@@ -1,0 +1,677 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		180E87F918BE0B05009A570F /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 180E87F718BE0B05009A570F /* AddressBook.framework */; };
+		180E87FA18BE0B05009A570F /* AddressBookUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 180E87F818BE0B05009A570F /* AddressBookUI.framework */; };
+		180E880318BE0B34009A570F /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 180E87FB18BE0B34009A570F /* AudioToolbox.framework */; };
+		180E880418BE0B34009A570F /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 180E87FC18BE0B34009A570F /* CFNetwork.framework */; };
+		180E880518BE0B34009A570F /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 180E87FD18BE0B34009A570F /* CoreData.framework */; };
+		180E880618BE0B34009A570F /* EventKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 180E87FE18BE0B34009A570F /* EventKit.framework */; };
+		180E880718BE0B34009A570F /* EventKitUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 180E87FF18BE0B34009A570F /* EventKitUI.framework */; };
+		180E880818BE0B34009A570F /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 180E880018BE0B34009A570F /* QuartzCore.framework */; };
+		180E880918BE0B34009A570F /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 180E880118BE0B34009A570F /* Security.framework */; };
+		180E880A18BE0B34009A570F /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 180E880218BE0B34009A570F /* SystemConfiguration.framework */; };
+		180E880B18BE0C58009A570F /* Parse.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 180E87F518BE0AF8009A570F /* Parse.framework */; };
+		180E880D18BE0C8A009A570F /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 180E880C18BE0C8A009A570F /* MobileCoreServices.framework */; };
+		180E880F18BE0C97009A570F /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 180E880E18BE0C97009A570F /* CoreLocation.framework */; };
+		180E881418BE1779009A570F /* FriensoCircleButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 180E881118BE1779009A570F /* FriensoCircleButton.m */; };
+		180E881518BE1779009A570F /* FriensoOptionsButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 180E881318BE1779009A570F /* FriensoOptionsButton.m */; };
+		180E881B18BE5584009A570F /* FriensoEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 180E881A18BE5584009A570F /* FriensoEvent.m */; };
+		180E881E18BF15F3009A570F /* FriensoFirstScreenViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 180E881D18BF15F3009A570F /* FriensoFirstScreenViewController.m */; };
+		180E882018BF1806009A570F /* first-view-cover.png in Resources */ = {isa = PBXBuildFile; fileRef = 180E881F18BF1806009A570F /* first-view-cover.png */; };
+		180E882618BF2AB5009A570F /* first-view-cover-2.png in Resources */ = {isa = PBXBuildFile; fileRef = 180E882418BF2AB4009A570F /* first-view-cover-2.png */; };
+		180E882718BF2AB5009A570F /* first-view-cover-3.png in Resources */ = {isa = PBXBuildFile; fileRef = 180E882518BF2AB5009A570F /* first-view-cover-3.png */; };
+		1827930518BE06740056C849 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1827930418BE06740056C849 /* Foundation.framework */; };
+		1827930718BE06740056C849 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1827930618BE06740056C849 /* CoreGraphics.framework */; };
+		1827930918BE06750056C849 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1827930818BE06750056C849 /* UIKit.framework */; };
+		1827930F18BE06750056C849 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1827930D18BE06750056C849 /* InfoPlist.strings */; };
+		1827931118BE06750056C849 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 1827931018BE06750056C849 /* main.m */; };
+		1827931518BE06750056C849 /* FriensoAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1827931418BE06750056C849 /* FriensoAppDelegate.m */; };
+		1827931818BE06750056C849 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1827931618BE06750056C849 /* Main.storyboard */; };
+		1827931B18BE06750056C849 /* FriensoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1827931A18BE06750056C849 /* FriensoViewController.m */; };
+		1827931D18BE06750056C849 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1827931C18BE06750056C849 /* Images.xcassets */; };
+		1827932418BE06750056C849 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1827932318BE06750056C849 /* XCTest.framework */; };
+		1827932518BE06750056C849 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1827930418BE06740056C849 /* Foundation.framework */; };
+		1827932618BE06750056C849 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1827930818BE06750056C849 /* UIKit.framework */; };
+		1827932E18BE06750056C849 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1827932C18BE06750056C849 /* InfoPlist.strings */; };
+		1827933018BE06750056C849 /* FriensoAlphaTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 1827932F18BE06750056C849 /* FriensoAlphaTests.m */; };
+		1827933C18BE07BD0056C849 /* alert-ring-bg.png in Resources */ = {isa = PBXBuildFile; fileRef = 1827933A18BE07BD0056C849 /* alert-ring-bg.png */; };
+		1827933D18BE07BD0056C849 /* frienso-alert.png in Resources */ = {isa = PBXBuildFile; fileRef = 1827933B18BE07BD0056C849 /* frienso-alert.png */; };
+		1827934018BE08090056C849 /* PanicViewCtrlr.m in Sources */ = {isa = PBXBuildFile; fileRef = 1827933F18BE08090056C849 /* PanicViewCtrlr.m */; };
+		182E86F018C120CF009AD302 /* ABALoginTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 182E86ED18C120CF009AD302 /* ABALoginTVC.m */; };
+		182E86F118C120CF009AD302 /* CoreCircleTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 182E86EF18C120CF009AD302 /* CoreCircleTVC.m */; };
+		184079CB18C21BED0016CD6D /* FriensoEvent.h in Sources */ = {isa = PBXBuildFile; fileRef = 180E881918BE5584009A570F /* FriensoEvent.h */; };
+		1853403918C220680094AC5A /* FriensoAlphaCoreDataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 1853403718C220680094AC5A /* FriensoAlphaCoreDataModel.xcdatamodeld */; };
+		1853403C18C223340094AC5A /* CoreFriends.m in Sources */ = {isa = PBXBuildFile; fileRef = 1853403B18C223340094AC5A /* CoreFriends.m */; };
+		1853403F18C2236E0094AC5A /* FriensoOptionsTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 1853403E18C2236E0094AC5A /* FriensoOptionsTVC.m */; };
+		18B8076B18C2029A0038B6F3 /* FriensoCoreFriendsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 18B8076A18C2029A0038B6F3 /* FriensoCoreFriendsViewController.m */; };
+		18DF849818C2718D003F431F /* settings-24.png in Resources */ = {isa = PBXBuildFile; fileRef = 18DF849718C2718D003F431F /* settings-24.png */; };
+		18DF849B18C275C7003F431F /* about-24.png in Resources */ = {isa = PBXBuildFile; fileRef = 18DF849918C275C7003F431F /* about-24.png */; };
+		18DF849C18C275C7003F431F /* lighthouse-24.png in Resources */ = {isa = PBXBuildFile; fileRef = 18DF849A18C275C7003F431F /* lighthouse-24.png */; };
+		18DF849E18C279A5003F431F /* profile-24.png in Resources */ = {isa = PBXBuildFile; fileRef = 18DF849D18C279A5003F431F /* profile-24.png */; };
+		18DF84A118C27D58003F431F /* umbrella-24.png in Resources */ = {isa = PBXBuildFile; fileRef = 18DF849F18C27D58003F431F /* umbrella-24.png */; };
+		18DF84A218C27D58003F431F /* watching-24.png in Resources */ = {isa = PBXBuildFile; fileRef = 18DF84A018C27D58003F431F /* watching-24.png */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		1827932718BE06750056C849 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 182792F918BE06740056C849 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1827930018BE06740056C849;
+			remoteInfo = FriensoAlpha;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		180E87F518BE0AF8009A570F /* Parse.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Parse.framework; path = ../../Downloads/Parse.framework; sourceTree = "<group>"; };
+		180E87F718BE0B05009A570F /* AddressBook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBook.framework; path = System/Library/Frameworks/AddressBook.framework; sourceTree = SDKROOT; };
+		180E87F818BE0B05009A570F /* AddressBookUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBookUI.framework; path = System/Library/Frameworks/AddressBookUI.framework; sourceTree = SDKROOT; };
+		180E87FB18BE0B34009A570F /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
+		180E87FC18BE0B34009A570F /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
+		180E87FD18BE0B34009A570F /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		180E87FE18BE0B34009A570F /* EventKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = EventKit.framework; path = System/Library/Frameworks/EventKit.framework; sourceTree = SDKROOT; };
+		180E87FF18BE0B34009A570F /* EventKitUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = EventKitUI.framework; path = System/Library/Frameworks/EventKitUI.framework; sourceTree = SDKROOT; };
+		180E880018BE0B34009A570F /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		180E880118BE0B34009A570F /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		180E880218BE0B34009A570F /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
+		180E880C18BE0C8A009A570F /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
+		180E880E18BE0C97009A570F /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
+		180E881018BE1779009A570F /* FriensoCircleButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FriensoCircleButton.h; sourceTree = "<group>"; };
+		180E881118BE1779009A570F /* FriensoCircleButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FriensoCircleButton.m; sourceTree = "<group>"; };
+		180E881218BE1779009A570F /* FriensoOptionsButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FriensoOptionsButton.h; sourceTree = "<group>"; };
+		180E881318BE1779009A570F /* FriensoOptionsButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FriensoOptionsButton.m; sourceTree = "<group>"; };
+		180E881918BE5584009A570F /* FriensoEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FriensoEvent.h; path = FriensoAlpha/FriensoEvent.h; sourceTree = SOURCE_ROOT; };
+		180E881A18BE5584009A570F /* FriensoEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FriensoEvent.m; path = FriensoAlpha/FriensoEvent.m; sourceTree = SOURCE_ROOT; };
+		180E881C18BF15F3009A570F /* FriensoFirstScreenViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FriensoFirstScreenViewController.h; sourceTree = "<group>"; };
+		180E881D18BF15F3009A570F /* FriensoFirstScreenViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FriensoFirstScreenViewController.m; sourceTree = "<group>"; };
+		180E881F18BF1806009A570F /* first-view-cover.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "first-view-cover.png"; sourceTree = "<group>"; };
+		180E882418BF2AB4009A570F /* first-view-cover-2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "first-view-cover-2.png"; sourceTree = "<group>"; };
+		180E882518BF2AB5009A570F /* first-view-cover-3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "first-view-cover-3.png"; sourceTree = "<group>"; };
+		1827930118BE06740056C849 /* FriensoAlpha.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FriensoAlpha.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1827930418BE06740056C849 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		1827930618BE06740056C849 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		1827930818BE06750056C849 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		1827930C18BE06750056C849 /* FriensoAlpha-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "FriensoAlpha-Info.plist"; sourceTree = "<group>"; };
+		1827930E18BE06750056C849 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		1827931018BE06750056C849 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		1827931218BE06750056C849 /* FriensoAlpha-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "FriensoAlpha-Prefix.pch"; sourceTree = "<group>"; };
+		1827931318BE06750056C849 /* FriensoAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FriensoAppDelegate.h; sourceTree = "<group>"; };
+		1827931418BE06750056C849 /* FriensoAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FriensoAppDelegate.m; sourceTree = "<group>"; };
+		1827931718BE06750056C849 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		1827931918BE06750056C849 /* FriensoViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FriensoViewController.h; sourceTree = "<group>"; };
+		1827931A18BE06750056C849 /* FriensoViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FriensoViewController.m; sourceTree = "<group>"; };
+		1827931C18BE06750056C849 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		1827932218BE06750056C849 /* FriensoAlphaTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FriensoAlphaTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		1827932318BE06750056C849 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
+		1827932B18BE06750056C849 /* FriensoAlphaTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "FriensoAlphaTests-Info.plist"; sourceTree = "<group>"; };
+		1827932D18BE06750056C849 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		1827932F18BE06750056C849 /* FriensoAlphaTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FriensoAlphaTests.m; sourceTree = "<group>"; };
+		1827933A18BE07BD0056C849 /* alert-ring-bg.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "alert-ring-bg.png"; sourceTree = "<group>"; };
+		1827933B18BE07BD0056C849 /* frienso-alert.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "frienso-alert.png"; sourceTree = "<group>"; };
+		1827933E18BE08090056C849 /* PanicViewCtrlr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PanicViewCtrlr.h; sourceTree = "<group>"; };
+		1827933F18BE08090056C849 /* PanicViewCtrlr.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PanicViewCtrlr.m; sourceTree = "<group>"; };
+		182E86EC18C120CF009AD302 /* ABALoginTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ABALoginTVC.h; sourceTree = "<group>"; };
+		182E86ED18C120CF009AD302 /* ABALoginTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ABALoginTVC.m; sourceTree = "<group>"; };
+		182E86EE18C120CF009AD302 /* CoreCircleTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreCircleTVC.h; sourceTree = "<group>"; };
+		182E86EF18C120CF009AD302 /* CoreCircleTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CoreCircleTVC.m; sourceTree = "<group>"; };
+		1853403818C220680094AC5A /* FriensoAlphaCoreDataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = FriensoAlphaCoreDataModel.xcdatamodel; sourceTree = "<group>"; };
+		1853403A18C223340094AC5A /* CoreFriends.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CoreFriends.h; path = FriensoAlpha/CoreFriends.h; sourceTree = SOURCE_ROOT; };
+		1853403B18C223340094AC5A /* CoreFriends.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CoreFriends.m; path = FriensoAlpha/CoreFriends.m; sourceTree = SOURCE_ROOT; };
+		1853403D18C2236E0094AC5A /* FriensoOptionsTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FriensoOptionsTVC.h; sourceTree = "<group>"; };
+		1853403E18C2236E0094AC5A /* FriensoOptionsTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FriensoOptionsTVC.m; sourceTree = "<group>"; };
+		18B8076918C2029A0038B6F3 /* FriensoCoreFriendsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FriensoCoreFriendsViewController.h; sourceTree = "<group>"; };
+		18B8076A18C2029A0038B6F3 /* FriensoCoreFriendsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FriensoCoreFriendsViewController.m; sourceTree = "<group>"; };
+		18DF849718C2718D003F431F /* settings-24.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "settings-24.png"; sourceTree = "<group>"; };
+		18DF849918C275C7003F431F /* about-24.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "about-24.png"; sourceTree = "<group>"; };
+		18DF849A18C275C7003F431F /* lighthouse-24.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "lighthouse-24.png"; sourceTree = "<group>"; };
+		18DF849D18C279A5003F431F /* profile-24.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "profile-24.png"; sourceTree = "<group>"; };
+		18DF849F18C27D58003F431F /* umbrella-24.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "umbrella-24.png"; sourceTree = "<group>"; };
+		18DF84A018C27D58003F431F /* watching-24.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "watching-24.png"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		182792FE18BE06740056C849 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				180E880F18BE0C97009A570F /* CoreLocation.framework in Frameworks */,
+				180E880D18BE0C8A009A570F /* MobileCoreServices.framework in Frameworks */,
+				180E880B18BE0C58009A570F /* Parse.framework in Frameworks */,
+				180E880318BE0B34009A570F /* AudioToolbox.framework in Frameworks */,
+				180E880418BE0B34009A570F /* CFNetwork.framework in Frameworks */,
+				180E880518BE0B34009A570F /* CoreData.framework in Frameworks */,
+				180E880618BE0B34009A570F /* EventKit.framework in Frameworks */,
+				180E880718BE0B34009A570F /* EventKitUI.framework in Frameworks */,
+				180E880818BE0B34009A570F /* QuartzCore.framework in Frameworks */,
+				180E880918BE0B34009A570F /* Security.framework in Frameworks */,
+				180E880A18BE0B34009A570F /* SystemConfiguration.framework in Frameworks */,
+				180E87F918BE0B05009A570F /* AddressBook.framework in Frameworks */,
+				180E87FA18BE0B05009A570F /* AddressBookUI.framework in Frameworks */,
+				1827930718BE06740056C849 /* CoreGraphics.framework in Frameworks */,
+				1827930918BE06750056C849 /* UIKit.framework in Frameworks */,
+				1827930518BE06740056C849 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1827931F18BE06750056C849 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1827932418BE06750056C849 /* XCTest.framework in Frameworks */,
+				1827932618BE06750056C849 /* UIKit.framework in Frameworks */,
+				1827932518BE06750056C849 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		182792F818BE06740056C849 = {
+			isa = PBXGroup;
+			children = (
+				1827930A18BE06750056C849 /* FriensoAlpha */,
+				1827932918BE06750056C849 /* FriensoAlphaTests */,
+				1827930318BE06740056C849 /* Frameworks */,
+				1827930218BE06740056C849 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		1827930218BE06740056C849 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				1827930118BE06740056C849 /* FriensoAlpha.app */,
+				1827932218BE06750056C849 /* FriensoAlphaTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		1827930318BE06740056C849 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				180E880E18BE0C97009A570F /* CoreLocation.framework */,
+				180E880C18BE0C8A009A570F /* MobileCoreServices.framework */,
+				180E87FB18BE0B34009A570F /* AudioToolbox.framework */,
+				180E87FC18BE0B34009A570F /* CFNetwork.framework */,
+				180E87FD18BE0B34009A570F /* CoreData.framework */,
+				180E87FE18BE0B34009A570F /* EventKit.framework */,
+				180E87FF18BE0B34009A570F /* EventKitUI.framework */,
+				180E880018BE0B34009A570F /* QuartzCore.framework */,
+				180E880118BE0B34009A570F /* Security.framework */,
+				180E880218BE0B34009A570F /* SystemConfiguration.framework */,
+				180E87F718BE0B05009A570F /* AddressBook.framework */,
+				180E87F818BE0B05009A570F /* AddressBookUI.framework */,
+				180E87F518BE0AF8009A570F /* Parse.framework */,
+				1827930418BE06740056C849 /* Foundation.framework */,
+				1827930618BE06740056C849 /* CoreGraphics.framework */,
+				1827930818BE06750056C849 /* UIKit.framework */,
+				1827932318BE06750056C849 /* XCTest.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		1827930A18BE06750056C849 /* FriensoAlpha */ = {
+			isa = PBXGroup;
+			children = (
+				1827934118BE08A00056C849 /* CoreData Files */,
+				1827933918BE07A70056C849 /* Media */,
+				1827931318BE06750056C849 /* FriensoAppDelegate.h */,
+				1827931418BE06750056C849 /* FriensoAppDelegate.m */,
+				1827931618BE06750056C849 /* Main.storyboard */,
+				1827931918BE06750056C849 /* FriensoViewController.h */,
+				1827931A18BE06750056C849 /* FriensoViewController.m */,
+				180E881C18BF15F3009A570F /* FriensoFirstScreenViewController.h */,
+				180E881D18BF15F3009A570F /* FriensoFirstScreenViewController.m */,
+				182E86EC18C120CF009AD302 /* ABALoginTVC.h */,
+				182E86ED18C120CF009AD302 /* ABALoginTVC.m */,
+				182E86EE18C120CF009AD302 /* CoreCircleTVC.h */,
+				182E86EF18C120CF009AD302 /* CoreCircleTVC.m */,
+				1827933E18BE08090056C849 /* PanicViewCtrlr.h */,
+				1827933F18BE08090056C849 /* PanicViewCtrlr.m */,
+				18B8076918C2029A0038B6F3 /* FriensoCoreFriendsViewController.h */,
+				18B8076A18C2029A0038B6F3 /* FriensoCoreFriendsViewController.m */,
+				1853403D18C2236E0094AC5A /* FriensoOptionsTVC.h */,
+				1853403E18C2236E0094AC5A /* FriensoOptionsTVC.m */,
+				180E881018BE1779009A570F /* FriensoCircleButton.h */,
+				180E881118BE1779009A570F /* FriensoCircleButton.m */,
+				180E881218BE1779009A570F /* FriensoOptionsButton.h */,
+				180E881318BE1779009A570F /* FriensoOptionsButton.m */,
+				1827931C18BE06750056C849 /* Images.xcassets */,
+				1827930B18BE06750056C849 /* Supporting Files */,
+				1853403718C220680094AC5A /* FriensoAlphaCoreDataModel.xcdatamodeld */,
+			);
+			path = FriensoAlpha;
+			sourceTree = "<group>";
+		};
+		1827930B18BE06750056C849 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				1827930C18BE06750056C849 /* FriensoAlpha-Info.plist */,
+				1827930D18BE06750056C849 /* InfoPlist.strings */,
+				1827931018BE06750056C849 /* main.m */,
+				1827931218BE06750056C849 /* FriensoAlpha-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		1827932918BE06750056C849 /* FriensoAlphaTests */ = {
+			isa = PBXGroup;
+			children = (
+				1827932F18BE06750056C849 /* FriensoAlphaTests.m */,
+				1827932A18BE06750056C849 /* Supporting Files */,
+			);
+			path = FriensoAlphaTests;
+			sourceTree = "<group>";
+		};
+		1827932A18BE06750056C849 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				1827932B18BE06750056C849 /* FriensoAlphaTests-Info.plist */,
+				1827932C18BE06750056C849 /* InfoPlist.strings */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		1827933918BE07A70056C849 /* Media */ = {
+			isa = PBXGroup;
+			children = (
+				18DF849F18C27D58003F431F /* umbrella-24.png */,
+				18DF84A018C27D58003F431F /* watching-24.png */,
+				18DF849D18C279A5003F431F /* profile-24.png */,
+				18DF849918C275C7003F431F /* about-24.png */,
+				18DF849A18C275C7003F431F /* lighthouse-24.png */,
+				18DF849718C2718D003F431F /* settings-24.png */,
+				180E882418BF2AB4009A570F /* first-view-cover-2.png */,
+				180E882518BF2AB5009A570F /* first-view-cover-3.png */,
+				180E881F18BF1806009A570F /* first-view-cover.png */,
+				1827933A18BE07BD0056C849 /* alert-ring-bg.png */,
+				1827933B18BE07BD0056C849 /* frienso-alert.png */,
+			);
+			path = Media;
+			sourceTree = "<group>";
+		};
+		1827934118BE08A00056C849 /* CoreData Files */ = {
+			isa = PBXGroup;
+			children = (
+				180E881918BE5584009A570F /* FriensoEvent.h */,
+				180E881A18BE5584009A570F /* FriensoEvent.m */,
+				1853403A18C223340094AC5A /* CoreFriends.h */,
+				1853403B18C223340094AC5A /* CoreFriends.m */,
+			);
+			path = "CoreData Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		1827930018BE06740056C849 /* FriensoAlpha */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1827933318BE06750056C849 /* Build configuration list for PBXNativeTarget "FriensoAlpha" */;
+			buildPhases = (
+				182792FD18BE06740056C849 /* Sources */,
+				182792FE18BE06740056C849 /* Frameworks */,
+				182792FF18BE06740056C849 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = FriensoAlpha;
+			productName = FriensoAlpha;
+			productReference = 1827930118BE06740056C849 /* FriensoAlpha.app */;
+			productType = "com.apple.product-type.application";
+		};
+		1827932118BE06750056C849 /* FriensoAlphaTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1827933618BE06750056C849 /* Build configuration list for PBXNativeTarget "FriensoAlphaTests" */;
+			buildPhases = (
+				1827931E18BE06750056C849 /* Sources */,
+				1827931F18BE06750056C849 /* Frameworks */,
+				1827932018BE06750056C849 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				1827932818BE06750056C849 /* PBXTargetDependency */,
+			);
+			name = FriensoAlphaTests;
+			productName = FriensoAlphaTests;
+			productReference = 1827932218BE06750056C849 /* FriensoAlphaTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		182792F918BE06740056C849 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				CLASSPREFIX = Frienso;
+				LastUpgradeCheck = 0500;
+				ORGANIZATIONNAME = ABitOfAlchemy;
+				TargetAttributes = {
+					1827932118BE06750056C849 = {
+						TestTargetID = 1827930018BE06740056C849;
+					};
+				};
+			};
+			buildConfigurationList = 182792FC18BE06740056C849 /* Build configuration list for PBXProject "FriensoAlpha" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 182792F818BE06740056C849;
+			productRefGroup = 1827930218BE06740056C849 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				1827930018BE06740056C849 /* FriensoAlpha */,
+				1827932118BE06750056C849 /* FriensoAlphaTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		182792FF18BE06740056C849 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				18DF84A118C27D58003F431F /* umbrella-24.png in Resources */,
+				1827931D18BE06750056C849 /* Images.xcassets in Resources */,
+				18DF849E18C279A5003F431F /* profile-24.png in Resources */,
+				180E882018BF1806009A570F /* first-view-cover.png in Resources */,
+				1827930F18BE06750056C849 /* InfoPlist.strings in Resources */,
+				18DF849B18C275C7003F431F /* about-24.png in Resources */,
+				1827931818BE06750056C849 /* Main.storyboard in Resources */,
+				1827933C18BE07BD0056C849 /* alert-ring-bg.png in Resources */,
+				180E882718BF2AB5009A570F /* first-view-cover-3.png in Resources */,
+				1827933D18BE07BD0056C849 /* frienso-alert.png in Resources */,
+				180E882618BF2AB5009A570F /* first-view-cover-2.png in Resources */,
+				18DF849C18C275C7003F431F /* lighthouse-24.png in Resources */,
+				18DF84A218C27D58003F431F /* watching-24.png in Resources */,
+				18DF849818C2718D003F431F /* settings-24.png in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1827932018BE06750056C849 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1827932E18BE06750056C849 /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		182792FD18BE06740056C849 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1853403C18C223340094AC5A /* CoreFriends.m in Sources */,
+				184079CB18C21BED0016CD6D /* FriensoEvent.h in Sources */,
+				1853403918C220680094AC5A /* FriensoAlphaCoreDataModel.xcdatamodeld in Sources */,
+				180E881518BE1779009A570F /* FriensoOptionsButton.m in Sources */,
+				180E881B18BE5584009A570F /* FriensoEvent.m in Sources */,
+				18B8076B18C2029A0038B6F3 /* FriensoCoreFriendsViewController.m in Sources */,
+				1827934018BE08090056C849 /* PanicViewCtrlr.m in Sources */,
+				1827931118BE06750056C849 /* main.m in Sources */,
+				180E881418BE1779009A570F /* FriensoCircleButton.m in Sources */,
+				1827931B18BE06750056C849 /* FriensoViewController.m in Sources */,
+				180E881E18BF15F3009A570F /* FriensoFirstScreenViewController.m in Sources */,
+				182E86F118C120CF009AD302 /* CoreCircleTVC.m in Sources */,
+				182E86F018C120CF009AD302 /* ABALoginTVC.m in Sources */,
+				1827931518BE06750056C849 /* FriensoAppDelegate.m in Sources */,
+				1853403F18C2236E0094AC5A /* FriensoOptionsTVC.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1827931E18BE06750056C849 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1827933018BE06750056C849 /* FriensoAlphaTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		1827932818BE06750056C849 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1827930018BE06740056C849 /* FriensoAlpha */;
+			targetProxy = 1827932718BE06750056C849 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		1827930D18BE06750056C849 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				1827930E18BE06750056C849 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		1827931618BE06750056C849 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				1827931718BE06750056C849 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		1827932C18BE06750056C849 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				1827932D18BE06750056C849 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		1827933118BE06750056C849 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		1827933218BE06750056C849 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		1827933418BE06750056C849 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					/Users/aboa/Downloads,
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "FriensoAlpha/FriensoAlpha-Prefix.pch";
+				INFOPLIST_FILE = "FriensoAlpha/FriensoAlpha-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		1827933518BE06750056C849 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					/Users/aboa/Downloads,
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "FriensoAlpha/FriensoAlpha-Prefix.pch";
+				INFOPLIST_FILE = "FriensoAlpha/FriensoAlpha-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+		1827933718BE06750056C849 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/FriensoAlpha.app/FriensoAlpha";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "FriensoAlpha/FriensoAlpha-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = "FriensoAlphaTests/FriensoAlphaTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = xctest;
+			};
+			name = Debug;
+		};
+		1827933818BE06750056C849 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/FriensoAlpha.app/FriensoAlpha";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "FriensoAlpha/FriensoAlpha-Prefix.pch";
+				INFOPLIST_FILE = "FriensoAlphaTests/FriensoAlphaTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = xctest;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		182792FC18BE06740056C849 /* Build configuration list for PBXProject "FriensoAlpha" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1827933118BE06750056C849 /* Debug */,
+				1827933218BE06750056C849 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1827933318BE06750056C849 /* Build configuration list for PBXNativeTarget "FriensoAlpha" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1827933418BE06750056C849 /* Debug */,
+				1827933518BE06750056C849 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1827933618BE06750056C849 /* Build configuration list for PBXNativeTarget "FriensoAlphaTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1827933718BE06750056C849 /* Debug */,
+				1827933818BE06750056C849 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		1853403718C220680094AC5A /* FriensoAlphaCoreDataModel.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				1853403818C220680094AC5A /* FriensoAlphaCoreDataModel.xcdatamodel */,
+			);
+			currentVersion = 1853403818C220680094AC5A /* FriensoAlphaCoreDataModel.xcdatamodel */;
+			path = FriensoAlphaCoreDataModel.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
+	};
+	rootObject = 182792F918BE06740056C849 /* Project object */;
+}
