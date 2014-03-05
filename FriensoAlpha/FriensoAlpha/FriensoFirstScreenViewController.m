@@ -32,8 +32,7 @@
         NSLog(@"[0]");
         return;
     } else {
-        NSLog(@"[1]");
-        //[username setText:[[NSUserDefaults standardUserDefaults] objectForKey:@"adminID"]];
+        NSLog(@"[ jumping to the dashboard ]");
         [self popDashboardVC];
         
     }
@@ -59,11 +58,24 @@
     return self;
 }
 
+-(void) viewDidAppear:(BOOL)animated {
+    
+    NSLog(@"view did appear");
+    [UIView animateWithDuration:1.0 animations:^{
+        self.navigationController.navigationBarHidden = YES;
+        // This will fix the view from being framed underneath the navigation bar and status bar.
+        self.navigationController.navigationBar.translucent = YES;
+        [super viewDidAppear:YES];
+    }];
+    
+}
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     [self CheckUserDefaults];
-    self.navigationController.navigationBarHidden = YES;
+    
+    // This will fix the view from being framed underneath the navigation bar and status bar.
+    self.navigationController.navigationBar.translucent = YES;
     
     [[self view] setBackgroundColor: [UIColor colorWithPatternImage: [UIImage imageNamed:@"first-view-cover.png"]]];
     

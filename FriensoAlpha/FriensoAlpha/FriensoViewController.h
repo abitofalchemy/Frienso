@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import <CoreData/NSFetchedResultsController.h>
+#import <Parse/Parse.h>
 
 @interface FriensoViewController : UIViewController <NSFetchedResultsControllerDelegate,
 UITableViewDelegate,UITableViewDataSource>

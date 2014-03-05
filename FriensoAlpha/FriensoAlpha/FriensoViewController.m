@@ -17,6 +17,10 @@ static NSString *eventCell = @"eventCell";
 
 
 @interface FriensoViewController ()
+{
+    NSMutableArray *coreFriendsArray;
+}
+@property (nonatomic,retain) NSMutableArray *coreFriendsArray;
 @property (nonatomic,strong) UITableView *tableView;
 @property (nonatomic, strong) NSFetchedResultsController *frc;
 
@@ -26,6 +30,7 @@ static NSString *eventCell = @"eventCell";
 @end
 
 @implementation FriensoViewController
+@synthesize coreFriendsArray = _coreFriendsArray;
 
 -(void)viewMenuOptions:(UIButton *)theButton {
     [self animateThisButton:theButton];
@@ -167,7 +172,60 @@ static NSString *eventCell = @"eventCell";
     
     
 }
-
+#pragma mark - Sync from Parse Methods
+- (void) syncFromParse {
+    //TODO: save core friends to coredata 
+    // sync from parse!
+    if ([[NSUserDefaults standardUserDefaults] objectForKey:@"CoreFriendsContactInfoDicKey"] == nil)
+    {
+    [PFUser logInWithUsernameInBackground:[[NSUserDefaults standardUserDefaults] objectForKey:@"adminID"]
+                                 password:[[NSUserDefaults standardUserDefaults] objectForKey:@"adminPass"]
+                                    block:^(PFUser *user, NSError *error) {
+                                        if (user) {
+                                            NSLog(@"[ Parse successful login ]"); // Do stuff after successful login.
+                                            
+                                            // sync from parse!
+                                            PFQuery *query = [PFQuery queryWithClassName:@"UserCoreFriends"];
+                                            [query whereKey:@"user" equalTo:user];
+                                            [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error)
+                                             {
+                                                 if (!error) { // The find succeeded.
+                                                     NSDictionary *parseCoreFriendsDic = [[NSDictionary alloc] init];
+                                                     for (PFObject *object in objects) { // Do something with the found objects
+                                                         parseCoreFriendsDic = [object valueForKey:@"userCoreFriends"];
+                                                         
+                                                     }
+                                                     if ( parseCoreFriendsDic != NULL) {
+                                                         // Save core friends dictionary to NSUserDefaults
+                                                         [self saveCFDictionaryToNSUserDefaults:parseCoreFriendsDic];
+                                                         coreFriendsArray = [[NSMutableArray alloc] initWithArray:[parseCoreFriendsDic allKeys]];
+                                                         
+                                                         
+                                                     }
+                                                 } else {
+                                                     // Log details of the failure
+                                                     NSLog(@"Error: %@ %@", error, [error userInfo]);
+                                                 }
+                                             }];
+                                            
+                                            
+                                        } else {
+                                            NSLog(@"[ ERROR: Login failed | %@",error);// The login failed. Check error to see why.
+                                        }
+                                    }];
+    }// testing if core circle dic is in nsuserdefaults
+    else        NSLog(@"not nil");
+}
+-(void) saveCFDictionaryToNSUserDefaults:(NSDictionary *)friendsDic {
+    // From Parse
+    NSLog(@"[ saveCFDictionaryToNSUserDefaults ]");
+    NSLog(@"%@",friendsDic);
+    
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+    [userDefaults setObject:friendsDic forKey:@"CoreFriendsContactInfoDicKey"];
+    [userDefaults setBool:YES forKey:@"coreFriendsSet"];
+    [userDefaults synchronize];
+}
 
 - (void)viewDidLoad
 {
@@ -175,6 +233,8 @@ static NSString *eventCell = @"eventCell";
     
     self.navigationController.navigationBarHidden = NO;
 	
+    [self syncFromParse];
+    
     [self setupNavigationBarImage];
     
     [self setupEventsTableView];

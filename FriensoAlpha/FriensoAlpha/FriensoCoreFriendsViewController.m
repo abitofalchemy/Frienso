@@ -9,6 +9,7 @@
 #import "FriensoCoreFriendsViewController.h"
 #import "FriensoAppDelegate.h"
 
+
 @interface FriensoCoreFriendsViewController ()
 {
     NSMutableArray *coreFriendsArray;
@@ -19,6 +20,8 @@
 
 @implementation FriensoCoreFriendsViewController
 @synthesize coreFriendsArray = _coreFriendsArray;
+
+
 
 - (id)initWithStyle:(UITableViewStyle)style
 {
@@ -32,7 +35,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-
+    
     NSDictionary *retrievedCoreFriendsDictionary = [[NSUserDefaults standardUserDefaults]
                                                     dictionaryForKey:@"CoreFriendsContactInfoDicKey"]; // immutable
     if ( retrievedCoreFriendsDictionary != NULL) {
@@ -65,7 +68,7 @@
     // self.clearsSelectionOnViewWillAppear = NO;
  
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
+    self.navigationItem.rightBarButtonItem = self.editButtonItem;
 }
 
 - (void)didReceiveMemoryWarning

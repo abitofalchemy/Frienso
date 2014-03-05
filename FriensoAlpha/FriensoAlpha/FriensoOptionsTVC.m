@@ -7,6 +7,8 @@
 //
 
 #import "FriensoOptionsTVC.h"
+#import "ProfileViewController.h"
+#import "SettingsViewController.h"
 
 @interface FriensoOptionsTVC ()
 @property (nonatomic,retain) NSMutableArray *optionsArray;
@@ -26,7 +28,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    self.optionsArray = [[NSMutableArray alloc] initWithArray:@[@"Profile",@"Watching", @"Settings",@"Resources",@"About"]];
+    self.optionsArray = [[NSMutableArray alloc] initWithArray:@[@"Profile",@"Watching", @"Resources",@"Settings",@"About"]];
     // Uncomment the following line to preserve selection between presentations.
     // self.clearsSelectionOnViewWillAppear = NO;
  
@@ -91,6 +93,56 @@
     return cell;
 }
 
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    switch (indexPath.row) {
+        case 0:{
+            NSLog(@"%@", [tableView cellForRowAtIndexPath:indexPath].textLabel.text);
+            
+            ProfileViewController *detailViewController = [[ProfileViewController alloc] initWithNibName:nil bundle:nil];
+            
+            // Pass the selected object to the new view controller.
+            [detailViewController setText:[tableView cellForRowAtIndexPath:indexPath].textLabel.text];
+//            NSDictionary *dictTemp = [arrItems objectAtIndex:indexPath.row];
+//            detailViewController.strDesc = [dictTemp objectForKey:@"Desc"];
+        
+            // Push the view controller.
+            [self.navigationController pushViewController:detailViewController
+                                                 animated:YES];
+            //[self presentViewController:detailViewController animated:YES completion:nil];
+//            [self.view addSubview:detailViewController];
+            break;
+        }
+        case 1:{
+            NSLog(@"%@", [tableView cellForRowAtIndexPath:indexPath].textLabel.text);
+            break;
+        }
+        case 2:{
+            NSLog(@"%@", [tableView cellForRowAtIndexPath:indexPath].textLabel.text);
+            break;
+        }
+        case 3:{
+            NSLog(@"%@", [tableView cellForRowAtIndexPath:indexPath].textLabel.text);
+            SettingsViewController *detailViewController = [[SettingsViewController alloc] initWithNibName:nil bundle:nil];
+            [detailViewController setText:[tableView cellForRowAtIndexPath:indexPath].textLabel.text];
+            [self.navigationController pushViewController:detailViewController
+                                                 animated:YES];
+            break;
+        }
+        case 4:{
+            NSLog(@"%@", [tableView cellForRowAtIndexPath:indexPath].textLabel.text);
+            ProfileViewController *detailViewController = [[ProfileViewController alloc] initWithNibName:nil bundle:nil];
+            [detailViewController setText:[tableView cellForRowAtIndexPath:indexPath].textLabel.text];
+            [self.navigationController pushViewController:detailViewController
+                                                 animated:YES];
+            break;
+        }
+        
+        default:
+            break;
+    }
+        
+}
 /*
 // Override to support conditional editing of the table view.
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath

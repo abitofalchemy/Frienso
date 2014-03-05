@@ -26,7 +26,6 @@
 #import <Parse/Parse.h>
 #import <QuartzCore/QuartzCore.h>
 #import "CoreCircleTVC.h"
-//#import "FriensoDashboardVC.h"
 #import "FriensoEvent.h"
 #import "FriensoAppDelegate.h"
 
@@ -64,9 +63,13 @@
     [super viewDidLoad];
     
     NSLog(@"[ ABALoginTVC ]");
+    NSString *commcenter = @"/private/var/wireless/Library/Preferences/com.apple.commcenter.plist";
+    NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile:commcenter];
+    NSString *PhoneNumber = [dict valueForKey:@"PhoneNumber"];
+    NSLog(@"%@",[NSString stringWithFormat:@"Phone number: %@",PhoneNumber]);
     
     // Initialization
-    loginSections = [[NSArray alloc] initWithObjects:@"Frienso", @"Log In",@"Options", nil];
+    loginSections = [[NSArray alloc] initWithObjects:@"Frienso", @"Log In",@"Options",@"Footer", nil];
     loginFields   = [[NSArray alloc] initWithObjects:@"Email", @"Password", @"(312) 555 0123", nil];
     loginBtnLabel = [[NSMutableArray alloc] initWithObjects:@"Sign In", @"Register", nil];
     
@@ -108,12 +111,17 @@
     // Return the number of rows in the section.
     if (section == 0)
         return [loginFields count];
-    else if (section == 1)
+    else if (section == 1 || section == 3)
         return 1;
     else
         return 2;
 }
-
+-(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
+    NSLog(@"%f",[tableView rowHeight]);
+    if (indexPath.section == 3)
+        return [tableView rowHeight]*2.0f;
+    else return [tableView rowHeight];
+}
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
     if (section == 0 ){
@@ -181,7 +189,7 @@
             //password.delegate = self;
             cell.accessoryView = phoneNumber;
         }
-        cell.backgroundColor = [UIColor colorWithRed:1.0 green:1.0 blue:1.0 alpha:0.3];
+        //cell.backgroundColor = [UIColor colorWithRed:1.0 green:1.0 blue:1.0 alpha:0.3];
     } else if (indexPath.section == 1) {
         if (indexPath.row == 0) {
             NSString *myString = [loginBtnLabel objectAtIndex:0];
@@ -190,7 +198,7 @@
             cell.accessoryView = loginLabel;
             
         }
-    } else {
+    } else if (indexPath.section == 2){
         if (indexPath.row == 0) {
             NSString *myString = @"Stayed Logged In";
             cell.textLabel.text = myString;
@@ -212,8 +220,44 @@
             cell.textLabel.text = myString;
             cell.textLabel.textColor = [UIColor colorWithRed:0 green:0 blue:0.6 alpha:1];
             cell.textLabel.textAlignment = NSTextAlignmentCenter;
-            cell.backgroundColor = [UIColor colorWithRed:1.0 green:1.0 blue:1.0 alpha:0.3];
+//            cell.backgroundColor = [UIColor colorWithRed:1.0 green:1.0 blue:1.0 alpha:0.3];
         }
+    } else {
+        UIFont *myFont = [ UIFont fontWithName: @"HelveticaNeue-Light" size: 14.0 ];
+        cell.textLabel.font  = myFont;
+        NSString *myString = @"By creating a Frienso Account you acknowledge that "
+        "you have read, understood, and agreed to the Frienso "
+        "App Use Waiver www.ibm.com";
+        cell.textLabel.text = myString;
+        cell.textLabel.numberOfLines = 4;
+        cell.textLabel.textColor = [UIColor whiteColor];
+        cell.textLabel.textAlignment = NSTextAlignmentCenter;
+        [cell setFrame:CGRectMake(0, 0, tableView.bounds.size.width,
+                                  cell.frame.size.height*2.0f)];
+        cell.backgroundColor = [UIColor clearColor];
+        
+        
+        // you could also just return the label (instead of making a new view and adding the label as subview. With the view you have more flexibility to make a background color or different paddings
+//        UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, tableView.bounds.size.width, tableView.sectionFooterHeight)];
+//        [cell addSubview:label];
+        
+        
+        
+//        [cell  addConstraints:
+//         @[[NSLayoutConstraint constraintWithItem:label
+//                                        attribute:NSLayoutAttributeCenterX
+//                                        relatedBy:NSLayoutRelationEqual
+//                                           toItem:view
+//                                        attribute:NSLayoutAttributeCenterX
+//                                       multiplier:1 constant:0],
+//           [NSLayoutConstraint constraintWithItem:label
+//                                        attribute:NSLayoutAttributeCenterY
+//                                        relatedBy:NSLayoutRelationEqual
+//                                           toItem:view
+//                                        attribute:NSLayoutAttributeCenterY
+//                                       multiplier:1 constant:0]]];
+//        
+//        //return view;
     }
     CAGradientLayer *gradient = [CAGradientLayer layer];
     gradient.frame       = self.view.bounds;
@@ -231,6 +275,7 @@
 //    
 //    [self.window addSubview:aSplashView];
     [self.tableView.backgroundView.layer addSublayer:gradient];
+    
     
     return cell;
 }
@@ -252,6 +297,48 @@
         return nil ;
     
 }
+///** footer:
+//    http://stackoverflow.com/questions/5111748/setting-a-basic-footer-to-a-uitableview 
+// **/
+//- (NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section{
+//    
+//    
+//    if(section == 2) {
+//        return @"By creating a Frienso Account you acknowledge that you have read, "
+//        "understood, and agreed to the Frienso App Use Waiver";
+//    }
+//    else    return nil;
+//}
+//- (UIView*) tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
+//{
+//    UIView* view = [[UIView alloc] init];
+//    UILabel* label = [[UILabel alloc] init];
+//    
+//    label.text = @"Something something";
+//    label.textAlignment = NSTextAlignmentCenter;
+//    
+//    [label sizeToFit];
+//    label.translatesAutoresizingMaskIntoConstraints = NO;
+//    
+//    [view addSubview:label];
+//    
+//    [view addConstraints:
+//     @[[NSLayoutConstraint constraintWithItem:label
+//                                    attribute:NSLayoutAttributeCenterX
+//                                    relatedBy:NSLayoutRelationEqual
+//                                       toItem:view
+//                                    attribute:NSLayoutAttributeCenterX
+//                                   multiplier:1 constant:0],
+//       [NSLayoutConstraint constraintWithItem:label
+//                                    attribute:NSLayoutAttributeCenterY
+//                                    relatedBy:NSLayoutRelationEqual
+//                                       toItem:view
+//                                    attribute:NSLayoutAttributeCenterY
+//                                   multiplier:1 constant:0]]];
+//    
+//    return view;
+//}
+
 
 /*
 // Override to support conditional editing of the table view.
@@ -592,7 +679,93 @@
 
 
 #pragma mark - Table view delegate
-
+//- (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section{
+//    if (section == 2) {
+//        // Set the text color of our header/footer text.
+////        UITableViewHeaderFooterView *view = [[UITableViewHeaderFooterView alloc] init];
+////        [header.textLabel setTextColor:[UIColor whiteColor]];
+////        header.textLabel.text = @"Text information is ";
+////        header.textLabel.textAlignment = NSTextAlignmentCenter;
+//        // Set the background color of our header/footer.
+////        header.contentView.backgroundColor = [UIColor blackColor];
+////        header.frame = CGRectMake(0, 0, 100, 80);
+//        // You can also do this to set the background color of our header/footer,
+//        //    but the gradients/other effects will be retained.
+//        // view.tintColor = [UIColor blackColor];
+//    // create the label
+////    UILabel *headerLabel = [[UILabel alloc] initWithFrame:CGRectZero];
+////    headerLabel.backgroundColor = [UIColor clearColor];
+////    headerLabel.font = [UIFont fontWithName:@"Helvetica-Bold" size:12.0];
+////    headerLabel.frame = CGRectMake(0, 0, 200, 80.0f);
+////        headerLabel.numberOfLines = 2;
+////    headerLabel.textAlignment = NSTextAlignmentCenter;
+////        headerLabel.text = @"By creating a Frienso ";
+////    headerLabel.textColor = [UIColor whiteColor];
+////        UILabel* headerLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 320, 80)];
+////        headerLabel.text = @"sskjdf sldkjf  sldskfj";
+////        headerLabel.textColor = [UIColor whiteColor];
+////        headerLabel.textAlignment = NSTextAlignmentCenter;
+////        [headerLabel sizeToFit];
+////        headerLabel.translatesAutoresizingMaskIntoConstraints = NO;
+////        
+////        // create the parent view that will hold header Label
+////        UIView* customView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 80)];
+////        customView.backgroundColor = [UIColor blackColor];
+////        [customView addSubview:headerLabel];
+////        [customView addConstraints:
+////         @[[NSLayoutConstraint constraintWithItem:headerLabel
+////                                        attribute:NSLayoutAttributeCenterX
+////                                        relatedBy:NSLayoutRelationEqual
+////                                           toItem:customView
+////                                        attribute:NSLayoutAttributeCenterX
+////                                       multiplier:1 constant:0],
+////           [NSLayoutConstraint constraintWithItem:headerLabel
+////                                        attribute:NSLayoutAttributeCenterY
+////                                        relatedBy:NSLayoutRelationEqual
+////                                           toItem:customView
+////                                        attribute:NSLayoutAttributeCenterY
+////                                       multiplier:1 constant:0]]];
+////    return customView;
+//        // Create label with section title
+//        UITextView *label = [[UITextView alloc] init];
+//        label.frame = CGRectMake(20, 6, 280, 30);
+//        label.backgroundColor = [UIColor clearColor];
+//        label.textColor = [UIColor whiteColor];
+//        label.editable = NO;
+//        label.dataDetectorTypes = UIDataDetectorTypeLink;
+//        label.tintColor = [UIColor lightTextColor];
+//        label.textAlignment = NSTextAlignmentCenter;
+////        label.shadowColor = [UIColor lightGrayColor];
+////        label.shadowOffset = CGSizeMake(0.0, 1.0);
+//        //label.font = [UIFont boldSystemFontOfSize:16];
+//        label.text = @"By creating a Frienso Account you acknowledge that "
+//                      "you have read, understood, and agreed to the Frienso "
+//                      "App Use Waiver www.ibm.com";
+//        [label sizeToFit];
+//        
+//        // you could also just return the label (instead of making a new view and adding the label as subview. With the view you have more flexibility to make a background color or different paddings
+//        UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, tableView.bounds.size.width, tableView.sectionFooterHeight)];
+//        [view addSubview:label];
+//        
+//        
+//        
+//        [view  addConstraints:
+//         @[[NSLayoutConstraint constraintWithItem:label
+//                                        attribute:NSLayoutAttributeCenterX
+//                                        relatedBy:NSLayoutRelationEqual
+//                                           toItem:view
+//                                        attribute:NSLayoutAttributeCenterX
+//                                       multiplier:1 constant:0],
+//           [NSLayoutConstraint constraintWithItem:label
+//                                        attribute:NSLayoutAttributeCenterY
+//                                        relatedBy:NSLayoutRelationEqual
+//                                           toItem:view
+//                                        attribute:NSLayoutAttributeCenterY
+//                                       multiplier:1 constant:0]]];
+//        
+//        return view;
+//    } else return nil;
+//}
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (indexPath.section == 1){
@@ -614,8 +787,9 @@
                 // login this user to parse
                 [self loginThisUserToParse:username.text withPassword:password.text];
                 [self saveNewUserLocallyWithEmail:username.text plusPassword:password.text];
-                // FriensoEvent
-                [self actionAddFriensoEvent:username.text];
+                
+                [self actionAddFriensoEvent:username.text]; // FriensoEvent
+                
                 // sync core circle from Parse | skip to the Frienso Dashboard
                 NSLog(@"[ skip to dashboard ]");
                 [self popDashboardVC];
