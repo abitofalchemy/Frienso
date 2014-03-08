@@ -10,6 +10,9 @@
 #import <QuartzCore/QuartzCore.h>
 #import "FriensoViewController.h"
 
+#define UIColorFromRGB(rgbValue) [UIColor colorWithRed:((float)((rgbValue & 0xFF0000) >> 16))/255.0 green:((float)((rgbValue & 0xFF00) >> 8))/255.0 blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
+
+
 @interface FriensoFirstScreenViewController ()
 {
     IBOutlet UILabel *welcomeLabel;
@@ -69,6 +72,21 @@
     }];
     
 }
+
+-(void) setupTopLabel{
+    welcomeLabel = [[UILabel alloc] init];
+    welcomeLabel.backgroundColor = [UIColor clearColor];
+    welcomeLabel.text = @"Panic Alert!";
+    welcomeLabel.font = [UIFont fontWithName:@"AppleSDGothicNeo-Medium" size:24.0];
+    welcomeLabel.textColor = [UIColor blackColor];
+    welcomeLabel.shadowColor = [UIColor lightGrayColor];
+    welcomeLabel.shadowOffset = CGSizeMake(2.0f, 2.0f);
+    [welcomeLabel sizeToFit];
+    
+    welcomeLabel.center = CGPointMake(self.view.center.x,self.view.bounds.size.height*0.8);
+    [self.view addSubview:welcomeLabel];
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -94,20 +112,22 @@
      }];
     **/
     
-    [self.welcomeLabel setTextColor:[UIColor whiteColor]];
-    [self.welcomeLabel setFont:[UIFont fontWithName:@"AppleSDGothicNeo-Light" size:28.0]];
-    [self.welcomeLabel setText:@"Welcome to Frienso"];
-    [self.welcomeLabel setCenter:CGPointMake(self.view.center.x, self.view.bounds.size.height*0.8)];
-    [self.welcomeLabel sizeToFit];
+    [self setupTopLabel];
     
-    
-    [self.chngTheWorldBtn.titleLabel setTextColor:[UIColor whiteColor]];
-    [self.chngTheWorldBtn.titleLabel setFont:[UIFont fontWithName:@"AppleSDGothicNeo-Light" size:16.0]];
-    self.chngTheWorldBtn.layer.cornerRadius = 8.0f;
-    self.chngTheWorldBtn.layer.borderWidth = 1.2f;
-    self.chngTheWorldBtn.layer.borderColor = [UIColor whiteColor].CGColor;
-    self.chngTheWorldBtn.layer.backgroundColor = [UIColor blueColor].CGColor;
-    [self.chngTheWorldBtn setCenter:self.view.center];
+    UIButton *button= [UIButton buttonWithType:UIButtonTypeCustom];
+    button.frame = CGRectMake(0, 0, self.view.bounds.size.width/2.0f, 50);
+    [button.titleLabel setTextColor:[UIColor whiteColor]];
+    [button.titleLabel setTintColor:[UIColor whiteColor]];
+    [button addTarget:self action:@selector(popDashboardVC) forControlEvents:UIControlEventTouchUpInside];
+    [button setTitle:@"Start Frienso" forState:UIControlStateNormal];
+    [button.titleLabel setFont:[UIFont fontWithName:@"AppleSDGothicNeo-Medium" size:16.0]];
+    button.layer.cornerRadius = 6.0f;
+    button.layer.borderWidth = 1.2f;
+    button.layer.borderColor = [UIColor whiteColor].CGColor;
+    button.backgroundColor = UIColorFromRGB(0x4962D6);
+    [button setCenter:CGPointMake([UIScreen mainScreen].bounds.size.width/2,
+                                  [UIScreen mainScreen].bounds.size.height*0.9)];
+    [self.view addSubview:button];
     
 }
 

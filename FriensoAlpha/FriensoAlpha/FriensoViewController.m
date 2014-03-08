@@ -99,7 +99,7 @@ static NSString *eventCell = @"eventCell";
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     id <NSFetchedResultsSectionInfo> sectionInfo = self.frc.sections[section];
-    NSLog(@"%d",sectionInfo.numberOfObjects);
+    //NSLog(@"%lu",sectionInfo.numberOfObjects);
     return sectionInfo.numberOfObjects;
     
 }

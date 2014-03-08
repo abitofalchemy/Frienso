@@ -925,7 +925,7 @@
         [userInLocal setObject:newUserEmail forKey:@"adminID"];
         [userInLocal setObject:newUserPassword forKey:@"adminPass"];
         [userInLocal setObject:@"0" forKey:@"adminInParse"];
-        [userInLocal setObject:@"0000000000" forKey:@"rootPhoneNumber"];
+        [userInLocal setObject:phoneNumber.text forKey:@"rootPhoneNumber"];
         [userInLocal synchronize];
         NSLog(@"[New user saved locally]");
     }

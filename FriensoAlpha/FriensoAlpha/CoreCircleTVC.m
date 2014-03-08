@@ -327,7 +327,7 @@
         NSArray *allContacts = (__bridge NSArray *)ABAddressBookCopyArrayOfAllPeople(addressBook);
         CFArrayRef allPeople = ABAddressBookCopyArrayOfAllPeople(addressBook);
 
-        NSLog(@"Number of users: %d ", [allContacts count]);
+        NSLog(@"Number of users: %lu ", (unsigned long)[allContacts count]);
         NSUInteger i = 0;
         for (i = 0; i < [allContacts count]; i++)
         {

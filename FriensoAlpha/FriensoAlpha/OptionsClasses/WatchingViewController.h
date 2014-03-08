@@ -7,10 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <Parse/Parse.h>
 
-@interface ProfileViewController : UIViewController
+
+@interface WatchingViewController : PFQueryTableViewController
 
 - (void) setText:(NSString *)paramText;
-
 
 @end

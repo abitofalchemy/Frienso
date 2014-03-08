@@ -9,6 +9,9 @@
 #import "FriensoOptionsTVC.h"
 #import "ProfileViewController.h"
 #import "SettingsViewController.h"
+#import "tstWatchingViewController.h"
+#import "FriensoResourcesTVC.h"
+
 
 @interface FriensoOptionsTVC ()
 @property (nonatomic,retain) NSMutableArray *optionsArray;
@@ -115,10 +118,25 @@
         }
         case 1:{
             NSLog(@"%@", [tableView cellForRowAtIndexPath:indexPath].textLabel.text);
+            UIStoryboard *mainStoryboard = [UIStoryboard storyboardWithName:@"Main"  bundle:nil];
+            tstWatchingViewController  *wtvc = (tstWatchingViewController*)[mainStoryboard instantiateViewControllerWithIdentifier:@"friensoWatching"];
+            [wtvc setText:[tableView cellForRowAtIndexPath:indexPath].textLabel.text];
+            [self.navigationController pushViewController:wtvc animated:YES];
             break;
         }
         case 2:{
             NSLog(@"%@", [tableView cellForRowAtIndexPath:indexPath].textLabel.text);
+            /*FriensoResourcesTVC *detailViewController = [[FriensoResourcesTVC alloc] initWithNibName:nil
+                                                                                              bundle:nil];
+            // Pass the selected object to the new view controller.
+            //[detailViewController setText:[tableView cellForRowAtIndexPath:indexPath].textLabel.text];
+            // Push the view controller.
+            [self.navigationController pushViewController:detailViewController
+                                                 animated:YES];
+            */
+            UIStoryboard *mainStoryboard = [UIStoryboard storyboardWithName:@"Main"  bundle:nil];
+            FriensoResourcesTVC  *rtvc = (FriensoResourcesTVC*)[mainStoryboard instantiateViewControllerWithIdentifier:@"friensoResources"];
+            [self.navigationController pushViewController:rtvc animated:YES];
             break;
         }
         case 3:{

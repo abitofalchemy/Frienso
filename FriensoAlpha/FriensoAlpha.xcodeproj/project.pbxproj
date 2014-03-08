@@ -55,6 +55,9 @@
 		1879B59018C6CD9400AEA55F /* SettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1879B58F18C6CD9400AEA55F /* SettingsViewController.m */; };
 		1879B59318C7277100AEA55F /* Profile-256.png in Resources */ = {isa = PBXBuildFile; fileRef = 1879B59118C7277100AEA55F /* Profile-256.png */; };
 		1879B59418C7277100AEA55F /* profile.png in Resources */ = {isa = PBXBuildFile; fileRef = 1879B59218C7277100AEA55F /* profile.png */; };
+		1879B59818C7847000AEA55F /* WatchingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1879B59718C7847000AEA55F /* WatchingViewController.m */; };
+		1879B59B18C786DB00AEA55F /* FriensoResourcesTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 1879B59A18C786DB00AEA55F /* FriensoResourcesTVC.m */; };
+		1879B59F18C888BB00AEA55F /* tstWatchingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1879B59E18C888BB00AEA55F /* tstWatchingViewController.m */; };
 		18B8076B18C2029A0038B6F3 /* FriensoCoreFriendsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 18B8076A18C2029A0038B6F3 /* FriensoCoreFriendsViewController.m */; };
 		18DF849818C2718D003F431F /* settings-24.png in Resources */ = {isa = PBXBuildFile; fileRef = 18DF849718C2718D003F431F /* settings-24.png */; };
 		18DF849B18C275C7003F431F /* about-24.png in Resources */ = {isa = PBXBuildFile; fileRef = 18DF849918C275C7003F431F /* about-24.png */; };
@@ -138,6 +141,12 @@
 		1879B58F18C6CD9400AEA55F /* SettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsViewController.m; sourceTree = "<group>"; };
 		1879B59118C7277100AEA55F /* Profile-256.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Profile-256.png"; sourceTree = "<group>"; };
 		1879B59218C7277100AEA55F /* profile.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = profile.png; sourceTree = "<group>"; };
+		1879B59618C7847000AEA55F /* WatchingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WatchingViewController.h; sourceTree = "<group>"; };
+		1879B59718C7847000AEA55F /* WatchingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WatchingViewController.m; sourceTree = "<group>"; };
+		1879B59918C786DB00AEA55F /* FriensoResourcesTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FriensoResourcesTVC.h; sourceTree = "<group>"; };
+		1879B59A18C786DB00AEA55F /* FriensoResourcesTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FriensoResourcesTVC.m; sourceTree = "<group>"; };
+		1879B59D18C888BB00AEA55F /* tstWatchingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tstWatchingViewController.h; sourceTree = "<group>"; };
+		1879B59E18C888BB00AEA55F /* tstWatchingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = tstWatchingViewController.m; sourceTree = "<group>"; };
 		18B8076918C2029A0038B6F3 /* FriensoCoreFriendsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FriensoCoreFriendsViewController.h; sourceTree = "<group>"; };
 		18B8076A18C2029A0038B6F3 /* FriensoCoreFriendsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FriensoCoreFriendsViewController.m; sourceTree = "<group>"; };
 		18DF849718C2718D003F431F /* settings-24.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "settings-24.png"; sourceTree = "<group>"; };
@@ -188,10 +197,16 @@
 		1808553618C4EEC30047A8BE /* OptionsClasses */ = {
 			isa = PBXGroup;
 			children = (
+				1879B59618C7847000AEA55F /* WatchingViewController.h */,
+				1879B59718C7847000AEA55F /* WatchingViewController.m */,
+				1879B59918C786DB00AEA55F /* FriensoResourcesTVC.h */,
+				1879B59A18C786DB00AEA55F /* FriensoResourcesTVC.m */,
 				1879B58E18C6CD9400AEA55F /* SettingsViewController.h */,
 				1879B58F18C6CD9400AEA55F /* SettingsViewController.m */,
 				1808553718C4EEFF0047A8BE /* ProfileViewController.h */,
 				1808553818C4EEFF0047A8BE /* ProfileViewController.m */,
+				1879B59D18C888BB00AEA55F /* tstWatchingViewController.h */,
+				1879B59E18C888BB00AEA55F /* tstWatchingViewController.m */,
 			);
 			path = OptionsClasses;
 			sourceTree = "<group>";
@@ -453,15 +468,18 @@
 				184079CB18C21BED0016CD6D /* FriensoEvent.h in Sources */,
 				1808553918C4EEFF0047A8BE /* ProfileViewController.m in Sources */,
 				1853403918C220680094AC5A /* FriensoAlphaCoreDataModel.xcdatamodeld in Sources */,
+				1879B59B18C786DB00AEA55F /* FriensoResourcesTVC.m in Sources */,
 				180E881518BE1779009A570F /* FriensoOptionsButton.m in Sources */,
 				180E881B18BE5584009A570F /* FriensoEvent.m in Sources */,
 				18B8076B18C2029A0038B6F3 /* FriensoCoreFriendsViewController.m in Sources */,
 				1827934018BE08090056C849 /* PanicViewCtrlr.m in Sources */,
+				1879B59F18C888BB00AEA55F /* tstWatchingViewController.m in Sources */,
 				1827931118BE06750056C849 /* main.m in Sources */,
 				1879B59018C6CD9400AEA55F /* SettingsViewController.m in Sources */,
 				180E881418BE1779009A570F /* FriensoCircleButton.m in Sources */,
 				1827931B18BE06750056C849 /* FriensoViewController.m in Sources */,
 				180E881E18BF15F3009A570F /* FriensoFirstScreenViewController.m in Sources */,
+				1879B59818C7847000AEA55F /* WatchingViewController.m in Sources */,
 				182E86F118C120CF009AD302 /* CoreCircleTVC.m in Sources */,
 				182E86F018C120CF009AD302 /* ABALoginTVC.m in Sources */,
 				1827931518BE06750056C849 /* FriensoAppDelegate.m in Sources */,
@@ -592,7 +610,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Salvador Aguinaga (PA6WYRP4VC)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -612,7 +630,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Salvador Aguinaga (WDLW7K2HT3)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
