@@ -47,17 +47,18 @@
     [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         if (!error) {
             // The find succeeded.
-            NSLog(@"Successfully retrieved %lu scores.", objects.count);
+            NSLog(@"Successfully retrieved %d scores.", objects.count);
             for (PFObject *object in objects) {
                 NSMutableDictionary *parseCoreFriendsDic = [object valueForKey:@"userCoreFriends"];
                 PFUser   *friensoUser    = [object valueForKey:@"user"];
-                NSString *root_ph_nbr_str = [[NSUserDefaults standardUserDefaults] objectForKey:@"rootPhoneNumber"];
+                NSString *root_ph_nbr_str = [[NSUserDefaults standardUserDefaults] objectForKey:@"userPhone"];
                 if ( parseCoreFriendsDic != NULL) {
 //                    self.thoseIWatchArray = [[NSMutableArray alloc] initWithArray:[parseCoreFriendsDic allValues]];
                     
                     for (NSString *phone_nbr in [parseCoreFriendsDic allValues]){
                         if([[self stripStringOfUnwantedChars:phone_nbr] isEqualToString:root_ph_nbr_str])
                         {
+                            NSLog(@"[%@][%@][%@]",friensoUser.username,root_ph_nbr_str, phone_nbr);
                             [self.thoseIWatchArray addObject:friensoUser.username];
                             //NSLog(@"#:%@", self.thoseIWatchArray);
                             //cell.textLabel.text = friensoUser.username;

@@ -15,6 +15,7 @@
 #import "CoreCircleTVC.h"
 #import "FriensoAppDelegate.h"
 #import "FriensoEvent.h"
+#import "FriensoViewController.h" // dashboard
 
 #import <AddressBook/AddressBook.h>
 #import <AddressBook/ABAddressBook.h>
@@ -88,13 +89,7 @@
     [super viewDidLoad];
     NSLog(@"[ CoreCircleTVC ]"); // Announce the view controller
     
-    // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
- 
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    [self.navigationController.navigationBar setHidden:NO];
     self.navigationItem.title = @"Setup Core Circle";
-    
     
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStyleBordered target:self action:@selector(cancel)];
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Save" style:UIBarButtonItemStyleDone target:self action:@selector(save)];
@@ -449,9 +444,12 @@
 
 - (void) cancel {
     NSLog(@"[ Cancel Core Circle of Friends ]");
+    [self.navigationController popViewControllerAnimated:YES];
+    
     /* When cancel is pressed offer to 'demo' the app
      * Users can be set as dummy to simulate app functionality
      * */
+    /*
     NSMutableDictionary *coreCircleDic = [[NSMutableDictionary  alloc] init];
     NSInteger i = 0;
     for (NSString *circleContactName in coreCircleOfFriends){
@@ -465,6 +463,7 @@
     UIStoryboard *mainStoryboard = [UIStoryboard storyboardWithName:@"LoginParseStoryboard"  bundle:nil];
     CoreCircleTVC  *coffController = (CoreCircleTVC*)[mainStoryboard instantiateViewControllerWithIdentifier: @"circleOfFriendsDashboard"];
     [self.navigationController pushViewController:coffController animated:YES];
+    */
 }
 
 - (void) save {
@@ -488,9 +487,11 @@
     NSLog(@"%@",coreCircleDic);
     [self uploadCoreFriends:coreCircleDic];
     //}
-    UIStoryboard *mainStoryboard = [UIStoryboard storyboardWithName:@"LoginParseStoryboard"  bundle:nil];
-    CoreCircleTVC  *coffController = (CoreCircleTVC*)[mainStoryboard instantiateViewControllerWithIdentifier: @"circleOfFriendsDashboard"];
-    [self.navigationController pushViewController:coffController animated:YES];
+    
+    
+    UIStoryboard *mainStoryboard = [UIStoryboard storyboardWithName:@"Main"  bundle:nil];
+    FriensoViewController  *nxtVC = (FriensoViewController*)[mainStoryboard instantiateViewControllerWithIdentifier: @"dashboardVC"];
+    [self.navigationController pushViewController:nxtVC animated:YES];
     
 }
 

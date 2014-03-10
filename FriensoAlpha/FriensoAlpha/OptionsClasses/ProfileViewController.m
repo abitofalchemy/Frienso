@@ -33,28 +33,32 @@
     // This will fix the view from being framed underneath the navigation bar and status bar.
     self.navigationController.navigationBar.translucent = NO;
     
-    CGRect applicationFrame = [[UIScreen mainScreen] applicationFrame];
+    /*CGRect applicationFrame = [[UIScreen mainScreen] applicationFrame];
     UIView *contentView = [[UIView alloc] initWithFrame:applicationFrame];
     contentView.backgroundColor = UIColorFromRGB(0xF6E4CC);
     self.view = contentView;
+    */
+    
+    
     
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0,0,self.view.bounds.size.width*0.85, 40)];
     [label setText:@"Change your profile photo"];
     [label sizeToFit];
     label.center = CGPointMake(self.view.center.x, self.view.bounds.size.height*0.25+10.0);
     [label setTextAlignment:NSTextAlignmentCenter];
-    [label setTextColor:[UIColor whiteColor]];
-    [label setFont:[UIFont fontWithName:@"AppleSDGothicNeo-Light" size:14.0]];
+//    [label setTextColor:[UIColor blackColor]];
+    [label setFont:[UIFont fontWithName:@"AppleSDGothicNeo-Light" size:16.0]];
     [self.view addSubview:label];
     
     // Profile photo
-    UIImageView *profilePhoto =[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"Profile-256.png"]];
-    [profilePhoto setFrame:CGRectMake(0, 0,self.view.bounds.size.width, self.view.bounds.size.height*0.25)];
+    UIImageView *profilePhoto =[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"profile-landscape.png"]];
+    [profilePhoto setFrame:CGRectMake(0, 0,self.view.bounds.size.width/2, self.view.bounds.size.width/2)];
     profilePhoto.layer.borderColor  = [UIColor whiteColor].CGColor;
     profilePhoto.contentMode = UIViewContentModeScaleAspectFit;
     profilePhoto.layer.borderWidth  = 1.0f;
     profilePhoto.layer.cornerRadius = 8.0f;
     [self.view addSubview:profilePhoto];
+    
     
     // Credentials
     NSString *userInfo = [NSString stringWithFormat:@"Name: %@\nEmail: %@", @"Sal",@"saguinag@nd.edu"];

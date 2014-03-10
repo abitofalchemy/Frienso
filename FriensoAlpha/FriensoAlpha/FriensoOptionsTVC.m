@@ -7,7 +7,7 @@
 //
 
 #import "FriensoOptionsTVC.h"
-#import "ProfileViewController.h"
+#import "UserProfileViewController.h"
 #import "SettingsViewController.h"
 #import "tstWatchingViewController.h"
 #import "FriensoResourcesTVC.h"
@@ -102,7 +102,7 @@
         case 0:{
             NSLog(@"%@", [tableView cellForRowAtIndexPath:indexPath].textLabel.text);
             
-            ProfileViewController *detailViewController = [[ProfileViewController alloc] initWithNibName:nil bundle:nil];
+            UserProfileViewController *detailViewController = [[UserProfileViewController alloc] initWithNibName:nil bundle:nil];
             
             // Pass the selected object to the new view controller.
             [detailViewController setText:[tableView cellForRowAtIndexPath:indexPath].textLabel.text];
@@ -149,7 +149,7 @@
         }
         case 4:{
             NSLog(@"%@", [tableView cellForRowAtIndexPath:indexPath].textLabel.text);
-            ProfileViewController *detailViewController = [[ProfileViewController alloc] initWithNibName:nil bundle:nil];
+            UserProfileViewController *detailViewController = [[UserProfileViewController alloc] initWithNibName:nil bundle:nil];
             [detailViewController setText:[tableView cellForRowAtIndexPath:indexPath].textLabel.text];
             [self.navigationController pushViewController:detailViewController
                                                  animated:YES];

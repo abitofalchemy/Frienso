@@ -58,7 +58,10 @@
 		1879B59818C7847000AEA55F /* WatchingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1879B59718C7847000AEA55F /* WatchingViewController.m */; };
 		1879B59B18C786DB00AEA55F /* FriensoResourcesTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 1879B59A18C786DB00AEA55F /* FriensoResourcesTVC.m */; };
 		1879B59F18C888BB00AEA55F /* tstWatchingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1879B59E18C888BB00AEA55F /* tstWatchingViewController.m */; };
-		18B8076B18C2029A0038B6F3 /* FriensoCoreFriendsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 18B8076A18C2029A0038B6F3 /* FriensoCoreFriendsViewController.m */; };
+		18CD00E518CBB98D007BAC85 /* profile-landscape.png in Resources */ = {isa = PBXBuildFile; fileRef = 18CD00E418CBB98D007BAC85 /* profile-landscape.png */; };
+		18CD00E818CCA020007BAC85 /* UserProfileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 18CD00E718CCA020007BAC85 /* UserProfileViewController.m */; };
+		18CD00EA18CDBCA7007BAC85 /* profile-landscape-1.png in Resources */ = {isa = PBXBuildFile; fileRef = 18CD00E918CDBCA7007BAC85 /* profile-landscape-1.png */; };
+		18CD00F018CDE557007BAC85 /* NewCoreCircleTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 18CD00EF18CDE557007BAC85 /* NewCoreCircleTVC.m */; };
 		18DF849818C2718D003F431F /* settings-24.png in Resources */ = {isa = PBXBuildFile; fileRef = 18DF849718C2718D003F431F /* settings-24.png */; };
 		18DF849B18C275C7003F431F /* about-24.png in Resources */ = {isa = PBXBuildFile; fileRef = 18DF849918C275C7003F431F /* about-24.png */; };
 		18DF849C18C275C7003F431F /* lighthouse-24.png in Resources */ = {isa = PBXBuildFile; fileRef = 18DF849A18C275C7003F431F /* lighthouse-24.png */; };
@@ -147,8 +150,12 @@
 		1879B59A18C786DB00AEA55F /* FriensoResourcesTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FriensoResourcesTVC.m; sourceTree = "<group>"; };
 		1879B59D18C888BB00AEA55F /* tstWatchingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tstWatchingViewController.h; sourceTree = "<group>"; };
 		1879B59E18C888BB00AEA55F /* tstWatchingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = tstWatchingViewController.m; sourceTree = "<group>"; };
-		18B8076918C2029A0038B6F3 /* FriensoCoreFriendsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FriensoCoreFriendsViewController.h; sourceTree = "<group>"; };
-		18B8076A18C2029A0038B6F3 /* FriensoCoreFriendsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FriensoCoreFriendsViewController.m; sourceTree = "<group>"; };
+		18CD00E418CBB98D007BAC85 /* profile-landscape.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "profile-landscape.png"; sourceTree = "<group>"; };
+		18CD00E618CCA020007BAC85 /* UserProfileViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserProfileViewController.h; sourceTree = "<group>"; };
+		18CD00E718CCA020007BAC85 /* UserProfileViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserProfileViewController.m; sourceTree = "<group>"; };
+		18CD00E918CDBCA7007BAC85 /* profile-landscape-1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "profile-landscape-1.png"; sourceTree = "<group>"; };
+		18CD00EE18CDE557007BAC85 /* NewCoreCircleTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewCoreCircleTVC.h; sourceTree = "<group>"; };
+		18CD00EF18CDE557007BAC85 /* NewCoreCircleTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NewCoreCircleTVC.m; sourceTree = "<group>"; };
 		18DF849718C2718D003F431F /* settings-24.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "settings-24.png"; sourceTree = "<group>"; };
 		18DF849918C275C7003F431F /* about-24.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "about-24.png"; sourceTree = "<group>"; };
 		18DF849A18C275C7003F431F /* lighthouse-24.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "lighthouse-24.png"; sourceTree = "<group>"; };
@@ -207,6 +214,8 @@
 				1808553818C4EEFF0047A8BE /* ProfileViewController.m */,
 				1879B59D18C888BB00AEA55F /* tstWatchingViewController.h */,
 				1879B59E18C888BB00AEA55F /* tstWatchingViewController.m */,
+				18CD00E618CCA020007BAC85 /* UserProfileViewController.h */,
+				18CD00E718CCA020007BAC85 /* UserProfileViewController.m */,
 			);
 			path = OptionsClasses;
 			sourceTree = "<group>";
@@ -271,10 +280,10 @@
 				182E86ED18C120CF009AD302 /* ABALoginTVC.m */,
 				182E86EE18C120CF009AD302 /* CoreCircleTVC.h */,
 				182E86EF18C120CF009AD302 /* CoreCircleTVC.m */,
+				18CD00EE18CDE557007BAC85 /* NewCoreCircleTVC.h */,
+				18CD00EF18CDE557007BAC85 /* NewCoreCircleTVC.m */,
 				1827933E18BE08090056C849 /* PanicViewCtrlr.h */,
 				1827933F18BE08090056C849 /* PanicViewCtrlr.m */,
-				18B8076918C2029A0038B6F3 /* FriensoCoreFriendsViewController.h */,
-				18B8076A18C2029A0038B6F3 /* FriensoCoreFriendsViewController.m */,
 				1853403D18C2236E0094AC5A /* FriensoOptionsTVC.h */,
 				1853403E18C2236E0094AC5A /* FriensoOptionsTVC.m */,
 				1808553618C4EEC30047A8BE /* OptionsClasses */,
@@ -321,6 +330,8 @@
 		1827933918BE07A70056C849 /* Media */ = {
 			isa = PBXGroup;
 			children = (
+				18CD00E918CDBCA7007BAC85 /* profile-landscape-1.png */,
+				18CD00E418CBB98D007BAC85 /* profile-landscape.png */,
 				1879B59118C7277100AEA55F /* Profile-256.png */,
 				1879B59218C7277100AEA55F /* profile.png */,
 				18DF849F18C27D58003F431F /* umbrella-24.png */,
@@ -429,9 +440,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				18CD00EA18CDBCA7007BAC85 /* profile-landscape-1.png in Resources */,
 				18DF84A118C27D58003F431F /* umbrella-24.png in Resources */,
 				1827931D18BE06750056C849 /* Images.xcassets in Resources */,
 				18DF849E18C279A5003F431F /* profile-24.png in Resources */,
+				18CD00E518CBB98D007BAC85 /* profile-landscape.png in Resources */,
 				180E882018BF1806009A570F /* first-view-cover.png in Resources */,
 				1827930F18BE06750056C849 /* InfoPlist.strings in Resources */,
 				18DF849B18C275C7003F431F /* about-24.png in Resources */,
@@ -470,8 +483,9 @@
 				1853403918C220680094AC5A /* FriensoAlphaCoreDataModel.xcdatamodeld in Sources */,
 				1879B59B18C786DB00AEA55F /* FriensoResourcesTVC.m in Sources */,
 				180E881518BE1779009A570F /* FriensoOptionsButton.m in Sources */,
+				18CD00E818CCA020007BAC85 /* UserProfileViewController.m in Sources */,
+				18CD00F018CDE557007BAC85 /* NewCoreCircleTVC.m in Sources */,
 				180E881B18BE5584009A570F /* FriensoEvent.m in Sources */,
-				18B8076B18C2029A0038B6F3 /* FriensoCoreFriendsViewController.m in Sources */,
 				1827934018BE08090056C849 /* PanicViewCtrlr.m in Sources */,
 				1879B59F18C888BB00AEA55F /* tstWatchingViewController.m in Sources */,
 				1827931118BE06750056C849 /* main.m in Sources */,

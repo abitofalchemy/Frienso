@@ -228,7 +228,7 @@
 //    PFObject *testObject = [testQuery getFirstObject];
 //    NSLog(@"username: %@",friensoUser.username); // not null
     
-    NSString *root_ph_nbr_str = [[NSUserDefaults standardUserDefaults] objectForKey:@"rootPhoneNumber"];
+    NSString *root_ph_nbr_str = [[NSUserDefaults standardUserDefaults] objectForKey:@"userPhone"];
     if ( parseCoreFriendsDic != NULL) {
         self.thoseIWatchArray = [[NSMutableArray alloc] initWithArray:[parseCoreFriendsDic allValues]];
         //NSLog(@"%@", root_ph_nbr_str);
@@ -337,7 +337,7 @@
 //                                    }
 //                                    // Save phone # to NSUserDefaults
 //                                    NSUserDefaults *userInLocal = [NSUserDefaults standardUserDefaults];
-//                                    [userInLocal setObject:strippedString forKey:@"rootPhoneNumber"];
+//                                    [userInLocal setObject:strippedString forKey:@"userPhone"];
 //                                    [userInLocal synchronize];
 //                                    
 //                                    // update the working array

@@ -25,7 +25,7 @@
 #import <Foundation/Foundation.h>
 #import <Parse/Parse.h>
 #import <QuartzCore/QuartzCore.h>
-#import "CoreCircleTVC.h"
+#import "NewCoreCircleTVC.h"
 #import "FriensoEvent.h"
 #import "FriensoAppDelegate.h"
 
@@ -181,9 +181,9 @@
             
         } else if (indexPath.row == 2) {
             phoneNumber = [[UITextField alloc] initWithFrame:CGRectMake(5, 0, 280, 21)];
-            NSString *myString = [loginFields objectAtIndex:2];
-            phoneNumber.placeholder = myString;
-            phoneNumber.secureTextEntry = YES;
+            //NSString *myString = [loginFields objectAtIndex:2];
+            phoneNumber.placeholder = @"555 123 4567";
+            phoneNumber.secureTextEntry = NO;
             phoneNumber.autocorrectionType = UITextAutocorrectionTypeNo;
             [phoneNumber setClearButtonMode:UITextFieldViewModeWhileEditing];
             //password.delegate = self;
@@ -869,26 +869,18 @@
 }
 - (void) popDashboardVC
 {
-    //[self dismissViewControllerAnimated:YES completion:nil];
     [self performSegueWithIdentifier:@"dashboardView" sender:self];
-    //    UIStoryboard *mainStoryboard = [UIStoryboard storyboardWithName:@"LoginParseStoryboard"  bundle:nil];
-//    FriensoDashboardVC  *coffController = (FriensoDashboardVC*)[mainStoryboard instantiateViewControllerWithIdentifier:@"friensoDashboard"];
-//    //coffController.managedObjectContext = nil;//[self managedObjectContext];
-
-//    FriensoDashboardVC *second = [[FriensoDashboardVC alloc] init];
-//    second.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
-//    UINavigationController *navigationController = [[UINavigationController alloc] init];
-//    [navigationController setViewControllers:@{second} animated:YES]
-//    //[self presentViewController:navigationController animated:YES completion:nil];
-//    [self.navigationController pushViewController:navigationController animated:YES];
+    
 }
 
 - (void) popCoreCircleSetupVC
 {
     UIStoryboard *mainStoryboard = [UIStoryboard storyboardWithName:@"Main"  bundle:nil];
-    CoreCircleTVC  *coreCircleController = (CoreCircleTVC*)[mainStoryboard instantiateViewControllerWithIdentifier: @"coreCircleSetup"];
+    NewCoreCircleTVC  *coreCircleController = (NewCoreCircleTVC*)[mainStoryboard instantiateViewControllerWithIdentifier: @"coreCircleView"];
     [self.navigationController pushViewController:coreCircleController animated:YES];
-
+    
+//    [self presentViewController:coreCircleController animated:YES completion:nil];
+//    [self performSegueWithIdentifier:@"coreFriendsView" sender:self];
 }
 
 #pragma mark - CoreData helper methods
@@ -904,10 +896,10 @@
     
     if (firstFriensoEvent != nil){
         NSString *loginFriensoEvent = @"You are logged in as: ";
-        firstFriensoEvent.eventTitle    = [loginFriensoEvent stringByAppendingString:message];
-        firstFriensoEvent.eventSubtitle = @"Welcome back to Frienso!";
-        firstFriensoEvent.eventLocation = @"Right here";
-        firstFriensoEvent.eventContact = @"me";
+        firstFriensoEvent.eventTitle     = [loginFriensoEvent stringByAppendingString:message];
+        firstFriensoEvent.eventSubtitle  = @"Welcome back to Frienso!";
+        firstFriensoEvent.eventLocation  = @"Right here";
+        firstFriensoEvent.eventContact   = @"me";
         firstFriensoEvent.eventCreated   = [NSDate date];
         firstFriensoEvent.eventModified  = [NSDate date];
         
@@ -923,9 +915,11 @@
     {
         NSUserDefaults *userInLocal = [NSUserDefaults standardUserDefaults];
         [userInLocal setObject:newUserEmail forKey:@"adminID"];
+        [userInLocal setObject:newUserEmail forKey:@"userName"];
+        [userInLocal setObject:newUserEmail forKey:@"userEmail"];
         [userInLocal setObject:newUserPassword forKey:@"adminPass"];
         [userInLocal setObject:@"0" forKey:@"adminInParse"];
-        [userInLocal setObject:phoneNumber.text forKey:@"rootPhoneNumber"];
+        [userInLocal setObject:phoneNumber.text forKey:@"userPhone"];
         [userInLocal synchronize];
         NSLog(@"[New user saved locally]");
     }

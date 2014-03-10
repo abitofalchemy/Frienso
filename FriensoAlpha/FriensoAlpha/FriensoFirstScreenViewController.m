@@ -32,13 +32,15 @@
     NSLog(@"check userdefaults");
     NSString       *adminKey    = [[NSUserDefaults standardUserDefaults] objectForKey:@"adminID"];
     if ([adminKey isEqualToString:@""] || adminKey == NULL){
-        NSLog(@"[0]");
         return;
     } else {
         NSLog(@"[ jumping to the dashboard ]");
         [self popDashboardVC];
         
     }
+}
+-(void) pushNextViewController {
+    [self performSegueWithIdentifier:@"loginView" sender:self];
 }
 
 -(void) popDashboardVC{
@@ -48,9 +50,10 @@
 ////    [navigationController setViewControllers:@{dashboardVC} animated:YES]
 //    //[self presentViewController:navigationController animated:YES completion:nil];
 //    [self.navigationController pushViewController:navigationController animated:YES];
-    UIStoryboard *mainStoryboard = [UIStoryboard storyboardWithName:@"Main"  bundle:nil];
-    FriensoViewController  *dashboardVC = (FriensoViewController*)[mainStoryboard instantiateViewControllerWithIdentifier:@"dashboardVC"];
-    [self.navigationController pushViewController:dashboardVC animated:NO];
+//    UIStoryboard *mainStoryboard = [UIStoryboard storyboardWithName:@"Main"  bundle:nil];
+//    FriensoViewController  *dashboardVC = (FriensoViewController*)[mainStoryboard instantiateViewControllerWithIdentifier:@"dashboardVC"];
+//    [self.navigationController pushViewController:dashboardVC animated:NO];
+    [self performSegueWithIdentifier:@"dashboardView" sender:self];
 }
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -76,11 +79,12 @@
 -(void) setupTopLabel{
     welcomeLabel = [[UILabel alloc] init];
     welcomeLabel.backgroundColor = [UIColor clearColor];
-    welcomeLabel.text = @"Panic Alert!";
-    welcomeLabel.font = [UIFont fontWithName:@"AppleSDGothicNeo-Medium" size:24.0];
-    welcomeLabel.textColor = [UIColor blackColor];
-    welcomeLabel.shadowColor = [UIColor lightGrayColor];
+    welcomeLabel.text = @"Welcome to Frienso";
+    welcomeLabel.font = [UIFont fontWithName:@"AppleSDGothicNeo-Medium" size:28.0];
+    welcomeLabel.textColor = [UIColor whiteColor];
+    /*welcomeLabel.shadowColor = [UIColor lightGrayColor];
     welcomeLabel.shadowOffset = CGSizeMake(2.0f, 2.0f);
+    */
     [welcomeLabel sizeToFit];
     
     welcomeLabel.center = CGPointMake(self.view.center.x,self.view.bounds.size.height*0.8);
@@ -118,12 +122,14 @@
     button.frame = CGRectMake(0, 0, self.view.bounds.size.width/2.0f, 50);
     [button.titleLabel setTextColor:[UIColor whiteColor]];
     [button.titleLabel setTintColor:[UIColor whiteColor]];
-    [button addTarget:self action:@selector(popDashboardVC) forControlEvents:UIControlEventTouchUpInside];
-    [button setTitle:@"Start Frienso" forState:UIControlStateNormal];
+    [button addTarget:self
+               action:@selector(pushNextViewController)
+     forControlEvents:UIControlEventTouchUpInside];
+    [button setTitle:@"Join the Movement" forState:UIControlStateNormal];
     [button.titleLabel setFont:[UIFont fontWithName:@"AppleSDGothicNeo-Medium" size:16.0]];
     button.layer.cornerRadius = 6.0f;
-    button.layer.borderWidth = 1.2f;
-    button.layer.borderColor = [UIColor whiteColor].CGColor;
+    //button.layer.borderWidth = 1.2f;
+    //button.layer.borderColor = [UIColor whiteColor].CGColor;
     button.backgroundColor = UIColorFromRGB(0x4962D6);
     [button setCenter:CGPointMake([UIScreen mainScreen].bounds.size.width/2,
                                   [UIScreen mainScreen].bounds.size.height*0.9)];
