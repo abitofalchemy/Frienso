@@ -19,7 +19,6 @@
 		180E880818BE0B34009A570F /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 180E880018BE0B34009A570F /* QuartzCore.framework */; };
 		180E880918BE0B34009A570F /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 180E880118BE0B34009A570F /* Security.framework */; };
 		180E880A18BE0B34009A570F /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 180E880218BE0B34009A570F /* SystemConfiguration.framework */; };
-		180E880B18BE0C58009A570F /* Parse.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 180E87F518BE0AF8009A570F /* Parse.framework */; };
 		180E880D18BE0C8A009A570F /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 180E880C18BE0C8A009A570F /* MobileCoreServices.framework */; };
 		180E880F18BE0C97009A570F /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 180E880E18BE0C97009A570F /* CoreLocation.framework */; };
 		180E881418BE1779009A570F /* FriensoCircleButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 180E881118BE1779009A570F /* FriensoCircleButton.m */; };
@@ -68,6 +67,7 @@
 		18DF849E18C279A5003F431F /* profile-24.png in Resources */ = {isa = PBXBuildFile; fileRef = 18DF849D18C279A5003F431F /* profile-24.png */; };
 		18DF84A118C27D58003F431F /* umbrella-24.png in Resources */ = {isa = PBXBuildFile; fileRef = 18DF849F18C27D58003F431F /* umbrella-24.png */; };
 		18DF84A218C27D58003F431F /* watching-24.png in Resources */ = {isa = PBXBuildFile; fileRef = 18DF84A018C27D58003F431F /* watching-24.png */; };
+		3E2F8C2F18D2FA3200FD2A99 /* Parse.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E2F8C2E18D2FA3200FD2A99 /* Parse.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -84,7 +84,6 @@
 		1808553418C3B9810047A8BE /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
 		1808553718C4EEFF0047A8BE /* ProfileViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProfileViewController.h; sourceTree = "<group>"; };
 		1808553818C4EEFF0047A8BE /* ProfileViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProfileViewController.m; sourceTree = "<group>"; };
-		180E87F518BE0AF8009A570F /* Parse.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Parse.framework; path = ../../Downloads/Parse.framework; sourceTree = "<group>"; };
 		180E87F718BE0B05009A570F /* AddressBook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBook.framework; path = System/Library/Frameworks/AddressBook.framework; sourceTree = SDKROOT; };
 		180E87F818BE0B05009A570F /* AddressBookUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBookUI.framework; path = System/Library/Frameworks/AddressBookUI.framework; sourceTree = SDKROOT; };
 		180E87FB18BE0B34009A570F /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
@@ -162,6 +161,7 @@
 		18DF849D18C279A5003F431F /* profile-24.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "profile-24.png"; sourceTree = "<group>"; };
 		18DF849F18C27D58003F431F /* umbrella-24.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "umbrella-24.png"; sourceTree = "<group>"; };
 		18DF84A018C27D58003F431F /* watching-24.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "watching-24.png"; sourceTree = "<group>"; };
+		3E2F8C2E18D2FA3200FD2A99 /* Parse.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Parse.framework; path = ../../../Downloads/Parse.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -169,9 +169,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3E2F8C2F18D2FA3200FD2A99 /* Parse.framework in Frameworks */,
 				180E880F18BE0C97009A570F /* CoreLocation.framework in Frameworks */,
 				180E880D18BE0C8A009A570F /* MobileCoreServices.framework in Frameworks */,
-				180E880B18BE0C58009A570F /* Parse.framework in Frameworks */,
 				180E880318BE0B34009A570F /* AudioToolbox.framework in Frameworks */,
 				180E880418BE0B34009A570F /* CFNetwork.framework in Frameworks */,
 				180E880518BE0B34009A570F /* CoreData.framework in Frameworks */,
@@ -243,6 +243,7 @@
 		1827930318BE06740056C849 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				3E2F8C2E18D2FA3200FD2A99 /* Parse.framework */,
 				180E880E18BE0C97009A570F /* CoreLocation.framework */,
 				180E880C18BE0C8A009A570F /* MobileCoreServices.framework */,
 				180E87FB18BE0B34009A570F /* AudioToolbox.framework */,
@@ -255,7 +256,6 @@
 				180E880218BE0B34009A570F /* SystemConfiguration.framework */,
 				180E87F718BE0B05009A570F /* AddressBook.framework */,
 				180E87F818BE0B05009A570F /* AddressBookUI.framework */,
-				180E87F518BE0AF8009A570F /* Parse.framework */,
 				1827930418BE06740056C849 /* Foundation.framework */,
 				1827930618BE06740056C849 /* CoreGraphics.framework */,
 				1827930818BE06750056C849 /* UIKit.framework */,
@@ -629,6 +629,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					/Users/aboa/Downloads,
+					/Users/sal/Downloads,
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "FriensoAlpha/FriensoAlpha-Prefix.pch";
@@ -649,6 +650,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					/Users/aboa/Downloads,
+					/Users/sal/Downloads,
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "FriensoAlpha/FriensoAlpha-Prefix.pch";

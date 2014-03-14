@@ -223,19 +223,27 @@
 //            cell.backgroundColor = [UIColor colorWithRed:1.0 green:1.0 blue:1.0 alpha:0.3];
         }
     } else {
-        UIFont *myFont = [ UIFont fontWithName: @"HelveticaNeue-Light" size: 14.0 ];
-        cell.textLabel.font  = myFont;
+//        UIFont *myFont = [ UIFont fontWithName: @"HelveticaNeue-Light" size: 14.0 ];
+//        cell.textLabel.font  = myFont;
         NSString *myString = @"By creating a Frienso Account you acknowledge that "
         "you have read, understood, and agreed to the Frienso "
-        "App Use Waiver www.ibm.com";
-        cell.textLabel.text = myString;
-        cell.textLabel.numberOfLines = 4;
-        cell.textLabel.textColor = [UIColor whiteColor];
-        cell.textLabel.textAlignment = NSTextAlignmentCenter;
-        [cell setFrame:CGRectMake(0, 0, tableView.bounds.size.width,
-                                  cell.frame.size.height*2.0f)];
-        cell.backgroundColor = [UIColor clearColor];
+        "App Use Waiver http://www.ibm.com";
+//        cell.textLabel.text = myString;
+//        cell.textLabel.numberOfLines = 4;
+//        cell.textLabel.textColor = [UIColor whiteColor];
+//        cell.textLabel.textAlignment = NSTextAlignmentCenter;
+//        [cell setFrame:CGRectMake(0, 0, tableView.bounds.size.width,
+//                                  cell.frame.size.height*2.0f)];
+//        cell.backgroundColor = [UIColor clearColor];
         
+        UITextView *cellTV = [[UITextView alloc] initWithFrame:CGRectMake(0, 0,
+                                                                          tableView.bounds.size.width,
+                                                                          cell.frame.size.height*2.0f)];
+        cellTV.text =myString;
+        cellTV.dataDetectorTypes = UIDataDetectorTypeLink;
+        cellTV.backgroundColor = [UIColor clearColor];
+        cellTV.editable = NO;
+        [cell addSubview:cellTV];
         
         // you could also just return the label (instead of making a new view and adding the label as subview. With the view you have more flexibility to make a background color or different paddings
 //        UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, tableView.bounds.size.width, tableView.sectionFooterHeight)];

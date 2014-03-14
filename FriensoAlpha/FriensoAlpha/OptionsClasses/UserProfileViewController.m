@@ -28,7 +28,7 @@
 - (void) coreFriendsAction:(id) sender {
     
     UIStoryboard *mainStoryboard = [UIStoryboard storyboardWithName:@"Main"  bundle:nil];
-    CoreCircleTVC  *coreCircleController = (CoreCircleTVC*)[mainStoryboard instantiateViewControllerWithIdentifier: @"coreCircleSetup"];
+    CoreCircleTVC  *coreCircleController = (CoreCircleTVC*)[mainStoryboard instantiateViewControllerWithIdentifier: @"coreCircleView"];
     [self.navigationController pushViewController:coreCircleController animated:YES];
     
 }

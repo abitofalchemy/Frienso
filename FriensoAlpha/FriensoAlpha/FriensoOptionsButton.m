@@ -29,9 +29,6 @@
 - (void)drawRect:(CGRect)rect
 {
     CGContextRef context = UIGraphicsGetCurrentContext();
-//    UIColor * color = [UIColor colorWithHue:self.hue saturation:self.saturation brightness:self.brightness alpha:1.0];
-//    CGContextSetFillColorWithColor(context, color.CGColor);
-//    CGContextFillRect(context, self.bounds);
     
     //CGContextRef context = UIGraphicsGetCurrentContext();
     CGContextSetStrokeColorWithColor(context, [UIColor darkGrayColor].CGColor);

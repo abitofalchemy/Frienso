@@ -7,7 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <AddressBookUI/AddressBookUI.h>
 
-@interface NewCoreCircleTVC : UIViewController <UITableViewDelegate,UITableViewDataSource>
+
+@interface NewCoreCircleTVC : UIViewController <UITableViewDelegate,UITableViewDataSource, ABPeoplePickerNavigationControllerDelegate>
+@property(nonatomic, strong) NSArray *coreCircleSections;
+@property(nonatomic, strong) NSMutableArray *contactList;
 
 @end
