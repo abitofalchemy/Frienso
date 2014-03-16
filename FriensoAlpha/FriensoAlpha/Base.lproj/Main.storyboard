@@ -33,11 +33,32 @@
                     <navigationItem key="navigationItem" id="jAx-9T-pHH"/>
                     <connections>
                         <segue destination="36T-Um-eAF" kind="push" identifier="showMenuOptions" id="zYu-MN-4wW"/>
+                        <segue destination="CWf-g8-ITg" kind="push" identifier="showMyCircle" id="BSs-oi-hx2"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-191" y="876"/>
+        </scene>
+        <!--Frienso Quick CircleVC-->
+        <scene sceneID="dMH-YK-LFt">
+            <objects>
+                <viewController storyboardIdentifier="showMyCircle" id="CWf-g8-ITg" customClass="FriensoQuickCircleVC" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="5r8-cb-tUE"/>
+                        <viewControllerLayoutGuide type="bottom" id="cib-uo-5Pt"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="GBg-8h-PYL">
+                        <rect key="frame" x="0.0" y="64" width="320" height="504"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                    </view>
+                    <extendedEdge key="edgesForExtendedLayout" bottom="YES"/>
+                    <navigationItem key="navigationItem" id="yr5-UU-892"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="T3R-go-2GS" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="666" y="1999"/>
         </scene>
         <!--Panic View Ctrlr-->
         <scene sceneID="rgz-kR-f24">
@@ -55,7 +76,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="gFv-so-a4W" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1464" y="153"/>
+            <point key="canvasLocation" x="666" y="657"/>
         </scene>
         <!--Frienso ResourcesTVC-->
         <scene sceneID="FUJ-QO-lgv">
@@ -149,7 +170,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="S0i-zL-VfE" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1454" y="829"/>
+            <point key="canvasLocation" x="666" y="1321"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="92e-QS-KMV">

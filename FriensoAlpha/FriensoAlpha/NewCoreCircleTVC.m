@@ -13,6 +13,7 @@
 #import <AddressBook/ABPerson.h>
 #import <Parse/Parse.h>
 #import "FriensoEvent.h"
+#import "CoreFriends.h"
 #import "FriensoViewController.h"
 #import "FriensoAppDelegate.h"
 
@@ -383,6 +384,8 @@
     // Add name to CoreData
     NSLog(@"%@", tempStr);
     [self createNewEvent:tempStr];
+    NSArray *contactArray = [[NSArray alloc] initWithObjects:firstName, lastName, contactPhoneNumber, nil];
+    [self coreDataAddContact:contactArray];
     
     [self dismissViewControllerAnimated:YES completion:nil];
     [self.tableView reloadRowsAtIndexPaths:[self.tableView indexPathsForVisibleRows]
@@ -401,4 +404,35 @@
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
+#pragma mark - CoreData Methods
+-(void) coreDataAddContact:(NSArray *)contactInfo
+{
+    FriensoAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+    
+    NSManagedObjectContext *managedObjectContext =
+    appDelegate.managedObjectContext;
+    
+    CoreFriends *cFriends =
+    [NSEntityDescription insertNewObjectForEntityForName:@"CoreFriends"
+                                  inManagedObjectContext:managedObjectContext];
+    
+    if (cFriends != nil){
+        
+        cFriends.coreFirstName = [contactInfo objectAtIndex:0];
+        cFriends.coreLastName  = [contactInfo objectAtIndex:1];
+        cFriends.corePhone     = [contactInfo objectAtIndex:2];
+        cFriends.coreModified  = [NSDate date];
+        
+        NSError *savingError = nil;
+        
+        if ([managedObjectContext save:&savingError]){
+            NSLog(@"Successfully saved event.");
+        } else {
+            NSLog(@"Failed to save the managed object context.");
+        }
+        
+    } else {
+        NSLog(@"Failed to create the new person object.");
+    }
+}
 @end

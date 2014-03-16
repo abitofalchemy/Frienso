@@ -68,6 +68,7 @@
 		18DF84A118C27D58003F431F /* umbrella-24.png in Resources */ = {isa = PBXBuildFile; fileRef = 18DF849F18C27D58003F431F /* umbrella-24.png */; };
 		18DF84A218C27D58003F431F /* watching-24.png in Resources */ = {isa = PBXBuildFile; fileRef = 18DF84A018C27D58003F431F /* watching-24.png */; };
 		3E2F8C2F18D2FA3200FD2A99 /* Parse.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E2F8C2E18D2FA3200FD2A99 /* Parse.framework */; };
+		3E2F8C3718D4C74600FD2A99 /* FriensoQuickCircleVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E2F8C3618D4C74600FD2A99 /* FriensoQuickCircleVC.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -162,6 +163,8 @@
 		18DF849F18C27D58003F431F /* umbrella-24.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "umbrella-24.png"; sourceTree = "<group>"; };
 		18DF84A018C27D58003F431F /* watching-24.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "watching-24.png"; sourceTree = "<group>"; };
 		3E2F8C2E18D2FA3200FD2A99 /* Parse.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Parse.framework; path = ../../../Downloads/Parse.framework; sourceTree = "<group>"; };
+		3E2F8C3518D4C74600FD2A99 /* FriensoQuickCircleVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FriensoQuickCircleVC.h; sourceTree = "<group>"; };
+		3E2F8C3618D4C74600FD2A99 /* FriensoQuickCircleVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FriensoQuickCircleVC.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -283,14 +286,16 @@
 				18CD00EE18CDE557007BAC85 /* NewCoreCircleTVC.h */,
 				18CD00EF18CDE557007BAC85 /* NewCoreCircleTVC.m */,
 				1827933E18BE08090056C849 /* PanicViewCtrlr.h */,
+				180E881318BE1779009A570F /* FriensoOptionsButton.m */,
 				1827933F18BE08090056C849 /* PanicViewCtrlr.m */,
 				1853403D18C2236E0094AC5A /* FriensoOptionsTVC.h */,
 				1853403E18C2236E0094AC5A /* FriensoOptionsTVC.m */,
+				3E2F8C3518D4C74600FD2A99 /* FriensoQuickCircleVC.h */,
+				3E2F8C3618D4C74600FD2A99 /* FriensoQuickCircleVC.m */,
 				1808553618C4EEC30047A8BE /* OptionsClasses */,
 				180E881018BE1779009A570F /* FriensoCircleButton.h */,
 				180E881118BE1779009A570F /* FriensoCircleButton.m */,
 				180E881218BE1779009A570F /* FriensoOptionsButton.h */,
-				180E881318BE1779009A570F /* FriensoOptionsButton.m */,
 				1827931C18BE06750056C849 /* Images.xcassets */,
 				1827930B18BE06750056C849 /* Supporting Files */,
 				1853403718C220680094AC5A /* FriensoAlphaCoreDataModel.xcdatamodeld */,
@@ -478,6 +483,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1853403C18C223340094AC5A /* CoreFriends.m in Sources */,
+				3E2F8C3718D4C74600FD2A99 /* FriensoQuickCircleVC.m in Sources */,
 				184079CB18C21BED0016CD6D /* FriensoEvent.h in Sources */,
 				1808553918C4EEFF0047A8BE /* ProfileViewController.m in Sources */,
 				1853403918C220680094AC5A /* FriensoAlphaCoreDataModel.xcdatamodeld in Sources */,

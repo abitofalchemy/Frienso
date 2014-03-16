@@ -117,34 +117,10 @@
     [editProfileBtn.titleLabel setTextColor:[UIColor blackColor]];
     [self.view addSubview:editProfileBtn];
  
-    // Logout Button
-    UIButton *logoutBtn = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 120, 35)];
-    [logoutBtn setTitle:@"Logout" forState:UIControlStateNormal];
-    
-    [logoutBtn addTarget:self
-                  action:@selector(logoutAction:)
-        forControlEvents:UIControlEventTouchUpInside];
-    [logoutBtn.titleLabel setFont:[UIFont fontWithName:@"AppleSDGothicNeo-Light" size:16.0]];
-    logoutBtn.layer.cornerRadius = 6.0f;
-    logoutBtn.layer.borderWidth = 0.5f;
-    logoutBtn.layer.borderColor = [UIColor blackColor].CGColor;
-    //    logoutBtn.layer.backgroundColor = [UIColor colorWithRed:250/255.00f green:244/250.00f
-    //                                                       blue:250/255.00f alpha:0.7f].CGColor;
-    [logoutBtn setCenter:CGPointMake(self.view.center.x, self.view.center.y)];
-    [logoutBtn.titleLabel setTextColor:[UIColor blackColor]];
-    [self.view addSubview:logoutBtn];
     
     [UIView animateWithDuration:0.8 animations:^{
-        [editProfileBtn setCenter:CGPointMake(self.view.center.x, self.view.bounds.size.height*0.70)];
-        [logoutBtn setCenter:CGPointMake(self.view.center.x, self.view.bounds.size.height*0.8)];
+        [editProfileBtn setCenter:CGPointMake(self.view.center.x, self.view.bounds.size.height*0.8)];
     }];
-    
-}
--(void) logoutAction:(id) sender {
-    [sender setEnabled:YES];
-    NSLog(@"[ logout ]");
-    
-    [self.navigationController popToRootViewControllerAnimated:YES];
 }
 
 - (void)didReceiveMemoryWarning
