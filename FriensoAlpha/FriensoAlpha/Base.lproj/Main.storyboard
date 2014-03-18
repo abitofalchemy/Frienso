@@ -241,6 +241,7 @@
                     <navigationItem key="navigationItem" id="ou8-8h-NJy"/>
                     <connections>
                         <segue destination="Ep9-nV-7ZB" kind="push" identifier="coreCircleSetup" id="tfJ-Tt-Myi"/>
+                        <segue destination="vXZ-lx-hvc" kind="push" identifier="dashboardView" id="qLM-fu-ynb"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="a5X-BM-YQz" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -275,4 +276,7 @@
         <simulatedOrientationMetrics key="orientation"/>
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
+    <inferredMetricsTieBreakers>
+        <segue reference="qLM-fu-ynb"/>
+    </inferredMetricsTieBreakers>
 </document>

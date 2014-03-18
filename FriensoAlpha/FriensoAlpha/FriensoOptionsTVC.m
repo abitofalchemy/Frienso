@@ -11,7 +11,7 @@
 #import "SettingsViewController.h"
 #import "tstWatchingViewController.h"
 #import "FriensoResourcesTVC.h"
-
+#import "AboutFriensoViewController.h"
 
 @interface FriensoOptionsTVC ()
 @property (nonatomic,retain) NSMutableArray *optionsArray;
@@ -149,7 +149,7 @@
         }
         case 4:{
             NSLog(@"%@", [tableView cellForRowAtIndexPath:indexPath].textLabel.text);
-            UserProfileViewController *detailViewController = [[UserProfileViewController alloc] initWithNibName:nil bundle:nil];
+            AboutFriensoViewController *detailViewController = [[AboutFriensoViewController alloc] initWithNibName:nil bundle:nil];
             [detailViewController setText:[tableView cellForRowAtIndexPath:indexPath].textLabel.text];
             [self.navigationController pushViewController:detailViewController
                                                  animated:YES];

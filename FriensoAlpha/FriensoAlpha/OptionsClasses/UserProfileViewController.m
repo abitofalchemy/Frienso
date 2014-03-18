@@ -41,6 +41,16 @@
     }
     return self;
 }
+-(void) setupNavigationBarWidget
+{
+    UIBarButtonItem *rightBtn = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemEdit target:self action:@selector(editProfile:)];
+    
+    self.navigationItem.rightBarButtonItem=rightBtn;
+}
+- (void) editProfile:(id)sender
+{
+    NSLog(@"edit Profile");
+}
 
 - (void)viewDidLoad
 {
@@ -49,6 +59,8 @@
         self.edgesForExtendedLayout = UIRectEdgeNone;   // iOS 7 specific
     
     self.view.backgroundColor = [UIColor whiteColor];
+    
+    [self setupNavigationBarWidget];
     
     // Profile photo
     UIImageView *profilePhoto =[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"profile-landscape-1.png"]];
@@ -72,10 +84,13 @@
     */
     
     // Credentials
-    NSString *userInfo = [NSString stringWithFormat:@"UserName: %@\nEmail: %@\nPhone: %@",
+    NSString *userInfo = [NSString stringWithFormat:@"UserName: %@\nEmail: %@\nPhone: %@\n"
+                                                     "First Name: %@\nLast Name: %@",
                           [[NSUserDefaults standardUserDefaults] objectForKey:@"userEmail"],
                           [[NSUserDefaults standardUserDefaults] objectForKey:@"userEmail"],
-                          [[NSUserDefaults standardUserDefaults] objectForKey:@"userPhone"]];
+                          [[NSUserDefaults standardUserDefaults] objectForKey:@"userPhone"],
+                          ([[NSUserDefaults standardUserDefaults] objectForKey:@"userFName"] == NULL) ? @"" : [[NSUserDefaults standardUserDefaults] objectForKey:@"userFName"],
+                          ([[NSUserDefaults standardUserDefaults] objectForKey:@"userLName"] == NULL) ? @"" : [[NSUserDefaults standardUserDefaults] objectForKey:@"userLName"]];
                           
     NSAttributedString *textString =  [[NSAttributedString alloc] initWithString:userInfo attributes:@{
                                                                                                        NSFontAttributeName: [UIFont fontWithName:@"AppleSDGothicNeo-Medium" size:18]

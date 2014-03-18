@@ -47,7 +47,7 @@
     [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         if (!error) {
             // The find succeeded.
-            NSLog(@"Successfully retrieved %d scores.", objects.count);
+            NSLog(@"Successfully retrieved %lu scores.", (unsigned long)objects.count);
             for (PFObject *object in objects) {
                 NSMutableDictionary *parseCoreFriendsDic = [object valueForKey:@"userCoreFriends"];
                 PFUser   *friensoUser    = [object valueForKey:@"user"];

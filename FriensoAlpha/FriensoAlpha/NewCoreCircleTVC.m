@@ -162,7 +162,7 @@
 {
 //#warning Incomplete method implementation.
     // Return the number of rows in the section.
-    NSLog(@"%d", self.coreCircleOfFriends.count);
+    NSLog(@"%lu", (unsigned long)self.coreCircleOfFriends.count);
     return self.coreCircleOfFriends.count;
 }
 
@@ -328,7 +328,7 @@
             case 0:
                 self.coreCircleOfFriends = [[NSMutableArray alloc] initWithObjects:@"CoreFriend 1",
                                        @"CoreFriend 2", @"CoreFriend 3",nil];
-                NSLog(@"[ 0 ]%d",[self.coreCircleOfFriends count]);
+                NSLog(@"[ 0 ]%lu",(unsigned long)[self.coreCircleOfFriends count]);
                 break;
             case 1:
                 [self.coreCircleOfFriends addObject:@"CoreFriend X"];

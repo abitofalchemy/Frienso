@@ -156,6 +156,7 @@
             username .autocorrectionType = UITextAutocorrectionTypeNo;
             username.keyboardType = UIKeyboardTypeEmailAddress;
             [username setClearButtonMode:UITextFieldViewModeWhileEditing];
+            [username setAutocapitalizationType:UITextAutocapitalizationTypeNone];
             username.delegate  = self;
             cell.accessoryView = username;
             
