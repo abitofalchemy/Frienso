@@ -174,9 +174,12 @@ static NSString *eventCell = @"eventCell";
 }
 #pragma mark - Sync from Parse Methods
 - (void) syncFromParse {
+    printf(" -- syncFromParse --\n");
     //TODO: save core friends to coredata 
     // sync from parse!
-    if ([[NSUserDefaults standardUserDefaults] objectForKey:@"CoreFriendsContactInfoDicKey"] == nil)
+    NSMutableDictionary *udCoreCircleDictionary = [[NSUserDefaults standardUserDefaults] objectForKey:@"CoreFriendsContactInfoDicKey"];
+    
+    if ([udCoreCircleDictionary count] == 0)
     {
     [PFUser logInWithUsernameInBackground:[[NSUserDefaults standardUserDefaults] objectForKey:@"adminID"]
                                  password:[[NSUserDefaults standardUserDefaults] objectForKey:@"adminPass"]
@@ -233,7 +236,11 @@ static NSString *eventCell = @"eventCell";
     
     self.navigationController.navigationBarHidden = NO;
 	
-    [self syncFromParse];
+    if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"CoreFriendsContactInfoDicKey"] count] == 0) {
+        [self syncFromParse];
+    } else
+        NSLog(@" all loaded already");
+    
     
     [self setupNavigationBarImage];
     

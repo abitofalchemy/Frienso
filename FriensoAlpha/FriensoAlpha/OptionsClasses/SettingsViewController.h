@@ -7,8 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <MessageUI/MessageUI.h>
+#import <MessageUI/MFMailComposeViewController.h>
 
-@interface SettingsViewController : UIViewController
+@interface SettingsViewController : UIViewController <MFMailComposeViewControllerDelegate,UITextFieldDelegate>
 
 - (void) setText:(NSString *)paramText;
 

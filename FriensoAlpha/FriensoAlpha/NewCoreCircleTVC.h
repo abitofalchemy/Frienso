@@ -11,6 +11,7 @@
 
 
 @interface NewCoreCircleTVC : UIViewController <UITableViewDelegate,UITableViewDataSource, ABPeoplePickerNavigationControllerDelegate>
+@property(nonatomic) BOOL checkCloud;
 @property(nonatomic, strong) NSArray *coreCircleSections;
 @property(nonatomic, strong) NSMutableArray *contactList;
 

@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface UserProfileViewController : UIViewController
+@interface UserProfileViewController : UIViewController <UITableViewDelegate,UITableViewDataSource,UITextFieldDelegate>
 - (void) setText:(NSString *)paramText;
 
 

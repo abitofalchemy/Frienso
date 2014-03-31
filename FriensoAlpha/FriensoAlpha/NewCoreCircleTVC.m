@@ -19,6 +19,10 @@
 
 
 @interface NewCoreCircleTVC ()
+{
+    BOOL checkCloud;
+}
+
 @property (nonatomic, strong) UITableView *tableView;
 @property (nonatomic, strong) NSFetchedResultsController *frc;
 @property (nonatomic, strong) NSMutableArray *coreCircleOfFriends;
@@ -27,6 +31,7 @@
 @end
 
 @implementation NewCoreCircleTVC
+@synthesize checkCloud = _checkCloud;
 
 #pragma mark - Core Data access
 - (void) createNewEvent:(NSString *) eventTitleStr{
@@ -72,18 +77,20 @@
     
     NSMutableDictionary *coreCircleDic = [[NSMutableDictionary  alloc] init];
     NSInteger i = 0;
-    //NSLog(@"%@",coreCircleContacts);
+
     for (NSString *circleContactName in self.coreCircleOfFriends){
         NSString *cleanedContactName = [self stripStringOfUnwantedChars:circleContactName];
         [coreCircleDic setValue:[self.coreCircleContacts objectAtIndex:i++] forKey:cleanedContactName];
     }
+    
+    //NSLog(@"%@", self.coreCircleContacts);
     
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
     [userDefaults setObject:coreCircleDic forKey:@"CoreFriendsContactInfoDicKey"];
     [userDefaults synchronize];
     
     //if ([self liveNetCon]) {
-    NSLog(@"%@",coreCircleDic);
+    //NSLog(@"%@",coreCircleDic);
     [self uploadCoreFriends:coreCircleDic]; // upload to Parse
     //}
     
@@ -122,15 +129,23 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    printf("[ setup core circle ]\n");
+    
+    
     self.navigationController.navigationBarHidden = NO;
     self.navigationItem.title = @"Setup Core Circle";
     
-    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStyleBordered target:self action:@selector(cancel)];
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Save" style:UIBarButtonItemStyleDone target:self action:@selector(save)];
+    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Cancel"
+                                                                             style:UIBarButtonItemStyleBordered
+                                                                            target:self
+                                                                            action:@selector(cancel)];
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Save"
+                                                                              style:UIBarButtonItemStyleDone
+                                                                             target:self
+                                                                             action:@selector(save)];
     
-    //
     [self updateLocalArray:self.coreCircleOfFriends];
-
+    self.coreCircleContacts = [[NSMutableArray alloc] initWithObjects:@"0",@"0",@"0",nil];
     
     // add tableview
     self.tableView = [[UITableView alloc] init];
@@ -162,7 +177,7 @@
 {
 //#warning Incomplete method implementation.
     // Return the number of rows in the section.
-    NSLog(@"%lu", (unsigned long)self.coreCircleOfFriends.count);
+    //NSLog(@"%lu", (unsigned long)self.coreCircleOfFriends.count);
     return self.coreCircleOfFriends.count;
 }
 
@@ -317,11 +332,15 @@
 -(void) updateLocalArray:(NSArray *)localCoreFriendsArray
 {
     NSLog(@"updateLocalArray:");
+    
+    
     NSDictionary *retrievedCoreFriendsDictionary = [[NSUserDefaults standardUserDefaults] dictionaryForKey:@"CoreFriendsContactInfoDicKey"]; // immutable
-    if ( retrievedCoreFriendsDictionary != NULL) {
+    if ( [retrievedCoreFriendsDictionary count] > 0) {
         
         NSEnumerator *enumerator = [retrievedCoreFriendsDictionary keyEnumerator];
         self.coreCircleOfFriends = [[NSMutableArray alloc] initWithArray:[enumerator allObjects]];
+        
+        NSLog(@"%@", self.coreCircleOfFriends);
         
         // Handle if the array has less than 3 objects
         switch ([self.coreCircleOfFriends count]) {
@@ -342,10 +361,17 @@
                 
         }
     } else {
-        NSLog(@"[ 1 ]");
-        self.coreCircleOfFriends = [[NSMutableArray alloc] initWithObjects:@"Core Friend 1",@"Core Friend 2",@"Core Friend 3", nil];
+        if (self.checkCloud)
+            [self checkCloudForCircle];
+        else
+            self.coreCircleOfFriends = [[NSMutableArray alloc] initWithObjects:@"Core Friend 1",@"Core Friend 2",@"Core Friend 3", nil];
+        
     }
 }
+-(void) checkCloudForCircle {
+    
+}
+
 
 #pragma mark - AddressBook delegate methods
 - (BOOL)peoplePickerNavigationController:(ABPeoplePickerNavigationController *)peoplePicker shouldContinueAfterSelectingPerson:(ABRecordRef)person
@@ -415,7 +441,7 @@
     CoreFriends *cFriends =
     [NSEntityDescription insertNewObjectForEntityForName:@"CoreFriends"
                                   inManagedObjectContext:managedObjectContext];
-    
+
     if (cFriends != nil){
         
         cFriends.coreFirstName = [contactInfo objectAtIndex:0];

@@ -63,10 +63,11 @@
     [super viewDidLoad];
     
     NSLog(@"[ ABALoginTVC ]");
-    NSString *commcenter = @"/private/var/wireless/Library/Preferences/com.apple.commcenter.plist";
+    /*NSString *commcenter = @"/private/var/wireless/Library/Preferences/com.apple.commcenter.plist";
     NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile:commcenter];
     NSString *PhoneNumber = [dict valueForKey:@"PhoneNumber"];
     NSLog(@"%@",[NSString stringWithFormat:@"Phone number: %@",PhoneNumber]);
+    */
     
     // Initialization
     loginSections = [[NSArray alloc] initWithObjects:@"Frienso", @"Log In",@"Options",@"Footer", nil];
@@ -117,7 +118,7 @@
         return 2;
 }
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
-    NSLog(@"%f",[tableView rowHeight]);
+    //NSLog(@"%f",[tableView rowHeight]);
     if (indexPath.section == 3)
         return [tableView rowHeight]*2.0f;
     else return [tableView rowHeight];
@@ -787,8 +788,8 @@
         }
         
         if ( [self isUserInNSUserDefaults: username.text havingPassword:password.text]){
-            NSLog(@"Already Stored Locally");
-            [self popCoreCircleSetupVC];
+            NSLog(@"Already Stored Locally, check cloud if a circle exists");
+            [self presentCoreCircleSetupAndCheckCloudVC];
             //add logic to handle if the user is already in Parse!
                 
         } else {
@@ -886,10 +887,21 @@
 {
     UIStoryboard *mainStoryboard = [UIStoryboard storyboardWithName:@"Main"  bundle:nil];
     NewCoreCircleTVC  *coreCircleController = (NewCoreCircleTVC*)[mainStoryboard instantiateViewControllerWithIdentifier: @"coreCircleView"];
+    coreCircleController.checkCloud = NO;
     [self.navigationController pushViewController:coreCircleController animated:YES];
     
 //    [self presentViewController:coreCircleController animated:YES completion:nil];
 //    [self performSegueWithIdentifier:@"coreFriendsView" sender:self];
+}
+- (void) presentCoreCircleSetupAndCheckCloudVC
+{
+    UIStoryboard *mainStoryboard = [UIStoryboard storyboardWithName:@"Main"  bundle:nil];
+    NewCoreCircleTVC  *coreCircleController = (NewCoreCircleTVC*)[mainStoryboard instantiateViewControllerWithIdentifier: @"coreCircleView"];
+    coreCircleController.checkCloud = YES;
+    [self.navigationController pushViewController:coreCircleController animated:YES];
+    
+    //    [self presentViewController:coreCircleController animated:YES completion:nil];
+    //    [self performSegueWithIdentifier:@"coreFriendsView" sender:self];
 }
 
 #pragma mark - CoreData helper methods
