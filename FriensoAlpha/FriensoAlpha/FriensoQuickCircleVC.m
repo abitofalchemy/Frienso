@@ -71,7 +71,7 @@ static NSString *coreFriendsCell = @"coreFriendsCell";
     self.frc.delegate = self;
     NSError *fetchingError = nil;
     if ([self.frc performFetch:&fetchingError]){
-        NSLog(@"Successfully fetched.");
+        NSLog(@"Successfully fetched coreCircle.");
     } else {
         NSLog(@"Failed to fetch.");
     }
@@ -116,7 +116,20 @@ static NSString *coreFriendsCell = @"coreFriendsCell";
     cell.backgroundColor = [UIColor clearColor];
     cell.textLabel.textColor = [UIColor blackColor];
     cell.detailTextLabel.textColor  = [UIColor blueColor];
+    cell.imageView.image = [UIImage imageNamed:@"Profile-256.png"];
     
     return cell;
 }
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+    NSString *cellText = cell.textLabel.text;
+    UIAlertView *alertView = [[UIAlertView alloc]
+                              initWithTitle:cellText
+                              message:cell.detailTextLabel.text
+                              delegate:nil
+                              cancelButtonTitle:@"OK"
+                              otherButtonTitles:nil];
+    [alertView show];
+}
+
 @end

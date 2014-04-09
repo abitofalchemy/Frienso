@@ -8,9 +8,10 @@
 
 #import <UIKit/UIKit.h>
 #import <AddressBookUI/AddressBookUI.h>
+#import <CoreData/NSFetchedResultsController.h>
 
 
-@interface NewCoreCircleTVC : UIViewController <UITableViewDelegate,UITableViewDataSource, ABPeoplePickerNavigationControllerDelegate>
+@interface NewCoreCircleTVC : UIViewController <UITableViewDelegate,UITableViewDataSource, ABPeoplePickerNavigationControllerDelegate,NSFetchedResultsControllerDelegate>
 @property(nonatomic) BOOL checkCloud;
 @property(nonatomic, strong) NSArray *coreCircleSections;
 @property(nonatomic, strong) NSMutableArray *contactList;

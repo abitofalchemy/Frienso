@@ -90,7 +90,7 @@
     [userDefaults synchronize];
     
     //if ([self liveNetCon]) {
-    //NSLog(@"%@",coreCircleDic);
+    NSLog(@"coreCircleDic: %@",coreCircleDic);
     [self uploadCoreFriends:coreCircleDic]; // upload to Parse
     //}
     
@@ -276,7 +276,7 @@
 }
 
 -(NSString *) stripStringOfUnwantedChars:(NSString *)dirtyContactName {
-    return  [dirtyContactName stringByTrimmingCharactersInSet: [NSCharacterSet characterSetWithCharactersInString:@".$"]];
+    return  [dirtyContactName stringByTrimmingCharactersInSet: [NSCharacterSet characterSetWithCharactersInString:@".$() -"]];
 }
 
 #pragma mark - Parse related methods
@@ -313,10 +313,8 @@
     userCoreFriends.ACL = ACL;// [PFACL ACLWithUser:[PFUser currentUser]];
     
     PFUser *user = [PFUser currentUser];
-    NSLog(@"%@",user.email);
+    //NSLog(@"%@",user.email);
     [userCoreFriends setObject:user forKey:@"user"];
-    NSLog(@"[2]");
-    
     [userCoreFriends saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
         if (!error) {
             //[self refresh:nil];
@@ -331,16 +329,16 @@
 
 -(void) updateLocalArray:(NSArray *)localCoreFriendsArray
 {
-    NSLog(@"updateLocalArray:");
-    
+    NSLog(@"--- updateLocalArray ---");
+    //[self showCoreCircle];
     
     NSDictionary *retrievedCoreFriendsDictionary = [[NSUserDefaults standardUserDefaults] dictionaryForKey:@"CoreFriendsContactInfoDicKey"]; // immutable
+    
+    
     if ( [retrievedCoreFriendsDictionary count] > 0) {
         
         NSEnumerator *enumerator = [retrievedCoreFriendsDictionary keyEnumerator];
         self.coreCircleOfFriends = [[NSMutableArray alloc] initWithArray:[enumerator allObjects]];
-        
-        NSLog(@"%@", self.coreCircleOfFriends);
         
         // Handle if the array has less than 3 objects
         switch ([self.coreCircleOfFriends count]) {
@@ -360,11 +358,12 @@
                 break;
                 
         }
+        
     } else {
-        if (self.checkCloud)
-            [self checkCloudForCircle];
-        else
-            self.coreCircleOfFriends = [[NSMutableArray alloc] initWithObjects:@"Core Friend 1",@"Core Friend 2",@"Core Friend 3", nil];
+//        if (self.checkCloud)
+//            [self checkCloudForCircle];
+//        else
+        self.coreCircleOfFriends = [[NSMutableArray alloc] initWithObjects:@"Core Friend 1",@"Core Friend 2",@"Core Friend 3", nil];
         
     }
 }
@@ -380,7 +379,7 @@
     NSMutableString *tempStr = [[NSMutableString alloc] init];
     NSString *firstName = (__bridge_transfer NSString *)(ABRecordCopyValue(person, kABPersonFirstNameProperty));
     NSString *lastName  = (__bridge_transfer NSString *)(ABRecordCopyValue(person, kABPersonLastNameProperty));
-    
+    NSLog(@"%@", lastName);
     if ( firstName != nil ) {
         [tempStr appendString: firstName];
         [tempStr appendString:@" "];
@@ -389,12 +388,16 @@
     } else if ((__bridge_transfer NSString *)(ABRecordCopyValue(person, kABPersonOrganizationProperty)) != nil){
         [tempStr appendString:(__bridge_transfer NSString *)(ABRecordCopyValue(person, kABPersonOrganizationProperty))];
     } else
-        [tempStr appendString:@"Name unknow"];
+        [tempStr appendString:@"unknow"];
     
     ABMultiValueRef phones = ABRecordCopyValue(person, kABPersonPhoneProperty);
     //[tmpStr appendString: (__bridge_transfer NSString *)(ABMultiValueCopyValueAtIndex(phones, 0));
-    NSLog(@"phone# %@",(__bridge_transfer NSString *)(ABMultiValueCopyValueAtIndex(phones, 0)));
+    //NSLog(@"phone# %@",(__bridge_transfer NSString *)(ABMultiValueCopyValueAtIndex(phones, 0)));
     NSString *contactPhoneNumber = (__bridge_transfer NSString *)(ABMultiValueCopyValueAtIndex(phones, 0));
+    NSCharacterSet *toExclude = [NSCharacterSet characterSetWithCharactersInString:@"/.()-  "];
+    contactPhoneNumber = [[contactPhoneNumber componentsSeparatedByCharactersInSet:toExclude] componentsJoinedByString:@""];
+
+    NSLog(@"phone# %@",contactPhoneNumber);
     
     if(contactPhoneNumber == nil) {
         NSLog(@"Alert! no phone# for this friend");
@@ -408,9 +411,8 @@
     [self.coreCircleOfFriends replaceObjectAtIndex:self.cellNumberSelected withObject:tempStr];
     
     // Add name to CoreData
-    NSLog(@"%@", tempStr);
     [self createNewEvent:tempStr];
-    NSArray *contactArray = [[NSArray alloc] initWithObjects:firstName, lastName, contactPhoneNumber, nil];
+    NSArray *contactArray = [[NSArray alloc] initWithObjects:firstName, (lastName == NULL) ? @"" : lastName, contactPhoneNumber, nil];
     [self coreDataAddContact:contactArray];
     
     [self dismissViewControllerAnimated:YES completion:nil];
@@ -433,26 +435,40 @@
 #pragma mark - CoreData Methods
 -(void) coreDataAddContact:(NSArray *)contactInfo
 {
-    FriensoAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+    // Adds contact info to CoreData
+    NSUInteger coreCircleSize = [self showCoreCircle];
     
-    NSManagedObjectContext *managedObjectContext =
-    appDelegate.managedObjectContext;
-    
-    CoreFriends *cFriends =
-    [NSEntityDescription insertNewObjectForEntityForName:@"CoreFriends"
-                                  inManagedObjectContext:managedObjectContext];
-
-    if (cFriends != nil){
+    CoreFriends *cFriends = nil;
+    if(coreCircleSize < 3)
+    {
+        cFriends = [NSEntityDescription insertNewObjectForEntityForName:@"CoreFriends"
+                                  inManagedObjectContext:[self managedObjectContext]];
+    } else{
+        NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
         
+        NSEntityDescription *entity = [NSEntityDescription entityForName:@"CoreFriends"
+                                                  inManagedObjectContext:[self managedObjectContext]];
+        
+        [fetchRequest setEntity:entity];
+        NSError *error;
+        NSArray *fetchedObjects = [[self managedObjectContext] executeFetchRequest:fetchRequest error:&error];
+        if (fetchedObjects == nil) {
+            // Handle the error.
+        }
+        cFriends = [fetchedObjects objectAtIndex:self.cellNumberSelected];
+
+    }
+    if (cFriends != nil){
+        NSLog(@"[contactInfo: %@]", contactInfo);
         cFriends.coreFirstName = [contactInfo objectAtIndex:0];
-        cFriends.coreLastName  = [contactInfo objectAtIndex:1];
-        cFriends.corePhone     = [contactInfo objectAtIndex:2];
+        cFriends.coreLastName  = ([contactInfo objectAtIndex:1] == nil) ? @"" : [contactInfo objectAtIndex:1];
+        cFriends.corePhone     = ([contactInfo objectAtIndex:2] == nil) ? @"" : [contactInfo objectAtIndex:2];
         cFriends.coreModified  = [NSDate date];
         
         NSError *savingError = nil;
         
-        if ([managedObjectContext save:&savingError]){
-            NSLog(@"Successfully saved event.");
+        if ([[self managedObjectContext] save:&savingError]){
+            NSLog(@"Successfully saved contact to CoreCircle.");
         } else {
             NSLog(@"Failed to save the managed object context.");
         }
@@ -461,4 +477,49 @@
         NSLog(@"Failed to create the new person object.");
     }
 }
+
+- (NSUInteger) showCoreCircle {
+    NSLog(@"-- showCoreCircle --");
+    NSUInteger returnValue = 0;
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc]
+                                    initWithEntityName:@"CoreFriends"];
+    
+    NSSortDescriptor *modifiedSort =
+    [[NSSortDescriptor alloc] initWithKey:@"coreLastName"
+                                ascending:NO];
+    
+    NSSortDescriptor *eventTitleSort =
+    [[NSSortDescriptor alloc] initWithKey:@"coreFirstName"
+                                ascending:NO];
+    
+    fetchRequest.sortDescriptors = @[modifiedSort, eventTitleSort];
+    
+    self.frc =
+    [[NSFetchedResultsController alloc] initWithFetchRequest:fetchRequest
+                                        managedObjectContext:[self managedObjectContext]
+                                          sectionNameKeyPath:nil
+                                                   cacheName:nil];
+    
+    self.frc.delegate = self;
+    NSError *fetchingError = nil;
+    if ([self.frc performFetch:&fetchingError]){
+        NSLog(@"Successfully fetched coreCircle.");
+        NSLog(@"Sections: %ld", [[self.frc sections] count]);
+        id <NSFetchedResultsSectionInfo> sectionInfo = self.frc.sections[0];
+        NSLog(@"No. of objects in section 0: %ld",sectionInfo.numberOfObjects);
+        returnValue = sectionInfo.numberOfObjects;
+    } else {
+        NSLog(@"Failed to fetch.");
+        
+    }
+    
+    return returnValue;
+}
+- (NSManagedObjectContext *) managedObjectContext{
+    
+    FriensoAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+    return appDelegate.managedObjectContext;
+    
+}
+
 @end

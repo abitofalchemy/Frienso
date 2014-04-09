@@ -849,7 +849,7 @@
                                         if (user) {
                                             NSLog(@"[ Parse successful login ]"); // Do stuff after successful login.
                                             
-                                            // sync from parse!
+                                            // Sync from parse!
                                             PFQuery *query = [PFQuery queryWithClassName:@"UserCoreFriends"];
                                             [query whereKey:@"user" equalTo:userName];
                                             [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error)

@@ -213,6 +213,10 @@
 //#warning Find a way to fetch a picture from an assets url
         case 0:
         {
+            cell.imageView.image = [UIImage imageNamed:@"Profile-256.png"];
+            cell.textLabel.text = @"Picture";
+            self.profileImageCell = cell;
+            
             NSURL *assetURL = [[NSUserDefaults standardUserDefaults] URLForKey:@"profileImageUrl"];
             ALAssetsLibrary *assetLibrary=[[ALAssetsLibrary alloc] init];
             UIImage __block *thumbImg = nil;
@@ -223,17 +227,13 @@
                                          orientation:UIImageOrientationUp];
 //                cell.backgroundView = [[UIImageView alloc] initWithImage:copyOfOriginalImage];
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    cell.imageView.image = thumbImg;
+                    if(thumbImg != NULL)
+                        cell.imageView.image = thumbImg;
                     });
             } failureBlock:^(NSError *err) {
                 cell.imageView.image = [UIImage imageNamed:@"Profile-256.png"];
                 NSLog(@"Error: %@",[err localizedDescription]);
             }];
-            if (thumbImg == nil)
-                cell.imageView.image = [UIImage imageNamed:@"Profile-256.png"];
-            
-            cell.textLabel.text = @"Picture";
-            self.profileImageCell = cell;
             break;
         }
         case 1:
@@ -361,32 +361,35 @@
 -(void) setProfileViewContent {
     // Profile photo
     UIImageView __block  *profilePhoto = [[UIImageView alloc] initWithFrame:CGRectZero];
+    [profilePhoto setImage:[UIImage imageNamed:@"profile-landscape-1.png"]];
+    [profilePhoto setFrame:CGRectMake(0, 0,self.view.bounds.size.width, self.view.bounds.size.width/2)];
+    profilePhoto.layer.borderColor  = [UIColor whiteColor].CGColor;
+#warning crop the image to look more normal
+    profilePhoto.contentMode = UIViewContentModeScaleAspectFit;
+    
+    profilePhoto.layer.borderWidth  = 1.0f;
+    profilePhoto.layer.cornerRadius = 8.0f;
+    profilePhoto.layer.borderColor = [UIColor lightGrayColor].CGColor;
+    [self.view addSubview:profilePhoto];
+    
     NSURL *assetURL = [[NSUserDefaults standardUserDefaults] URLForKey:@"profileImageUrl"];
     ALAssetsLibrary *assetLibrary=[[ALAssetsLibrary alloc] init];
-    UIImage __block *thumbImg = nil;
     [assetLibrary assetForURL:assetURL
                   resultBlock:^(ALAsset *asset) {
-                      thumbImg = [UIImage imageWithCGImage:[[asset defaultRepresentation] fullScreenImage]
+                      UIImage *thumbImg = [UIImage imageWithCGImage:[[asset defaultRepresentation] fullScreenImage]
                                                      scale:0.5
                                                orientation:UIImageOrientationUp];
                       //                cell.backgroundView = [[UIImageView alloc] initWithImage:copyOfOriginalImage];
                       dispatch_async(dispatch_get_main_queue(), ^{
-                          [profilePhoto setImage:thumbImg];
+                          if (thumbImg != NULL)
+                              [profilePhoto setImage:thumbImg];
                       });
                   } failureBlock:^(NSError *err) {
                       //profilePhoto =[[UIImageView alloc] initWithImage:[UIImage imageNamed::@"Profile-256.png"];
                       NSLog(@"Error: %@",[err localizedDescription]);
                   }];
-    if (profilePhoto == nil)
-        [profilePhoto setImage:[UIImage imageNamed:@"profile-landscape-1.png"]];
-    [profilePhoto setFrame:CGRectMake(0, 0,self.view.bounds.size.width, self.view.bounds.size.width/2)];
-    profilePhoto.layer.borderColor  = [UIColor whiteColor].CGColor;
-    profilePhoto.contentMode = UIViewContentModeScaleAspectFill;
-    /*
-     profilePhoto.layer.borderWidth  = 1.0f;
-     profilePhoto.layer.cornerRadius = 8.0f;
-     profilePhoto.layer.borderColor = [UIColor lightGrayColor].CGColor;*/
-    [self.view addSubview:profilePhoto];
+    
+    
     
     // Credentials
     NSString *userInfo = [NSString stringWithFormat:@"UserName: %@\nEmail: %@\nPhone: %@\n"

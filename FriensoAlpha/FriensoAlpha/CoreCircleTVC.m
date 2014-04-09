@@ -422,7 +422,6 @@
     [coreCircleOfFriends replaceObjectAtIndex:cellNumberSelected withObject:tempStr];
     
     // Add name to CoreData
-    NSLog(@"%@", tempStr);
     [self createNewEvent:tempStr];
     
     [self dismissViewControllerAnimated:YES completion:nil];

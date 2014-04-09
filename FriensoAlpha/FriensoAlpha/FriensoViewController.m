@@ -12,6 +12,7 @@
 #import <QuartzCore/QuartzCore.h>
 #import "FriensoAppDelegate.h"
 #import "FriensoEvent.h"
+#import "CoreFriends.h"
 
 static NSString *eventCell = @"eventCell";
 
@@ -126,8 +127,13 @@ static NSString *eventCell = @"eventCell";
 
     return cell;
 }
+#pragma mark - NSFetchResultsController delegate methods
+- (void)controllerDidChangeContent:(NSFetchedResultsController *)controller {
+    printf("refreshing frc\n");
+    [self.tableView reloadData];
+}
 
-
+#pragma mark - Local Actions
 -(void) animateThisButton:(UIButton *)button {
     // animate the button
     CABasicAnimation *anim = [CABasicAnimation animationWithKeyPath:@"transform"];
@@ -194,7 +200,8 @@ static NSString *eventCell = @"eventCell";
                                              {
                                                  if (!error) { // The find succeeded.
                                                      NSDictionary *parseCoreFriendsDic = [[NSDictionary alloc] init];
-                                                     for (PFObject *object in objects) { // Do something with the found objects
+                                                     for (PFObject *object in objects) { // Do something w/ found objects
+                                                         NSLog(@"%@",[object valueForKey:@"userCoreFriends"]);
                                                          parseCoreFriendsDic = [object valueForKey:@"userCoreFriends"];
                                                          
                                                      }
@@ -222,18 +229,48 @@ static NSString *eventCell = @"eventCell";
 -(void) saveCFDictionaryToNSUserDefaults:(NSDictionary *)friendsDic {
     // From Parse
     NSLog(@"[ saveCFDictionaryToNSUserDefaults ]");
-    NSLog(@"%@",friendsDic);
+    //NSLog(@"%@",friendsDic);
     
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
     [userDefaults setObject:friendsDic forKey:@"CoreFriendsContactInfoDicKey"];
     [userDefaults setBool:YES forKey:@"coreFriendsSet"];
     [userDefaults synchronize];
+    
+    // Save dictionary to CoreFriends Entity (CoreData)
+    NSEnumerator    *enumerator = [friendsDic keyEnumerator];
+    NSMutableArray  *coreCircle = [[NSMutableArray alloc] initWithArray:[enumerator allObjects]];
+    NSArray *valueArray         = [friendsDic allValues]; // holds phone numbers
+    // Access to CoreData
+    
+    
+        for (int i=0; i<[coreCircle count]; i++) {
+            CoreFriends *cFriends = [NSEntityDescription insertNewObjectForEntityForName:@"CoreFriends"
+                                                                  inManagedObjectContext:[self managedObjectContext]];
+            if (cFriends != nil){
+                cFriends.coreFirstName = [coreCircle objectAtIndex:i];
+                cFriends.coreLastName  = @"";
+                cFriends.corePhone     = [valueArray objectAtIndex:i];
+                cFriends.coreModified  = [NSDate date];
+                
+                NSLog(@"%@",[coreCircle objectAtIndex:i] );
+                NSError *savingError = nil;
+                
+                if ([[self managedObjectContext] save:&savingError]){
+                    NSLog(@"Successfully saved contact to CoreCircle.");
+                } else {
+                    NSLog(@"Failed to save the managed object context.");
+                }
+            } else {
+                NSLog(@"Failed to create the new person object.");
+            }
+        }
+    
 }
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
+    printf("[ Dashboard: FriensoViewController]\n");
     self.navigationController.navigationBarHidden = NO;
 	
     if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"CoreFriendsContactInfoDicKey"] count] == 0) {
