@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="3401" systemVersion="13C64" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="5064" systemVersion="13C64" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
     <entity name="CoreFriends" representedClassName="CoreFriends" syncable="YES">
         <attribute name="coreEmail" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="coreFirstName" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="coreLastName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="coreLocation" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="coreModified" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="coreNickName" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="corePhone" optional="YES" attributeType="String" syncable="YES"/>
@@ -17,7 +18,7 @@
         <attribute name="eventTitle" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
     <elements>
-        <element name="FriensoEvent" positionX="0" positionY="0" width="0" height="0"/>
-        <element name="CoreFriends" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="CoreFriends" positionX="0" positionY="0" width="128" height="150"/>
+        <element name="FriensoEvent" positionX="0" positionY="0" width="128" height="135"/>
     </elements>
 </model>

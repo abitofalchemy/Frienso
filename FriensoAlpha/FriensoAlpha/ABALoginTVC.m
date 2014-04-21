@@ -18,7 +18,8 @@
  | 15Jan14SA: Need to handle the main user's phone #
  
  *  http://stackoverflow.com/questions/3276504/how-to-set-a-gradient-uitableviewcell-background
- *
+ *  https://parse.com/tutorials/geolocations
+ *  http://www.raywenderlich.com/42266/augmented-reality-ios-tutorial-location-based
  */
 
 #import "ABALoginTVC.h"
@@ -28,12 +29,16 @@
 #import "NewCoreCircleTVC.h"
 #import "FriensoEvent.h"
 #import "FriensoAppDelegate.h"
+#import <CoreLocation/CoreLocation.h>
 
-@interface ABALoginTVC ()
+
+@interface ABALoginTVC () <CLLocationManagerDelegate>
 
 @property (nonatomic, strong) NSFetchedResultsController *fetchedResultsController;
 @property (nonatomic, strong) UIBarButtonItem *rightBarButtonItem;
-
+@property (nonatomic, strong) CLLocationManager *myLocationManager;
+@property (nonatomic) CLLocationCoordinate2D coordinate;
+@property (nonatomic, strong) PFGeoPoint *geoPoint;
 @end
 
 @implementation ABALoginTVC
@@ -63,11 +68,6 @@
     [super viewDidLoad];
     
     NSLog(@"[ ABALoginTVC ]");
-    /*NSString *commcenter = @"/private/var/wireless/Library/Preferences/com.apple.commcenter.plist";
-    NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile:commcenter];
-    NSString *PhoneNumber = [dict valueForKey:@"PhoneNumber"];
-    NSLog(@"%@",[NSString stringWithFormat:@"Phone number: %@",PhoneNumber]);
-    */
     
     // Initialization
     loginSections = [[NSArray alloc] initWithObjects:@"Frienso", @"Log In",@"Options",@"Footer", nil];
@@ -75,10 +75,9 @@
     loginBtnLabel = [[NSMutableArray alloc] initWithObjects:@"Sign In", @"Register", nil];
     
     // Defaulting the 'keep me logged in switch to ON'
-    
     [self.navigationController.navigationBar setHidden:YES];
     
-    
+    [self getDeviceLocationInfo];
     
 //    NSError *error;
 //    if (![[self fetchedResultsController] performFetch:&error]) {
@@ -186,7 +185,8 @@
             //NSString *myString = [loginFields objectAtIndex:2];
             phoneNumber.placeholder = @"555 123 4567";
             phoneNumber.secureTextEntry = NO;
-            phoneNumber.autocorrectionType = UITextAutocorrectionTypeNo;
+            //phoneNumber.autocorrectionType = UITextAutocorrectionTypeNo;
+            phoneNumber.keyboardType = UIKeyboardTypePhonePad;
             [phoneNumber setClearButtonMode:UITextFieldViewModeWhileEditing];
             //password.delegate = self;
             cell.accessoryView = phoneNumber;
@@ -229,7 +229,7 @@
 //        cell.textLabel.font  = myFont;
         NSString *myString = @"By creating a Frienso Account you acknowledge that "
         "you have read, understood, and agreed to the Frienso "
-        "App Use Waiver http://www.ibm.com";
+        "App Use Waiver http://frienso.tumblr.com";
 //        cell.textLabel.text = myString;
 //        cell.textLabel.numberOfLines = 4;
 //        cell.textLabel.textColor = [UIColor whiteColor];
@@ -797,8 +797,9 @@
                 // login this user to parse
                 [self loginThisUserToParse:username.text withPassword:password.text];
                 [self saveNewUserLocallyWithEmail:username.text plusPassword:password.text];
-                
-                [self actionAddFriensoEvent:username.text]; // FriensoEvent
+                NSString *message = @"You are logged in as: ";
+                [self actionAddFriensoEvent:[message stringByAppendingString:username.text]
+                               withSubtitle:@"Welcome to Frienso."]; // FriensoEvent
                 
                 // sync core circle from Parse | skip to the Frienso Dashboard
                 NSLog(@"[ skip to dashboard ]");
@@ -808,7 +809,8 @@
                 NSLog(@"[ register new user ]");
                 [self saveNewUserLocallyWithEmail:username.text plusPassword:password.text];
                 
-                [self registerNewUserToParseWithEmail:username.text plusPassword:password.text];
+                [self registerNewUserToParseWithEmail:username.text
+                                         plusPassword:password.text withPhoneNumber:phoneNumber.text];
             
                 [self popCoreCircleSetupVC]; // go to the core circle first setup
             }
@@ -848,6 +850,16 @@
                                     block:^(PFUser *user, NSError *error) {
                                         if (user) {
                                             NSLog(@"[ Parse successful login ]"); // Do stuff after successful login.
+                                            [self insertCurrentLocation:user];
+                                            
+                                            [PFGeoPoint geoPointForCurrentLocationInBackground:^(PFGeoPoint *geoPoint, NSError *error) {
+                                                if (!error) {
+                                                    NSLog(@"User is currently at %f, %f", geoPoint.latitude, geoPoint.longitude);
+                                                    
+                                                    [[PFUser currentUser] setObject:geoPoint forKey:@"currentLocation"];
+                                                    [[PFUser currentUser] saveInBackground];
+                                                }
+                                            }];
                                             
                                             // Sync from parse!
                                             PFQuery *query = [PFQuery queryWithClassName:@"UserCoreFriends"];
@@ -905,7 +917,7 @@
 }
 
 #pragma mark - CoreData helper methods
-- (void) actionAddFriensoEvent:(NSString *) message {
+- (void) actionAddFriensoEvent:(NSString *) message withSubtitle:(NSString *)subtitle{
     NSLog(@"[ actionAddFriensoEvent ]");
     FriensoAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
     
@@ -914,12 +926,12 @@
     
     FriensoEvent *firstFriensoEvent = [NSEntityDescription insertNewObjectForEntityForName:@"FriensoEvent"
                                                                     inManagedObjectContext:managedObjectContext];
-    
+    /** What the right way to manage geolocation points between coredata and parse.com? **/
     if (firstFriensoEvent != nil){
-        NSString *loginFriensoEvent = @"You are logged in as: ";
-        firstFriensoEvent.eventTitle     = [loginFriensoEvent stringByAppendingString:message];
-        firstFriensoEvent.eventSubtitle  = @"Welcome back to Frienso!";
-        firstFriensoEvent.eventLocation  = @"Right here";
+        //NSString *loginFriensoEvent = @"You are logged in as: ";
+        firstFriensoEvent.eventTitle     = message;
+        firstFriensoEvent.eventSubtitle  = subtitle;
+        firstFriensoEvent.eventLocation  = [NSString stringWithFormat:@"%f,%f", self.coordinate.latitude, self.coordinate.longitude];
         firstFriensoEvent.eventContact   = @"me";
         firstFriensoEvent.eventCreated   = [NSDate date];
         firstFriensoEvent.eventModified  = [NSDate date];
@@ -946,21 +958,36 @@
     }
 
 // register or sign-up
-- (void)registerNewUserToParseWithEmail:(NSString *)newUserEmail plusPassword:(NSString *)newUserPassword {
-    PFUser *user = [PFUser user];
-    user.email    = newUserEmail;
-    user.username = newUserEmail;
-    user.password = newUserPassword;
+- (void)registerNewUserToParseWithEmail:(NSString *)newUserEmail
+                           plusPassword:(NSString *)newUserPassword withPhoneNumber:(NSString *)userPhoneNumber{
+    PFUser *user   = [PFUser user];
+    user.email     = newUserEmail;
+    user.username  = newUserEmail;
+    user.password  = newUserPassword;
     
     
+    [self insertCurrentLocation:user];// MIGHT NOT BE NEEDED
+    // add current location to User object
+    [PFGeoPoint geoPointForCurrentLocationInBackground:^(PFGeoPoint *geoPoint, NSError *error) {
+        if (!error) {
+            NSLog(@"User is currently at %f, %f", geoPoint.latitude, geoPoint.longitude);
+            
+            [[PFUser currentUser] setObject:geoPoint forKey:@"currentLocation"];
+            [[PFUser currentUser] saveInBackground];
+        }
+    }];
     // other fields can be set just like with PFObject
     //[user setObject:@"415-392-0202" forKey:@"phone"];
     
     [user signUpInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
         if (!error) {
             // Hooray! Let them use the app now.
+            // Add Phone
+            [self addPhoneNumberToCloudForEmail: newUserEmail withPhoneNumber:userPhoneNumber];
+            
             NSUserDefaults *userInLocal = [NSUserDefaults standardUserDefaults];
             [userInLocal setObject:@"1" forKey:@"adminInParse"];
+            [userInLocal setBool:YES forKey:@"isUserNew"];
             [userInLocal synchronize];
             NSLog(@"[NSUserDefaults/Parse sync confirmed]");
             
@@ -998,6 +1025,49 @@
 
 
 #pragma mark * Actions
+-(void) addPhoneNumberToCloudForEmail:(NSString *)userEmail  withPhoneNumber:(NSString *)userPhone {
+    PFObject *userCoreFriends = [PFObject objectWithClassName:@"UserConnection"]; //connection = phone number
+    [userCoreFriends setObject:userPhone forKey:@"userNumber"];
+    
+    /*[PFUser logInWithUsernameInBackground:userEmail
+                                 password:
+                                    block:^(PFUser *user, NSError *error) {
+                                        if (user) {
+                                            PFUser *currentUser = [PFUser currentUser];
+                                            if (currentUser) {
+                                                NSLog(@"%@, login successful",currentUser.email);
+                                            } else {
+                                                // show the signup or login screen
+                                                NSLog(@"no current user");
+                                            }
+                                        } else {
+                                            NSLog(@"The login failed. Check error to see why. %@",error);
+                                        }
+                                    }];
+    */
+    // Set the proper ACLs
+    PFACL *ACL = [PFACL ACLWithUser:[PFUser currentUser]];
+    [ACL setPublicReadAccess:YES];
+    [PFACL setDefaultACL:ACL withAccessForCurrentUser:YES];
+    //comment.ACL = ACL;
+    // Set the access control list to current user for security purposes
+    userCoreFriends.ACL = ACL;// [PFACL ACLWithUser:[PFUser currentUser]];
+    
+    PFUser *user = [PFUser currentUser];
+    NSLog(@"%@",user.email);
+    [userCoreFriends setObject:user forKey:@"user"];
+    [userCoreFriends saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+        if (!error) {
+            //[self refresh:nil];
+            NSLog(@"[ CoreFriends Dictionary for User upload attempted. ]");
+        }
+        else{
+            // Log details of the failure
+            NSLog(@"Error: %@ %@", error, [error userInfo]);
+        }
+    }];
+    
+}
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
     NSString *title = [alertView buttonTitleAtIndex:buttonIndex];
     if([title isEqualToString:@"Submit"])
@@ -1028,8 +1098,80 @@
     
     
 }
-#pragma mark - Fetched results controller
 
+
+#pragma mark - Core Location Services
+-(void) locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations{
+    
+    
+    CLLocation *lastLocation = [locations lastObject];
+    CLLocationAccuracy accuracy = [lastLocation horizontalAccuracy];
+	NSLog(@"Received location %@ with accuracy %f", lastLocation, accuracy);
+    CLLocation *location = manager.location;
+
+	if(accuracy <= 50.0) {
+		//4
+//        NSLog(@"latitude and longitude: %ld, %@", [locations count], locations );
+        self.coordinate = [location coordinate];
+        
+        self.geoPoint = [PFGeoPoint geoPointWithLatitude:self.coordinate.latitude
+                                                      longitude:self.coordinate.longitude];
+        //[self actionAddFriensoEvent:username.text withSubtitle:<#(NSString *)#>]; // FriensoEvent
+		[manager stopUpdatingLocation];
+	}
+    
+    
+    
+}
+- (void) locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error
+{
+    NSLog(@"Failed to receive location information, see error: %@", error);
+}
+
+-(void) getDeviceLocationInfo {
+    if ([CLLocationManager locationServicesEnabled]) {
+        self.myLocationManager = [[CLLocationManager alloc] init];
+        //self.myLocationManager.distanceFilter = kCLDistance; // whenever we move
+        self.myLocationManager.desiredAccuracy = kCLLocationAccuracyBest; // 100 m
+        self.myLocationManager.delegate = self;
+        [self.myLocationManager startUpdatingLocation];
+        
+        
+        
+    } else
+        NSLog(@"Location services are not enabled");
+        
+        
+}
+
+- (void) insertCurrentLocation:(PFUser *)pfUser {
+    NSLog(@"-- insertCurrentLocation --");
+    [self getDeviceLocationInfo];
+    
+	// If it's not possible to get a location, then return.
+	CLLocation *location = self.myLocationManager.location;
+	if (!location) {
+		return;
+	}
+    
+	// Configure the new event with information from the location.
+	CLLocationCoordinate2D coordinate = [location coordinate];
+    PFGeoPoint *geoPoint = [PFGeoPoint geoPointWithLatitude:coordinate.latitude longitude:coordinate.longitude];
+    PFObject *object = [PFObject objectWithClassName:@"Location"];
+    [object setObject:geoPoint forKey:@"location"];
+    [object setObject:pfUser.username forKey:@"user"];
+    
+    [object saveEventually:^(BOOL succeeded, NSError *error) {
+        if (succeeded) {
+            // Reload the PFQueryTableViewController
+            NSLog(@"...location saved to cloud");//[self loadObjects];
+            [self actionAddFriensoEvent:@"Location Saved"
+                           withSubtitle:[NSString stringWithFormat:@"%4.f, %4.f",coordinate.latitude, coordinate.longitude]];
+        }
+    }];
+}
+
+//#pragma mark - Fetched results controller
 /*
  Returns the fetched results controller. Creates and configures the controller if necessary.
  */

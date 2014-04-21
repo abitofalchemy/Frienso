@@ -17,6 +17,7 @@
 @property (nonatomic, retain) NSString * coreNickName;
 @property (nonatomic, retain) NSString * corePhone;
 @property (nonatomic, retain) NSString * coreEmail;
+@property (nonatomic, retain) NSString * coreLocation;
 @property (nonatomic, retain) NSDate * coreModified;
 
 @end

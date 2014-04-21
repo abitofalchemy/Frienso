@@ -74,6 +74,16 @@
 		3E4120FC18E306630058012B /* frienso-info-0.png in Resources */ = {isa = PBXBuildFile; fileRef = 3E4120F918E306630058012B /* frienso-info-0.png */; };
 		3E4120FD18E306630058012B /* frienso-info-1.png in Resources */ = {isa = PBXBuildFile; fileRef = 3E4120FA18E306630058012B /* frienso-info-1.png */; };
 		3E4120FE18E306630058012B /* frienso-info-2.png in Resources */ = {isa = PBXBuildFile; fileRef = 3E4120FB18E306630058012B /* frienso-info-2.png */; };
+		3E9F892318FE8D5E00DA190C /* map-wireframe.png in Resources */ = {isa = PBXBuildFile; fileRef = 3E9F892118FE8D5E00DA190C /* map-wireframe.png */; };
+		3E9F892418FE8D5E00DA190C /* map-parisbirdseye.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 3E9F892218FE8D5E00DA190C /* map-parisbirdseye.jpg */; };
+		3E9F892F18FE99E700DA190C /* SearchViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E9F892818FE99E700DA190C /* SearchViewController.m */; };
+		3E9F893018FE99E700DA190C /* GeoPointAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E9F892A18FE99E700DA190C /* GeoPointAnnotation.m */; };
+		3E9F893118FE99E700DA190C /* GeoQueryAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E9F892C18FE99E700DA190C /* GeoQueryAnnotation.m */; };
+		3E9F893218FE99E700DA190C /* CircleOverlay.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E9F892E18FE99E700DA190C /* CircleOverlay.m */; };
+		3E9F893518FEB62A00DA190C /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E9F893418FEB62A00DA190C /* MapKit.framework */; };
+		3E9F893F1903E17700DA190C /* frienso-ic-2x29.png in Resources */ = {isa = PBXBuildFile; fileRef = 3E9F893C1903E17700DA190C /* frienso-ic-2x29.png */; };
+		3E9F89401903E17700DA190C /* frienso-ic-2x40.png in Resources */ = {isa = PBXBuildFile; fileRef = 3E9F893D1903E17700DA190C /* frienso-ic-2x40.png */; };
+		3E9F89411903E17700DA190C /* frienso-ic-2x60.png in Resources */ = {isa = PBXBuildFile; fileRef = 3E9F893E1903E17700DA190C /* frienso-ic-2x60.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -177,6 +187,20 @@
 		3E4120F918E306630058012B /* frienso-info-0.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "frienso-info-0.png"; sourceTree = "<group>"; };
 		3E4120FA18E306630058012B /* frienso-info-1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "frienso-info-1.png"; sourceTree = "<group>"; };
 		3E4120FB18E306630058012B /* frienso-info-2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "frienso-info-2.png"; sourceTree = "<group>"; };
+		3E9F892118FE8D5E00DA190C /* map-wireframe.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "map-wireframe.png"; sourceTree = "<group>"; };
+		3E9F892218FE8D5E00DA190C /* map-parisbirdseye.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "map-parisbirdseye.jpg"; sourceTree = "<group>"; };
+		3E9F892718FE99E700DA190C /* SearchViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchViewController.h; sourceTree = "<group>"; };
+		3E9F892818FE99E700DA190C /* SearchViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SearchViewController.m; sourceTree = "<group>"; };
+		3E9F892918FE99E700DA190C /* GeoPointAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeoPointAnnotation.h; sourceTree = "<group>"; };
+		3E9F892A18FE99E700DA190C /* GeoPointAnnotation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeoPointAnnotation.m; sourceTree = "<group>"; };
+		3E9F892B18FE99E700DA190C /* GeoQueryAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeoQueryAnnotation.h; sourceTree = "<group>"; };
+		3E9F892C18FE99E700DA190C /* GeoQueryAnnotation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeoQueryAnnotation.m; sourceTree = "<group>"; };
+		3E9F892D18FE99E700DA190C /* CircleOverlay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CircleOverlay.h; sourceTree = "<group>"; };
+		3E9F892E18FE99E700DA190C /* CircleOverlay.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CircleOverlay.m; sourceTree = "<group>"; };
+		3E9F893418FEB62A00DA190C /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
+		3E9F893C1903E17700DA190C /* frienso-ic-2x29.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "frienso-ic-2x29.png"; sourceTree = "<group>"; };
+		3E9F893D1903E17700DA190C /* frienso-ic-2x40.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "frienso-ic-2x40.png"; sourceTree = "<group>"; };
+		3E9F893E1903E17700DA190C /* frienso-ic-2x60.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "frienso-ic-2x60.png"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -184,6 +208,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3E9F893518FEB62A00DA190C /* MapKit.framework in Frameworks */,
 				3E2F8C2F18D2FA3200FD2A99 /* Parse.framework in Frameworks */,
 				180E880F18BE0C97009A570F /* CoreLocation.framework in Frameworks */,
 				180E880D18BE0C8A009A570F /* MobileCoreServices.framework in Frameworks */,
@@ -262,6 +287,7 @@
 		1827930318BE06740056C849 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				3E9F893418FEB62A00DA190C /* MapKit.framework */,
 				3E2F8C2E18D2FA3200FD2A99 /* Parse.framework */,
 				180E880E18BE0C97009A570F /* CoreLocation.framework */,
 				180E880C18BE0C8A009A570F /* MobileCoreServices.framework */,
@@ -307,6 +333,7 @@
 				1853403E18C2236E0094AC5A /* FriensoOptionsTVC.m */,
 				3E2F8C3518D4C74600FD2A99 /* FriensoQuickCircleVC.h */,
 				3E2F8C3618D4C74600FD2A99 /* FriensoQuickCircleVC.m */,
+				3E9F893318FE99F800DA190C /* MappingFriends */,
 				1808553618C4EEC30047A8BE /* OptionsClasses */,
 				180E881018BE1779009A570F /* FriensoCircleButton.h */,
 				180E881118BE1779009A570F /* FriensoCircleButton.m */,
@@ -351,6 +378,11 @@
 		1827933918BE07A70056C849 /* Media */ = {
 			isa = PBXGroup;
 			children = (
+				3E9F893C1903E17700DA190C /* frienso-ic-2x29.png */,
+				3E9F893D1903E17700DA190C /* frienso-ic-2x40.png */,
+				3E9F893E1903E17700DA190C /* frienso-ic-2x60.png */,
+				3E9F892118FE8D5E00DA190C /* map-wireframe.png */,
+				3E9F892218FE8D5E00DA190C /* map-parisbirdseye.jpg */,
 				3E4120F918E306630058012B /* frienso-info-0.png */,
 				3E4120FA18E306630058012B /* frienso-info-1.png */,
 				3E4120FB18E306630058012B /* frienso-info-2.png */,
@@ -382,6 +414,21 @@
 				1853403B18C223340094AC5A /* CoreFriends.m */,
 			);
 			path = "CoreData Files";
+			sourceTree = "<group>";
+		};
+		3E9F893318FE99F800DA190C /* MappingFriends */ = {
+			isa = PBXGroup;
+			children = (
+				3E9F892718FE99E700DA190C /* SearchViewController.h */,
+				3E9F892818FE99E700DA190C /* SearchViewController.m */,
+				3E9F892918FE99E700DA190C /* GeoPointAnnotation.h */,
+				3E9F892A18FE99E700DA190C /* GeoPointAnnotation.m */,
+				3E9F892B18FE99E700DA190C /* GeoQueryAnnotation.h */,
+				3E9F892C18FE99E700DA190C /* GeoQueryAnnotation.m */,
+				3E9F892D18FE99E700DA190C /* CircleOverlay.h */,
+				3E9F892E18FE99E700DA190C /* CircleOverlay.m */,
+			);
+			name = MappingFriends;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -482,7 +529,12 @@
 				18DF849C18C275C7003F431F /* lighthouse-24.png in Resources */,
 				1808553518C3B9810047A8BE /* README.md in Resources */,
 				1879B59318C7277100AEA55F /* Profile-256.png in Resources */,
+				3E9F89401903E17700DA190C /* frienso-ic-2x40.png in Resources */,
+				3E9F892318FE8D5E00DA190C /* map-wireframe.png in Resources */,
+				3E9F89411903E17700DA190C /* frienso-ic-2x60.png in Resources */,
+				3E9F892418FE8D5E00DA190C /* map-parisbirdseye.jpg in Resources */,
 				3E4120FC18E306630058012B /* frienso-info-0.png in Resources */,
+				3E9F893F1903E17700DA190C /* frienso-ic-2x29.png in Resources */,
 				18DF84A218C27D58003F431F /* watching-24.png in Resources */,
 				18DF849818C2718D003F431F /* settings-24.png in Resources */,
 				3E4120FE18E306630058012B /* frienso-info-2.png in Resources */,
@@ -511,14 +563,18 @@
 				1853403918C220680094AC5A /* FriensoAlphaCoreDataModel.xcdatamodeld in Sources */,
 				1879B59B18C786DB00AEA55F /* FriensoResourcesTVC.m in Sources */,
 				180E881518BE1779009A570F /* FriensoOptionsButton.m in Sources */,
+				3E9F893018FE99E700DA190C /* GeoPointAnnotation.m in Sources */,
 				18CD00E818CCA020007BAC85 /* UserProfileViewController.m in Sources */,
 				18CD00F018CDE557007BAC85 /* NewCoreCircleTVC.m in Sources */,
 				180E881B18BE5584009A570F /* FriensoEvent.m in Sources */,
 				1827934018BE08090056C849 /* PanicViewCtrlr.m in Sources */,
 				1879B59F18C888BB00AEA55F /* tstWatchingViewController.m in Sources */,
+				3E9F892F18FE99E700DA190C /* SearchViewController.m in Sources */,
 				3E2F8C3F18D83D8300FD2A99 /* AboutFriensoViewController.m in Sources */,
 				1827931118BE06750056C849 /* main.m in Sources */,
 				1879B59018C6CD9400AEA55F /* SettingsViewController.m in Sources */,
+				3E9F893118FE99E700DA190C /* GeoQueryAnnotation.m in Sources */,
+				3E9F893218FE99E700DA190C /* CircleOverlay.m in Sources */,
 				180E881418BE1779009A570F /* FriensoCircleButton.m in Sources */,
 				1827931B18BE06750056C849 /* FriensoViewController.m in Sources */,
 				3E4120F818E3005E0058012B /* aBoAViewController.m in Sources */,
@@ -652,11 +708,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Salvador Aguinaga (PA6WYRP4VC)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					/Users/aboa/Downloads,
 					/Users/sal/Downloads,
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -664,7 +719,7 @@
 				INFOPLIST_FILE = "FriensoAlpha/FriensoAlpha-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "E16AB7C0-6AF5-44D3-A432-E2C2EDB7634B";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -678,7 +733,6 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Salvador Aguinaga (WDLW7K2HT3)";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					/Users/aboa/Downloads,
 					/Users/sal/Downloads,
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -686,7 +740,7 @@
 				INFOPLIST_FILE = "FriensoAlpha/FriensoAlpha-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "E16AB7C0-6AF5-44D3-A432-E2C2EDB7634B";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

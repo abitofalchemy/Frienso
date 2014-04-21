@@ -55,7 +55,7 @@ static NSString *eventCell = @"eventCell";
 -(void) setupEventsTableView {
     self.tableView = [[UITableView alloc] init];
     [self.tableView setFrame:CGRectMake(0, 0, self.view.bounds.size.width,
-                                        self.view.bounds.size.height*0.70)];
+                                        self.view.bounds.size.height*0.40)];
     
     self.tableView.dataSource = self;
     self.tableView.delegate   = self;
@@ -145,7 +145,30 @@ static NSString *eventCell = @"eventCell";
     anim.toValue = [NSValue valueWithCATransform3D:CATransform3DMakeScale(1.2, 1.2, 1.0)];
     [button.layer addAnimation:anim forKey:nil];
 }
+-(void) friensoMapViewCtrlr:(UIButton *)button {
+    //NSLog(@"-- Map button touched --");
+    [self animateThisButton:button];
+    [self performSegueWithIdentifier:@"showFriesoMap" sender:self];
+}
 
+#pragma mark - Setup view widgets
+-(void) setupMapButton {
+    UIButton *button= [UIButton buttonWithType:UIButtonTypeCustom];
+    button.frame = CGRectMake(0, 0, self.view.bounds.size.width*.90, self.view.bounds.size.width*.90/1.618);
+    [button addTarget:self
+               action:@selector(friensoMapViewCtrlr:)
+     forControlEvents:UIControlEventTouchDown];
+    button.layer.cornerRadius = 6.0f;
+    button.layer.borderWidth = 1.2f;
+    button.layer.borderColor = [UIColor lightGrayColor].CGColor;
+    //button.backgroundColor = UIColorFromRGB(0x4962D6);
+    [button setBackgroundImage:[UIImage imageNamed:@"map-wireframe.png"] forState:UIControlStateNormal];
+    [button setBackgroundImage:[UIImage imageNamed:@"map-parisbirdseye.jpg"] forState:UIControlStateSelected];
+    [button setCenter:CGPointMake([UIScreen mainScreen].bounds.size.width/2,
+                                  self.tableView.frame.size.height + 6.0 + /* offset */
+                                  button.frame.size.height/2.0 )];
+    [self.view addSubview:button];
+}
 -(void) setupNavigationBarImage{
     [[UINavigationBar appearance] setTitleTextAttributes:
      [NSDictionary dictionaryWithObjectsAndKeys:
@@ -201,7 +224,7 @@ static NSString *eventCell = @"eventCell";
                                                  if (!error) { // The find succeeded.
                                                      NSDictionary *parseCoreFriendsDic = [[NSDictionary alloc] init];
                                                      for (PFObject *object in objects) { // Do something w/ found objects
-                                                         NSLog(@"%@",[object valueForKey:@"userCoreFriends"]);
+                                                         //NSLog(@"%@",[object valueForKey:@"userCoreFriends"]);
                                                          parseCoreFriendsDic = [object valueForKey:@"userCoreFriends"];
                                                          
                                                      }
@@ -212,6 +235,8 @@ static NSString *eventCell = @"eventCell";
                                                          
                                                          
                                                      }
+                                                     // Notify that records were fetched from Parse
+                                                     [self  actionAddFriensoEvent:@"Contacts successfully fetched and restored."];
                                                  } else {
                                                      // Log details of the failure
                                                      NSLog(@"Error: %@ %@", error, [error userInfo]);
@@ -229,7 +254,6 @@ static NSString *eventCell = @"eventCell";
 -(void) saveCFDictionaryToNSUserDefaults:(NSDictionary *)friendsDic {
     // From Parse
     NSLog(@"[ saveCFDictionaryToNSUserDefaults ]");
-    //NSLog(@"%@",friendsDic);
     
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
     [userDefaults setObject:friendsDic forKey:@"CoreFriendsContactInfoDicKey"];
@@ -240,10 +264,9 @@ static NSString *eventCell = @"eventCell";
     NSEnumerator    *enumerator = [friendsDic keyEnumerator];
     NSMutableArray  *coreCircle = [[NSMutableArray alloc] initWithArray:[enumerator allObjects]];
     NSArray *valueArray         = [friendsDic allValues]; // holds phone numbers
+    
     // Access to CoreData
-    
-    
-        for (int i=0; i<[coreCircle count]; i++) {
+    for (int i=0; i<[coreCircle count]; i++) {
             CoreFriends *cFriends = [NSEntityDescription insertNewObjectForEntityForName:@"CoreFriends"
                                                                   inManagedObjectContext:[self managedObjectContext]];
             if (cFriends != nil){
@@ -263,7 +286,7 @@ static NSString *eventCell = @"eventCell";
             } else {
                 NSLog(@"Failed to create the new person object.");
             }
-        }
+    }
     
 }
 
@@ -276,13 +299,13 @@ static NSString *eventCell = @"eventCell";
     if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"CoreFriendsContactInfoDicKey"] count] == 0) {
         [self syncFromParse];
     } else
-        NSLog(@" all loaded already");
+        NSLog(@"all loaded already");
     
     
     [self setupNavigationBarImage];
     
     [self setupEventsTableView];
-
+    [self setupMapButton];
 }
 - (void)viewDidUnload {
     self.tableView = nil;
@@ -293,6 +316,34 @@ static NSString *eventCell = @"eventCell";
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+#pragma mark - CoreData helper methods
+- (void) actionAddFriensoEvent:(NSString *) message {
+    NSLog(@"[ actionAddFriensoEvent ]");
+    FriensoAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+    
+    NSManagedObjectContext *managedObjectContext =
+    appDelegate.managedObjectContext;
+    
+    FriensoEvent *firstFriensoEvent = [NSEntityDescription insertNewObjectForEntityForName:@"FriensoEvent"
+                                                                    inManagedObjectContext:managedObjectContext];
+    
+    if (firstFriensoEvent != nil){
+        NSString *loginFriensoEvent = @"";
+        firstFriensoEvent.eventTitle     = [loginFriensoEvent stringByAppendingString:message];
+        firstFriensoEvent.eventSubtitle  = @"Review these data";
+        firstFriensoEvent.eventLocation  = @"Right here";
+        firstFriensoEvent.eventContact   = @"me";
+        firstFriensoEvent.eventCreated   = [NSDate date];
+        firstFriensoEvent.eventModified  = [NSDate date];
+        
+        NSError *savingError = nil;
+        if([managedObjectContext save:&savingError]) {
+            NSLog(@"Successfully saved the context");
+        } else { NSLog(@"Failed to save the context. Error = %@", savingError); }
+    } else {
+        NSLog(@"Failed to create a new event.");
+    }
 }
 
 @end

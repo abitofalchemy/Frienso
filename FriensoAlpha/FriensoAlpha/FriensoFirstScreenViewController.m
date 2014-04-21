@@ -29,7 +29,7 @@
 
 
 - (void) CheckUserDefaults {
-    NSLog(@"check userdefaults");
+    //NSLog(@"check userdefaults");
     NSString       *adminKey    = [[NSUserDefaults standardUserDefaults] objectForKey:@"adminID"];
     if ([adminKey isEqualToString:@""] || adminKey == NULL){
         return;
@@ -66,7 +66,7 @@
 
 -(void) viewDidAppear:(BOOL)animated {
     
-    NSLog(@"view did appear");
+    //NSLog(@"view did appear");
     [UIView animateWithDuration:1.0 animations:^{
         self.navigationController.navigationBarHidden = YES;
         // This will fix the view from being framed underneath the navigation bar and status bar.

@@ -16,6 +16,7 @@
 @dynamic coreNickName;
 @dynamic corePhone;
 @dynamic coreEmail;
+@dynamic coreLocation;
 @dynamic coreModified;
 
 @end

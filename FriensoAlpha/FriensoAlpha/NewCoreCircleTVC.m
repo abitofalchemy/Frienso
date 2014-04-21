@@ -80,17 +80,20 @@
 
     for (NSString *circleContactName in self.coreCircleOfFriends){
         NSString *cleanedContactName = [self stripStringOfUnwantedChars:circleContactName];
-        [coreCircleDic setValue:[self.coreCircleContacts objectAtIndex:i++] forKey:cleanedContactName];
+        //NSLog(@"circleContactName: %@", circleContactName);
+        //NSLog(@"phone: %@", [self.coreCircleContacts objectAtIndex:i++]);
+        [coreCircleDic setValue:[self.coreCircleContacts objectAtIndex:i] forKey:cleanedContactName];
+        i += 1;
     }
     
-    //NSLog(@"%@", self.coreCircleContacts);
+    NSLog(@"%@", self.coreCircleContacts);
     
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
     [userDefaults setObject:coreCircleDic forKey:@"CoreFriendsContactInfoDicKey"];
     [userDefaults synchronize];
     
     //if ([self liveNetCon]) {
-    NSLog(@"coreCircleDic: %@",coreCircleDic);
+    NSLog(@"-- coreCircleDic: %@",coreCircleDic);
     [self uploadCoreFriends:coreCircleDic]; // upload to Parse
     //}
     
@@ -99,7 +102,13 @@
     FriensoViewController  *nxtVC = (FriensoViewController*)[mainStoryboard instantiateViewControllerWithIdentifier: @"dashboardVC"];
     [self.navigationController pushViewController:nxtVC animated:YES];
      */
-    [self.navigationController popViewControllerAnimated:YES];
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"isUserNew"])
+        [self presentDashboardViewController];
+    else
+        [self.navigationController popViewControllerAnimated:YES];
+}
+-(void) presentDashboardViewController {
+    [self performSegueWithIdentifier:@"presentDashboard" sender:self];
 }
 
 - (void) cancel {
@@ -145,7 +154,7 @@
                                                                              action:@selector(save)];
     
     [self updateLocalArray:self.coreCircleOfFriends];
-    self.coreCircleContacts = [[NSMutableArray alloc] initWithObjects:@"0",@"0",@"0",nil];
+    self.coreCircleContacts = [[NSMutableArray alloc] initWithObjects:@"0",@"0",@"0",nil]; //stores phone #s
     
     // add tableview
     self.tableView = [[UITableView alloc] init];
@@ -282,6 +291,7 @@
 #pragma mark - Parse related methods
 -(void) uploadCoreFriends:(NSDictionary *)friendsDictionary
 {
+    NSLog(@"dictionary: %@", friendsDictionary);
     PFObject *userCoreFriends = [PFObject objectWithClassName:@"UserCoreFriends"];
     [userCoreFriends setObject:friendsDictionary forKey:@"userCoreFriends"];
     
@@ -294,7 +304,7 @@
                                         if (user) {
                                             PFUser *currentUser = [PFUser currentUser];
                                             if (currentUser) {
-                                                NSLog(@"%@",currentUser.email);
+                                                NSLog(@"%@, login successful",currentUser.email);
                                             } else {
                                                 // show the signup or login screen
                                                 NSLog(@"no current user");
@@ -313,7 +323,7 @@
     userCoreFriends.ACL = ACL;// [PFACL ACLWithUser:[PFUser currentUser]];
     
     PFUser *user = [PFUser currentUser];
-    //NSLog(@"%@",user.email);
+    NSLog(@"%@",user.email);
     [userCoreFriends setObject:user forKey:@"user"];
     [userCoreFriends saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
         if (!error) {
@@ -329,7 +339,7 @@
 
 -(void) updateLocalArray:(NSArray *)localCoreFriendsArray
 {
-    NSLog(@"--- updateLocalArray ---");
+    NSLog(@"--- updateLocalArray ");
     //[self showCoreCircle];
     
     NSDictionary *retrievedCoreFriendsDictionary = [[NSUserDefaults standardUserDefaults] dictionaryForKey:@"CoreFriendsContactInfoDicKey"]; // immutable
@@ -339,13 +349,14 @@
         
         NSEnumerator *enumerator = [retrievedCoreFriendsDictionary keyEnumerator];
         self.coreCircleOfFriends = [[NSMutableArray alloc] initWithArray:[enumerator allObjects]];
-        
+        self.coreCircleContacts =  [[NSMutableArray alloc] initWithArray:[retrievedCoreFriendsDictionary allValues]];
+
         // Handle if the array has less than 3 objects
         switch ([self.coreCircleOfFriends count]) {
             case 0:
                 self.coreCircleOfFriends = [[NSMutableArray alloc] initWithObjects:@"CoreFriend 1",
                                        @"CoreFriend 2", @"CoreFriend 3",nil];
-                NSLog(@"[ 0 ]%lu",(unsigned long)[self.coreCircleOfFriends count]);
+                //NSLog(@"[ 0 ]%lu",(unsigned long)[self.coreCircleOfFriends count]);
                 break;
             case 1:
                 [self.coreCircleOfFriends addObject:@"CoreFriend X"];
@@ -379,7 +390,7 @@
     NSMutableString *tempStr = [[NSMutableString alloc] init];
     NSString *firstName = (__bridge_transfer NSString *)(ABRecordCopyValue(person, kABPersonFirstNameProperty));
     NSString *lastName  = (__bridge_transfer NSString *)(ABRecordCopyValue(person, kABPersonLastNameProperty));
-    NSLog(@"%@", lastName);
+    //NSLog(@"%@", lastName);
     if ( firstName != nil ) {
         [tempStr appendString: firstName];
         [tempStr appendString:@" "];
@@ -391,15 +402,16 @@
         [tempStr appendString:@"unknow"];
     
     ABMultiValueRef phones = ABRecordCopyValue(person, kABPersonPhoneProperty);
+    //NSLog(@"%@", phones);
     //[tmpStr appendString: (__bridge_transfer NSString *)(ABMultiValueCopyValueAtIndex(phones, 0));
     //NSLog(@"phone# %@",(__bridge_transfer NSString *)(ABMultiValueCopyValueAtIndex(phones, 0)));
+#warning check for all potential phone numbers
     NSString *contactPhoneNumber = (__bridge_transfer NSString *)(ABMultiValueCopyValueAtIndex(phones, 0));
     NSCharacterSet *toExclude = [NSCharacterSet characterSetWithCharactersInString:@"/.()-  "];
     contactPhoneNumber = [[contactPhoneNumber componentsSeparatedByCharactersInSet:toExclude] componentsJoinedByString:@""];
-
-    NSLog(@"phone# %@",contactPhoneNumber);
+    //NSLog(@"phone# %@",contactPhoneNumber);
     
-    if(contactPhoneNumber == nil) {
+    if (contactPhoneNumber == nil) {
         NSLog(@"Alert! no phone# for this friend");
         contactPhoneNumber = @"000-111-2222";
         
@@ -407,7 +419,7 @@
     // Alert some-how if the phone # is invalid
     [self.coreCircleContacts replaceObjectAtIndex:self.cellNumberSelected
                                   withObject:contactPhoneNumber];//(__bridge_transfer NSString *)(ABMultiValueCopyValueAtIndex(phones, 0))];
-    
+    //NSLog(@"%@", self.coreCircleContacts);
     [self.coreCircleOfFriends replaceObjectAtIndex:self.cellNumberSelected withObject:tempStr];
     
     // Add name to CoreData
@@ -504,9 +516,9 @@
     NSError *fetchingError = nil;
     if ([self.frc performFetch:&fetchingError]){
         NSLog(@"Successfully fetched coreCircle.");
-        NSLog(@"Sections: %ld", [[self.frc sections] count]);
+        //NSLog(@"Sections: %ld", (unsigned long)[[self.frc sections] count]);
         id <NSFetchedResultsSectionInfo> sectionInfo = self.frc.sections[0];
-        NSLog(@"No. of objects in section 0: %ld",sectionInfo.numberOfObjects);
+        //NSLog(@"No. of objects in section 0: %ld",(unsigned long)sectionInfo.numberOfObjects);
         returnValue = sectionInfo.numberOfObjects;
     } else {
         NSLog(@"Failed to fetch.");

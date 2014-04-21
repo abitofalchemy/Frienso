@@ -11,31 +11,44 @@ ver 1.1 build 1.0   Fixes: Added more functionality to the Profile view; user ca
                     Settings View updated with more functionality working.
 ver 1.1 build 1.1   Fixed issues with Setup Core Circle and Profile images
                     Fixed bug when you login and your already stored coreCircle of friends isn't fetched elegantly, now it's fetched and stored locally.
+                    When a single core circle friend is updated, the whole set of core friends is correctly update in the cloud.
+                    Connected the privacy policy and terms of use buttons to a web link that will host the document for now.
 
-                    when core frienso changes:
+ver 1.2 build 1.0   Added location information @ user signup or login
+                    Fixed issued when creating a new account and building your core friends group
+                    Added Mapping of your core Friends
+                    Added icon (working, not final)
 
-Project Log:
-------------
-* Finish(or finished?) re-doing the coreCircleSetup
-* Finished the about
-* 01Apr14:SA Profile fully working
+ver 1.2 build 2.0   Updates to the friends list (coreData) 
+
 
 
 ToDo
 ----
-* Need to replace coreFriends as a whole or update Parse record(s) when edited.
-* When selecting a new core friend: upload to Parse Correctly
-* Add Location info and Map
-* Add a License agreement online accessible and link to web doc
+* {bug} When user sings in, if there are networking issues, the auto-sync which fetches the users stored coreFriends group is delayed (maybe even fails).  To fix this we could force a sync, else we could 
+    retry until it succeeds, but then the user will have to wait.
+    If a forced sync is done, we need cancel the auto attemps to sync
+* Cache the coreF group current locations and show those until we can update them from cloud
+
 * Fully logout
 * Handle Parse time-outs
-* Trap parse calls to the network - network outage
-* Connect methods: - (void) privacyPolicyView  & - (void) termsOfUserView
+    Trap parse calls to the network - network outage
 * Input validation for user profile editing
-* What to save to Parse when user changes profile? ***
 
-Tasks Done
-----------
+
+Tasks Done / Project Log:
+-------------------------
+* What to save to Parse when user changes profile? ***
+* {done: Add Location info} and Map
+  Make sure location is created if new or updated if existing
+  Add map view to homeview
+* Finish(or finished?) re-doing the coreCircleSetup
+* Finished the about
+* 01Apr14:SA Profile fully working
+* Connect methods: - (void) privacyPolicyView  & - (void) termsOfUserView
+* Add a License agreement online accessible and link to web doc
+* When selecting a new core friend: upload to Parse Correctly
+* Need to replace coreFriends as a whole or update Parse record(s) when edited.
 * Added functionality to User Profile Editing
 * { Done } Fix Edit button in Profile
 * { Done } Fix database duplicates
@@ -44,6 +57,9 @@ Tasks Done
 Referenced Work
 ----------------
 * Fonts
+* Images
+  # http://wpwide.com/paris-france-birds-eye-view-sunshine-wide-hd-wallpaper/
+  # http://dudye.com/futuristic-aerial-metro-station-in-miami
 * Colors
     # http://ios7colors.com
     # flatuicolors.com

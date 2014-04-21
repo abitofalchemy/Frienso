@@ -135,13 +135,14 @@
 #pragma mark - Actions & Selectors
 - (void) privacyPolicyView
 {
-    
+    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://frienso.tumblr.com/post/82291084442/privacy"]];
+
     
 }
 
 - (void) termsOfUseView
 {
-    
+ [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://frienso.tumblr.com/post/82283533144/terms"]];
 }
 
 

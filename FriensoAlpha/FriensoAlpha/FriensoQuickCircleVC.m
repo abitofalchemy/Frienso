@@ -117,6 +117,8 @@ static NSString *coreFriendsCell = @"coreFriendsCell";
     cell.textLabel.textColor = [UIColor blackColor];
     cell.detailTextLabel.textColor  = [UIColor blueColor];
     cell.imageView.image = [UIImage imageNamed:@"Profile-256.png"];
+    NSLog(@"%@", friend.corePhone);
+    
     
     return cell;
 }
