@@ -7,8 +7,9 @@
 
 #import <MapKit/MapKit.h>
 #import <CoreLocation/CoreLocation.h>
+#import <CoreData/NSFetchedResultsController.h>
 
-@interface SearchViewController : UIViewController <MKMapViewDelegate,CLLocationManagerDelegate>
+@interface SearchViewController : UIViewController <MKMapViewDelegate,CLLocationManagerDelegate,NSFetchedResultsControllerDelegate>
 
 @property (nonatomic, retain) CLLocationManager *locationManager;
 @property (nonatomic, strong) IBOutlet MKMapView *mapView;

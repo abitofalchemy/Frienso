@@ -26,11 +26,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "FriensoAlpha/SearchViewController.m"
-            timestampString = "419689175.412622"
+            timestampString = "419852753.364294"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "107"
-            endingLineNumber = "107"
+            startingLineNumber = "157"
+            endingLineNumber = "157"
             landmarkName = "-locationManager"
             landmarkType = "5">
          </BreakpointContent>
@@ -38,7 +38,7 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "FriensoAlpha/ABALoginTVC.m"
@@ -51,13 +51,13 @@
             landmarkType = "5">
             <Locations>
                <Location
-                  shouldBeEnabled = "Yes"
+                  shouldBeEnabled = "No"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
                   symbolName = "__49-[ABALoginTVC loginThisUserToParse:withPassword:]_block_invoke"
                   moduleName = "FriensoAlpha"
                   urlString = "file:///Users/sal/aBitofAlchemy/Frienso/FriensoAlpha/FriensoAlpha/ABALoginTVC.m"
-                  timestampString = "419599649.600716"
+                  timestampString = "419859086.618373"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "855"
@@ -65,13 +65,13 @@
                   offsetFromSymbolStart = "184">
                </Location>
                <Location
-                  shouldBeEnabled = "Yes"
+                  shouldBeEnabled = "No"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
                   symbolName = "__49-[ABALoginTVC loginThisUserToParse:withPassword:]_block_invoke_2"
                   moduleName = "FriensoAlpha"
                   urlString = "file:///Users/sal/aBitofAlchemy/Frienso/FriensoAlpha/FriensoAlpha/ABALoginTVC.m"
-                  timestampString = "419599649.601081"
+                  timestampString = "419859086.618646"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "855"
@@ -104,13 +104,87 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "FriensoAlpha/SearchViewController.m"
-            timestampString = "419689175.412622"
+            timestampString = "419852753.364294"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "59"
-            endingLineNumber = "59"
+            startingLineNumber = "73"
+            endingLineNumber = "73"
             landmarkName = "-fetchCurrentLocationForUser:"
             landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "FriensoAlpha/NewCoreCircleTVC.m"
+            timestampString = "419792679.345218"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "16"
+            endingLineNumber = "16">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[NewCoreCircleTVC tableView]"
+                  moduleName = "FriensoAlpha"
+                  urlString = "file:///Users/sal/aBitofAlchemy/Frienso/FriensoAlpha/FriensoAlpha/NewCoreCircleTVC.m"
+                  timestampString = "420046407.528847"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "26"
+                  endingLineNumber = "26"
+                  offsetFromSymbolStart = "24">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[NewCoreCircleTVC setTableView:]"
+                  moduleName = "FriensoAlpha"
+                  urlString = "file:///Users/sal/aBitofAlchemy/Frienso/FriensoAlpha/FriensoAlpha/NewCoreCircleTVC.m"
+                  timestampString = "420046407.529207"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "26"
+                  endingLineNumber = "26"
+                  offsetFromSymbolStart = "31">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "FriensoAlpha/OptionsClasses/FriensoResourcesTVC.m"
+            timestampString = "419953353.183195"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "167"
+            endingLineNumber = "167"
+            landmarkName = "@implementation FriensoResourcesTVC"
+            landmarkType = "3">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "FriensoAlpha/MappingFriends/FRCoreDataParse.m"
+            timestampString = "419959550.271602"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "11"
+            endingLineNumber = "11">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

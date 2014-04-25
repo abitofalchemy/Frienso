@@ -36,7 +36,6 @@
     // Draw them with a 2.0 stroke width so they are a bit more visible.
     CGContextSetLineWidth(context, 1.5);
     
-
     
     CGContextMoveToPoint(context, 4,9); //start at this point
     CGContextAddLineToPoint(context, 23, 9); //draw to this point

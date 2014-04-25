@@ -6,6 +6,7 @@
 //  Copyright (c) 2013 Salvador Aguinaga. All rights reserved.
 /*  
  *  https://github.com/ParsePlatform/TodoTable/tree/master/ParseStarterProject
+ *  https://www.parse.com/questions/core-data-with-nsincrementalstore-or-plain-sync
  *
  *  */
 
@@ -17,18 +18,6 @@
 
 @implementation FriensoResourcesTVC
 
-/**- (id)initWithStyle:(UITableViewStyle)style
-{
-    self = [super initWithStyle:style];
-    if (self) {
-        // This table displays items in the Todo class
-        self.parseClassName = @"User";
-        self.pullToRefreshEnabled = YES;
-        self.paginationEnabled = NO;
-        //self.objectsPerPage = 25;
-    }
-    return self;
-}**/
 - (id)initWithCoder:(NSCoder *)aCoder {
     self = [super initWithCoder:aCoder];
     if (self) {
@@ -191,7 +180,7 @@
     // against the network.
     if ([self.objects count] == 0) {
         query.cachePolicy = kPFCachePolicyCacheThenNetwork;
-    }
+    } NSLog(@"%d", [self.objects count]);
     
     [query orderByDescending:@"createdAt"];
     
@@ -203,23 +192,22 @@
                         object:(PFObject    *)object {
     static NSString *CellIdentifier = @"resourceCell";
     
+    
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle
                                       reuseIdentifier:CellIdentifier];
     }
     
-    // Configure the cell
-    // to show todo item with a priority at the bottom
+    // Configure the cell // to show todo item with a priority at the bottom
     NSString *fullDetails = [NSString stringWithFormat:@"%@%@%@",[object objectForKey:@"detail"],
                              ([object objectForKey:@"phonenumber"]) ? [NSString stringWithFormat:@"|%@",[object objectForKey:@"phonenumber"]] : @"|",
                              ([object objectForKey:@"ResourceLink"]) ? [NSString stringWithFormat:@"|%@",[object objectForKey:@"ResourceLink"]]: @"|"];
     
     cell.textLabel.text         = [object objectForKey:@"resource"];
     self.resourcePhoneNumber    = [object objectForKey:@"phonenumber"];
-    cell.detailTextLabel.text   = fullDetails;//[NSString stringWithFormat:@"%@", [object objectForKey:@"detail"]];
+    cell.detailTextLabel.text   = fullDetails;
     
-    //cell.detailTextLabel.numberOfLines = 2;
     return cell;
 }
 
@@ -245,12 +233,11 @@
     NSArray *strings = [cellText componentsSeparatedByString:@"|"];
     
     if (![[strings objectAtIndex:1] isEqualToString:@""]) {
-        NSLog(@"1");
+        
         NSString *phoneNumber = [@"tel://" stringByAppendingString:strings[1]];
         [[UIApplication sharedApplication] openURL:[NSURL URLWithString:phoneNumber]];
     
     } else if(![[strings objectAtIndex:2] isEqualToString:@""]) {
-        NSLog(@"2");
         [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[strings objectAtIndex:2]]];
     } else {
         NSLog(@"nothing");

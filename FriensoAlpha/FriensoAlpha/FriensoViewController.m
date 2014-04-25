@@ -9,12 +9,16 @@
 #import "FriensoViewController.h"
 #import "FriensoOptionsButton.h"
 #import "FriensoCircleButton.h"
+#import "FriensoPersonalEvent.h"
 #import <QuartzCore/QuartzCore.h>
 #import "FriensoAppDelegate.h"
 #import "FriensoEvent.h"
 #import "CoreFriends.h"
+#import "FRCoreDataParse.h"
 
+#define ARC4RANDOM_MAX      0x100000000
 static NSString *eventCell = @"eventCell";
+
 
 
 @interface FriensoViewController ()
@@ -27,11 +31,17 @@ static NSString *eventCell = @"eventCell";
 
 -(void)viewMenuOptions:(UIButton *)theButton;
 -(void)viewCoreCircle :(UIButton *)theButton;
+-(void)makeFriensoEvent :(UIButton *)theButton;
 
 @end
 
 @implementation FriensoViewController
 @synthesize coreFriendsArray = _coreFriendsArray;
+
+-(void)makeFriensoEvent:(UIButton *)theButton {
+    [self animateThisButton:theButton];
+    [self performSegueWithIdentifier:@"createEvent" sender:self];
+}
 
 -(void)viewMenuOptions:(UIButton *)theButton {
     [self animateThisButton:theButton];
@@ -60,7 +70,6 @@ static NSString *eventCell = @"eventCell";
     self.tableView.dataSource = self;
     self.tableView.delegate   = self;
     [self.view addSubview:self.tableView];
-    //[self.tableView setCenter:self.view.center];
     
     /* Create the fetch request first */
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc]
@@ -86,7 +95,7 @@ static NSString *eventCell = @"eventCell";
     self.frc.delegate = self;
     NSError *fetchingError = nil;
     if ([self.frc performFetch:&fetchingError]){
-        NSLog(@"Successfully fetched.");
+        // local events fetched ok ->NSLog(@"Successfully fetched.");
     } else {
         NSLog(@"Failed to fetch.");
     }
@@ -162,14 +171,30 @@ static NSString *eventCell = @"eventCell";
     button.layer.borderWidth = 1.2f;
     button.layer.borderColor = [UIColor lightGrayColor].CGColor;
     //button.backgroundColor = UIColorFromRGB(0x4962D6);
-    [button setBackgroundImage:[UIImage imageNamed:@"map-wireframe.png"] forState:UIControlStateNormal];
-    [button setBackgroundImage:[UIImage imageNamed:@"map-parisbirdseye.jpg"] forState:UIControlStateSelected];
+    /*NSMutableArray *imageArray = [NSMutableArray new];
+    
+    for (int i = 0; i < 2; i ++) {
+        [imageArray addObject:[UIImage imageNamed:[NSString stringWithFormat:@"map-btn-%d.png",i]]];
+    }
+    
+    [button setImage:[UIImage imageNamed:@"map-btn-0.png"] forState:UIControlStateNormal];
+    [button.imageView setAnimationImages:[imageArray copy]];
+    [button.imageView setAnimationDuration:0.5];
+    [button.imageView startAnimating];*/
+    double rndNbr = ((double)arc4random() / ARC4RANDOM_MAX);
+    NSLog(@"%f", rndNbr);
+    
+    [button setBackgroundImage:[UIImage imageNamed: (rndNbr<.5) ? @"map-btn-0.png" : @"map-btn-1.png"] forState:UIControlStateNormal];
     [button setCenter:CGPointMake([UIScreen mainScreen].bounds.size.width/2,
                                   self.tableView.frame.size.height + 6.0 + /* offset */
                                   button.frame.size.height/2.0 )];
     [self.view addSubview:button];
+    
+    
 }
+
 -(void) setupNavigationBarImage{
+    
     [[UINavigationBar appearance] setTitleTextAttributes:
      [NSDictionary dictionaryWithObjectsAndKeys:
       [UIColor blackColor], NSForegroundColorAttributeName,
@@ -185,7 +210,7 @@ static NSString *eventCell = @"eventCell";
      forControlEvents:UIControlEventTouchUpInside];
     UIBarButtonItem *barButton=[[UIBarButtonItem alloc] init];
     [barButton setCustomView:button];
-    self.navigationItem.rightBarButtonItem=barButton;
+    //self.navigationItem.rightBarButtonItem=barButton;
     
     // Left CoreCircle button
     FriensoCircleButton *coreCircleBtn = [[FriensoCircleButton alloc]
@@ -199,7 +224,17 @@ static NSString *eventCell = @"eventCell";
     [barLeftButton setCustomView:coreCircleBtn];
     self.navigationItem.leftBarButtonItem=barLeftButton;
     
-    
+    // Right to left Create Event button
+    FriensoPersonalEvent *createEventBtn = [[FriensoPersonalEvent alloc]
+                                          initWithFrame:CGRectMake(0, 0, 27, 27)];
+    createEventBtn.layer.cornerRadius = 4.0;
+    createEventBtn.layer.borderWidth  =  1.0;
+    createEventBtn.layer.borderColor  = [UIColor blackColor].CGColor;//[UIColor colorWithRed:540./255.0 green:545.0/255.0 blue:255.0/255.0 alpha:0.25].CGColor;
+    [createEventBtn addTarget:self action:@selector(makeFriensoEvent:)
+            forControlEvents:UIControlEventTouchUpInside];
+    UIBarButtonItem *barRightOfLeftButton = [[UIBarButtonItem alloc] init];
+    [barRightOfLeftButton setCustomView:createEventBtn];
+    self.navigationItem.rightBarButtonItems=[NSArray arrayWithObjects:barButton,barRightOfLeftButton, nil];
 }
 #pragma mark - Sync from Parse Methods
 - (void) syncFromParse {
@@ -274,12 +309,11 @@ static NSString *eventCell = @"eventCell";
                 cFriends.coreLastName  = @"";
                 cFriends.corePhone     = [valueArray objectAtIndex:i];
                 cFriends.coreModified  = [NSDate date];
-                
-                NSLog(@"%@",[coreCircle objectAtIndex:i] );
+                //NSLog(@"%@",[coreCircle objectAtIndex:i] );
                 NSError *savingError = nil;
                 
                 if ([[self managedObjectContext] save:&savingError]){
-                    NSLog(@"Successfully saved contact to CoreCircle.");
+                    NSLog(@"Successfully saved contacts to CoreCircle.");
                 } else {
                     NSLog(@"Failed to save the managed object context.");
                 }
@@ -293,7 +327,8 @@ static NSString *eventCell = @"eventCell";
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    printf("[ Dashboard: FriensoViewController]\n");
+    
+    printf("[ Dashboard: FriensoVC ]\n");
     self.navigationController.navigationBarHidden = NO;
 	
     if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"CoreFriendsContactInfoDicKey"] count] == 0) {
@@ -303,7 +338,7 @@ static NSString *eventCell = @"eventCell";
     
     
     [self setupNavigationBarImage];
-    
+    [self syncCoreFriendsLocation]; //  from parse to coredata
     [self setupEventsTableView];
     [self setupMapButton];
 }
@@ -345,5 +380,18 @@ static NSString *eventCell = @"eventCell";
         NSLog(@"Failed to create a new event.");
     }
 }
-
+-(void) syncCoreFriendsLocation {
+    NSLog(@"[ Sync friends' location to CoreData ]");
+    
+    FRCoreDataParse *frCDPObject = [[FRCoreDataParse alloc] init];
+    [frCDPObject updateThisUserLocation];
+    [frCDPObject updateCoreFriendsLocation];
+    [frCDPObject showCoreFriendsEntityData];
+     
+    
+}
+/*
+ *  http://borkware.com/quickies/one?topic=Graphics
+ *
+ **/
 @end

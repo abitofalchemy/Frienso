@@ -19,18 +19,31 @@ ver 1.2 build 1.0   Added location information @ user signup or login
                     Added Mapping of your core Friends
                     Added icon (working, not final)
 
-ver 1.2 build 2.0   Updates to the friends list (coreData) 
+ver 1.3 build 1.0   Updates to the friends list (coreData), we cache coreFriends location locally
+                    When app is launched, the user's current location and his/her friends' are cached
+                    Also when the user clicks on the quick-view of his/her circle, the user's current loc is updated
+                    When the Map view is loaded, 1) the user's current location is update and the friends' locations are cached
 
 
 
 ToDo
 ----
+* Add event creation
+    Create a full event
+    Go for a run, etc.
+    {working} - added a button to top left of right bar button, need to connect it to an event generation
+    VC 
+    
 * {bug} When user sings in, if there are networking issues, the auto-sync which fetches the users stored coreFriends group is delayed (maybe even fails).  To fix this we could force a sync, else we could 
     retry until it succeeds, but then the user will have to wait.
     If a forced sync is done, we need cancel the auto attemps to sync
 * Cache the coreF group current locations and show those until we can update them from cloud
+    Try to make this work at searchviewcontroller or at FriensoQuickCircle
+    ...
+* Cache Resources and update if new from Parse!
 
 * Fully logout
+
 * Handle Parse time-outs
     Trap parse calls to the network - network outage
 * Input validation for user profile editing
@@ -38,6 +51,9 @@ ToDo
 
 Tasks Done / Project Log:
 -------------------------
+* When app is launched, the user's current location and his/her friends' are cached
+  Also when the user clicks on the quick-view of his/her circle, the user's current loc is updated
+  When the Map view is loaded, 1) the user's current location is update and the friends' locations are cached
 * What to save to Parse when user changes profile? ***
 * {done: Add Location info} and Map
   Make sure location is created if new or updated if existing

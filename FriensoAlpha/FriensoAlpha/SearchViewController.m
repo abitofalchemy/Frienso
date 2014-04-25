@@ -11,6 +11,9 @@
 #import "CircleOverlay.h"
 #import "GeoPointAnnotation.h"
 #import "GeoQueryAnnotation.h"
+#import "CoreFriends.h"
+#import "FriensoAppDelegate.h"
+
 
 enum PinAnnotationTypeTag {
     PinAnnotationTypeTagGeoPoint = 0,
@@ -31,7 +34,11 @@ enum PinAnnotationTypeTag {
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-
+    
+    [[UINavigationBar appearance] setTitleTextAttributes:
+     [NSDictionary dictionaryWithObjectsAndKeys:[UIColor blackColor], NSForegroundColorAttributeName,
+      [UIFont fontWithName:@"AppleSDGothicNeo-Light" size:18.0], NSFontAttributeName,nil]];
+    self.title = @"LOCATE FRIENDS";
     [self.locationManager startUpdatingLocation];
     [self setInitialLocation:self.locationManager.location];
 
@@ -40,6 +47,12 @@ enum PinAnnotationTypeTag {
 }
 
 -(void) fetchCurrentLocationForUser:(NSString *) coreFriendObjectId {
+    /** fetchCurrentLocationForUser
+        coreFriendObjectId: objectId in Parse User class
+     
+        the connection has to be done via the phone nbr.
+     
+     **/
     //NSLog(@"fetchCurrentLocationForUser: %@", coreFriendObjectId);
     
     PFQuery *query = [PFUser query];
@@ -48,7 +61,8 @@ enum PinAnnotationTypeTag {
     {
         if (!error) {
             NSLog(@"%@, %@", (NSString *)[object valueForKey:@"email"], (PFGeoPoint *)[object valueForKey:@"currentLocation"]);
-            
+            [self updateCoreFriendEntity:(NSString *)[object valueForKey:@"email"]
+                            withLocation:(PFGeoPoint *)[object valueForKey:@"currentLocation"]];
             GeoPointAnnotation *geoPointAnnotation = [[GeoPointAnnotation alloc] initWithObject:object];
             [self.mapView addAnnotation:geoPointAnnotation];
 
@@ -88,6 +102,42 @@ enum PinAnnotationTypeTag {
 //        }
 //    }];
     
+}
+#pragma mark - Update CoreData with currentLocation
+- (NSManagedObjectContext *) managedObjectContext{
+    
+    FriensoAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+    return appDelegate.managedObjectContext;
+    
+}
+
+-(void) updateCoreFriendEntity:(NSString *)friendEmail
+                  withLocation:(PFGeoPoint *)friendCurrentLoc
+{
+    // NOT WORKING!!
+    
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
+    
+    NSEntityDescription *entity  = [NSEntityDescription entityForName:@"CoreFriends"
+                                               inManagedObjectContext:[self managedObjectContext]];
+    
+    [fetchRequest setEntity:entity];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"coreEmail like %@",@"nd.edu"];
+    [fetchRequest setPredicate:predicate];
+    
+    NSError *error;
+    NSArray *fetchedObjects = [[self managedObjectContext] executeFetchRequest:fetchRequest
+                                                                         error:&error];
+    if (fetchedObjects == nil) {
+        // Handle the error.
+        NSLog(@"Handle the error: %@", error);
+    } else {
+        for (NSManagedObject *object in fetchedObjects) {
+            
+            NSLog(@"%@", object);
+            
+        }
+    }
 }
 
 #pragma mark - MasterViewController
@@ -210,7 +260,12 @@ enum PinAnnotationTypeTag {
     [PFGeoPoint geoPointForCurrentLocationInBackground:^(PFGeoPoint *geoPoint, NSError *error) {
         if (!error) {
             NSLog(@"User is currently at %f, %f", geoPoint.latitude, geoPoint.longitude);
+            NSNumber *lat = [NSNumber numberWithDouble:geoPoint.latitude];
+            NSNumber *lon = [NSNumber numberWithDouble:geoPoint.longitude];
+            NSDictionary *userLocation=@{@"lat":lat,@"long":lon};
             
+            [[NSUserDefaults standardUserDefaults] setObject:userLocation forKey:@"userLocation"];
+            [[NSUserDefaults standardUserDefaults] synchronize];
             [[PFUser currentUser] setObject:geoPoint forKey:@"currentLocation"];
             [[PFUser currentUser] saveInBackground];
         }

@@ -851,7 +851,7 @@
                                         if (user) {
                                             NSLog(@"[ Parse successful login ]"); // Do stuff after successful login.
                                             [self insertCurrentLocation:user];
-                                            
+                                            NSLog(@"[ Stored this user's current loc ]");
                                             [PFGeoPoint geoPointForCurrentLocationInBackground:^(PFGeoPoint *geoPoint, NSError *error) {
                                                 if (!error) {
                                                     NSLog(@"User is currently at %f, %f", geoPoint.latitude, geoPoint.longitude);
@@ -1135,9 +1135,6 @@
         self.myLocationManager.desiredAccuracy = kCLLocationAccuracyBest; // 100 m
         self.myLocationManager.delegate = self;
         [self.myLocationManager startUpdatingLocation];
-        
-        
-        
     } else
         NSLog(@"Location services are not enabled");
         

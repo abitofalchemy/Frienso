@@ -9,6 +9,8 @@
 #import "FriensoQuickCircleVC.h"
 #import "FriensoAppDelegate.h"
 #import "CoreFriends.h"
+#import "FRCoreDataParse.h"
+#import <Parse/Parse.h>
 
 static NSString *coreFriendsCell = @"coreFriendsCell";
 
@@ -39,6 +41,11 @@ static NSString *coreFriendsCell = @"coreFriendsCell";
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    // Update this user's current location
+    FRCoreDataParse *frCDPObject = [[FRCoreDataParse alloc] init];
+    [frCDPObject updateThisUserLocation];
+    
 	//  Add new table view
     self.tableView = [[UITableView alloc] init];
     [self.tableView setFrame:CGRectMake(0, 0, self.view.bounds.size.width,
@@ -68,7 +75,7 @@ static NSString *coreFriendsCell = @"coreFriendsCell";
                                           sectionNameKeyPath:nil
                                                    cacheName:nil];
     
-    self.frc.delegate = self;
+    self.frc.delegate      = self;
     NSError *fetchingError = nil;
     if ([self.frc performFetch:&fetchingError]){
         NSLog(@"Successfully fetched coreCircle.");
@@ -112,13 +119,15 @@ static NSString *coreFriendsCell = @"coreFriendsCell";
     
     cell.textLabel.text = friend.coreFirstName;// stringByAppendingFormat:@" %@", person.lastName];
     cell.textLabel.font = [UIFont fontWithName:@"AppleSDGothicNeo-Medium" size:14.0];
-    cell.detailTextLabel.text = [NSString stringWithFormat:@"%@",friend.coreEmail ? friend.coreEmail : @"email"];
+    cell.detailTextLabel.text = [NSString stringWithFormat:@"%@",(friend.coreLocation == NULL) ? @"..." : friend.coreLocation];
     cell.backgroundColor = [UIColor clearColor];
     cell.textLabel.textColor = [UIColor blackColor];
     cell.detailTextLabel.textColor  = [UIColor blueColor];
     cell.imageView.image = [UIImage imageNamed:@"Profile-256.png"];
-    NSLog(@"%@", friend.corePhone);
-    
+    /***** NSLog(@"%@ --", friend.corePhone);
+     update coredata coreFriends entity with friend's location
+     [self updateCoreFriendsCurrentLocation:friend.corePhone];
+     *****/
     
     return cell;
 }
@@ -134,4 +143,76 @@ static NSString *coreFriendsCell = @"coreFriendsCell";
     [alertView show];
 }
 
+//- (void) updateCoreFriendsCurrentLocation:(NSString *)corePhone {
+//    PFQuery *query = [PFQuery queryWithClassName:@"UserConnection"];
+//    NSRange substrRange = NSMakeRange(corePhone.length-10, 10);
+//    [query whereKey:@"userNumber" containsString:[corePhone substringWithRange:substrRange]];
+//    [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error)
+//     {
+//         if (!error) { // The find succeeded.
+//             for (PFObject *object in objects) { // Do something w/ found objects
+//                 //NSLog(@"%@", object);
+//                 //NSLog(@"%@", [[object valueForKey:@"user"] objectId]);
+//                 [self fetchCurrentLocationForUser:[[object valueForKey:@"user"] objectId] includePhone:corePhone];
+//             }
+//         } else {
+//             // Log details of the failure
+//             NSLog(@"Error: %@ %@", error, [error userInfo]);
+//         }
+//     }];
+//}
+//
+//-(void) fetchCurrentLocationForUser:(NSString *) coreFriendObjectId includePhone:(NSString *)fPhoneStr
+//{
+//    PFQuery *query = [PFUser query];
+//    [query getObjectInBackgroundWithId:coreFriendObjectId
+//                                 block:^(PFObject *object, NSError *error)
+//    {
+//         if (!error) {
+//             NSLog(@"%@", (NSString *)[object valueForKey:@"email"]);
+//             /*  NSLog(@"%@, %@", (NSString *)[object valueForKey:@"email"], (PFGeoPoint *)[object valueForKey:@"currentLocation"]); */
+//             PFGeoPoint *friendLocation = (PFGeoPoint *)[object valueForKey:@"currentLocation"];
+//             NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
+//             
+//             NSEntityDescription *entity = [NSEntityDescription entityForName:@"CoreFriends"
+//                                                       inManagedObjectContext:[self managedObjectContext]];
+//             
+//             [fetchRequest setEntity:entity];
+//             NSPredicate *predicate = [NSPredicate predicateWithFormat:@"corePhone like %@",fPhoneStr];
+//             [fetchRequest setPredicate:predicate];
+//             
+//             NSError *error;
+//             NSArray *fetchedObjects = [[self managedObjectContext] executeFetchRequest:fetchRequest error:&error];
+//             if (fetchedObjects == nil) {
+//                 // Handle the error.
+//             } else
+//                 //NSLog(@"from coredata: %@",fetchedObjects);
+//                 for (NSManagedObject *mObject in fetchedObjects) {
+//                     // Ref [0]
+//                     CLLocation *locA = [[CLLocation alloc] initWithLatitude:friendLocation.latitude longitude:friendLocation.longitude];
+//                     NSDictionary *userLocDic = [[NSUserDefaults standardUserDefaults] objectForKey:@"userLocation"];
+//                     CLLocation *locB = [[CLLocation alloc]
+//                                         initWithLatitude:(CLLocationDegrees)[[userLocDic objectForKey:@"lat"] doubleValue]
+//                                         longitude:(CLLocationDegrees)[[userLocDic objectForKey:@"long"] doubleValue]];
+//                     
+//                     CLLocationDistance distance = [locA distanceFromLocation:locB];
+//                     
+//                     [mObject setValue:[NSString stringWithFormat:@"%.2f meters away from you", distance] forKey:@"coreLocation"];
+//                     
+//                     NSError *savingError = nil;
+//                     
+//                     if ([[self managedObjectContext] save:&savingError]){
+//                         NSLog(@"Successfully saved loc info for %@",(NSString *)[object valueForKey:@"email"]);
+//                     } else {
+//                         NSLog(@"Failed to save the managed object context.");
+//                     }
+//                 }
+//             
+//         } else
+//             NSLog(@"Error: %@ %@", error, [error userInfo]); // Log details of the failure
+//     }];
+//}
 @end
+/** References:
+    http://stackoverflow.com/questions/7175412/calculate-distance-between-two-place-using-latitude-longitude-in-gmap-for-iphone
+ **/

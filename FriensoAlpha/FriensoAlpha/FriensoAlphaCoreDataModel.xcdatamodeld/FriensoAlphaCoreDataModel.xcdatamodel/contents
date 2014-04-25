@@ -17,8 +17,18 @@
         <attribute name="eventSubtitle" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="eventTitle" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
+    <entity name="FriensoResources" representedClassName="FriensoResources" syncable="YES">
+        <attribute name="resContactPhone" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="resCreated" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="resDetail" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="resInstitution" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="resTitle" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="resUpdated" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="resUrlLink" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
     <elements>
         <element name="CoreFriends" positionX="0" positionY="0" width="128" height="150"/>
         <element name="FriensoEvent" positionX="0" positionY="0" width="128" height="135"/>
+        <element name="FriensoResources" positionX="0" positionY="54" width="128" height="150"/>
     </elements>
 </model>
