@@ -9,12 +9,18 @@
 #import <UIKit/UIKit.h>
 #import <EventKit/EventKit.h>
 #import <EventKitUI/EventKitUI.h>
+/*
+ #import <CoreData/NSFetchedResultsController.h>
+*/
 
-@interface AlarmTimerTriggersTVC : UITableViewController
+@interface AlarmTimerTriggersTVC : UITableViewController /*<NSFetchedResultsControllerDelegate>*/
 {
     __strong NSTimer *eventEndDateTimer;
     __strong EKEvent *eventHolderObj;
     UIAlertView *       _alertView;
 }
+
 -(void) uploadNewEventToCloud:(EKEvent *)event;
+-(void) actionAddFriensoEven:(NSString *)message andSubtitle:(NSString *)subTitle;
+
 @end

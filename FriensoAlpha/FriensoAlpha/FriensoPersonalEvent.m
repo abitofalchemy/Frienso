@@ -54,10 +54,19 @@
     NSAttributedString* attrStr = [[NSAttributedString alloc] initWithString:dateString attributes:stringAttrs];
     
     [attrStr drawAtPoint:CGPointMake(4.f, 7.0f)];
-    
+    //[self drawInContext:context];
+    [self createImage];
+
     
 }
-
+-(void)createImage {
+    NSString* outFile = [NSHomeDirectory() stringByAppendingPathComponent:@"Documents/image.png"];
+    NSLog(@"creating image file at %@", outFile);
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    NSData *imageData = UIImagePNGRepresentation(image);
+    [imageData writeToFile:outFile
+                atomically:NO];
+}
 
 
 @end

@@ -21,6 +21,9 @@
 //#endif
 
 #import "AlarmTimerTriggersTVC.h"
+#import "FriensoEvent.h"
+#import "FriensoAppDelegate.h"
+
 
 @interface AlarmTimerTriggersTVC () <EKEventEditViewDelegate, UIAlertViewDelegate>
 // private properties
@@ -42,7 +45,35 @@
 @end
 
 @implementation AlarmTimerTriggersTVC
-
+#pragma mark - CoreData helper methods
+-(void) actionAddFriensoEven:(NSString *)message andSubtitle:(NSString *)subTitle {
+    
+    NSLog(@"[ Adding a FriensoEvent ]");
+    FriensoAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+    
+    NSManagedObjectContext *managedObjectContext =
+    appDelegate.managedObjectContext;
+    
+    FriensoEvent *firstFriensoEvent = [NSEntityDescription insertNewObjectForEntityForName:@"FriensoEvent"
+                                                                    inManagedObjectContext:managedObjectContext];
+    
+    if (firstFriensoEvent != nil){
+        NSString *loginFriensoEvent = @"";
+        firstFriensoEvent.eventTitle     = [loginFriensoEvent stringByAppendingString:message];
+        firstFriensoEvent.eventSubtitle  = subTitle;
+        firstFriensoEvent.eventLocation  = @"Right here";
+        firstFriensoEvent.eventContact   = @"me";
+        firstFriensoEvent.eventCreated   = [NSDate date];
+        firstFriensoEvent.eventModified  = [NSDate date];
+        
+        NSError *savingError = nil;
+        if([managedObjectContext save:&savingError]) {
+            NSLog(@"Successfully saved the context");
+        } else { NSLog(@"Failed to save the context. Error = %@", savingError); }
+    } else {
+        NSLog(@"Failed to create a new event.");
+    }
+}
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -326,10 +357,9 @@
 {
     AlarmTimerTriggersTVC * __weak weakSelf = self;
     
-    
 	// Dismiss the modal view controller
     [self dismissViewControllerAnimated:YES completion:^
-     {
+    {
          if (action != EKEventEditViewActionCanceled)
          {
              dispatch_async(dispatch_get_main_queue(), ^{
@@ -337,7 +367,6 @@
                  weakSelf.eventsList = [self fetchEvents];
                  // Update the UI with the above events
                  [weakSelf.tableView reloadData];
-                 
                  
                  EKAlarm *alarm = [EKAlarm alarmWithAbsoluteDate:controller.event.endDate];
                  controller.event.alarms = [NSArray arrayWithObject:alarm];
@@ -359,6 +388,7 @@
                  */
                  // Upload event to Cloud
                  [self uploadNewEventToCloud:controller.event];
+                 [self actionAddFriensoEven:controller.event.title andSubtitle:controller.event.location];
                  
                  /** Not sure how to handle this yet .........
                  // Schedule Notification at endDate
@@ -542,6 +572,9 @@
 //        NSLog(@"Do nothing ...");
 //    }
 }
+
+
+
 //MFMessageComposeViewController *picker = [[MFMessageComposeViewController alloc] init];
 //picker.messageComposeDelegate = delegate;
 //

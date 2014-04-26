@@ -133,6 +133,8 @@ static NSString *eventCell = @"eventCell";
     cell.backgroundColor = [UIColor clearColor];
     cell.textLabel.textColor = [UIColor blackColor];
     cell.detailTextLabel.textColor  = [UIColor lightGrayColor];
+    
+    cell.imageView.image = [UIImage imageNamed:@"frienso-ic-2x29.png"];
 
     return cell;
 }
