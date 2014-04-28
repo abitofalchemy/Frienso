@@ -13,6 +13,7 @@
 
 @dynamic eventTitle;
 @dynamic eventSubtitle;
+@dynamic eventCategory;
 @dynamic eventLocation;
 @dynamic eventCreated;
 @dynamic eventModified;

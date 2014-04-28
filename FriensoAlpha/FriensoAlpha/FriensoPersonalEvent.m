@@ -51,14 +51,16 @@
     UIFont*       font = [UIFont fontWithName:@"AppleSDGothicNeo-Light" size:16];
     UIColor* textColor = [UIColor redColor];
     NSDictionary* stringAttrs = @{ NSFontAttributeName: font, NSForegroundColorAttributeName: textColor };
-    NSAttributedString* attrStr = [[NSAttributedString alloc] initWithString:dateString attributes:stringAttrs];
+    NSAttributedString* attrStr = [[NSAttributedString alloc] initWithString:dateString
+                                                                  attributes:stringAttrs];
     
     [attrStr drawAtPoint:CGPointMake(4.f, 7.0f)];
     //[self drawInContext:context];
-    [self createImage];
+    //[self createImage];
 
     
 }
+/***
 -(void)createImage {
     NSString* outFile = [NSHomeDirectory() stringByAppendingPathComponent:@"Documents/image.png"];
     NSLog(@"creating image file at %@", outFile);
@@ -67,6 +69,6 @@
     [imageData writeToFile:outFile
                 atomically:NO];
 }
-
+***/
 
 @end

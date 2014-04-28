@@ -22,5 +22,5 @@
 
 -(void) uploadNewEventToCloud:(EKEvent *)event;
 -(void) actionAddFriensoEven:(NSString *)message andSubtitle:(NSString *)subTitle;
-
+-(void) actionAddFriensoEven:(EKEvent *)calEvent;
 @end

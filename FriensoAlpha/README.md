@@ -23,16 +23,18 @@ ver 1.3 build 1.0   Updates to the friends list (coreData), we cache coreFriends
                     When app is launched, the user's current location and his/her friends' are cached
                     Also when the user clicks on the quick-view of his/her circle, the user's current loc is updated
                     When the Map view is loaded, 1) the user's current location is update and the friends' locations are cached
+                    Added *basic* event creation with local alarms
 
-
+ver 1.4 build 1.0   New layout
 
 ToDo
 ----
 * Add event creation
-    Create a full event
+  Create a full event
     Go for a run, etc.
     {working} - added a button to top left of right bar button, need to connect it to an event generation
-    VC 
+    VC
+    {working} - basic notifications alert-views
     
 * {bug} When user sings in, if there are networking issues, the auto-sync which fetches the users stored coreFriends group is delayed (maybe even fails).  To fix this we could force a sync, else we could 
     retry until it succeeds, but then the user will have to wait.

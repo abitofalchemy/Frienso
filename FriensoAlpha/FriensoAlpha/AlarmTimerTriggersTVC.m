@@ -27,7 +27,8 @@
 
 @interface AlarmTimerTriggersTVC () <EKEventEditViewDelegate, UIAlertViewDelegate>
 // private properties
-@property (nonatomic, retain, readwrite) UIAlertView *      alertView;
+//@property (nonatomic, retain, readwrite) UIAlertView *      alertView;
+@property (nonatomic, strong) UIAlertView *      alertView;
 
 @property (nonatomic, strong) EKEventStore *eventStore;
 
@@ -46,6 +47,37 @@
 
 @implementation AlarmTimerTriggersTVC
 #pragma mark - CoreData helper methods
+-(void) actionAddFriensoEven:(EKEvent *)calEvent
+{
+    NSLog(@"[ Adding a FriensoEvent ]");
+    FriensoAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+    
+    NSManagedObjectContext *managedObjectContext =
+    appDelegate.managedObjectContext;
+    
+    FriensoEvent *firstFriensoEvent = [NSEntityDescription insertNewObjectForEntityForName:@"FriensoEvent"
+                                                                    inManagedObjectContext:managedObjectContext];
+    
+    if (firstFriensoEvent != nil){
+        NSString *loginFriensoEvent = @"";
+        firstFriensoEvent.eventTitle     = [loginFriensoEvent stringByAppendingString:calEvent.title];
+        firstFriensoEvent.eventSubtitle  = [NSString stringWithFormat:@"%@ \u00B7 %@", calEvent.location, calEvent.startDate];
+        NSLog(@"%@", [NSString stringWithFormat:@"%@ \u00B7 %@", calEvent.location, calEvent.startDate]);
+        firstFriensoEvent.eventCategory  = @"calendar";
+        firstFriensoEvent.eventLocation  = @"Right here";
+        firstFriensoEvent.eventContact   = @"me";
+        firstFriensoEvent.eventCreated   = [NSDate date];
+        firstFriensoEvent.eventModified  = [NSDate date];
+        
+        NSError *savingError = nil;
+        if([managedObjectContext save:&savingError]) {
+            NSLog(@"Successfully saved the context");
+        } else { NSLog(@"Failed to save the context. Error = %@", savingError); }
+    } else {
+        NSLog(@"Failed to create a new event.");
+    }
+}
+
 -(void) actionAddFriensoEven:(NSString *)message andSubtitle:(NSString *)subTitle {
     
     NSLog(@"[ Adding a FriensoEvent ]");
@@ -61,6 +93,7 @@
         NSString *loginFriensoEvent = @"";
         firstFriensoEvent.eventTitle     = [loginFriensoEvent stringByAppendingString:message];
         firstFriensoEvent.eventSubtitle  = subTitle;
+        firstFriensoEvent.eventCategory  = @"calendar";
         firstFriensoEvent.eventLocation  = @"Right here";
         firstFriensoEvent.eventContact   = @"me";
         firstFriensoEvent.eventCreated   = [NSDate date];
@@ -104,6 +137,14 @@
 
     // Check whether we are authorized to access Calendar
     [self checkEventStoreAccessForCalendar];
+}
+
+-(void)dealloc {
+    //[super dealloc];
+    NSLog(@"Problems ahead.");
+    [self.alertView setDelegate:nil]; // this prevents the crash in the event that the alertview is still showing.
+    self.alertView = nil; // release it
+    
 }
 
 // This method is called when the user selects an event in the table view.
@@ -159,8 +200,23 @@
     
     // ToDo:
     EKEvent *thisEvent = [self.eventsList objectAtIndex:indexPath.row];
-    NSArray *eventMinDetails  = [[NSArray alloc] initWithObjects:thisEvent.location, thisEvent.endDate, nil];
-    cell.detailTextLabel.text = [eventMinDetails componentsJoinedByString:@"|"];
+    NSMutableArray *eventMinDetails  = [[NSMutableArray alloc] initWithObjects:thisEvent.location,
+                                        thisEvent.startDate, thisEvent.endDate, nil];
+
+    
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setDateFormat:@"HH:mm"];
+    
+    NSString *startTimeString = [dateFormatter stringFromDate:eventMinDetails[1]];
+    NSString *endTimeString   = [dateFormatter stringFromDate:eventMinDetails[2]];
+    
+    //[weekday setLocale:NSLocale];
+    [eventMinDetails replaceObjectAtIndex:1 withObject:startTimeString];
+    [eventMinDetails replaceObjectAtIndex:2 withObject:  endTimeString];
+    cell.detailTextLabel.text = [NSString stringWithFormat:@"📍 %@ ⌚ %@-%@",
+                                 [eventMinDetails objectAtIndex:0],
+                                 [eventMinDetails objectAtIndex:1],
+                                 [eventMinDetails objectAtIndex:2]]; //[eventMinDetails componentsJoinedByString:@"\u2194"];
     
     return cell;
 }
@@ -507,36 +563,53 @@
 }
 
 -(void) sendSMStoCoreFriends {
+    [self showAlert];
+}
+
+-(void) showAlert {
+    if (self.alertView) {
+        // if for some reason the code can trigger more alertviews before
+        // the user has dismissed prior alerts, make sure we only let one of
+        // them actually keep us as a delegate just to keep things simple
+        // and manageable. if you really need to be able to issue multiple
+        // alert views and be able to handle their delegate callbacks,
+        // you'll have to keep them in an array!
+        [self.alertView setDelegate:nil];
+        self.alertView = nil;
+    }
+    
+    
+//    assert(self.alertView == nil);
 //    AlarmTimerTriggersTVC * __weak weakSelf = self;
-//    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Frienso"
-//                                                    message:@"Frienso Alarm:\n sendSMStoCoreFriends"
-//                                                   delegate:nil
-//                                          cancelButtonTitle:@"Dismiss"
-//                                          otherButtonTitles:@"Stop", nil];
-//    [alert show];
-    assert(self.alertView == nil);
     self.alertView = [[UIAlertView alloc] initWithTitle:@"Frienso"
-                                                message:@"Frienso Alarm:\n sendSMStoCoreFriends"
-                                               delegate:nil
-                                      cancelButtonTitle:nil otherButtonTitles:@"Stop!", nil];
+                                                message:@"Frienso Alarm:\n Send SMS to CoreFriends"
+                                               delegate:self
+                                      cancelButtonTitle:@"Cancel"
+                                      otherButtonTitles:@"Yes", nil];
                       
-    assert(self.alertView != nil);
-                       
-    self.alertView.cancelButtonIndex = 0;
-    self.alertView.delegate = self;
-   
+//    assert(self.alertView != nil);
     [self.alertView show];
+    
 }
 
 #pragma mark
 #pragma mark - AlertView Delegate
+- (BOOL)alertViewShouldEnableFirstOtherButton:(UIAlertView *)alertView
+{
+    return YES;
+}
+-(void)alertView:(UIAlertView *)alertView willDismissWithButtonIndex:(NSInteger)buttonIndex {
+    NSLog(@"[ will dismiss ]");
+}
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
-    NSLog(@"[ 0 ]");
+    self.alertView = nil; // release it
+    
+    NSLog(@"[ didDismiss ]");
     NSString *title = [alertView buttonTitleAtIndex:buttonIndex];
     NSLog(@"%@",title);
 
 }
-+ (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+-(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     NSLog(@"[ 1 ]");
     NSString *title = [alertView buttonTitleAtIndex:buttonIndex];

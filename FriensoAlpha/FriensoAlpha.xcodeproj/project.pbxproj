@@ -76,6 +76,8 @@
 		3E4120FE18E306630058012B /* frienso-info-2.png in Resources */ = {isa = PBXBuildFile; fileRef = 3E4120FB18E306630058012B /* frienso-info-2.png */; };
 		3E57016E190A519A0056EFD7 /* FriensoPersonalEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E57016D190A519A0056EFD7 /* FriensoPersonalEvent.m */; };
 		3E570171190A665C0056EFD7 /* AlarmTimerTriggersTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E570170190A665C0056EFD7 /* AlarmTimerTriggersTVC.m */; };
+		3E5EA0B5190D0A4A004A710C /* cal-ic-40.png in Resources */ = {isa = PBXBuildFile; fileRef = 3E5EA0B4190D0A4A004A710C /* cal-ic-40.png */; };
+		3E5EA0B7190D0CDA004A710C /* cal-ic-24.png in Resources */ = {isa = PBXBuildFile; fileRef = 3E5EA0B6190D0CDA004A710C /* cal-ic-24.png */; };
 		3E68DF5C190666FF00DF3992 /* map-btn-1.png in Resources */ = {isa = PBXBuildFile; fileRef = 3E68DF5B190666FF00DF3992 /* map-btn-1.png */; };
 		3E68DF621907C64400DF3992 /* FriensoResources.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E68DF611907C64400DF3992 /* FriensoResources.m */; };
 		3E9F892318FE8D5E00DA190C /* map-btn-0.png in Resources */ = {isa = PBXBuildFile; fileRef = 3E9F892118FE8D5E00DA190C /* map-btn-0.png */; };
@@ -195,6 +197,8 @@
 		3E57016D190A519A0056EFD7 /* FriensoPersonalEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FriensoPersonalEvent.m; path = FriensoAlpha/FriensoPersonalEvent.m; sourceTree = SOURCE_ROOT; };
 		3E57016F190A665C0056EFD7 /* AlarmTimerTriggersTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlarmTimerTriggersTVC.h; sourceTree = "<group>"; };
 		3E570170190A665C0056EFD7 /* AlarmTimerTriggersTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AlarmTimerTriggersTVC.m; sourceTree = "<group>"; };
+		3E5EA0B4190D0A4A004A710C /* cal-ic-40.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "cal-ic-40.png"; sourceTree = "<group>"; };
+		3E5EA0B6190D0CDA004A710C /* cal-ic-24.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "cal-ic-24.png"; sourceTree = "<group>"; };
 		3E68DF5B190666FF00DF3992 /* map-btn-1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "map-btn-1.png"; sourceTree = "<group>"; };
 		3E68DF601907C64400DF3992 /* FriensoResources.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FriensoResources.h; path = FriensoAlpha/FriensoResources.h; sourceTree = SOURCE_ROOT; };
 		3E68DF611907C64400DF3992 /* FriensoResources.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FriensoResources.m; path = FriensoAlpha/FriensoResources.m; sourceTree = SOURCE_ROOT; };
@@ -357,7 +361,6 @@
 				3E57016D190A519A0056EFD7 /* FriensoPersonalEvent.m */,
 				1827931C18BE06750056C849 /* Images.xcassets */,
 				1827930B18BE06750056C849 /* Supporting Files */,
-				1853403718C220680094AC5A /* FriensoAlphaCoreDataModel.xcdatamodeld */,
 			);
 			path = FriensoAlpha;
 			sourceTree = "<group>";
@@ -394,6 +397,8 @@
 		1827933918BE07A70056C849 /* Media */ = {
 			isa = PBXGroup;
 			children = (
+				3E5EA0B6190D0CDA004A710C /* cal-ic-24.png */,
+				3E5EA0B4190D0A4A004A710C /* cal-ic-40.png */,
 				3E9F893C1903E17700DA190C /* frienso-ic-2x29.png */,
 				3E9F893D1903E17700DA190C /* frienso-ic-2x40.png */,
 				3E9F893E1903E17700DA190C /* frienso-ic-2x60.png */,
@@ -424,6 +429,7 @@
 		1827934118BE08A00056C849 /* CoreData Files */ = {
 			isa = PBXGroup;
 			children = (
+				1853403718C220680094AC5A /* FriensoAlphaCoreDataModel.xcdatamodeld */,
 				180E881918BE5584009A570F /* FriensoEvent.h */,
 				180E881A18BE5584009A570F /* FriensoEvent.m */,
 				1853403A18C223340094AC5A /* CoreFriends.h */,
@@ -501,6 +507,11 @@
 				TargetAttributes = {
 					1827930018BE06740056C849 = {
 						DevelopmentTeam = WDLW7K2HT3;
+						SystemCapabilities = {
+							com.apple.iOS = {
+								enabled = 0;
+							};
+						};
 					};
 					1827932118BE06750056C849 = {
 						TestTargetID = 1827930018BE06740056C849;
@@ -541,6 +552,7 @@
 				1827930F18BE06750056C849 /* InfoPlist.strings in Resources */,
 				18DF849B18C275C7003F431F /* about-24.png in Resources */,
 				1827931818BE06750056C849 /* Main.storyboard in Resources */,
+				3E5EA0B5190D0A4A004A710C /* cal-ic-40.png in Resources */,
 				1827933C18BE07BD0056C849 /* alert-ring-bg.png in Resources */,
 				3E4120FD18E306630058012B /* frienso-info-1.png in Resources */,
 				180E882718BF2AB5009A570F /* first-view-cover-3.png in Resources */,
@@ -550,6 +562,7 @@
 				18DF849C18C275C7003F431F /* lighthouse-24.png in Resources */,
 				1808553518C3B9810047A8BE /* README.md in Resources */,
 				1879B59318C7277100AEA55F /* Profile-256.png in Resources */,
+				3E5EA0B7190D0CDA004A710C /* cal-ic-24.png in Resources */,
 				3E9F89401903E17700DA190C /* frienso-ic-2x40.png in Resources */,
 				3E9F892318FE8D5E00DA190C /* map-btn-0.png in Resources */,
 				3E9F89411903E17700DA190C /* frienso-ic-2x60.png in Resources */,
@@ -711,7 +724,7 @@
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Salvador Aguinaga (WDLW7K2HT3)";
 				COPY_PHASE_STRIP = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -743,7 +756,7 @@
 				INFOPLIST_FILE = "FriensoAlpha/FriensoAlpha-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "E16AB7C0-6AF5-44D3-A432-E2C2EDB7634B";
+				PROVISIONING_PROFILE = "98BE103D-783D-48CD-89C9-AA120C7CBB03";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -753,6 +766,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				"CODE_SIGN_ENTITLEMENTS[sdk=*]" = "";
 				CODE_SIGN_IDENTITY = "iPhone Distribution: Salvador Aguinaga (WDLW7K2HT3)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Salvador Aguinaga (WDLW7K2HT3)";
 				FRAMEWORK_SEARCH_PATHS = (
@@ -764,7 +778,7 @@
 				INFOPLIST_FILE = "FriensoAlpha/FriensoAlpha-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "E16AB7C0-6AF5-44D3-A432-E2C2EDB7634B";
+				PROVISIONING_PROFILE = "98BE103D-783D-48CD-89C9-AA120C7CBB03";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -848,7 +862,8 @@
 				1853403818C220680094AC5A /* FriensoAlphaCoreDataModel.xcdatamodel */,
 			);
 			currentVersion = 1853403818C220680094AC5A /* FriensoAlphaCoreDataModel.xcdatamodel */;
-			path = FriensoAlphaCoreDataModel.xcdatamodeld;
+			name = FriensoAlphaCoreDataModel.xcdatamodeld;
+			path = ../FriensoAlphaCoreDataModel.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
 		};

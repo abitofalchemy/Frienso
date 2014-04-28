@@ -130,17 +130,19 @@ static NSString *eventCell = @"eventCell";
     cell.textLabel.text = event.eventTitle;// stringByAppendingFormat:@" %@", person.lastName];
     cell.textLabel.font = [UIFont fontWithName:@"AppleSDGothicNeo-Medium" size:14.0];
     cell.detailTextLabel.text = [NSString stringWithFormat:@"%@",event.eventSubtitle];
-    cell.backgroundColor = [UIColor clearColor];
+    
     cell.textLabel.textColor = [UIColor blackColor];
     cell.detailTextLabel.textColor  = [UIColor lightGrayColor];
     
-    cell.imageView.image = [UIImage imageNamed:@"frienso-ic-2x29.png"];
-
+    if ([event.eventCategory isEqualToString:@"calendar"]) {
+        cell.imageView.image = [self imageWithBorderFromImage:[UIImage imageNamed:@"cal-ic-24.png"]];
+        cell.backgroundColor = [UIColor clearColor];
+    }
     return cell;
 }
 #pragma mark - NSFetchResultsController delegate methods
 - (void)controllerDidChangeContent:(NSFetchedResultsController *)controller {
-    printf("refreshing frc\n");
+    //printf("refreshing frc\n");
     [self.tableView reloadData];
 }
 
@@ -392,8 +394,58 @@ static NSString *eventCell = @"eventCell";
      
     
 }
+
+#pragma mark - core graphics
+- (UIImage*)imageWithBorderFromImage:(UIImage*)source
+{
+    const CGFloat margin = 4.0f;
+    CGSize size = CGSizeMake([source size].width + 2*margin, [source size].height + 2*margin);
+    UIGraphicsBeginImageContext(size);
+    
+    [[UIColor whiteColor] setFill];
+    [[UIBezierPath bezierPathWithRect:CGRectMake(0, 0, size.width, size.height)] fill];
+    
+    CGRect rect = CGRectMake(margin, margin, size.width-2*margin, size.height-2*margin);
+    [source drawInRect:rect blendMode:kCGBlendModeNormal alpha:1.0];
+    /**
+    CGContextRef context = UIGraphicsGetCurrentContext();
+
+    //CGContextRef context = UIGraphicsGetCurrentContext();
+    CGContextSetStrokeColorWithColor(context, [UIColor darkGrayColor].CGColor);
+    
+    // Draw them with a 2.0 stroke width so they are a bit more visible.
+    CGContextSetLineWidth(context, 1.0);
+    
+    
+    
+    CGContextMoveToPoint(context, 0,5.4); //start at this point
+    CGContextAddLineToPoint(context, rect.size.width, 5.4 ); //draw to this point
+    
+    // and now draw the Path!
+    CGContextStrokePath(context);
+    
+    // setting the date
+    NSDate *now = [NSDate date];
+    NSDateFormatter *weekday = [[NSDateFormatter alloc] init];
+    [weekday setDateFormat:@"dd"];
+    //[weekday setLocale:NSLocale];
+    NSString * dateString = [weekday stringFromDate:now];
+    
+    UIFont*       font = [UIFont fontWithName:@"AppleSDGothicNeo-Light" size:16];
+    UIColor* textColor = [UIColor redColor];
+    NSDictionary* stringAttrs = @{ NSFontAttributeName: font, NSForegroundColorAttributeName: textColor };
+    NSAttributedString* attrStr = [[NSAttributedString alloc] initWithString:dateString attributes:stringAttrs];
+    
+    [attrStr drawAtPoint:CGPointMake(4.f, 7.0f)];
+    **/
+    UIImage *testImg =  UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return testImg;
+}
+
 /*
  *  http://borkware.com/quickies/one?topic=Graphics
+ *  http://stackoverflow.com/questions/10895035/coregraphics-draw-an-image-on-a-white-canvas
  *
  **/
 @end

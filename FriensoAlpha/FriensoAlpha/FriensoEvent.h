@@ -11,6 +11,7 @@
 
 
 @interface FriensoEvent : NSManagedObject
+@property (nonatomic, retain) NSString * eventCategory;
 @property (nonatomic, retain) NSString * eventContact;
 @property (nonatomic, retain) NSString * eventTitle;
 @property (nonatomic, retain) NSString * eventSubtitle;
