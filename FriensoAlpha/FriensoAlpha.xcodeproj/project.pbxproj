@@ -353,12 +353,7 @@
 				3E570170190A665C0056EFD7 /* AlarmTimerTriggersTVC.m */,
 				3E9F893318FE99F800DA190C /* MappingFriends */,
 				1808553618C4EEC30047A8BE /* OptionsClasses */,
-				180E881018BE1779009A570F /* FriensoCircleButton.h */,
-				180E881118BE1779009A570F /* FriensoCircleButton.m */,
-				180E881218BE1779009A570F /* FriensoOptionsButton.h */,
-				180E881318BE1779009A570F /* FriensoOptionsButton.m */,
-				3E57016C190A519A0056EFD7 /* FriensoPersonalEvent.h */,
-				3E57016D190A519A0056EFD7 /* FriensoPersonalEvent.m */,
+				3E84F6F0190FAE210073D2FF /* FriensoButtonClasses */,
 				1827931C18BE06750056C849 /* Images.xcassets */,
 				1827930B18BE06750056C849 /* Supporting Files */,
 			);
@@ -438,6 +433,19 @@
 				3E68DF611907C64400DF3992 /* FriensoResources.m */,
 			);
 			path = "CoreData Files";
+			sourceTree = "<group>";
+		};
+		3E84F6F0190FAE210073D2FF /* FriensoButtonClasses */ = {
+			isa = PBXGroup;
+			children = (
+				180E881018BE1779009A570F /* FriensoCircleButton.h */,
+				180E881118BE1779009A570F /* FriensoCircleButton.m */,
+				180E881218BE1779009A570F /* FriensoOptionsButton.h */,
+				180E881318BE1779009A570F /* FriensoOptionsButton.m */,
+				3E57016C190A519A0056EFD7 /* FriensoPersonalEvent.h */,
+				3E57016D190A519A0056EFD7 /* FriensoPersonalEvent.m */,
+			);
+			name = FriensoButtonClasses;
 			sourceTree = "<group>";
 		};
 		3E9F893318FE99F800DA190C /* MappingFriends */ = {
@@ -754,7 +762,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "FriensoAlpha/FriensoAlpha-Prefix.pch";
 				INFOPLIST_FILE = "FriensoAlpha/FriensoAlpha-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "98BE103D-783D-48CD-89C9-AA120C7CBB03";
 				WRAPPER_EXTENSION = app;
@@ -776,9 +784,9 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "FriensoAlpha/FriensoAlpha-Prefix.pch";
 				INFOPLIST_FILE = "FriensoAlpha/FriensoAlpha-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "98BE103D-783D-48CD-89C9-AA120C7CBB03";
+				PROVISIONING_PROFILE = "F65DA395-8821-446B-A26D-02C2401BCB45";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

@@ -28,18 +28,17 @@
      CGContextRef context = UIGraphicsGetCurrentContext();
      
      //CGContextRef context = UIGraphicsGetCurrentContext();
-     CGContextSetStrokeColorWithColor(context, [UIColor darkGrayColor].CGColor);
+     CGContextSetStrokeColorWithColor(context, [UIColor blackColor].CGColor);
      
      // Draw them with a 2.0 stroke width so they are a bit more visible.
      CGContextSetLineWidth(context, 1.0);
 
-    
-    
     CGContextMoveToPoint(context, 0,5.4); //start at this point
     CGContextAddLineToPoint(context, rect.size.width, 5.4 ); //draw to this point
-
     // and now draw the Path!
     CGContextStrokePath(context);
+    
+    
     
     // setting the date
     NSDate *now = [NSDate date];
@@ -55,11 +54,19 @@
                                                                   attributes:stringAttrs];
     
     [attrStr drawAtPoint:CGPointMake(4.f, 7.0f)];
-    //[self drawInContext:context];
-    //[self createImage];
-
     
+//    CGFloat oneFithLen = rect.size.width/4.0;
+//    CGContextSetStrokeColorWithColor(context, [UIColor colorWithRed:0.0/255.0 green:107.0/255.0 blue:182.0/255.0 alpha:1.0].CGColor);
+//    // Draw them with a 2.0 stroke width so they are a bit more visible.
+//    CGContextSetLineWidth(context, 2.5);
+//    CGContextMoveToPoint(context, 3.0*oneFithLen -2.0, 0+2.0); //start at this point
+//    CGContextAddLineToPoint(context, 3.0*oneFithLen-2.0, 2.0*oneFithLen+2.0); //vertical
+//    CGContextMoveToPoint(context, 2.0*oneFithLen-2.0, oneFithLen + 2.0); //start at this point
+//    CGContextAddLineToPoint(context, 4.0*oneFithLen-2.0, oneFithLen+2.0);
+//    // and now draw the Path!
+//    CGContextStrokePath(context);
 }
+
 /***
 -(void)createImage {
     NSString* outFile = [NSHomeDirectory() stringByAppendingPathComponent:@"Documents/image.png"];

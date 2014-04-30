@@ -15,18 +15,6 @@
                     <view key="view" contentMode="scaleToFill" id="kh9-bI-dsS">
                         <rect key="frame" x="0.0" y="64" width="320" height="504"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4Dd-zf-RS7">
-                                <rect key="frame" x="104" y="437" width="113" height="47"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" image="frienso-alert.png">
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <segue destination="6kB-Zb-JaQ" kind="modal" identifier="panicSegue" modalTransitionStyle="coverVertical" id="F2g-4F-t2U"/>
-                                </connections>
-                            </button>
-                        </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
                     <extendedEdge key="edgesForExtendedLayout" bottom="YES"/>
@@ -36,6 +24,7 @@
                         <segue destination="CWf-g8-ITg" kind="push" identifier="showMyCircle" id="BSs-oi-hx2"/>
                         <segue destination="sRi-j8-7s4" kind="push" identifier="showFriesoMap" id="HKj-DF-MrE"/>
                         <segue destination="aY6-gZ-dOi" kind="push" identifier="createEvent" id="KMa-pk-ZOI"/>
+                        <segue destination="6kB-Zb-JaQ" kind="push" identifier="panicEvent" id="n71-eB-Kl2"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
@@ -75,6 +64,7 @@
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
+                    <navigationItem key="navigationItem" id="K4n-vp-2F7"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="gFv-so-a4W" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -424,9 +414,6 @@
             <point key="canvasLocation" x="1386" y="-541"/>
         </scene>
     </scenes>
-    <resources>
-        <image name="frienso-alert.png" width="58" height="47"/>
-    </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>
         <simulatedOrientationMetrics key="orientation"/>

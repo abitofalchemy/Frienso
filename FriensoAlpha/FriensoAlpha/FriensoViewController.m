@@ -29,31 +29,60 @@ static NSString *eventCell = @"eventCell";
 @property (nonatomic,strong) UITableView *tableView;
 @property (nonatomic, strong) NSFetchedResultsController *frc;
 
--(void)viewMenuOptions:(UIButton *)theButton;
--(void)viewCoreCircle :(UIButton *)theButton;
--(void)makeFriensoEvent :(UIButton *)theButton;
+-(void)actionPanicEvent: (UIButton *)theButton;
+-(void)viewMenuOptions: (UIButton *)theButton;
+-(void)viewCoreCircle:  (UIButton *)theButton;
+-(void)makeFriensoEvent:(UIButton *)theButton;
+-(void)actionHomeView:  (UIButton *)sender;
+
 
 @end
 
 @implementation FriensoViewController
 @synthesize coreFriendsArray = _coreFriendsArray;
 
+-(void)actionPanicEvent:(UIButton *)theButton {
+    [self animateThisButton:theButton];
+    [theButton.layer setBorderColor:[UIColor redColor].CGColor];
+    [theButton setHidden:YES];
+    [theButton setEnabled:NO];
+    [self performSegueWithIdentifier:@"panicEvent" sender:self];
+}
 -(void)makeFriensoEvent:(UIButton *)theButton {
     [self animateThisButton:theButton];
+    [theButton.layer setBorderColor:[UIColor grayColor].CGColor];
+    [theButton setHidden:YES];
     [self performSegueWithIdentifier:@"createEvent" sender:self];
 }
 
 -(void)viewMenuOptions:(UIButton *)theButton {
     [self animateThisButton:theButton];
     [self performSegueWithIdentifier:@"showMenuOptions" sender:self];
+    [theButton.layer setBorderColor:[UIColor grayColor].CGColor];
+
 }
 
 -(void)viewCoreCircle:(UIButton *)theButton {
+    if ([theButton isEnabled]) {
+        [theButton setEnabled:NO];
+        [theButton.layer setBorderColor:[UIColor redColor].CGColor];
+    }
     [self animateThisButton:theButton];
     [self performSegueWithIdentifier:@"showMyCircle" sender:self];
 }
-
-
+- (void)actionHomeView:(UIButton *)sender {
+    
+    
+        CABasicAnimation *anim = [CABasicAnimation animationWithKeyPath:@"transform"];
+        anim.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
+        anim.duration = 0.125;
+        anim.repeatCount = 1;
+        anim.autoreverses = YES;
+        anim.removedOnCompletion = YES;
+        anim.toValue = [NSValue valueWithCATransform3D:CATransform3DMakeScale(1.2, 1.2, 1.0)];
+        [self.tableView.layer addAnimation:anim forKey:nil];
+    
+}
 
 - (NSManagedObjectContext *) managedObjectContext{
     
@@ -64,11 +93,15 @@ static NSString *eventCell = @"eventCell";
 #pragma mark - UITableViewDataSource Methods
 -(void) setupEventsTableView {
     self.tableView = [[UITableView alloc] init];
-    [self.tableView setFrame:CGRectMake(0, 0, self.view.bounds.size.width,
-                                        self.view.bounds.size.height*0.40)];
+    [self.tableView setFrame:CGRectMake(0, self.view.bounds.size.height*0.4,
+                                        self.view.bounds.size.width,
+                                        self.view.bounds.size.height*0.50)];
     
     self.tableView.dataSource = self;
     self.tableView.delegate   = self;
+    self.tableView.layer.cornerRadius = 6.0f;
+    self.tableView.layer.borderWidth = 1.0f;
+    self.tableView.layer.borderColor = [UIColor lightGrayColor].CGColor;
     [self.view addSubview:self.tableView];
     
     /* Create the fetch request first */
@@ -133,7 +166,8 @@ static NSString *eventCell = @"eventCell";
     
     cell.textLabel.textColor = [UIColor blackColor];
     cell.detailTextLabel.textColor  = [UIColor lightGrayColor];
-    
+    cell.textLabel.font = [UIFont fontWithName:@"AppleSDGothicNeo-Medium" size:10.0];
+    cell.detailTextLabel.font = [UIFont fontWithName:@"AppleSDGothicNeo-Light" size:10.0];
     if ([event.eventCategory isEqualToString:@"calendar"]) {
         cell.imageView.image = [self imageWithBorderFromImage:[UIImage imageNamed:@"cal-ic-24.png"]];
         cell.backgroundColor = [UIColor clearColor];
@@ -165,14 +199,19 @@ static NSString *eventCell = @"eventCell";
 }
 
 #pragma mark - Setup view widgets
+-(void) friendsIWatchView {
+    
+}
 -(void) setupMapButton {
     UIButton *button= [UIButton buttonWithType:UIButtonTypeCustom];
-    button.frame = CGRectMake(0, 0, self.view.bounds.size.width*.90, self.view.bounds.size.width*.90/1.618);
+    button.frame = CGRectMake(0, 0,
+                              self.view.frame.size.width,
+                              self.view.frame.size.height*0.4);
     [button addTarget:self
                action:@selector(friensoMapViewCtrlr:)
      forControlEvents:UIControlEventTouchDown];
     button.layer.cornerRadius = 6.0f;
-    button.layer.borderWidth = 1.2f;
+    button.layer.borderWidth = 1.0f;
     button.layer.borderColor = [UIColor lightGrayColor].CGColor;
     //button.backgroundColor = UIColorFromRGB(0x4962D6);
     /*NSMutableArray *imageArray = [NSMutableArray new];
@@ -189,14 +228,59 @@ static NSString *eventCell = @"eventCell";
     NSLog(@"%f", rndNbr);
     
     [button setBackgroundImage:[UIImage imageNamed: (rndNbr<.5) ? @"map-btn-0.png" : @"map-btn-1.png"] forState:UIControlStateNormal];
-    [button setCenter:CGPointMake([UIScreen mainScreen].bounds.size.width/2,
-                                  self.tableView.frame.size.height + 6.0 + /* offset */
-                                  button.frame.size.height/2.0 )];
+    
     [self.view addSubview:button];
     
     
 }
+-(void) setupToolBarIcons{
+    self.navigationController.toolbarHidden = NO;
 
+    UIColor *violetTulip = [UIColor colorWithRed:155.0/255.0 green:144.0/255.0 blue:182.0/255.0 alpha:1.0];
+    
+    // Left CoreCircle button
+    FriensoCircleButton *coreCircleBtn = [[FriensoCircleButton alloc]
+                                          initWithFrame:CGRectMake(0, 0, 27, 27)];
+    coreCircleBtn.layer.cornerRadius = 4.0;
+    coreCircleBtn.layer.borderWidth =  1.0;
+    coreCircleBtn.layer.borderColor = [UIColor blackColor].CGColor;//[UIColor colorWithRed:540./255.0 green:545.0/255.0 blue:255.0/255.0 alpha:0.25].CGColor;
+    if (![coreCircleBtn isEnabled])
+        [coreCircleBtn setEnabled:YES];
+    [coreCircleBtn addTarget:self action:@selector(viewCoreCircle:)
+            forControlEvents:UIControlEventTouchUpInside];
+    UIBarButtonItem *barLeftButton=[[UIBarButtonItem alloc] init];
+    [barLeftButton setCustomView:coreCircleBtn];
+    //self.navigationItem.leftBarButtonItem=barLeftButton;
+    [coreCircleBtn setCenter:CGPointMake(44.0f,22)];
+    
+    // right tool bar btn
+    FriensoPersonalEvent *calEventBtn = [[FriensoPersonalEvent alloc]
+                                            initWithFrame:CGRectMake(0, 0, 27, 27)];
+    calEventBtn.layer.cornerRadius = 4.0f;
+    calEventBtn.layer.borderWidth = 1.0f;
+    calEventBtn.layer.borderColor = violetTulip.CGColor;
+    [calEventBtn addTarget:self action:@selector(makeFriensoEvent:)
+          forControlEvents:UIControlEventTouchUpInside];
+    [calEventBtn setCenter:CGPointMake(self.navigationController.toolbar.bounds.size.width - 44.0f,22)];
+    [calEventBtn setTitleShadowColor:[UIColor grayColor] forState:UIControlStateHighlighted];
+    
+    // center toolbar btn
+    UIButton *panicButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 27, 27)];
+    [panicButton addTarget:self action:@selector(actionPanicEvent:)
+          forControlEvents:UIControlEventTouchUpInside];
+    [panicButton setTitle:@"\u26A0" forState:(UIControlStateNormal)];
+    panicButton.layer.cornerRadius = 4.0f;
+    panicButton.layer.borderWidth = 1.0f;
+    panicButton.layer.borderColor = violetTulip.CGColor;
+//    [panicButton.titleLabel setFont:[UIFont fontWithName:@"AppleSDGothicNeo-Medium" size:22.0]];
+    panicButton.titleLabel.textColor = [UIColor colorWithRed:0.0/255.0 green:107.0/255.0 blue:182.0/255.0 alpha:1.0];
+    [panicButton setCenter:CGPointMake(self.navigationController.toolbar.center.x, 22)];
+    
+    [self.navigationController.toolbar addSubview:coreCircleBtn]; // left
+    [self.navigationController.toolbar addSubview:calEventBtn]; // right
+    [self.navigationController.toolbar addSubview:panicButton]; // center
+
+}
 -(void) setupNavigationBarImage{
     
     [[UINavigationBar appearance] setTitleTextAttributes:
@@ -205,40 +289,46 @@ static NSString *eventCell = @"eventCell";
       [UIFont fontWithName:@"AppleSDGothicNeo-Light" size:16.0], NSFontAttributeName,nil]];
     self.navigationItem.title = @"FRIENSO";
     
+    // Left CoreCircle button
+    UIButton *ugcTopLeftBtn = [[UIButton alloc]
+                                          initWithFrame:CGRectMake(0, 0, 27, 27)];
+    [ugcTopLeftBtn setTitle:@"💬" forState:UIControlStateNormal];
+    ugcTopLeftBtn.layer.cornerRadius = 4.0;
+    ugcTopLeftBtn.layer.borderWidth =  0.5;
+    ugcTopLeftBtn.layer.borderColor = [UIColor grayColor].CGColor;//[UIColor colorWithRed:540./255.0 green:545.0/255.0 blue:255.0/255.0 alpha:0.25].CGColor;
+    [ugcTopLeftBtn setEnabled:NO];
+    [ugcTopLeftBtn addTarget:self action:@selector(viewCoreCircle:)
+            forControlEvents:UIControlEventTouchUpInside];
+    
+    UIBarButtonItem *barLeftButton=[[UIBarButtonItem alloc] init];
+    [barLeftButton setCustomView:ugcTopLeftBtn];
+    self.navigationItem.leftBarButtonItem=barLeftButton;
+    [self.navigationItem.leftBarButtonItem setEnabled:NO];
+    
     // Right Options Button
     FriensoOptionsButton *button = [[FriensoOptionsButton alloc] initWithFrame:CGRectMake(0, 0, 27, 27)];
     button.layer.cornerRadius = 4.0;
     button.layer.borderWidth =  1.0;
-    button.layer.borderColor = [UIColor blackColor].CGColor;//[UIColor colorWithRed:540./255.0 green:545.0/255.0 blue:255.0/255.0 alpha:0.25].CGColor;
+    button.layer.borderColor = [UIColor blackColor].CGColor;
     [button addTarget:self action:@selector(viewMenuOptions:)
      forControlEvents:UIControlEventTouchUpInside];
     UIBarButtonItem *barButton=[[UIBarButtonItem alloc] init];
     [barButton setCustomView:button];
     //self.navigationItem.rightBarButtonItem=barButton;
     
-    // Left CoreCircle button
-    FriensoCircleButton *coreCircleBtn = [[FriensoCircleButton alloc]
-                                          initWithFrame:CGRectMake(0, 0, 27, 27)];
-    coreCircleBtn.layer.cornerRadius = 4.0;
-    coreCircleBtn.layer.borderWidth =  1.0;
-    coreCircleBtn.layer.borderColor = [UIColor blackColor].CGColor;//[UIColor colorWithRed:540./255.0 green:545.0/255.0 blue:255.0/255.0 alpha:0.25].CGColor;
-    [coreCircleBtn addTarget:self action:@selector(viewCoreCircle:)
-            forControlEvents:UIControlEventTouchUpInside];
-    UIBarButtonItem *barLeftButton=[[UIBarButtonItem alloc] init];
-    [barLeftButton setCustomView:coreCircleBtn];
-    self.navigationItem.leftBarButtonItem=barLeftButton;
     
-    // Right to left Create Event button
-    FriensoPersonalEvent *createEventBtn = [[FriensoPersonalEvent alloc]
-                                          initWithFrame:CGRectMake(0, 0, 27, 27)];
-    createEventBtn.layer.cornerRadius = 4.0;
-    createEventBtn.layer.borderWidth  =  1.0;
-    createEventBtn.layer.borderColor  = [UIColor blackColor].CGColor;//[UIColor colorWithRed:540./255.0 green:545.0/255.0 blue:255.0/255.0 alpha:0.25].CGColor;
-    [createEventBtn addTarget:self action:@selector(makeFriensoEvent:)
-            forControlEvents:UIControlEventTouchUpInside];
-    UIBarButtonItem *barRightOfLeftButton = [[UIBarButtonItem alloc] init];
-    [barRightOfLeftButton setCustomView:createEventBtn];
-    self.navigationItem.rightBarButtonItems=[NSArray arrayWithObjects:barButton,barRightOfLeftButton, nil];
+    
+//    // Right to left Create Event button
+//    FriensoPersonalEvent *createEventBtn = [[FriensoPersonalEvent alloc]
+//                                          initWithFrame:CGRectMake(0, 0, 27, 27)];
+//    createEventBtn.layer.cornerRadius = 4.0;
+//    createEventBtn.layer.borderWidth  =  1.0;
+//    createEventBtn.layer.borderColor  = [UIColor blackColor].CGColor;
+//    [createEventBtn addTarget:self action:@selector(makeFriensoEvent:)
+//            forControlEvents:UIControlEventTouchUpInside];
+//    UIBarButtonItem *barRightOfLeftButton = [[UIBarButtonItem alloc] init];
+//    [barRightOfLeftButton setCustomView:createEventBtn];
+    self.navigationItem.rightBarButtonItems=[NSArray arrayWithObjects:barButton, nil];
 }
 #pragma mark - Sync from Parse Methods
 - (void) syncFromParse {
@@ -345,12 +435,19 @@ static NSString *eventCell = @"eventCell";
     [self syncCoreFriendsLocation]; //  from parse to coredata
     [self setupEventsTableView];
     [self setupMapButton];
+    [self friendsIWatchView];
+    
 }
 - (void)viewDidUnload {
     self.tableView = nil;
     
     [super viewDidUnload];
 }
+-(void) viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:YES];
+    [self setupToolBarIcons];
+}
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
@@ -446,6 +543,6 @@ static NSString *eventCell = @"eventCell";
 /*
  *  http://borkware.com/quickies/one?topic=Graphics
  *  http://stackoverflow.com/questions/10895035/coregraphics-draw-an-image-on-a-white-canvas
- *
+ *  http://iwork3.us/2013/09/13/pantone-ny-fashion-week-2014-spring-colors/
  **/
 @end

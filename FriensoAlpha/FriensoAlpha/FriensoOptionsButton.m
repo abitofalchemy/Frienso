@@ -49,11 +49,14 @@
     // and now draw the Path!
     CGContextStrokePath(context);
 }
-//-(void) setHue:(CGFloat)hue
-//{
+-(void) setEnabledBorder:(BOOL) boolVal
+{
 //    _hue = hue;
 //    [self setNeedsDisplay];
-//}
+    if (boolVal)
+        [self.layer setBorderColor:[UIColor redColor].CGColor];
+    
+}
 //
 //-(void) setSaturation:(CGFloat)saturation
 //{
