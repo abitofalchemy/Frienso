@@ -5,27 +5,34 @@ Frienso iOS Nu
 
 Version History
 ---------------
-ver 1.0 build 1.0   Initial release
-ver 1.1 build 1.0   Fixes: Added more functionality to the Profile view; user can edit it.
-                    Worked on the About view and have functionality working.
-                    Settings View updated with more functionality working.
-ver 1.1 build 1.1   Fixed issues with Setup Core Circle and Profile images
-                    Fixed bug when you login and your already stored coreCircle of friends isn't fetched elegantly, now it's fetched and stored locally.
-                    When a single core circle friend is updated, the whole set of core friends is correctly update in the cloud.
-                    Connected the privacy policy and terms of use buttons to a web link that will host the document for now.
-
-ver 1.2 build 1.0   Added location information @ user signup or login
-                    Fixed issued when creating a new account and building your core friends group
-                    Added Mapping of your core Friends
-                    Added icon (working, not final)
+ver 1.4 build 1.0   New layout after input from team;
 
 ver 1.3 build 1.0   Updates to the friends list (coreData), we cache coreFriends location locally
                     When app is launched, the user's current location and his/her friends' are cached
                     Also when the user clicks on the quick-view of his/her circle, the user's current loc is updated
                     When the Map view is loaded, 1) the user's current location is update and the friends' locations are cached
                     Added *basic* event creation with local alarms
+                    
+ver 1.2 build 1.0   Added location information @ user signup or login
+                    Fixed issued when creating a new account and building your core friends group
+                    Added Mapping of your core Friends
+                    Added icon (working, not final)
 
-ver 1.4 build 1.0   New layout
+ver 1.1 build 1.1   Fixed issues with Setup Core Circle and Profile images
+                    Fixed bug when you login and your already stored coreCircle of friends isn't fetched elegantly, now it's fetched and stored locally.
+                    When a single core circle friend is updated, the whole set of core friends is correctly update in the cloud.
+                    Connected the privacy policy and terms of use buttons to a web link that will host the document for now.
+
+ver 1.1 build 1.0   Fixes: Added more functionality to the Profile view; user can edit it.
+                    Worked on the About view and have functionality working.
+                    Settings View updated with more functionality working.
+
+
+ver 1.0 build 1.0   Initial release
+
+
+
+
 
 ToDo
 ----
@@ -82,6 +89,7 @@ Referenced Work
     # http://ios7colors.com
     # flatuicolors.com
 * icons
+    # http://www.blog.montgomerie.net/iphone-images-from-character-glyphs
 * style
     # http://www.cs.uakron.edu/~collard/cs489iOS/notes/IOSUITextKit.md
 * other

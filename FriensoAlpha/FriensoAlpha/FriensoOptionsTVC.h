@@ -10,4 +10,7 @@
 
 @interface FriensoOptionsTVC : UITableViewController
 
+- (UIImage *)imageWithString:(NSString *)string // What we want an image of.
+                        font:(UIFont *)font     // The font we'd like it in.
+                        size:(CGSize)size;       // Size of the desired image.
 @end

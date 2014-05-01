@@ -31,9 +31,15 @@ enum PinAnnotationTypeTag {
 
 
 #pragma mark - UIViewController
+//- (void) setText:(NSString *)paramText{
+//    self.title = paramText;
+//}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    // hide parent vc toolbar
+    [self.navigationController setToolbarHidden:YES];
     
     [[UINavigationBar appearance] setTitleTextAttributes:
      [NSDictionary dictionaryWithObjectsAndKeys:[UIColor blackColor], NSForegroundColorAttributeName,

@@ -9,8 +9,17 @@
 #import <UIKit/UIKit.h>
 #import <CoreData/NSFetchedResultsController.h>
 #import <Parse/Parse.h>
+#import <MapKit/MapKit.h>
+#import <CoreLocation/CoreLocation.h>
 
 @interface FriensoViewController : UIViewController <NSFetchedResultsControllerDelegate,
-UITableViewDelegate,UITableViewDataSource>
+UITableViewDelegate,UITableViewDataSource,
+MKMapViewDelegate,CLLocationManagerDelegate>
+
+@property (nonatomic, retain) CLLocationManager *locationManager;
+@property (nonatomic, strong) MKMapView *mapView;
+
+- (void)setInitialLocation:(CLLocation *)aLocation;
+
 
 @end

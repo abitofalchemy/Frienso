@@ -117,6 +117,7 @@
     [self.navigationController.navigationBar setHidden:NO];
     self.navigationItem.title = @"Alarms";
     
+    [self.navigationController setToolbarHidden:YES];
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     self.navigationItem.rightBarButtonItem = self.addButton;
     // Initialize the event store

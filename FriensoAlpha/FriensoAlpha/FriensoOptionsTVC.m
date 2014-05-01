@@ -12,6 +12,7 @@
 #import "tstWatchingViewController.h"
 #import "FriensoResourcesTVC.h"
 #import "AboutFriensoViewController.h"
+#import "SearchViewController.h"
 
 @interface FriensoOptionsTVC ()
 @property (nonatomic,retain) NSMutableArray *optionsArray;
@@ -31,7 +32,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    self.optionsArray = [[NSMutableArray alloc] initWithArray:@[@"Profile",@"Watching", @"Resources",@"Settings",@"About"]];
+    self.optionsArray = [[NSMutableArray alloc] initWithArray:@[@"Profile",@"Watching", @"Resources",@"Settings",@"About",@"Map"]];
     // Uncomment the following line to preserve selection between presentations.
     // self.clearsSelectionOnViewWillAppear = NO;
  
@@ -87,6 +88,8 @@
             case 4:
                 cell.imageView.image = [UIImage imageNamed:@"about-24.png"];
                 break;
+            case 5:
+                cell.imageView.image = [self imageWithString:@"🌐" font:[UIFont systemFontOfSize:[UIFont systemFontSize]] size:CGSizeMake(24, 24)];
             default:
                 break;
         }
@@ -143,8 +146,7 @@
             NSLog(@"%@", [tableView cellForRowAtIndexPath:indexPath].textLabel.text);
             SettingsViewController *detailViewController = [[SettingsViewController alloc] initWithNibName:nil bundle:nil];
             [detailViewController setText:[tableView cellForRowAtIndexPath:indexPath].textLabel.text];
-            [self.navigationController pushViewController:detailViewController
-                                                 animated:YES];
+            [self.navigationController pushViewController:detailViewController animated:YES];
             break;
         }
         case 4:{
@@ -155,7 +157,10 @@
                                                  animated:YES];
             break;
         }
-        
+        case 5: {
+            [self performSegueWithIdentifier:@"friensoMap" sender:self];
+            break;
+        }
         default:
             break;
     }
@@ -211,5 +216,49 @@
 }
 
  */
-
+- (UIImage *)imageWithString:(NSString *)string // What we want an image of.
+                        font:(UIFont *)font     // The font we'd like it in.
+                        size:(CGSize)size       // Size of the desired image.
+{
+    // Create a context to render into.
+    UIGraphicsBeginImageContext(size);
+    
+    // Work out what size of font will give us a rendering of the string
+    // that will fit in an image of the desired size.
+    
+    // We do this by measuring the string at the given font size and working
+    // out the ratio scale to it by to get the desired size of image.
+    NSDictionary *attributes = @{NSFontAttributeName:font};
+    // Measure the string size.
+    CGSize stringSize = [string sizeWithAttributes:attributes];
+    
+    // Work out what it should be scaled by to get the desired size.
+    CGFloat xRatio = size.width / stringSize.width;
+    CGFloat yRatio = size.height / stringSize.height;
+    CGFloat ratio = MIN(xRatio, yRatio);
+    
+    // Work out the point size that'll give us the desired image size, and
+    // create a UIFont that size.
+    CGFloat oldFontSize = font.pointSize;
+    CGFloat newFontSize = floor(oldFontSize * ratio);
+    ratio = newFontSize / oldFontSize;
+    font = [font fontWithSize:newFontSize];
+    
+    // What size is the string with this new font?
+    stringSize = [string sizeWithAttributes:attributes];
+    
+    // Work out where the origin of the drawn string should be to get it in
+    // the centre of the image.
+    CGPoint textOrigin = CGPointMake((size.width - stringSize.width) / 2,
+                                     (size.height - stringSize.height) / 2);
+    
+    // Draw the string into out image!
+    [string drawAtPoint:textOrigin withAttributes:attributes];
+    
+    // We're done!  Grab the image and return it!
+    // (Don't forget to end the image context first though!)
+    UIImage *retImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return retImage;
+}
 @end

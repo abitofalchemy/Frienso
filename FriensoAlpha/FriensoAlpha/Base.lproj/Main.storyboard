@@ -24,7 +24,7 @@
                         <segue destination="CWf-g8-ITg" kind="push" identifier="showMyCircle" id="BSs-oi-hx2"/>
                         <segue destination="sRi-j8-7s4" kind="push" identifier="showFriesoMap" id="HKj-DF-MrE"/>
                         <segue destination="aY6-gZ-dOi" kind="push" identifier="createEvent" id="KMa-pk-ZOI"/>
-                        <segue destination="6kB-Zb-JaQ" kind="push" identifier="panicEvent" id="n71-eB-Kl2"/>
+                        <segue destination="6kB-Zb-JaQ" kind="modal" identifier="panicEvent" id="n71-eB-Kl2"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
@@ -83,48 +83,23 @@
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="QGl-5i-oH8">
-                                <rect key="frame" x="0.0" y="0.0" width="320" height="513"/>
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <connections>
                                     <outlet property="delegate" destination="sRi-j8-7s4" id="e66-PJ-Wea"/>
                                 </connections>
                             </mapView>
-                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dBK-uv-099">
-                                <rect key="frame" x="102" y="513" width="197" height="44"/>
-                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                                <items>
-                                    <barButtonItem style="plain" id="0zX-7q-Skb">
-                                        <slider key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" id="L7J-5P-ZNf">
-                                            <rect key="frame" x="14" y="7" width="230" height="30"/>
-                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                            <connections>
-                                                <action selector="sliderDidTouchUp:" destination="sRi-j8-7s4" eventType="touchUpOutside" id="0t7-us-Oqm"/>
-                                                <action selector="sliderDidTouchUp:" destination="sRi-j8-7s4" eventType="touchUpInside" id="cTq-nQ-waC"/>
-                                                <action selector="sliderValueChanged:" destination="sRi-j8-7s4" eventType="valueChanged" id="BVo-I2-DD4"/>
-                                            </connections>
-                                        </slider>
-                                    </barButtonItem>
-                                </items>
-                            </toolbar>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Radius (m)" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="beU-Eo-Fej">
-                                <rect key="frame" x="20" y="527" width="82" height="21"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
                     <navigationItem key="navigationItem" id="SNC-N9-di2"/>
                     <connections>
                         <outlet property="mapView" destination="QGl-5i-oH8" id="dd0-pG-PoY"/>
-                        <outlet property="slider" destination="L7J-5P-ZNf" id="6kZ-qY-uCb"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="9Od-IB-ToZ" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="922" y="26"/>
+            <point key="canvasLocation" x="1482" y="1413"/>
         </scene>
         <!--Frienso ResourcesTVC-->
         <scene sceneID="FUJ-QO-lgv">
@@ -233,6 +208,9 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" id="0S8-I2-NJF"/>
+                    <connections>
+                        <segue destination="sRi-j8-7s4" kind="push" identifier="friensoMap" id="ixB-WG-BG7"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="S0i-zL-VfE" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -421,5 +399,6 @@
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
         <segue reference="hk5-85-B4H"/>
+        <segue reference="ixB-WG-BG7"/>
     </inferredMetricsTieBreakers>
 </document>

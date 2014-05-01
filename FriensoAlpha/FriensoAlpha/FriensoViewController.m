@@ -15,9 +15,17 @@
 #import "FriensoEvent.h"
 #import "CoreFriends.h"
 #import "FRCoreDataParse.h"
+#import "GeoPointAnnotation.h"
+#import "GeoQueryAnnotation.h"
+
 
 #define ARC4RANDOM_MAX      0x100000000
+#define UIColorFromRGB(rgbValue) [UIColor colorWithRed:((float)((rgbValue & 0xFF0000) >> 16))/255.0 green:((float)((rgbValue & 0xFF00) >> 8))/255.0 blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 static NSString *eventCell = @"eventCell";
+enum PinAnnotationTypeTag {
+    PinAnnotationTypeTagGeoPoint = 0,
+    PinAnnotationTypeTagGeoQuery = 1
+};
 
 
 
@@ -28,18 +36,19 @@ static NSString *eventCell = @"eventCell";
 @property (nonatomic,retain) NSMutableArray *coreFriendsArray;
 @property (nonatomic,strong) UITableView *tableView;
 @property (nonatomic, strong) NSFetchedResultsController *frc;
+@property (nonatomic, strong) CLLocation *location;
 
 -(void)actionPanicEvent: (UIButton *)theButton;
 -(void)viewMenuOptions: (UIButton *)theButton;
 -(void)viewCoreCircle:  (UIButton *)theButton;
 -(void)makeFriensoEvent:(UIButton *)theButton;
--(void)actionHomeView:  (UIButton *)sender;
-
 
 @end
 
 @implementation FriensoViewController
 @synthesize coreFriendsArray = _coreFriendsArray;
+@synthesize locationManager = _locationManager;
+
 
 -(void)actionPanicEvent:(UIButton *)theButton {
     [self animateThisButton:theButton];
@@ -50,8 +59,6 @@ static NSString *eventCell = @"eventCell";
 }
 -(void)makeFriensoEvent:(UIButton *)theButton {
     [self animateThisButton:theButton];
-    [theButton.layer setBorderColor:[UIColor grayColor].CGColor];
-    [theButton setHidden:YES];
     [self performSegueWithIdentifier:@"createEvent" sender:self];
 }
 
@@ -70,19 +77,7 @@ static NSString *eventCell = @"eventCell";
     [self animateThisButton:theButton];
     [self performSegueWithIdentifier:@"showMyCircle" sender:self];
 }
-- (void)actionHomeView:(UIButton *)sender {
-    
-    
-        CABasicAnimation *anim = [CABasicAnimation animationWithKeyPath:@"transform"];
-        anim.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
-        anim.duration = 0.125;
-        anim.repeatCount = 1;
-        anim.autoreverses = YES;
-        anim.removedOnCompletion = YES;
-        anim.toValue = [NSValue valueWithCATransform3D:CATransform3DMakeScale(1.2, 1.2, 1.0)];
-        [self.tableView.layer addAnimation:anim forKey:nil];
-    
-}
+
 
 - (NSManagedObjectContext *) managedObjectContext{
     
@@ -91,6 +86,91 @@ static NSString *eventCell = @"eventCell";
     
 }
 #pragma mark - UITableViewDataSource Methods
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
+    //return 1;
+    return [[self.frc sections] count];
+}
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    id <NSFetchedResultsSectionInfo> sectionInfo = self.frc.sections[section];
+    //NSLog(@"%lu",sectionInfo.numberOfObjects);
+    return sectionInfo.numberOfObjects;
+    
+}
+-(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
+    //NSLog(@"%f",[tableView rowHeight]);
+    if (indexPath.row == 0)
+        return [tableView rowHeight]*2.0f;
+    else return [tableView rowHeight];
+}
+
+- (UITableViewCell *)tableView:(UITableView *)theTableView
+         cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+    
+    UITableViewCell *cell = [self.tableView dequeueReusableCellWithIdentifier:eventCell];
+    if (cell == nil) {
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle
+                                      reuseIdentifier:eventCell];
+    }
+
+    FriensoEvent *event = [self.frc objectAtIndexPath:indexPath];
+
+    cell.textLabel.text = event.eventTitle;// stringByAppendingFormat:@" %@", person.lastName];
+    cell.textLabel.font = [UIFont fontWithName:@"AppleSDGothicNeo-Medium" size:14.0];
+    cell.detailTextLabel.text = [NSString stringWithFormat:@"%@",event.eventSubtitle];
+    
+    cell.textLabel.textColor = [UIColor blackColor];
+    cell.detailTextLabel.textColor  = [UIColor lightGrayColor];
+    cell.textLabel.font = [UIFont fontWithName:@"AppleSDGothicNeo-Medium" size:10.0];
+    cell.detailTextLabel.font = [UIFont fontWithName:@"AppleSDGothicNeo-Light" size:10.0];
+    if ([event.eventCategory isEqualToString:@"calendar"]) {
+        cell.imageView.image = [self imageWithBorderFromImage:[UIImage imageNamed:@"cal-ic-24.png"]];
+        cell.backgroundColor = [UIColor clearColor];
+    } else {
+        cell.imageView.image = [self imageWithBorderFromImage:[UIImage imageNamed:@"profile-24.png"]];
+        cell.backgroundColor = [UIColor clearColor];
+    }
+    //
+    if (indexPath.row == 0){
+        cell.textLabel.text = @"White House to Press Colleges to Do More to Combat Rape";
+        [cell.textLabel setNumberOfLines:2];
+        cell.detailTextLabel.text = @"Reacting to a series of highly publicized rapes, the White House is increasing the pressure on universities to more aggressively combat sexual assaults on campus. ";
+        [cell.detailTextLabel setNumberOfLines:4];
+        NSURL *imageURL = [NSURL URLWithString:@"http://static01.nyt.com/images/2014/04/29/us/politics/29ASSAULT/29ASSAULT-master315.jpg"];
+        NSData *imageData = [NSData dataWithContentsOfURL:imageURL];
+        UIImage *img = [UIImage imageWithData:imageData];
+        cell.imageView.image = [self imageWithBorderFromImage:img];
+    }
+    return cell;
+}
+#pragma mark - NSFetchResultsController delegate methods
+- (void)controllerDidChangeContent:(NSFetchedResultsController *)controller {
+    //printf("refreshing frc\n");
+    [self.tableView reloadData];
+}
+
+#pragma mark - Local Actions
+-(void) animateThisButton:(UIButton *)button {
+    // animate the button
+    CABasicAnimation *anim = [CABasicAnimation animationWithKeyPath:@"transform"];
+    anim.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
+    anim.duration = 0.125;
+    anim.repeatCount = 1;
+    anim.autoreverses = YES;
+    anim.removedOnCompletion = YES;
+    anim.toValue = [NSValue valueWithCATransform3D:CATransform3DMakeScale(1.2, 1.2, 1.0)];
+    [button.layer addAnimation:anim forKey:nil];
+}
+-(void) friensoMapViewCtrlr:(UIButton *)button {
+    //NSLog(@"-- Map button touched --");
+    [self animateThisButton:button];
+    [self performSegueWithIdentifier:@"showFriesoMap" sender:self];
+}
+
+#pragma mark - Setup view widgets
 -(void) setupEventsTableView {
     self.tableView = [[UITableView alloc] init];
     [self.tableView setFrame:CGRectMake(0, self.view.bounds.size.height*0.4,
@@ -99,10 +179,23 @@ static NSString *eventCell = @"eventCell";
     
     self.tableView.dataSource = self;
     self.tableView.delegate   = self;
-    self.tableView.layer.cornerRadius = 6.0f;
+    //self.tableView.layer.cornerRadius = 6.0f;
     self.tableView.layer.borderWidth = 1.0f;
-    self.tableView.layer.borderColor = [UIColor lightGrayColor].CGColor;
+    self.tableView.layer.borderColor = UIColorFromRGB(0x9B90C8).CGColor;
     [self.view addSubview:self.tableView];
+    
+    /*** Tile label
+    UILabel *tileLabel = [[UILabel alloc] initWithFrame:CGRectZero];
+    [tileLabel setText:@"ACTIVITY"];
+    [tileLabel sizeToFit];
+    [tileLabel setFont:[UIFont fontWithName:@"AppleSDGothicNeo-Medium" size:16.0]];
+    [tileLabel setTextColor:UIColorFromRGB(0x006bb6)];
+    [tileLabel setTextAlignment:NSTextAlignmentRight];
+    [tileLabel setCenter:CGPointMake(self.view.bounds.size.width -tileLabel.frame.size.width/1.5,
+                                     self.tableView.frame.origin.y+tileLabel.frame.size.height*1.3/2.0)];
+    [self.view addSubview:tileLabel];
+    ***/
+    
     
     /* Create the fetch request first */
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc]
@@ -133,75 +226,32 @@ static NSString *eventCell = @"eventCell";
         NSLog(@"Failed to fetch.");
     }
 }
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
-{
-    //return 1;
-    return [[self.frc sections] count];
-}
 
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
-{
-    id <NSFetchedResultsSectionInfo> sectionInfo = self.frc.sections[section];
-    //NSLog(@"%lu",sectionInfo.numberOfObjects);
-    return sectionInfo.numberOfObjects;
+-(void) setupHalfMapView {
     
-}
+    self.mapView = [[MKMapView alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width,self.view.bounds.size.height*0.4)];
+    [self.view addSubview:self.mapView];
+    self.mapView.region = MKCoordinateRegionMake(self.location.coordinate,MKCoordinateSpanMake(0.05f,0.05f));
 
-
-- (UITableViewCell *)tableView:(UITableView *)theTableView
-         cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    self.mapView.layer.borderWidth = 2.0f;
+    self.mapView.layer.borderColor = [UIColor whiteColor].CGColor;
     
-    
-    UITableViewCell *cell = [self.tableView dequeueReusableCellWithIdentifier:eventCell];
-    if (cell == nil) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle
-                                      reuseIdentifier:eventCell];
-    }
-
-    FriensoEvent *event = [self.frc objectAtIndexPath:indexPath];
-
-    cell.textLabel.text = event.eventTitle;// stringByAppendingFormat:@" %@", person.lastName];
-    cell.textLabel.font = [UIFont fontWithName:@"AppleSDGothicNeo-Medium" size:14.0];
-    cell.detailTextLabel.text = [NSString stringWithFormat:@"%@",event.eventSubtitle];
-    
-    cell.textLabel.textColor = [UIColor blackColor];
-    cell.detailTextLabel.textColor  = [UIColor lightGrayColor];
-    cell.textLabel.font = [UIFont fontWithName:@"AppleSDGothicNeo-Medium" size:10.0];
-    cell.detailTextLabel.font = [UIFont fontWithName:@"AppleSDGothicNeo-Light" size:10.0];
-    if ([event.eventCategory isEqualToString:@"calendar"]) {
-        cell.imageView.image = [self imageWithBorderFromImage:[UIImage imageNamed:@"cal-ic-24.png"]];
-        cell.backgroundColor = [UIColor clearColor];
-    }
-    return cell;
-}
-#pragma mark - NSFetchResultsController delegate methods
-- (void)controllerDidChangeContent:(NSFetchedResultsController *)controller {
-    //printf("refreshing frc\n");
-    [self.tableView reloadData];
+    /**
+    UILabel *tileLabel = [[UILabel alloc] initWithFrame:CGRectZero];
+    [tileLabel setText:@"↕"];
+    [tileLabel sizeToFit];
+    tileLabel.layer.cornerRadius = 6.0f;
+    tileLabel.layer.borderWidth = 1.0f;
+    tileLabel.layer.borderColor = UIColorFromRGB(0x4962D6).CGColor;
+    [tileLabel setFont:[UIFont fontWithName:@"AppleSDGothicNeo-Medium" size:18.0]];
+    [tileLabel setTextAlignment:NSTextAlignmentCenter];
+    [tileLabel setTextColor:[UIColor blackColor]];
+    [tileLabel setCenter:CGPointMake(self.view.bounds.size.width -tileLabel.frame.size.width,
+                                     tileLabel.frame.size.height*1.1/2.0)];
+    [self.mapView addSubview:tileLabel];
+    **/
 }
 
-#pragma mark - Local Actions
--(void) animateThisButton:(UIButton *)button {
-    // animate the button
-    CABasicAnimation *anim = [CABasicAnimation animationWithKeyPath:@"transform"];
-    anim.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
-    anim.duration = 0.125;
-    anim.repeatCount = 1;
-    anim.autoreverses = YES;
-    anim.removedOnCompletion = YES;
-    anim.toValue = [NSValue valueWithCATransform3D:CATransform3DMakeScale(1.2, 1.2, 1.0)];
-    [button.layer addAnimation:anim forKey:nil];
-}
--(void) friensoMapViewCtrlr:(UIButton *)button {
-    //NSLog(@"-- Map button touched --");
-    [self animateThisButton:button];
-    [self performSegueWithIdentifier:@"showFriesoMap" sender:self];
-}
-
-#pragma mark - Setup view widgets
--(void) friendsIWatchView {
-    
-}
 -(void) setupMapButton {
     UIButton *button= [UIButton buttonWithType:UIButtonTypeCustom];
     button.frame = CGRectMake(0, 0,
@@ -242,8 +292,9 @@ static NSString *eventCell = @"eventCell";
     FriensoCircleButton *coreCircleBtn = [[FriensoCircleButton alloc]
                                           initWithFrame:CGRectMake(0, 0, 27, 27)];
     coreCircleBtn.layer.cornerRadius = 4.0;
-    coreCircleBtn.layer.borderWidth =  1.0;
-    coreCircleBtn.layer.borderColor = [UIColor blackColor].CGColor;//[UIColor colorWithRed:540./255.0 green:545.0/255.0 blue:255.0/255.0 alpha:0.25].CGColor;
+    coreCircleBtn.layer.borderWidth  =  1.0;
+    coreCircleBtn.layer.borderColor  = UIColorFromRGB(0x006bb6).CGColor;
+    
     if (![coreCircleBtn isEnabled])
         [coreCircleBtn setEnabled:YES];
     [coreCircleBtn addTarget:self action:@selector(viewCoreCircle:)
@@ -290,8 +341,7 @@ static NSString *eventCell = @"eventCell";
     self.navigationItem.title = @"FRIENSO";
     
     // Left CoreCircle button
-    UIButton *ugcTopLeftBtn = [[UIButton alloc]
-                                          initWithFrame:CGRectMake(0, 0, 27, 27)];
+    UIButton *ugcTopLeftBtn = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 27, 27)];
     [ugcTopLeftBtn setTitle:@"💬" forState:UIControlStateNormal];
     ugcTopLeftBtn.layer.cornerRadius = 4.0;
     ugcTopLeftBtn.layer.borderWidth =  0.5;
@@ -299,7 +349,6 @@ static NSString *eventCell = @"eventCell";
     [ugcTopLeftBtn setEnabled:NO];
     [ugcTopLeftBtn addTarget:self action:@selector(viewCoreCircle:)
             forControlEvents:UIControlEventTouchUpInside];
-    
     UIBarButtonItem *barLeftButton=[[UIBarButtonItem alloc] init];
     [barLeftButton setCustomView:ugcTopLeftBtn];
     self.navigationItem.leftBarButtonItem=barLeftButton;
@@ -424,7 +473,7 @@ static NSString *eventCell = @"eventCell";
     
     printf("[ Dashboard: FriensoVC ]\n");
     self.navigationController.navigationBarHidden = NO;
-	
+	//[UIFont fontWithName:@"AppleSDGothicNeo-Light" size:16.0]
     if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"CoreFriendsContactInfoDicKey"] count] == 0) {
         [self syncFromParse];
     } else
@@ -432,10 +481,14 @@ static NSString *eventCell = @"eventCell";
     
     
     [self setupNavigationBarImage];
-    [self syncCoreFriendsLocation]; //  from parse to coredata
+    [self.locationManager startUpdatingLocation];
+    [self setInitialLocation:self.locationManager.location];
+
+    [self setupHalfMapView];
     [self setupEventsTableView];
-    [self setupMapButton];
-    [self friendsIWatchView];
+
+
+    [self syncCoreFriendsLocation]; //  from parse to coredata
     
 }
 - (void)viewDidUnload {
@@ -495,7 +548,7 @@ static NSString *eventCell = @"eventCell";
 #pragma mark - core graphics
 - (UIImage*)imageWithBorderFromImage:(UIImage*)source
 {
-    const CGFloat margin = 4.0f;
+    const CGFloat margin = 6.0f;
     CGSize size = CGSizeMake([source size].width + 2*margin, [source size].height + 2*margin);
     UIGraphicsBeginImageContext(size);
     
@@ -538,6 +591,129 @@ static NSString *eventCell = @"eventCell";
     UIImage *testImg =  UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
     return testImg;
+}
+#pragma mark - MKMapViewDelegate
+
+- (MKAnnotationView *)mapView:(MKMapView *)mapView viewForAnnotation:(id<MKAnnotation>)annotation {
+    static NSString *GeoPointAnnotationIdentifier = @"RedPinAnnotation";
+    static NSString *GeoQueryAnnotationIdentifier = @"PurplePinAnnotation";
+    
+    if ([annotation isKindOfClass:[GeoQueryAnnotation class]]) {
+        MKPinAnnotationView *annotationView =
+        (MKPinAnnotationView *)[mapView
+                                dequeueReusableAnnotationViewWithIdentifier:GeoQueryAnnotationIdentifier];
+        
+        if (!annotationView) {
+            annotationView = [[MKPinAnnotationView alloc]
+                              initWithAnnotation:annotation
+                              reuseIdentifier:GeoQueryAnnotationIdentifier];
+            annotationView.tag = PinAnnotationTypeTagGeoQuery;
+            annotationView.canShowCallout = YES;
+            annotationView.pinColor = MKPinAnnotationColorPurple;
+            annotationView.animatesDrop = NO;
+            annotationView.draggable = YES;
+        }
+        
+        return annotationView;
+    } else if ([annotation isKindOfClass:[GeoPointAnnotation class]]) {
+        MKPinAnnotationView *annotationView =
+        (MKPinAnnotationView *)[mapView
+                                dequeueReusableAnnotationViewWithIdentifier:GeoPointAnnotationIdentifier];
+        
+        if (!annotationView) {
+            annotationView = [[MKPinAnnotationView alloc]
+                              initWithAnnotation:annotation
+                              reuseIdentifier:GeoPointAnnotationIdentifier];
+            annotationView.tag = PinAnnotationTypeTagGeoPoint;
+            annotationView.canShowCallout = YES;
+            annotationView.pinColor = MKPinAnnotationColorRed;
+            annotationView.animatesDrop = YES;
+            annotationView.draggable = NO;
+        }
+        
+        return annotationView;
+    }
+    
+    return nil;
+}
+
+//- (MKOverlayView *)mapView:(MKMapView *)mapView viewForOverlay:(id<MKOverlay>)overlay {
+//    static NSString *CircleOverlayIdentifier = @"Circle";
+//    
+//    if ([overlay isKindOfClass:[CircleOverlay class]]) {
+//        CircleOverlay *circleOverlay = (CircleOverlay *)overlay;
+//        
+//        MKCircleView *annotationView =
+//        (MKCircleView *)[mapView dequeueReusableAnnotationViewWithIdentifier:CircleOverlayIdentifier];
+//        
+//        if (!annotationView) {
+//            MKCircle *circle = [MKCircle
+//                                circleWithCenterCoordinate:circleOverlay.coordinate
+//                                radius:circleOverlay.radius];
+//            annotationView = [[MKCircleView alloc] initWithCircle:circle];
+//        }
+//        
+//        if (overlay == self.targetOverlay) {
+//            annotationView.fillColor = [UIColor colorWithRed:1.0f green:0.0f blue:0.0f alpha:0.3f];
+//            annotationView.strokeColor = [UIColor redColor];
+//            annotationView.lineWidth = 1.0f;
+//        } else {
+//            annotationView.fillColor = [UIColor colorWithWhite:0.3f alpha:0.3f];
+//            annotationView.strokeColor = [UIColor purpleColor];
+//            annotationView.lineWidth = 2.0f;
+//        }
+//        
+//        return annotationView;
+//    }
+//    
+//    return nil;
+//}
+
+- (void)mapView:(MKMapView *)mapView annotationView:(MKAnnotationView *)view didChangeDragState:(MKAnnotationViewDragState)newState fromOldState:(MKAnnotationViewDragState)oldState {
+    if (![view isKindOfClass:[MKPinAnnotationView class]] || view.tag != PinAnnotationTypeTagGeoQuery) {
+        return;
+    }
+    
+    if (MKAnnotationViewDragStateStarting == newState) {
+        [self.mapView removeOverlays:self.mapView.overlays];
+    } else if (MKAnnotationViewDragStateNone == newState && MKAnnotationViewDragStateEnding == oldState) {
+        MKPinAnnotationView *pinAnnotationView = (MKPinAnnotationView *)view;
+        GeoQueryAnnotation *geoQueryAnnotation = (GeoQueryAnnotation *)pinAnnotationView.annotation;
+        self.location = [[CLLocation alloc] initWithLatitude:geoQueryAnnotation.coordinate.latitude longitude:geoQueryAnnotation.coordinate.longitude];
+//        [self configureOverlay];
+    }
+}
+
+- (CLLocationManager *)locationManager {
+	
+    if (_locationManager != nil) {
+		return _locationManager;
+	}
+	//NSLog(@"[1]");
+	_locationManager = [[CLLocationManager alloc] init];
+    _locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters;
+    _locationManager.delegate = self;
+    //_locationManager.purpose = @"Your current location is used to demonstrate PFGeoPoint and Geo Queries.";
+	
+	return _locationManager;
+}
+- (void)setInitialLocation:(CLLocation *)aLocation {
+    self.location = aLocation;
+//    self.radius = 1000;
+    //NSLog(@"%.2f,%.2f",self.location.coordinate.latitude, self.location.coordinate.longitude);
+    [PFGeoPoint geoPointForCurrentLocationInBackground:^(PFGeoPoint *geoPoint, NSError *error) {
+        if (!error) {
+            NSLog(@"User is currently at %f, %f", geoPoint.latitude, geoPoint.longitude);
+            NSNumber *lat = [NSNumber numberWithDouble:geoPoint.latitude];
+            NSNumber *lon = [NSNumber numberWithDouble:geoPoint.longitude];
+            NSDictionary *userLocation=@{@"lat":lat,@"long":lon};
+            
+            [[NSUserDefaults standardUserDefaults] setObject:userLocation forKey:@"userLocation"];
+            [[NSUserDefaults standardUserDefaults] synchronize];
+            [[PFUser currentUser] setObject:geoPoint forKey:@"currentLocation"];
+            [[PFUser currentUser] saveInBackground];
+        }
+    }];
 }
 
 /*

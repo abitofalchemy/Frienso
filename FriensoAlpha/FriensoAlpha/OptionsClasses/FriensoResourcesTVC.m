@@ -180,7 +180,7 @@
     // against the network.
     if ([self.objects count] == 0) {
         query.cachePolicy = kPFCachePolicyCacheThenNetwork;
-    } NSLog(@"%d", [self.objects count]);
+    } //NSLog(@"%d", [self.objects count]);
     
     [query orderByDescending:@"createdAt"];
     

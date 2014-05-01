@@ -42,6 +42,8 @@ static NSString *coreFriendsCell = @"coreFriendsCell";
 {
     [super viewDidLoad];
     
+    [self.navigationController setToolbarHidden:YES];
+    
     // Update this user's current location
     FRCoreDataParse *frCDPObject = [[FRCoreDataParse alloc] init];
     [frCDPObject updateThisUserLocation];

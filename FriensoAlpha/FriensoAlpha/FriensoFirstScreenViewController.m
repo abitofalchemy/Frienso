@@ -79,16 +79,31 @@
 -(void) setupTopLabel{
     welcomeLabel = [[UILabel alloc] init];
     welcomeLabel.backgroundColor = [UIColor clearColor];
-    welcomeLabel.text = @"Welcome to Frienso";
+    welcomeLabel.text = @"Frienso";
     welcomeLabel.font = [UIFont fontWithName:@"AppleSDGothicNeo-Medium" size:28.0];
     welcomeLabel.textColor = [UIColor whiteColor];
+    [welcomeLabel setTextAlignment:NSTextAlignmentCenter];
     /*welcomeLabel.shadowColor = [UIColor lightGrayColor];
     welcomeLabel.shadowOffset = CGSizeMake(2.0f, 2.0f);
     */
     [welcomeLabel sizeToFit];
     
-    welcomeLabel.center = CGPointMake(self.view.center.x,self.view.bounds.size.height*0.8);
+    UILabel *welcomeLabel2 = [[UILabel alloc] init];
+    welcomeLabel2.backgroundColor = [UIColor clearColor];
+    welcomeLabel2.text = @"Your μSocial Safety Network\nfor College Campus";
+    welcomeLabel2.font = [UIFont fontWithName:@"AppleSDGothicNeo-Light" size:20.0];
+    welcomeLabel2.textColor = [UIColor whiteColor];
+    [welcomeLabel2 setTextAlignment:NSTextAlignmentCenter];
+    [welcomeLabel2 setNumberOfLines:2];
+    /*welcomeLabel.shadowColor = [UIColor lightGrayColor];
+     welcomeLabel.shadowOffset = CGSizeMake(2.0f, 2.0f);
+     */
+    [welcomeLabel2 sizeToFit];
+    welcomeLabel.center = CGPointMake(self.view.center.x,self.view.bounds.size.height*0.125);
+    welcomeLabel2.center = CGPointMake(self.view.center.x,self.view.bounds.size.height*0.20);
+    
     [self.view addSubview:welcomeLabel];
+    [self.view addSubview:welcomeLabel2];
 }
 
 - (void)viewDidLoad
