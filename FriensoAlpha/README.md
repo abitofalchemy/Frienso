@@ -5,6 +5,14 @@ Frienso iOS Nu
 
 Version History
 ---------------
+ver 1.4 build 3.1   Added ability to save a resource (contact) and access it via the circle of Friends
+                    button, we can decide where else to make this available.
+                    -  Fixed the sections view in the CoreCircle viewcontroller
+                    -  Fully logout and reset the local database is working 
+                    -  
+
+ver 1.4 build 2.0   Adding resources view to Home View
+
 ver 1.4 build 1.0   New layout after input from team;
 
 ver 1.3 build 1.0   Updates to the friends list (coreData), we cache coreFriends location locally
@@ -51,7 +59,7 @@ ToDo
     ...
 * Cache Resources and update if new from Parse!
 
-* Fully logout
+
 
 * Handle Parse time-outs
     Trap parse calls to the network - network outage
@@ -60,6 +68,7 @@ ToDo
 
 Tasks Done / Project Log:
 -------------------------
+* { Done } Fully logout
 * When app is launched, the user's current location and his/her friends' are cached
   Also when the user clicks on the quick-view of his/her circle, the user's current loc is updated
   When the Map view is loaded, 1) the user's current location is update and the friends' locations are cached

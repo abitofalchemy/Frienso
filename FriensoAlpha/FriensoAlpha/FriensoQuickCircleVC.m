@@ -47,6 +47,7 @@ static NSString *coreFriendsCell = @"coreFriendsCell";
     // Update this user's current location
     FRCoreDataParse *frCDPObject = [[FRCoreDataParse alloc] init];
     [frCDPObject updateThisUserLocation];
+    [frCDPObject updateCoreFriendsLocation];
     
 	//  Add new table view
     self.tableView = [[UITableView alloc] init];
@@ -60,10 +61,11 @@ static NSString *coreFriendsCell = @"coreFriendsCell";
     /* Create the fetch request first */
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc]
                                     initWithEntityName:@"CoreFriends"];
+    fetchRequest.fetchBatchSize = 20;
     
     NSSortDescriptor *modifiedSort =
-    [[NSSortDescriptor alloc] initWithKey:@"coreLastName"
-                                ascending:NO];
+    [[NSSortDescriptor alloc] initWithKey:@"coreType"
+                                ascending:YES];
     
     NSSortDescriptor *eventTitleSort =
     [[NSSortDescriptor alloc] initWithKey:@"coreFirstName"
@@ -74,7 +76,7 @@ static NSString *coreFriendsCell = @"coreFriendsCell";
     self.frc =
     [[NSFetchedResultsController alloc] initWithFetchRequest:fetchRequest
                                         managedObjectContext:[self managedObjectContext]
-                                          sectionNameKeyPath:nil
+                                          sectionNameKeyPath:@"coreType"
                                                    cacheName:nil];
     
     self.frc.delegate      = self;
@@ -96,17 +98,32 @@ static NSString *coreFriendsCell = @"coreFriendsCell";
 #pragma mark - TableView methods
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    //return 1;
-    return [[self.frc sections] count];
+    NSInteger sectionNbr = [[self.frc sections] count];
+    NSLog(@"%lu",sectionNbr);
+    return sectionNbr;
 }
-
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     id <NSFetchedResultsSectionInfo> sectionInfo = self.frc.sections[section];
-    //NSLog(@"%lu",sectionInfo.numberOfObjects);
+    NSLog(@"no of sections: %lu",sectionInfo.numberOfObjects);
     return sectionInfo.numberOfObjects;
-    
 }
+// handling the sections for these data
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
+    id <NSFetchedResultsSectionInfo> sectionInfo = [[self.frc sections] objectAtIndex:section];
+    return [sectionInfo name];
+}
+- (NSArray *)sectionIndexTitlesForTableView:(UITableView *)tableView {
+    return [self.frc sectionIndexTitles];
+}
+- (NSInteger)tableView:(UITableView *)tableView sectionForSectionIndexTitle:(NSString *)title atIndex:(NSInteger)index {
+    return [self.frc sectionForSectionIndexTitle:title atIndex:index];
+}
+
+//- (NSInteger)tableView:(UITableView *)tableView sectionForSectionIndexTitle:(NSString *)title atIndex:(NSInteger)index {
+//    return [self.frc sectionForSectionIndexTitle:title atIndex:index];
+//}
+
 - (UITableViewCell *)tableView:(UITableView *)theTableView
          cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
@@ -118,10 +135,14 @@ static NSString *coreFriendsCell = @"coreFriendsCell";
     }
     
     CoreFriends *friend = [self.frc objectAtIndexPath:indexPath];
+    NSLog(@"%@", friend.corePhone);
     
-    cell.textLabel.text = friend.coreFirstName;// stringByAppendingFormat:@" %@", person.lastName];
+    cell.textLabel.text = ([friend.coreType isEqualToString:@"Person"]) ? friend.coreFirstName : friend.coreTitle;// stringByAppendingFormat:@" %@", person.lastName];
     cell.textLabel.font = [UIFont fontWithName:@"AppleSDGothicNeo-Medium" size:14.0];
-    cell.detailTextLabel.text = [NSString stringWithFormat:@"%@",(friend.coreLocation == NULL) ? @"..." : friend.coreLocation];
+    if ([friend.coreType isEqualToString:@"Person"])
+        cell.detailTextLabel.text = [NSString stringWithFormat:@"%@",(friend.coreLocation == NULL) ? @"..." : friend.coreLocation];
+    else
+        cell.detailTextLabel.text = [NSString stringWithFormat:@"%@",(friend.corePhone == NULL) ? @"..." : friend.corePhone];
     cell.backgroundColor = [UIColor clearColor];
     cell.textLabel.textColor = [UIColor blackColor];
     cell.detailTextLabel.textColor  = [UIColor blueColor];

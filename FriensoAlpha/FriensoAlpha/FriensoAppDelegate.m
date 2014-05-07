@@ -151,4 +151,16 @@
     return [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject];
 }
 
+-(void) flushDatabase{
+    [_managedObjectContext lock];
+    NSArray *stores = [_persistentStoreCoordinator persistentStores];
+    for(NSPersistentStore *store in stores) {
+        [_persistentStoreCoordinator removePersistentStore:store error:nil];
+        [[NSFileManager defaultManager] removeItemAtPath:store.URL.path error:nil];
+    }
+    [_managedObjectContext unlock];
+    _managedObjectModel    = nil;
+    _managedObjectContext  = nil;
+    _persistentStoreCoordinator = nil;
+}
 @end

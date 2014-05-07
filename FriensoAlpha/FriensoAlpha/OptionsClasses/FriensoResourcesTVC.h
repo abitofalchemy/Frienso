@@ -11,5 +11,7 @@
 
 
 @interface FriensoResourcesTVC : PFQueryTableViewController
+- (void) setText:(NSString *)paramText;
+//- (void) setFrame:(CGRect )frame;
 
 @end

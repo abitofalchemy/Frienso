@@ -25,6 +25,7 @@
                         <segue destination="sRi-j8-7s4" kind="push" identifier="showFriesoMap" id="HKj-DF-MrE"/>
                         <segue destination="aY6-gZ-dOi" kind="push" identifier="createEvent" id="KMa-pk-ZOI"/>
                         <segue destination="6kB-Zb-JaQ" kind="modal" identifier="panicEvent" id="n71-eB-Kl2"/>
+                        <segue destination="3kY-1V-fX0" kind="push" identifier="instResources" id="Efz-ba-uWS"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
@@ -111,7 +112,7 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="fkk-b4-g1T">
-                                <rect key="frame" x="0.0" y="22" width="320" height="44"/>
+                                <rect key="frame" x="0.0" y="86" width="320" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="fkk-b4-g1T" id="VjJ-7t-C4R">
                                     <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
@@ -124,10 +125,11 @@
                             <outlet property="delegate" destination="3kY-1V-fX0" id="Xko-l6-EjS"/>
                         </connections>
                     </tableView>
+                    <navigationItem key="navigationItem" id="NVI-Ra-hwX"/>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dDy-si-0W9" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2082" y="1429"/>
+            <point key="canvasLocation" x="1482" y="754"/>
         </scene>
         <!--A BoA View Controller-->
         <scene sceneID="FR0-Th-QOX">
@@ -399,6 +401,6 @@
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
         <segue reference="hk5-85-B4H"/>
-        <segue reference="ixB-WG-BG7"/>
+        <segue reference="HKj-DF-MrE"/>
     </inferredMetricsTieBreakers>
 </document>

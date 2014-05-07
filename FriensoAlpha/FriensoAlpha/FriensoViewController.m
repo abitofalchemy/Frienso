@@ -17,6 +17,7 @@
 #import "FRCoreDataParse.h"
 #import "GeoPointAnnotation.h"
 #import "GeoQueryAnnotation.h"
+#import "FriensoResources.h"
 
 
 #define ARC4RANDOM_MAX      0x100000000
@@ -34,9 +35,10 @@ enum PinAnnotationTypeTag {
     NSMutableArray *coreFriendsArray;
 }
 @property (nonatomic,retain) NSMutableArray *coreFriendsArray;
-@property (nonatomic,strong) UITableView *tableView;
 @property (nonatomic, strong) NSFetchedResultsController *frc;
 @property (nonatomic, strong) CLLocation *location;
+@property (nonatomic,strong) UITableView *tableView;
+@property (nonatomic,strong) UITableView *rsrcTableView; //frienso resources tableview
 
 -(void)actionPanicEvent: (UIButton *)theButton;
 -(void)viewMenuOptions: (UIButton *)theButton;
@@ -47,7 +49,7 @@ enum PinAnnotationTypeTag {
 
 @implementation FriensoViewController
 @synthesize coreFriendsArray = _coreFriendsArray;
-@synthesize locationManager = _locationManager;
+@synthesize locationManager  = _locationManager;
 
 
 -(void)actionPanicEvent:(UIButton *)theButton {
@@ -100,10 +102,12 @@ enum PinAnnotationTypeTag {
     
 }
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
-    //NSLog(@"%f",[tableView rowHeight]);
-    if (indexPath.row == 0)
-        return [tableView rowHeight]*2.0f;
-    else return [tableView rowHeight];
+    
+        if (indexPath.row == 0)
+            return [tableView rowHeight]*2.0f;
+        else
+            return [tableView rowHeight];
+    
 }
 
 - (UITableViewCell *)tableView:(UITableView *)theTableView
@@ -123,29 +127,47 @@ enum PinAnnotationTypeTag {
     cell.detailTextLabel.text = [NSString stringWithFormat:@"%@",event.eventSubtitle];
     
     cell.textLabel.textColor = [UIColor blackColor];
-    cell.detailTextLabel.textColor  = [UIColor lightGrayColor];
+    cell.detailTextLabel.textColor  = UIColorFromRGB(0x83b5dd);
     cell.textLabel.font = [UIFont fontWithName:@"AppleSDGothicNeo-Medium" size:10.0];
     cell.detailTextLabel.font = [UIFont fontWithName:@"AppleSDGothicNeo-Light" size:10.0];
     if ([event.eventCategory isEqualToString:@"calendar"]) {
         cell.imageView.image = [self imageWithBorderFromImage:[UIImage imageNamed:@"cal-ic-24.png"]];
         cell.backgroundColor = [UIColor clearColor];
+    } else if ([event.eventCategory isEqualToString:@"general"]) {
+        NSLog(@"%@", event.eventImage);
+        NSURL *imageURL = [NSURL URLWithString:event.eventImage];
+        //[NSURL URLWithString:@"http://static01.nyt.com/images/2014/04/29/us/politics/29ASSAULT/29ASSAULT-master315.jpg"];
+        NSData *imageData = [NSData dataWithContentsOfURL:imageURL];
+        UIImage *img = [UIImage imageWithData:imageData];
+        cell.imageView.image = [self imageWithBorderFromImage:img];
+        [cell setAccessoryType:UITableViewCellAccessoryDisclosureIndicator];
+        [cell setTag:10];
     } else {
         cell.imageView.image = [self imageWithBorderFromImage:[UIImage imageNamed:@"profile-24.png"]];
         cell.backgroundColor = [UIColor clearColor];
     }
-    //
+//    //
     if (indexPath.row == 0){
-        cell.textLabel.text = @"White House to Press Colleges to Do More to Combat Rape";
-        [cell.textLabel setNumberOfLines:2];
-        cell.detailTextLabel.text = @"Reacting to a series of highly publicized rapes, the White House is increasing the pressure on universities to more aggressively combat sexual assaults on campus. ";
-        [cell.detailTextLabel setNumberOfLines:4];
-        NSURL *imageURL = [NSURL URLWithString:@"http://static01.nyt.com/images/2014/04/29/us/politics/29ASSAULT/29ASSAULT-master315.jpg"];
-        NSData *imageData = [NSData dataWithContentsOfURL:imageURL];
-        UIImage *img = [UIImage imageWithData:imageData];
-        cell.imageView.image = [self imageWithBorderFromImage:img];
+        [cell.textLabel setNumberOfLines:3];
+        [cell.detailTextLabel setNumberOfLines:3];
+//        [cell setFrame:CGRectMake(0, 0, cell.frame.size.width, cell.frame.size.height*2.0)];
     }
     return cell;
 }
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    NSLog(@"%ld", (long)[tableView cellForRowAtIndexPath:indexPath].tag);
+    switch ([tableView cellForRowAtIndexPath:indexPath].tag)
+    {
+        case 10:
+            [self performSegueWithIdentifier:@"instResources" sender:self];
+            break;
+        default:
+            break;
+    }
+}
+
+
 #pragma mark - NSFetchResultsController delegate methods
 - (void)controllerDidChangeContent:(NSFetchedResultsController *)controller {
     //printf("refreshing frc\n");
@@ -172,16 +194,17 @@ enum PinAnnotationTypeTag {
 
 #pragma mark - Setup view widgets
 -(void) setupEventsTableView {
+
     self.tableView = [[UITableView alloc] init];
-    [self.tableView setFrame:CGRectMake(0, self.view.bounds.size.height*0.4,
+    [self.tableView setFrame:CGRectMake(0, self.view.bounds.size.height*0.305,
                                         self.view.bounds.size.width,
-                                        self.view.bounds.size.height*0.50)];
+                                        self.view.bounds.size.height*0.66)];
     
     self.tableView.dataSource = self;
     self.tableView.delegate   = self;
     //self.tableView.layer.cornerRadius = 6.0f;
     self.tableView.layer.borderWidth = 1.0f;
-    self.tableView.layer.borderColor = UIColorFromRGB(0x9B90C8).CGColor;
+    self.tableView.layer.borderColor = [UIColor whiteColor].CGColor;// UIColorFromRGB(0x9B90C8).CGColor;
     [self.view addSubview:self.tableView];
     
     /*** Tile label
@@ -201,18 +224,17 @@ enum PinAnnotationTypeTag {
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc]
                                     initWithEntityName:@"FriensoEvent"];
     
-    NSSortDescriptor *modifiedSort =
-    [[NSSortDescriptor alloc] initWithKey:@"eventModified"
+    NSSortDescriptor *createdSort =
+    [[NSSortDescriptor alloc] initWithKey:@"eventCreated"
                                 ascending:NO];
     
-    NSSortDescriptor *eventTitleSort =
-    [[NSSortDescriptor alloc] initWithKey:@"eventTitle"
+    NSSortDescriptor *prioritySort =
+    [[NSSortDescriptor alloc] initWithKey:@"eventPriority"
                                 ascending:NO];
     
-    fetchRequest.sortDescriptors = @[modifiedSort, eventTitleSort];
+    fetchRequest.sortDescriptors = @[prioritySort,createdSort];
     
-    self.frc =
-    [[NSFetchedResultsController alloc]
+    self.frc = [[NSFetchedResultsController alloc]
      initWithFetchRequest:fetchRequest
      managedObjectContext:[self managedObjectContext]
      sectionNameKeyPath:nil
@@ -228,13 +250,14 @@ enum PinAnnotationTypeTag {
 }
 
 -(void) setupHalfMapView {
-    
-    self.mapView = [[MKMapView alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width,self.view.bounds.size.height*0.4)];
+    self.mapView = [[MKMapView alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width,self.view.bounds.size.height*0.3)];
     [self.view addSubview:self.mapView];
     self.mapView.region = MKCoordinateRegionMake(self.location.coordinate,MKCoordinateSpanMake(0.05f,0.05f));
 
     self.mapView.layer.borderWidth = 2.0f;
-    self.mapView.layer.borderColor = [UIColor whiteColor].CGColor;
+    self.mapView.layer.borderColor = UIColorFromRGB(0x9B90C8).CGColor;
+    [self configureOverlay];
+
     
     /**
     UILabel *tileLabel = [[UILabel alloc] initWithFrame:CGRectZero];
@@ -252,37 +275,6 @@ enum PinAnnotationTypeTag {
     **/
 }
 
--(void) setupMapButton {
-    UIButton *button= [UIButton buttonWithType:UIButtonTypeCustom];
-    button.frame = CGRectMake(0, 0,
-                              self.view.frame.size.width,
-                              self.view.frame.size.height*0.4);
-    [button addTarget:self
-               action:@selector(friensoMapViewCtrlr:)
-     forControlEvents:UIControlEventTouchDown];
-    button.layer.cornerRadius = 6.0f;
-    button.layer.borderWidth = 1.0f;
-    button.layer.borderColor = [UIColor lightGrayColor].CGColor;
-    //button.backgroundColor = UIColorFromRGB(0x4962D6);
-    /*NSMutableArray *imageArray = [NSMutableArray new];
-    
-    for (int i = 0; i < 2; i ++) {
-        [imageArray addObject:[UIImage imageNamed:[NSString stringWithFormat:@"map-btn-%d.png",i]]];
-    }
-    
-    [button setImage:[UIImage imageNamed:@"map-btn-0.png"] forState:UIControlStateNormal];
-    [button.imageView setAnimationImages:[imageArray copy]];
-    [button.imageView setAnimationDuration:0.5];
-    [button.imageView startAnimating];*/
-    double rndNbr = ((double)arc4random() / ARC4RANDOM_MAX);
-    NSLog(@"%f", rndNbr);
-    
-    [button setBackgroundImage:[UIImage imageNamed: (rndNbr<.5) ? @"map-btn-0.png" : @"map-btn-1.png"] forState:UIControlStateNormal];
-    
-    [self.view addSubview:button];
-    
-    
-}
 -(void) setupToolBarIcons{
     self.navigationController.toolbarHidden = NO;
 
@@ -309,7 +301,7 @@ enum PinAnnotationTypeTag {
                                             initWithFrame:CGRectMake(0, 0, 27, 27)];
     calEventBtn.layer.cornerRadius = 4.0f;
     calEventBtn.layer.borderWidth = 1.0f;
-    calEventBtn.layer.borderColor = violetTulip.CGColor;
+    calEventBtn.layer.borderColor = UIColorFromRGB(0x006bb6).CGColor;
     [calEventBtn addTarget:self action:@selector(makeFriensoEvent:)
           forControlEvents:UIControlEventTouchUpInside];
     [calEventBtn setCenter:CGPointMake(self.navigationController.toolbar.bounds.size.width - 44.0f,22)];
@@ -322,7 +314,7 @@ enum PinAnnotationTypeTag {
     [panicButton setTitle:@"\u26A0" forState:(UIControlStateNormal)];
     panicButton.layer.cornerRadius = 4.0f;
     panicButton.layer.borderWidth = 1.0f;
-    panicButton.layer.borderColor = violetTulip.CGColor;
+    panicButton.layer.borderColor = UIColorFromRGB(0x006bb6).CGColor;;
 //    [panicButton.titleLabel setFont:[UIFont fontWithName:@"AppleSDGothicNeo-Medium" size:22.0]];
     panicButton.titleLabel.textColor = [UIColor colorWithRed:0.0/255.0 green:107.0/255.0 blue:182.0/255.0 alpha:1.0];
     [panicButton setCenter:CGPointMake(self.navigationController.toolbar.center.x, 22)];
@@ -451,7 +443,9 @@ enum PinAnnotationTypeTag {
                 cFriends.coreFirstName = [coreCircle objectAtIndex:i];
                 cFriends.coreLastName  = @"";
                 cFriends.corePhone     = [valueArray objectAtIndex:i];
+                cFriends.coreCreated   =  [NSDate date];
                 cFriends.coreModified  = [NSDate date];
+                cFriends.coreType      = @"Person";
                 //NSLog(@"%@",[coreCircle objectAtIndex:i] );
                 NSError *savingError = nil;
                 
@@ -473,10 +467,10 @@ enum PinAnnotationTypeTag {
     
     printf("[ Dashboard: FriensoVC ]\n");
     self.navigationController.navigationBarHidden = NO;
-	//[UIFont fontWithName:@"AppleSDGothicNeo-Light" size:16.0]
-    if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"CoreFriendsContactInfoDicKey"] count] == 0) {
+
+    if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"CoreFriendsContactInfoDicKey"] count] == 0)
         [self syncFromParse];
-    } else
+    else
         NSLog(@"all loaded already");
     
     
@@ -487,18 +481,93 @@ enum PinAnnotationTypeTag {
     [self setupHalfMapView];
     [self setupEventsTableView];
 
-
     [self syncCoreFriendsLocation]; //  from parse to coredata
     
 }
 - (void)viewDidUnload {
     self.tableView = nil;
-    
     [super viewDidUnload];
 }
 -(void) viewWillAppear:(BOOL)animated {
     [super viewWillAppear:YES];
     [self setupToolBarIcons];
+}
+
+-(void) viewDidAppear:(BOOL)animated{
+    [super viewDidAppear:animated];
+    
+    //  cache resources from parse
+    // The className to query on
+    PFQuery *query = [PFQuery queryWithClassName:@"Resources"];
+    [query orderByDescending:@"createdAt"];
+    query.cachePolicy = kPFCachePolicyNetworkElseCache;
+    [query getFirstObjectInBackgroundWithBlock:^(PFObject *object, NSError *error) {
+        if (!object) {
+            NSLog(@"The getFirstObject request failed.");
+        } else {
+            // The find succeeded.
+            //NSLog(@"Successfully retrieved the object.");
+            //NSLog(@"%@", object.objectId);
+            
+            
+                FriensoAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+                
+                NSManagedObjectContext *managedObjectContext =
+                appDelegate.managedObjectContext;
+                // First check to see if the objectId already exists
+                NSEntityDescription *entityDescription = [NSEntityDescription entityForName:@"FriensoEvent"
+                                                                     inManagedObjectContext:managedObjectContext];
+                NSFetchRequest *request = [[NSFetchRequest alloc] init];
+                [request setPredicate:[NSPredicate predicateWithFormat:@"eventObjId like %@",object.objectId]];
+                [request setEntity:entityDescription];
+                BOOL unique = YES;
+                NSError  *error;
+                NSArray *items = [managedObjectContext executeFetchRequest:request error:&error];
+                if(items.count > 0){
+                    /*for(FriensoEvent *thisFEvent in items){
+                        if([thisFEvent.eventObjId isEqualToString: nameToEnter]){
+                            unique = NO;
+                        }
+                        //NSLog(@"%@", thisPerson);
+                    }
+                    */
+                    unique = NO;
+                    //NSLog(@"%ld", [items count]);
+                    
+                }
+            if (unique) {
+                FriensoEvent *firstFriensoEvent = [NSEntityDescription insertNewObjectForEntityForName:@"FriensoEvent"
+                                                                                inManagedObjectContext:managedObjectContext];
+                
+                if (firstFriensoEvent != nil)
+                {
+                    
+                    firstFriensoEvent.eventTitle     = [object valueForKey:@"resource"];
+                    firstFriensoEvent.eventSubtitle  = [object valueForKey:@"detail"];
+                    firstFriensoEvent.eventLocation  = [object valueForKey:@"ResourceLink"];
+                    firstFriensoEvent.eventCategory  = [object valueForKey:@"categoryType"];
+                    firstFriensoEvent.eventCreated   = [NSDate date];
+                    firstFriensoEvent.eventModified  = object.createdAt;
+                    firstFriensoEvent.eventObjId     = object.objectId;
+                    firstFriensoEvent.eventImage     = [object valueForKey:@"rImage"];
+                    firstFriensoEvent.eventPriority  = [NSNumber numberWithInteger:3];
+                    
+                    NSError *savingError = nil;
+                    if([managedObjectContext save:&savingError]) {
+                        NSLog(@"Successfully cached the resource");
+                    } else
+                        NSLog(@"Failed to save the context. Error = %@", savingError);
+                    // update the Parse record:
+                    [object setObject:[NSNumber numberWithBool:YES]
+                               forKey:@"wasCached"];
+                    [object saveInBackground];
+                    
+                } else {
+                    NSLog(@"Failed to create a new event.");
+                }
+            } else NSLog(@"! Parse event is not unique");
+        }
+    }];
 }
 
 - (void)didReceiveMemoryWarning
@@ -507,6 +576,34 @@ enum PinAnnotationTypeTag {
     // Dispose of any resources that can be recreated.
 }
 #pragma mark - CoreData helper methods
+-(void) updateCoreFriendEntity:(NSString *)friendEmail
+                  withLocation:(PFGeoPoint *)friendCurrentLoc
+{
+    // NOT WORKING!!
+    
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
+    
+    NSEntityDescription *entity  = [NSEntityDescription entityForName:@"CoreFriends"
+                                               inManagedObjectContext:[self managedObjectContext]];
+    
+    [fetchRequest setEntity:entity];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"coreEmail like %@",@"nd.edu"];
+    [fetchRequest setPredicate:predicate];
+    
+    NSError *error;
+    NSArray *fetchedObjects = [[self managedObjectContext] executeFetchRequest:fetchRequest
+                                                                         error:&error];
+    if (fetchedObjects == nil) {
+        // Handle the error.
+        NSLog(@"Handle the error: %@", error);
+    } else {
+        for (NSManagedObject *object in fetchedObjects) {
+            
+            NSLog(@"%@", object);
+            
+        }
+    }
+}
 - (void) actionAddFriensoEvent:(NSString *) message {
     NSLog(@"[ actionAddFriensoEvent ]");
     FriensoAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
@@ -716,6 +813,76 @@ enum PinAnnotationTypeTag {
     }];
 }
 
+- (void)configureOverlay {
+    if (self.location) {
+        [self.mapView removeAnnotations:self.mapView.annotations];
+        [self.mapView removeOverlays:self.mapView.overlays];
+        
+        /**CircleOverlay *overlay = [[CircleOverlay alloc] initWithCoordinate:self.location.coordinate radius:self.radius];
+        [self.mapView addOverlay:overlay];
+        **/
+        
+        GeoQueryAnnotation *annotation = [[GeoQueryAnnotation alloc] initWithCoordinate:self.location.coordinate radius:1000];
+        [self.mapView addAnnotation:annotation];
+        
+        [self updateLocations];
+    }
+}
+- (void)updateLocations {
+    // Get geopoints for coreF
+    NSDictionary *retrievedCoreFriendsDictionary = [[NSUserDefaults standardUserDefaults] objectForKey:@"CoreFriendsContactInfoDicKey"];
+    
+    if ( [retrievedCoreFriendsDictionary count] > 0) {
+        NSArray *connectionKeyArray =  [[NSArray alloc]
+                                        initWithArray:[retrievedCoreFriendsDictionary allValues]];
+        
+        for (NSString *pNumber in connectionKeyArray) {
+            //NSLog(@"CoreF contact: %@", pNumber);
+            PFQuery *query = [PFQuery queryWithClassName:@"UserConnection"];
+            NSRange substrRange = NSMakeRange(pNumber.length-10, 10);
+            [query whereKey:@"userNumber" containsString:[pNumber substringWithRange:substrRange]];
+            [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error)
+             {
+                 if (!error) { // The find succeeded.
+                     for (PFObject *object in objects) { // Do something w/ found objects
+                         //NSLog(@"%@", object);
+                         //NSLog(@"%@", [[object valueForKey:@"user"] objectId]);
+                         [self fetchCurrentLocationForUser:[[object valueForKey:@"user"] objectId]];
+                     }
+                 } else {
+                     // Log details of the failure
+                     NSLog(@"Error: %@ %@", error, [error userInfo]);
+                 }
+             }];
+            
+            
+            
+            
+            
+        }
+    }
+}
+-(void) fetchCurrentLocationForUser:(NSString *) coreFriendObjectId {
+    /** fetchCurrentLocationForUser
+     coreFriendObjectId: objectId in Parse User class
+     the connection has to be done via the phone nbr.
+     **/
+
+    PFQuery *query = [PFUser query];
+    [query getObjectInBackgroundWithId:coreFriendObjectId
+                                 block:^(PFObject *object, NSError *error)
+     {
+         if (!error) {
+             NSLog(@"%@, %@", (NSString *)[object valueForKey:@"email"], (PFGeoPoint *)[object valueForKey:@"currentLocation"]);
+             [self updateCoreFriendEntity:(NSString *)[object valueForKey:@"email"]
+                             withLocation:(PFGeoPoint *)[object valueForKey:@"currentLocation"]];
+             GeoPointAnnotation *geoPointAnnotation = [[GeoPointAnnotation alloc] initWithObject:object];
+             [self.mapView addAnnotation:geoPointAnnotation];
+             
+         } else
+             NSLog(@"Error: %@ %@", error, [error userInfo]); // Log details of the failure
+     }];
+}
 /*
  *  http://borkware.com/quickies/one?topic=Graphics
  *  http://stackoverflow.com/questions/10895035/coregraphics-draw-an-image-on-a-white-canvas

@@ -11,6 +11,9 @@
  *  */
 
 #import "FriensoResourcesTVC.h"
+#import "FriensoAppDelegate.h"
+#import "FriensoEvent.h"
+#import "CoreFriends.h"
 
 @interface FriensoResourcesTVC ()
 @property (nonatomic,retain) NSString * resourcePhoneNumber;
@@ -43,6 +46,12 @@
     }
     return self;
 }
+- (void) setText:(NSString *)paramText{
+    self.title = paramText;
+}
+//- (void) setFrame:(CGRect)frame{
+//    self->_view.frame = frame;
+//}
 
 - (void)viewDidLoad
 {
@@ -186,7 +195,14 @@
     
     return query;
 }
-
+-(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
+    
+    if (indexPath.row == 0)
+        return [tableView rowHeight]*3.0f;
+    else
+        return [tableView rowHeight]*1.5f;
+    
+}
 - (UITableViewCell *)tableView:(UITableView *)tableView
          cellForRowAtIndexPath:(NSIndexPath *)indexPath
                         object:(PFObject    *)object {
@@ -204,10 +220,46 @@
                              ([object objectForKey:@"phonenumber"]) ? [NSString stringWithFormat:@"|%@",[object objectForKey:@"phonenumber"]] : @"|",
                              ([object objectForKey:@"ResourceLink"]) ? [NSString stringWithFormat:@"|%@",[object objectForKey:@"ResourceLink"]]: @"|"];
     
-    cell.textLabel.text         = [object objectForKey:@"resource"];
+    cell.textLabel.text         = [object objectForKey:@"resource"];    // title
+    cell.textLabel.font         = [UIFont fontWithName:@"AppleSDGothicNeo-Medium" size:14.0];
     self.resourcePhoneNumber    = [object objectForKey:@"phonenumber"];
     cell.detailTextLabel.text   = fullDetails;
-    
+    cell.detailTextLabel.font   = [UIFont fontWithName:@"AppleSDGothicNeo-Light" size:12.0];
+    if (indexPath.row == 0 )
+    {
+        [cell.textLabel setNumberOfLines:3];
+        [cell.textLabel adjustsFontSizeToFitWidth];
+        [cell.detailTextLabel setNumberOfLines:4];
+        if ( [[object objectForKey:@"categoryType"] isEqualToString:@"general"])
+        {// image
+            NSURL *imageURL = [NSURL URLWithString:[object objectForKey:@"rImage"]];
+            NSData *imageData = [NSData dataWithContentsOfURL:imageURL];
+            UIImage *img = [UIImage imageWithData:imageData];
+            NSLog(@"img: %2.f, %2.f", img.size.width, img.size.height);
+            NSLog(@"cell:%2.f, %2.f", cell.frame.size.width, cell.frame.size.height);
+            CGFloat ratio = (cell.frame.size.width*0.4*cell.frame.size.height)/cell.frame.size.height;
+            cell.imageView.image = [self scaleImage:img
+                                             toSize:CGSizeMake(cell.frame.size.width*0.4,ratio)];//[self imageWithBorderFromImage:img];
+        }
+    } else if ([[object objectForKey:@"categoryType"] isEqualToString:@"inst,contact"]) {
+        UIButton *label = [UIButton buttonWithType:UIButtonTypeCustom];
+        [label setTitle:@"📥" forState:UIControlStateNormal];
+        [label sizeToFit];
+        [label addTarget:self action:@selector(checkButtonTapped:event:)  forControlEvents:UIControlEventTouchUpInside];
+
+        cell.accessoryType = UITableViewCellAccessoryDetailButton;
+        cell.accessoryView = label;
+        [cell.detailTextLabel setNumberOfLines:2];
+        PFFile *instImageFile = [object objectForKey:@"image"];
+        [instImageFile getDataInBackgroundWithBlock:^(NSData *imageData, NSError *error) {
+            if (!error) {
+                UIImage *image = [UIImage imageWithData:imageData];
+                cell.imageView.image = (imageData) ? image : [UIImage imageNamed:@"und_logo29.png"];
+            } else NSLog(@"Error: %@", [error localizedDescription]);
+        }];
+        
+        
+    }
     return cell;
 }
 
@@ -228,8 +280,11 @@
 
 -(void)tableView:(UITableView *)tableView accessoryButtonTappedForRowWithIndexPath:(NSIndexPath *)indexPath
 {
+    NSLog(@"-- Save resource");
     UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
-    NSString *cellText = cell.detailTextLabel.text;
+    cell.accessoryView = nil;
+    cell.accessoryType = UITableViewCellAccessoryCheckmark;
+    /*
     NSArray *strings = [cellText componentsSeparatedByString:@"|"];
     
     if (![[strings objectAtIndex:1] isEqualToString:@""]) {
@@ -243,6 +298,144 @@
         NSLog(@"nothing");
         return;
     }
+    */
+    
+    FriensoAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+    NSManagedObjectContext *managedObjectContext = appDelegate.managedObjectContext;
+    // First check to see if the objectId already exists
+    NSEntityDescription *entityDescription = [NSEntityDescription entityForName:@"CoreFriends"
+                                                         inManagedObjectContext:managedObjectContext];
+    NSFetchRequest *request = [[NSFetchRequest alloc] init];
+    PFObject *pfObj = [self.objects objectAtIndex:indexPath.row];
+    [request setPredicate:[NSPredicate predicateWithFormat:@"coreObjId like %@",pfObj.objectId]];//[pfObj objectForKey:@"resObjId"]]];
+    [request setEntity:entityDescription];
+    BOOL unique = YES;
+    NSError  *error;
+    NSArray *items = [managedObjectContext executeFetchRequest:request error:&error];
+    if(items.count > 0){
+        /*for(FriensoEvent *thisFEvent in items){
+         if([thisFEvent.eventObjId isEqualToString: nameToEnter]){
+         unique = NO;
+         }
+         //NSLog(@"%@", thisPerson);
+         }
+         */
+        unique = NO;
+        //NSLog(@"%ld", [items count]);
+        
+    }
+    if (unique) {
+        CoreFriends  *coreFResource = [NSEntityDescription insertNewObjectForEntityForName:@"CoreFriends"
+                                                                        inManagedObjectContext:managedObjectContext];
+        
+        if (coreFResource != nil)
+        {
+            coreFResource.coreTitle = [pfObj objectForKey:@"resource"];
+            coreFResource.corePhone = [pfObj objectForKey:@"phonenumber"];
+            coreFResource.coreObjId     = pfObj.objectId;
+            coreFResource.coreModified  = [NSDate date];
+            coreFResource.coreCreated   = [NSDate date];
+            coreFResource.coreType      = @"Resource";
+            
+            
+            NSError *savingError = nil;
+            if([managedObjectContext save:&savingError]) {
+                NSLog(@"Successfully cached the resource");
+                cell.accessoryType = UITableViewCellAccessoryCheckmark;
+            } else
+                NSLog(@"Failed to save the context. Error = %@", savingError);
+            
+            
+        } else {
+            NSLog(@"Failed to create a new event.");
+        }
+    } else NSLog(@"! Parse event is not unique");
 }
-
+#pragma mark - Image Actions
+- (UIImage*) scaleImage:(UIImage*)image toSize:(CGSize)newSize {
+    CGSize scaledSize = newSize;
+    float scaleFactor = 1.0;
+    if( image.size.width > image.size.height ) {
+        scaleFactor = image.size.width / image.size.height;
+        scaledSize.width = newSize.width;
+        scaledSize.height = newSize.height / scaleFactor;
+    }
+    else {
+        scaleFactor = image.size.height / image.size.width;
+        scaledSize.height = newSize.height;
+        scaledSize.width = newSize.width / scaleFactor;
+    }
+    
+    UIGraphicsBeginImageContextWithOptions( scaledSize, NO, 0.0 );
+    CGRect scaledImageRect = CGRectMake( 0.0, 0.0, scaledSize.width, scaledSize.height );
+    [image drawInRect:scaledImageRect];
+    UIImage* scaledImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    return scaledImage;
+}
+- (UIImage *)imageWithString:(NSString *)string // What we want an image of.
+                        font:(UIFont *)font     // The font we'd like it in.
+                        size:(CGSize)size       // Size of the desired image.
+{
+    // Create a context to render into.
+    UIGraphicsBeginImageContext(size);
+    
+    // Work out what size of font will give us a rendering of the string
+    // that will fit in an image of the desired size.
+    
+    // We do this by measuring the string at the given font size and working
+    // out the ratio scale to it by to get the desired size of image.
+    NSDictionary *attributes = @{NSFontAttributeName:font};
+    // Measure the string size.
+    CGSize stringSize = [string sizeWithAttributes:attributes];
+    
+    // Work out what it should be scaled by to get the desired size.
+    CGFloat xRatio = size.width / stringSize.width;
+    CGFloat yRatio = size.height / stringSize.height;
+    CGFloat ratio = MIN(xRatio, yRatio);
+    
+    // Work out the point size that'll give us the desired image size, and
+    // create a UIFont that size.
+    CGFloat oldFontSize = font.pointSize;
+    CGFloat newFontSize = floor(oldFontSize * ratio);
+    ratio = newFontSize / oldFontSize;
+    font = [font fontWithSize:newFontSize];
+    
+    // What size is the string with this new font?
+    stringSize = [string sizeWithAttributes:attributes];
+    
+    // Work out where the origin of the drawn string should be to get it in
+    // the centre of the image.
+    CGPoint textOrigin = CGPointMake((size.width - stringSize.width) / 2,
+                                     (size.height - stringSize.height) / 2);
+    
+    // Draw the string into out image!
+    [string drawAtPoint:textOrigin withAttributes:attributes];
+    
+    // We're done!  Grab the image and return it!
+    // (Don't forget to end the image context first though!)
+    UIImage *retImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return retImage;
+}
+#pragma mark - Button Selectors
+- (void)checkButtonTapped:(id)sender event:(id)event
+{
+    NSSet *touches = [event allTouches];
+    UITouch *touch = [touches anyObject];
+    CGPoint currentTouchPosition = [touch locationInView:self.tableView];
+    NSIndexPath *indexPath = [self.tableView indexPathForRowAtPoint: currentTouchPosition];
+    
+    if (indexPath != nil)
+    {
+        [self tableView: self.tableView accessoryButtonTappedForRowWithIndexPath: indexPath];
+    }
+}
 @end
+/** References
+ *
+ *  http://stackoverflow.com/questions/869421/using-a-custom-image-for-a-uitableviewcells-accessoryview-and-having-it-respond
+ *
+ *
+ ****/

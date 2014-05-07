@@ -1,20 +1,27 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="5064" systemVersion="13C64" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
     <entity name="CoreFriends" representedClassName="CoreFriends" syncable="YES">
+        <attribute name="coreCreated" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="coreEmail" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="coreFirstName" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="coreLastName" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="coreLocation" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="coreModified" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="coreNickName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="coreObjId" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="corePhone" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="coreTitle" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="coreType" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
-    <entity name="FriensoEvent" syncable="YES">
+    <entity name="FriensoEvent" representedClassName="FriensoEvent" syncable="YES">
         <attribute name="eventCategory" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="eventContact" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="eventCreated" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="eventImage" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="eventLocation" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="eventModified" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="eventObjId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="eventPriority" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
         <attribute name="eventSubtitle" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="eventTitle" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
@@ -23,13 +30,14 @@
         <attribute name="resCreated" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="resDetail" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="resInstitution" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="resObjId" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="resTitle" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="resUpdated" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="resUrlLink" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
     <elements>
-        <element name="CoreFriends" positionX="0" positionY="0" width="128" height="150"/>
-        <element name="FriensoEvent" positionX="0" positionY="0" width="128" height="150"/>
-        <element name="FriensoResources" positionX="0" positionY="54" width="128" height="150"/>
+        <element name="CoreFriends" positionX="0" positionY="0" width="128" height="210"/>
+        <element name="FriensoEvent" positionX="0" positionY="0" width="128" height="195"/>
+        <element name="FriensoResources" positionX="0" positionY="54" width="128" height="165"/>
     </elements>
 </model>

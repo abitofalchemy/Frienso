@@ -41,6 +41,7 @@
 }
 - (void) updateThisUserLocation
 {
+    NSLog(@"updating my location");
     [PFGeoPoint geoPointForCurrentLocationInBackground:^(PFGeoPoint *geoPoint, NSError *error) {
         if (!error) {
             NSLog(@"User is currently at %f, %f", geoPoint.latitude, geoPoint.longitude);
@@ -53,7 +54,7 @@
         
             [[PFUser currentUser] setObject:geoPoint forKey:@"currentLocation"];
             [[PFUser currentUser] saveInBackground];
-        }
+        } else NSLog(@"An error occurred: %@", error.localizedDescription);
     }];
 }
 - (void) updateCoreFriendsLocation
@@ -65,7 +66,7 @@
                                         initWithArray:[retrievedCoreFriendsDictionary allValues]];
         
         for (NSString *pNumber in connectionKeyArray) {
-            
+            //NSLog(@"%@",pNumber);
             PFQuery *query = [PFQuery queryWithClassName:@"UserConnection"];
             NSRange substrRange = NSMakeRange(pNumber.length-10, 10);
             [query whereKey:@"userNumber" containsString:[pNumber substringWithRange:substrRange]];
@@ -75,7 +76,6 @@
                      for (PFObject *object in objects) { // Do something w/ found objects
                          //NSLog(@"%@", object);
                          //NSLog(@"%@", [[object valueForKey:@"user"] objectId]);
-                         //[self fetchCurrentLocationForUser:[[object valueForKey:@"user"] objectId]];
                          [self fetchCurrentLocationForUser:[[object valueForKey:@"user"] objectId] includePhone:[pNumber substringWithRange:substrRange]];
                      }
                 } else
@@ -116,34 +116,36 @@
                                  block:^(PFObject *object, NSError *error)
      {
          if (!error) {
-             NSLog(@"Friend: %@", (NSString *)[object valueForKey:@"email"]);
-             /*  NSLog(@"%@, %@", (NSString *)[object valueForKey:@"email"], (PFGeoPoint *)[object valueForKey:@"currentLocation"]); */
-             PFGeoPoint *friendLocation = (PFGeoPoint *)[object valueForKey:@"currentLocation"];
+             //NSLog(@"Friend: %@", (NSString *)[object valueForKey:@"email"]);
+             /*NSLog(@"%@, loc: (%.3f,%.3f)", (NSString *)[object valueForKey:@"email"], [[object valueForKey:@"currentLocation"] latitude], [[object valueForKey:@"currentLocation"] longitude]);
+             */
+             PFGeoPoint *friendLocation   = (PFGeoPoint *)[object valueForKey:@"currentLocation"];
              NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
              
-             NSEntityDescription *entity = [NSEntityDescription entityForName:@"CoreFriends"
+             NSEntityDescription *entity  = [NSEntityDescription entityForName:@"CoreFriends"
                                                        inManagedObjectContext:[self managedObjectContext]];
              
              [fetchRequest setEntity:entity];
-             NSPredicate *predicate = [NSPredicate predicateWithFormat:@"corePhone like %@",fPhoneStr];
+             NSPredicate *predicate = [NSPredicate predicateWithFormat:@"corePhone endswith %@",fPhoneStr];
              [fetchRequest setPredicate:predicate];
              
              NSError *error;
-             NSArray *fetchedObjects = [[self managedObjectContext] executeFetchRequest:fetchRequest error:&error];
+             NSArray *fetchedObjects = [[self managedObjectContext] executeFetchRequest:fetchRequest
+                                                                                  error:&error];
              if (fetchedObjects == nil) {
                  // Handle the error.
-             } else
+                 NSLog(@"%@", error);
+             } else {
                  //NSLog(@"from coredata: %@",fetchedObjects);
                  for (NSManagedObject *mObject in fetchedObjects) {
-                     // Ref [0]
+                     
                      CLLocation *locA = [[CLLocation alloc] initWithLatitude:friendLocation.latitude longitude:friendLocation.longitude];
                      NSDictionary *userLocDic = [[NSUserDefaults standardUserDefaults] objectForKey:@"userLocation"];
-                     CLLocation *locB = [[CLLocation alloc]
-                                         initWithLatitude:(CLLocationDegrees)[[userLocDic objectForKey:@"lat"] doubleValue]
-                                         longitude:(CLLocationDegrees)[[userLocDic objectForKey:@"long"] doubleValue]];
+                     CLLocation *locB = [[CLLocation alloc] initWithLatitude:(CLLocationDegrees)[[userLocDic objectForKey:@"lat"] doubleValue]
+                                                                   longitude:(CLLocationDegrees)[[userLocDic objectForKey:@"long"] doubleValue]];
                      
                      CLLocationDistance distance = [locA distanceFromLocation:locB];
-                     
+                     //NSLog(@"%@", [NSString stringWithFormat:@"%.2f meters away from you", distance]);
                      [mObject setValue:[NSString stringWithFormat:@"%.2f meters away from you", distance] forKey:@"coreLocation"];
                      
                      NSError *savingError = nil;
@@ -153,8 +155,8 @@
                      } else {
                          NSLog(@"Failed to save the managed object context.");
                      }
-                 }
-             
+                 }//ends for
+            }
          } else
              NSLog(@"Error: %@ %@", error, [error userInfo]); // Log details of the failure
      }];

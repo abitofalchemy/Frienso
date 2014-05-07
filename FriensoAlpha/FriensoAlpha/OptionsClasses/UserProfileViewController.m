@@ -7,7 +7,7 @@
 //
 
 #import "UserProfileViewController.h"
-#import "CoreCircleTVC.h"
+//#import "CoreCircleTVC.h"
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <AssetsLibrary/AssetsLibrary.h>
 
@@ -42,9 +42,9 @@
 
 - (void) coreFriendsAction:(id) sender {
     
-    UIStoryboard *mainStoryboard = [UIStoryboard storyboardWithName:@"Main"  bundle:nil];
-    CoreCircleTVC  *coreCircleController = (CoreCircleTVC*)[mainStoryboard instantiateViewControllerWithIdentifier: @"coreCircleView"];
-    [self.navigationController pushViewController:coreCircleController animated:YES];
+//    UIStoryboard *mainStoryboard = [UIStoryboard storyboardWithName:@"Main"  bundle:nil];
+//    CoreCircleTVC  *coreCircleController = (CoreCircleTVC*)[mainStoryboard instantiateViewControllerWithIdentifier: @"coreCircleView"];
+//    [self.navigationController pushViewController:coreCircleController animated:YES];
     
 }
 
@@ -161,7 +161,7 @@
  
     
     [UIView animateWithDuration:0.8 animations:^{
-        [viewYourCoreCircleBtn setCenter:CGPointMake(self.view.center.x, self.view.bounds.size.height*0.8)];
+        [viewYourCoreCircleBtn setCenter:CGPointMake(self.view.center.x, self.view.bounds.size.height*0.75)];
     }];
     
     /** gestures **/

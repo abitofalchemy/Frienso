@@ -31,10 +31,10 @@
 - (void) CheckUserDefaults {
     //NSLog(@"check userdefaults");
     NSString       *adminKey    = [[NSUserDefaults standardUserDefaults] objectForKey:@"adminID"];
-    if ([adminKey isEqualToString:@""] || adminKey == NULL){
+    if ([adminKey isEqualToString:@""] || adminKey == NULL || adminKey == nil){
         return;
     } else {
-        NSLog(@"[ jumping to the dashboard ]");
+        //NSLog(@"%@,[ jumping to the dashboard ]", adminKey);
         [self popDashboardVC];
         
     }
@@ -44,15 +44,6 @@
 }
 
 -(void) popDashboardVC{
-//    FriensoViewController *dashboardVC = [[FriensoViewController alloc] init];
-//    dashboardVC.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
-//    UINavigationController *navigationController = [[UINavigationController alloc] init];
-////    [navigationController setViewControllers:@{dashboardVC} animated:YES]
-//    //[self presentViewController:navigationController animated:YES completion:nil];
-//    [self.navigationController pushViewController:navigationController animated:YES];
-//    UIStoryboard *mainStoryboard = [UIStoryboard storyboardWithName:@"Main"  bundle:nil];
-//    FriensoViewController  *dashboardVC = (FriensoViewController*)[mainStoryboard instantiateViewControllerWithIdentifier:@"dashboardVC"];
-//    [self.navigationController pushViewController:dashboardVC animated:NO];
     [self performSegueWithIdentifier:@"dashboardView" sender:self];
 }
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -83,9 +74,6 @@
     welcomeLabel.font = [UIFont fontWithName:@"AppleSDGothicNeo-Medium" size:28.0];
     welcomeLabel.textColor = [UIColor whiteColor];
     [welcomeLabel setTextAlignment:NSTextAlignmentCenter];
-    /*welcomeLabel.shadowColor = [UIColor lightGrayColor];
-    welcomeLabel.shadowOffset = CGSizeMake(2.0f, 2.0f);
-    */
     [welcomeLabel sizeToFit];
     
     UILabel *welcomeLabel2 = [[UILabel alloc] init];
@@ -95,9 +83,6 @@
     welcomeLabel2.textColor = [UIColor whiteColor];
     [welcomeLabel2 setTextAlignment:NSTextAlignmentCenter];
     [welcomeLabel2 setNumberOfLines:2];
-    /*welcomeLabel.shadowColor = [UIColor lightGrayColor];
-     welcomeLabel.shadowOffset = CGSizeMake(2.0f, 2.0f);
-     */
     [welcomeLabel2 sizeToFit];
     welcomeLabel.center = CGPointMake(self.view.center.x,self.view.bounds.size.height*0.125);
     welcomeLabel2.center = CGPointMake(self.view.center.x,self.view.bounds.size.height*0.20);
@@ -130,7 +115,6 @@
          self.view.backgroundColor = [UIColor colorWithPatternImage: [UIImage imageNamed:@"first-view-cover-3.png"]];
      }];
     **/
-    
     [self setupTopLabel];
     
     UIButton *button= [UIButton buttonWithType:UIButtonTypeCustom];
@@ -143,12 +127,14 @@
     [button setTitle:@"Join the Movement" forState:UIControlStateNormal];
     [button.titleLabel setFont:[UIFont fontWithName:@"AppleSDGothicNeo-Medium" size:16.0]];
     button.layer.cornerRadius = 6.0f;
-    //button.layer.borderWidth = 1.2f;
-    //button.layer.borderColor = [UIColor whiteColor].CGColor;
     button.backgroundColor = UIColorFromRGB(0x4962D6);
-    [button setCenter:CGPointMake([UIScreen mainScreen].bounds.size.width/2,
-                                  [UIScreen mainScreen].bounds.size.height*0.9)];
+//    [button setCenter:CGPointMake([UIScreen mainScreen].bounds.size.width/2,
+//                                  [UIScreen mainScreen].bounds.size.height*0.9)];
     [self.view addSubview:button];
+        
+    [UIView animateWithDuration:1.5 animations:^{
+        [button setCenter:CGPointMake(self.view.center.x, self.view.bounds.size.height*0.9)];
+    }];
     
 }
 

@@ -2,7 +2,7 @@
 //  CoreFriends.h
 //  FriensoAlpha
 //
-//  Created by Sal Aguinaga on 3/1/14.
+//  Created by Salvador Aguinaga on 5/5/14.
 //  Copyright (c) 2014 ABitOfAlchemy. All rights reserved.
 //
 
@@ -12,12 +12,16 @@
 
 @interface CoreFriends : NSManagedObject
 
+@property (nonatomic, retain) NSString * coreEmail;
 @property (nonatomic, retain) NSString * coreFirstName;
 @property (nonatomic, retain) NSString * coreLastName;
+@property (nonatomic, retain) NSString * coreLocation;
 @property (nonatomic, retain) NSString * coreNickName;
 @property (nonatomic, retain) NSString * corePhone;
-@property (nonatomic, retain) NSString * coreEmail;
-@property (nonatomic, retain) NSString * coreLocation;
+@property (nonatomic, retain) NSString * coreType;
+@property (nonatomic, retain) NSString * coreObjId;
+@property (nonatomic, retain) NSString * coreTitle;
+@property (nonatomic, retain) NSDate * coreCreated;
 @property (nonatomic, retain) NSDate * coreModified;
 
 @end

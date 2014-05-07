@@ -42,7 +42,7 @@
     NSNumberFormatter *numberFormatter = [[NSNumberFormatter alloc] init];
     [numberFormatter setNumberStyle:NSNumberFormatterDecimalStyle];
 
-    _title = @"Geo Query";
+    _title = @"Me";
     
     _subtitle = [NSString stringWithFormat:@"Center: (%@, %@) Radius: %@ m",
                  [numberFormatter stringFromNumber:[NSNumber numberWithFloat:_coordinate.latitude]],

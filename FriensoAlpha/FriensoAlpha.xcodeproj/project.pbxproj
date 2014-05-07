@@ -23,7 +23,6 @@
 		180E880F18BE0C97009A570F /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 180E880E18BE0C97009A570F /* CoreLocation.framework */; };
 		180E881418BE1779009A570F /* FriensoCircleButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 180E881118BE1779009A570F /* FriensoCircleButton.m */; };
 		180E881518BE1779009A570F /* FriensoOptionsButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 180E881318BE1779009A570F /* FriensoOptionsButton.m */; };
-		180E881B18BE5584009A570F /* FriensoEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 180E881A18BE5584009A570F /* FriensoEvent.m */; };
 		180E881E18BF15F3009A570F /* FriensoFirstScreenViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 180E881D18BF15F3009A570F /* FriensoFirstScreenViewController.m */; };
 		180E882018BF1806009A570F /* first-view-cover.png in Resources */ = {isa = PBXBuildFile; fileRef = 180E881F18BF1806009A570F /* first-view-cover.png */; };
 		180E882618BF2AB5009A570F /* first-view-cover-2.png in Resources */ = {isa = PBXBuildFile; fileRef = 180E882418BF2AB4009A570F /* first-view-cover-2.png */; };
@@ -46,10 +45,7 @@
 		1827933D18BE07BD0056C849 /* frienso-alert.png in Resources */ = {isa = PBXBuildFile; fileRef = 1827933B18BE07BD0056C849 /* frienso-alert.png */; };
 		1827934018BE08090056C849 /* PanicViewCtrlr.m in Sources */ = {isa = PBXBuildFile; fileRef = 1827933F18BE08090056C849 /* PanicViewCtrlr.m */; };
 		182E86F018C120CF009AD302 /* ABALoginTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 182E86ED18C120CF009AD302 /* ABALoginTVC.m */; };
-		182E86F118C120CF009AD302 /* CoreCircleTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 182E86EF18C120CF009AD302 /* CoreCircleTVC.m */; };
-		184079CB18C21BED0016CD6D /* FriensoEvent.h in Sources */ = {isa = PBXBuildFile; fileRef = 180E881918BE5584009A570F /* FriensoEvent.h */; };
 		1853403918C220680094AC5A /* FriensoAlphaCoreDataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 1853403718C220680094AC5A /* FriensoAlphaCoreDataModel.xcdatamodeld */; };
-		1853403C18C223340094AC5A /* CoreFriends.m in Sources */ = {isa = PBXBuildFile; fileRef = 1853403B18C223340094AC5A /* CoreFriends.m */; };
 		1853403F18C2236E0094AC5A /* FriensoOptionsTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 1853403E18C2236E0094AC5A /* FriensoOptionsTVC.m */; };
 		1879B59018C6CD9400AEA55F /* SettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1879B58F18C6CD9400AEA55F /* SettingsViewController.m */; };
 		1879B59318C7277100AEA55F /* Profile-256.png in Resources */ = {isa = PBXBuildFile; fileRef = 1879B59118C7277100AEA55F /* Profile-256.png */; };
@@ -89,7 +85,11 @@
 		3E9F893F1903E17700DA190C /* frienso-ic-2x29.png in Resources */ = {isa = PBXBuildFile; fileRef = 3E9F893C1903E17700DA190C /* frienso-ic-2x29.png */; };
 		3E9F89401903E17700DA190C /* frienso-ic-2x40.png in Resources */ = {isa = PBXBuildFile; fileRef = 3E9F893D1903E17700DA190C /* frienso-ic-2x40.png */; };
 		3E9F89411903E17700DA190C /* frienso-ic-2x60.png in Resources */ = {isa = PBXBuildFile; fileRef = 3E9F893E1903E17700DA190C /* frienso-ic-2x60.png */; };
+		3EB5C447191A5EE5006557DE /* FRUserGenContentButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 3EB5C446191A5EE5006557DE /* FRUserGenContentButton.m */; };
 		3EF1D0D91907FA1200FC8544 /* FRCoreDataParse.m in Sources */ = {isa = PBXBuildFile; fileRef = 3EF1D0D81907FA1200FC8544 /* FRCoreDataParse.m */; };
+		3EFEC30A19152633002A709D /* FriensoEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 3EFEC30919152633002A709D /* FriensoEvent.m */; };
+		3EFEC30C1917877E002A709D /* und_logo29.png in Resources */ = {isa = PBXBuildFile; fileRef = 3EFEC30B1917877E002A709D /* und_logo29.png */; };
+		3EFEC30F19180276002A709D /* CoreFriends.m in Sources */ = {isa = PBXBuildFile; fileRef = 3EFEC30E19180276002A709D /* CoreFriends.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -122,8 +122,6 @@
 		180E881118BE1779009A570F /* FriensoCircleButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FriensoCircleButton.m; sourceTree = "<group>"; };
 		180E881218BE1779009A570F /* FriensoOptionsButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FriensoOptionsButton.h; sourceTree = "<group>"; };
 		180E881318BE1779009A570F /* FriensoOptionsButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FriensoOptionsButton.m; sourceTree = "<group>"; };
-		180E881918BE5584009A570F /* FriensoEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FriensoEvent.h; path = FriensoAlpha/FriensoEvent.h; sourceTree = SOURCE_ROOT; };
-		180E881A18BE5584009A570F /* FriensoEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FriensoEvent.m; path = FriensoAlpha/FriensoEvent.m; sourceTree = SOURCE_ROOT; };
 		180E881C18BF15F3009A570F /* FriensoFirstScreenViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FriensoFirstScreenViewController.h; sourceTree = "<group>"; };
 		180E881D18BF15F3009A570F /* FriensoFirstScreenViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FriensoFirstScreenViewController.m; sourceTree = "<group>"; };
 		180E881F18BF1806009A570F /* first-view-cover.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "first-view-cover.png"; sourceTree = "<group>"; };
@@ -154,11 +152,7 @@
 		1827933F18BE08090056C849 /* PanicViewCtrlr.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PanicViewCtrlr.m; sourceTree = "<group>"; };
 		182E86EC18C120CF009AD302 /* ABALoginTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ABALoginTVC.h; sourceTree = "<group>"; };
 		182E86ED18C120CF009AD302 /* ABALoginTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ABALoginTVC.m; sourceTree = "<group>"; };
-		182E86EE18C120CF009AD302 /* CoreCircleTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreCircleTVC.h; sourceTree = "<group>"; };
-		182E86EF18C120CF009AD302 /* CoreCircleTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CoreCircleTVC.m; sourceTree = "<group>"; };
 		1853403818C220680094AC5A /* FriensoAlphaCoreDataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = FriensoAlphaCoreDataModel.xcdatamodel; sourceTree = "<group>"; };
-		1853403A18C223340094AC5A /* CoreFriends.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CoreFriends.h; path = FriensoAlpha/CoreFriends.h; sourceTree = SOURCE_ROOT; };
-		1853403B18C223340094AC5A /* CoreFriends.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CoreFriends.m; path = FriensoAlpha/CoreFriends.m; sourceTree = SOURCE_ROOT; };
 		1853403D18C2236E0094AC5A /* FriensoOptionsTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FriensoOptionsTVC.h; sourceTree = "<group>"; };
 		1853403E18C2236E0094AC5A /* FriensoOptionsTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FriensoOptionsTVC.m; sourceTree = "<group>"; };
 		1879B58E18C6CD9400AEA55F /* SettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingsViewController.h; sourceTree = "<group>"; };
@@ -215,8 +209,15 @@
 		3E9F893C1903E17700DA190C /* frienso-ic-2x29.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "frienso-ic-2x29.png"; sourceTree = "<group>"; };
 		3E9F893D1903E17700DA190C /* frienso-ic-2x40.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "frienso-ic-2x40.png"; sourceTree = "<group>"; };
 		3E9F893E1903E17700DA190C /* frienso-ic-2x60.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "frienso-ic-2x60.png"; sourceTree = "<group>"; };
+		3EB5C445191A5EE5006557DE /* FRUserGenContentButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FRUserGenContentButton.h; sourceTree = "<group>"; };
+		3EB5C446191A5EE5006557DE /* FRUserGenContentButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FRUserGenContentButton.m; sourceTree = "<group>"; };
 		3EF1D0D71907FA1200FC8544 /* FRCoreDataParse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FRCoreDataParse.h; path = MappingFriends/FRCoreDataParse.h; sourceTree = "<group>"; };
 		3EF1D0D81907FA1200FC8544 /* FRCoreDataParse.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FRCoreDataParse.m; path = MappingFriends/FRCoreDataParse.m; sourceTree = "<group>"; };
+		3EFEC30819152633002A709D /* FriensoEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FriensoEvent.h; path = FriensoAlpha/FriensoEvent.h; sourceTree = SOURCE_ROOT; };
+		3EFEC30919152633002A709D /* FriensoEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FriensoEvent.m; path = FriensoAlpha/FriensoEvent.m; sourceTree = SOURCE_ROOT; };
+		3EFEC30B1917877E002A709D /* und_logo29.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = und_logo29.png; sourceTree = "<group>"; };
+		3EFEC30D19180275002A709D /* CoreFriends.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CoreFriends.h; path = FriensoAlpha/CoreFriends.h; sourceTree = SOURCE_ROOT; };
+		3EFEC30E19180276002A709D /* CoreFriends.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CoreFriends.m; path = FriensoAlpha/CoreFriends.m; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -328,6 +329,7 @@
 		1827930A18BE06750056C849 /* FriensoAlpha */ = {
 			isa = PBXGroup;
 			children = (
+				1853403718C220680094AC5A /* FriensoAlphaCoreDataModel.xcdatamodeld */,
 				1827934118BE08A00056C849 /* CoreData Files */,
 				1827933918BE07A70056C849 /* Media */,
 				1827931318BE06750056C849 /* FriensoAppDelegate.h */,
@@ -339,8 +341,6 @@
 				180E881D18BF15F3009A570F /* FriensoFirstScreenViewController.m */,
 				182E86EC18C120CF009AD302 /* ABALoginTVC.h */,
 				182E86ED18C120CF009AD302 /* ABALoginTVC.m */,
-				182E86EE18C120CF009AD302 /* CoreCircleTVC.h */,
-				182E86EF18C120CF009AD302 /* CoreCircleTVC.m */,
 				18CD00EE18CDE557007BAC85 /* NewCoreCircleTVC.h */,
 				18CD00EF18CDE557007BAC85 /* NewCoreCircleTVC.m */,
 				1827933E18BE08090056C849 /* PanicViewCtrlr.h */,
@@ -392,6 +392,7 @@
 		1827933918BE07A70056C849 /* Media */ = {
 			isa = PBXGroup;
 			children = (
+				3EFEC30B1917877E002A709D /* und_logo29.png */,
 				3E5EA0B6190D0CDA004A710C /* cal-ic-24.png */,
 				3E5EA0B4190D0A4A004A710C /* cal-ic-40.png */,
 				3E9F893C1903E17700DA190C /* frienso-ic-2x29.png */,
@@ -424,13 +425,12 @@
 		1827934118BE08A00056C849 /* CoreData Files */ = {
 			isa = PBXGroup;
 			children = (
-				1853403718C220680094AC5A /* FriensoAlphaCoreDataModel.xcdatamodeld */,
-				180E881918BE5584009A570F /* FriensoEvent.h */,
-				180E881A18BE5584009A570F /* FriensoEvent.m */,
-				1853403A18C223340094AC5A /* CoreFriends.h */,
-				1853403B18C223340094AC5A /* CoreFriends.m */,
 				3E68DF601907C64400DF3992 /* FriensoResources.h */,
 				3E68DF611907C64400DF3992 /* FriensoResources.m */,
+				3EFEC30819152633002A709D /* FriensoEvent.h */,
+				3EFEC30919152633002A709D /* FriensoEvent.m */,
+				3EFEC30D19180275002A709D /* CoreFriends.h */,
+				3EFEC30E19180276002A709D /* CoreFriends.m */,
 			);
 			path = "CoreData Files";
 			sourceTree = "<group>";
@@ -444,6 +444,8 @@
 				180E881318BE1779009A570F /* FriensoOptionsButton.m */,
 				3E57016C190A519A0056EFD7 /* FriensoPersonalEvent.h */,
 				3E57016D190A519A0056EFD7 /* FriensoPersonalEvent.m */,
+				3EB5C445191A5EE5006557DE /* FRUserGenContentButton.h */,
+				3EB5C446191A5EE5006557DE /* FRUserGenContentButton.m */,
 			);
 			name = FriensoButtonClasses;
 			sourceTree = "<group>";
@@ -559,6 +561,7 @@
 				180E882018BF1806009A570F /* first-view-cover.png in Resources */,
 				1827930F18BE06750056C849 /* InfoPlist.strings in Resources */,
 				18DF849B18C275C7003F431F /* about-24.png in Resources */,
+				3EFEC30C1917877E002A709D /* und_logo29.png in Resources */,
 				1827931818BE06750056C849 /* Main.storyboard in Resources */,
 				3E5EA0B5190D0A4A004A710C /* cal-ic-40.png in Resources */,
 				1827933C18BE07BD0056C849 /* alert-ring-bg.png in Resources */,
@@ -597,18 +600,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1853403C18C223340094AC5A /* CoreFriends.m in Sources */,
 				3E2F8C3718D4C74600FD2A99 /* FriensoQuickCircleVC.m in Sources */,
-				184079CB18C21BED0016CD6D /* FriensoEvent.h in Sources */,
 				1808553918C4EEFF0047A8BE /* ProfileViewController.m in Sources */,
 				1853403918C220680094AC5A /* FriensoAlphaCoreDataModel.xcdatamodeld in Sources */,
+				3EFEC30A19152633002A709D /* FriensoEvent.m in Sources */,
 				1879B59B18C786DB00AEA55F /* FriensoResourcesTVC.m in Sources */,
 				180E881518BE1779009A570F /* FriensoOptionsButton.m in Sources */,
 				3E68DF621907C64400DF3992 /* FriensoResources.m in Sources */,
 				3E9F893018FE99E700DA190C /* GeoPointAnnotation.m in Sources */,
 				18CD00E818CCA020007BAC85 /* UserProfileViewController.m in Sources */,
 				18CD00F018CDE557007BAC85 /* NewCoreCircleTVC.m in Sources */,
-				180E881B18BE5584009A570F /* FriensoEvent.m in Sources */,
 				1827934018BE08090056C849 /* PanicViewCtrlr.m in Sources */,
 				1879B59F18C888BB00AEA55F /* tstWatchingViewController.m in Sources */,
 				3E9F892F18FE99E700DA190C /* SearchViewController.m in Sources */,
@@ -618,13 +619,14 @@
 				3EF1D0D91907FA1200FC8544 /* FRCoreDataParse.m in Sources */,
 				3E9F893118FE99E700DA190C /* GeoQueryAnnotation.m in Sources */,
 				3E570171190A665C0056EFD7 /* AlarmTimerTriggersTVC.m in Sources */,
+				3EFEC30F19180276002A709D /* CoreFriends.m in Sources */,
 				3E9F893218FE99E700DA190C /* CircleOverlay.m in Sources */,
 				180E881418BE1779009A570F /* FriensoCircleButton.m in Sources */,
 				1827931B18BE06750056C849 /* FriensoViewController.m in Sources */,
 				3E4120F818E3005E0058012B /* aBoAViewController.m in Sources */,
 				180E881E18BF15F3009A570F /* FriensoFirstScreenViewController.m in Sources */,
 				1879B59818C7847000AEA55F /* WatchingViewController.m in Sources */,
-				182E86F118C120CF009AD302 /* CoreCircleTVC.m in Sources */,
+				3EB5C447191A5EE5006557DE /* FRUserGenContentButton.m in Sources */,
 				182E86F018C120CF009AD302 /* ABALoginTVC.m in Sources */,
 				1827931518BE06750056C849 /* FriensoAppDelegate.m in Sources */,
 				1853403F18C2236E0094AC5A /* FriensoOptionsTVC.m in Sources */,
@@ -753,7 +755,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -762,9 +764,9 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "FriensoAlpha/FriensoAlpha-Prefix.pch";
 				INFOPLIST_FILE = "FriensoAlpha/FriensoAlpha-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "98BE103D-783D-48CD-89C9-AA120C7CBB03";
+				PROVISIONING_PROFILE = "CDE91B26-C0DB-40A7-9B3C-FADD2AC84AE6";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -776,7 +778,7 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				"CODE_SIGN_ENTITLEMENTS[sdk=*]" = "";
 				CODE_SIGN_IDENTITY = "iPhone Distribution: Salvador Aguinaga (WDLW7K2HT3)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Salvador Aguinaga (WDLW7K2HT3)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Salvador Aguinaga (PA6WYRP4VC)";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					/Users/sal/Downloads,
@@ -784,9 +786,9 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "FriensoAlpha/FriensoAlpha-Prefix.pch";
 				INFOPLIST_FILE = "FriensoAlpha/FriensoAlpha-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "98BE103D-783D-48CD-89C9-AA120C7CBB03";
+				PROVISIONING_PROFILE = "CDE91B26-C0DB-40A7-9B3C-FADD2AC84AE6";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -870,8 +872,7 @@
 				1853403818C220680094AC5A /* FriensoAlphaCoreDataModel.xcdatamodel */,
 			);
 			currentVersion = 1853403818C220680094AC5A /* FriensoAlphaCoreDataModel.xcdatamodel */;
-			name = FriensoAlphaCoreDataModel.xcdatamodeld;
-			path = ../FriensoAlphaCoreDataModel.xcdatamodeld;
+			path = FriensoAlphaCoreDataModel.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
 		};

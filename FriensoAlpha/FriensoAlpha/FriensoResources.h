@@ -19,5 +19,6 @@
 @property (nonatomic, retain) NSString * resUrlLink;
 @property (nonatomic, retain) NSString * resContactPhone;
 @property (nonatomic, retain) NSString * resInstitution;
+@property (nonatomic, retain) NSString * resObjId;
 
 @end

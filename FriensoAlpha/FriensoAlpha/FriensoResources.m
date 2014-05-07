@@ -18,5 +18,7 @@
 @dynamic resUrlLink;
 @dynamic resContactPhone;
 @dynamic resInstitution;
+@dynamic resObjId;
+
 
 @end

@@ -2,7 +2,7 @@
 //  FriensoEvent.m
 //  FriensoAlpha
 //
-//  Created by Sal Aguinaga on 2/26/14.
+//  Created by Salvador Aguinaga on 5/3/14.
 //  Copyright (c) 2014 ABitOfAlchemy. All rights reserved.
 //
 
@@ -11,12 +11,15 @@
 
 @implementation FriensoEvent
 
-@dynamic eventTitle;
-@dynamic eventSubtitle;
 @dynamic eventCategory;
-@dynamic eventLocation;
-@dynamic eventCreated;
-@dynamic eventModified;
 @dynamic eventContact;
+@dynamic eventCreated;
+@dynamic eventLocation;
+@dynamic eventModified;
+@dynamic eventSubtitle;
+@dynamic eventTitle;
+@dynamic eventObjId;
+@dynamic eventImage;
+@dynamic eventPriority;
 
 @end

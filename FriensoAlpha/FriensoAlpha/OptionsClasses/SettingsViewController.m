@@ -8,6 +8,8 @@
 
 #import "SettingsViewController.h"
 #import "aBoAViewController.h"
+#import <Parse/Parse.h>
+#import "FriensoAppDelegate.h"
 
 #define UIColorFromRGB(rgbValue) [UIColor colorWithRed:((float)((rgbValue & 0xFF0000) >> 16))/255.0 green:((float)((rgbValue & 0xFF00) >> 8))/255.0 blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
@@ -219,7 +221,23 @@
 -(void) logoutAction:(id) sender {
     [sender setEnabled:YES];
     NSLog(@"[ logout ]");
-//TODO: logout in full
+    
+    // logout user from Parse.com
+    if ([PFUser currentUser]) {
+        [PFUser logOut];
+        NSLog(@"... loging out user.");
+    }
+    // Reset persistence
+    NSString *domainName = [[NSBundle mainBundle] bundleIdentifier];
+    [[NSUserDefaults standardUserDefaults] removePersistentDomainForName:domainName];
+    NSLog(@"... cleared persistence variables.");
+    // Reset database
+    FriensoAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+    [appDelegate flushDatabase];
+    NSLog(@"... cleared database.");
+    
+    [self.navigationController setToolbarHidden:YES];
+    
     [self.navigationController popToRootViewControllerAnimated:YES];
 }
 -(void) shareFriensoAction:(id) sender {
@@ -233,7 +251,8 @@
 -(void) reportProblemAction:(id) sender {
     NSLog(@"[ reporting a problem  ]");
     NSArray *recipientsArray = [NSArray arrayWithObject:@"frienso@gmail.com"];
-    [self sendEmailTo:recipientsArray withSubject:@"Reporting a problem" withBodyHeader:@"-- FRIENSO Problem Report -- "];
+    [self sendEmailTo:recipientsArray withSubject:@"Reporting a problem"
+       withBodyHeader:@"-- FRIENSO Problem Report -- "];
 }
 
 -(void) sendEmailTo:(NSArray *)toRecipients withSubject:(NSString *)subject withBodyHeader:(NSString *)bodyHeader {

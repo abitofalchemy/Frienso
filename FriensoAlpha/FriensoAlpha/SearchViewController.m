@@ -45,6 +45,7 @@ enum PinAnnotationTypeTag {
      [NSDictionary dictionaryWithObjectsAndKeys:[UIColor blackColor], NSForegroundColorAttributeName,
       [UIFont fontWithName:@"AppleSDGothicNeo-Light" size:18.0], NSFontAttributeName,nil]];
     self.title = @"LOCATE FRIENDS";
+    
     [self.locationManager startUpdatingLocation];
     [self setInitialLocation:self.locationManager.location];
 

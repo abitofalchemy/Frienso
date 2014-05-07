@@ -16,7 +16,7 @@
 @property (nonatomic, strong) IBOutlet UISlider *slider;
 
 - (void)setInitialLocation:(CLLocation *)aLocation;
-//- (void) setText:(NSString *)paramText;
+//- (void)setFrame:(CGRect)frame;//- (void) setText:(NSString *)paramText;
 
 
 @end

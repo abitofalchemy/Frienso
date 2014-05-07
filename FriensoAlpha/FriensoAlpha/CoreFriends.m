@@ -2,7 +2,7 @@
 //  CoreFriends.m
 //  FriensoAlpha
 //
-//  Created by Sal Aguinaga on 3/1/14.
+//  Created by Salvador Aguinaga on 5/5/14.
 //  Copyright (c) 2014 ABitOfAlchemy. All rights reserved.
 //
 
@@ -11,12 +11,16 @@
 
 @implementation CoreFriends
 
+@dynamic coreEmail;
 @dynamic coreFirstName;
 @dynamic coreLastName;
-@dynamic coreNickName;
-@dynamic corePhone;
-@dynamic coreEmail;
 @dynamic coreLocation;
 @dynamic coreModified;
+@dynamic coreNickName;
+@dynamic corePhone;
+@dynamic coreType;
+@dynamic coreObjId;
+@dynamic coreTitle;
+@dynamic coreCreated;
 
 @end
