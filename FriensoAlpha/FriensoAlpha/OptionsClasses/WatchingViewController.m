@@ -13,10 +13,13 @@
 
 #import "WatchingViewController.h"
 
+#define UIColorFromRGB(rgbValue) [UIColor colorWithRed:((float)((rgbValue & 0xFF0000) >> 16))/255.0 green:((float)((rgbValue & 0xFF00) >> 8))/255.0 blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
+
 @interface WatchingViewController ()
 @property (nonatomic,retain) NSString * resourcePhoneNumber;
 @property (nonatomic,retain) NSMutableArray *thoseIWatchArray;
 @end
+
 
 @implementation WatchingViewController
 
@@ -69,7 +72,6 @@
     
     self.thoseIWatchArray = [[NSMutableArray alloc] init];
     
-//    self.navigationItem.title = @"Resources";
     self.resourcePhoneNumber =@"";
     
 }
@@ -84,11 +86,13 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    [self.view setBackgroundColor:UIColorFromRGB(0x9eccb3)];
 }
 
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
+    
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -221,13 +225,7 @@
     // getting the dictionaries
     NSMutableDictionary *parseCoreFriendsDic = [object valueForKey:@"userCoreFriends"];
     PFUser   *friensoUser    = [object valueForKey:@"user"];
-    //PFUser *testUser = [testObject objectForKey:@"user"];
-//    PFQuery *testQuery = [PFQuery queryWithClassName:@"test"];
-//    [testQuery includeKey:@"user"];
-//
-//    PFObject *testObject = [testQuery getFirstObject];
-//    NSLog(@"username: %@",friensoUser.username); // not null
-    
+   
     NSString *root_ph_nbr_str = [[NSUserDefaults standardUserDefaults] objectForKey:@"userPhone"];
     if ( parseCoreFriendsDic != NULL) {
         self.thoseIWatchArray = [[NSMutableArray alloc] initWithArray:[parseCoreFriendsDic allValues]];

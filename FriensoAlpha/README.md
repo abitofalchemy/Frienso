@@ -1,15 +1,19 @@
 Frienso
 =======
 
-Frienso iOS Nu
+Frienso iOS Alpha
 
 Version History
 ---------------
-ver 1.4 build 3.1   Added ability to save a resource (contact) and access it via the circle of Friends
+
+
+ver 1.4 build 3.2   Added ability to save a resource (contact) and access it via the circle of Friends
                     button, we can decide where else to make this available.
                     -  Fixed the sections view in the CoreCircle viewcontroller
-                    -  Fully logout and reset the local database is working 
-                    -  
+                    -  Fully logout and reset the local database now working 
+                    -  Added a help view to the Home page (experimenting with this feature)
+                    -  Fixed the 'Watching' (which we might want to rename to something like On Watch, 
+                    or something) to click on these cells and engage in comm with them.
 
 ver 1.4 build 2.0   Adding resources view to Home View
 
@@ -44,13 +48,16 @@ ver 1.0 build 1.0   Initial release
 
 ToDo
 ----
+* Don't track users, 
 * Add event creation
   Create a full event
     Go for a run, etc.
     {working} - added a button to top left of right bar button, need to connect it to an event generation
     VC
     {working} - basic notifications alert-views
-    
+
+* {bug} When user changes its core circle, we need only one record to be updated (not inserted or created new)
+
 * {bug} When user sings in, if there are networking issues, the auto-sync which fetches the users stored coreFriends group is delayed (maybe even fails).  To fix this we could force a sync, else we could 
     retry until it succeeds, but then the user will have to wait.
     If a forced sync is done, we need cancel the auto attemps to sync

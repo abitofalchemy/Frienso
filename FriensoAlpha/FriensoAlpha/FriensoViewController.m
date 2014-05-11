@@ -175,6 +175,17 @@ enum PinAnnotationTypeTag {
 }
 
 #pragma mark - Local Actions
+-(void) animateHelpView:(UIView *)helpView {
+    // animate the button
+    CABasicAnimation *anim = [CABasicAnimation animationWithKeyPath:@"transform"];
+    anim.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
+    anim.duration = 3.0;
+    anim.repeatCount = 1;
+    anim.autoreverses = YES;
+    anim.removedOnCompletion = YES;
+    anim.toValue = [NSValue valueWithCATransform3D:CATransform3DMakeScale(1.2, 1.2, 1.0)];
+    [helpView.layer addAnimation:anim forKey:nil];
+}
 -(void) animateThisButton:(UIButton *)button {
     // animate the button
     CABasicAnimation *anim = [CABasicAnimation animationWithKeyPath:@"transform"];
@@ -194,7 +205,22 @@ enum PinAnnotationTypeTag {
 
 #pragma mark - Setup view widgets
 -(void) setupEventsTableView {
+    UIView *tableHelpView = [[UIView alloc] initWithFrame:CGRectMake(0, 0,
+                                                                     self.view.bounds.size.width,
+                                                                     self.view.bounds.size.height*0.66)];// help view
+    [tableHelpView setBackgroundColor:UIColorFromRGB(0x006bb6)];
+    [tableHelpView setAlpha:0.8f];
+    tableHelpView.layer.borderWidth = 2.0f;
+    tableHelpView.layer.borderColor = [UIColor whiteColor].CGColor;
 
+    UILabel *label = [[UILabel alloc] init];
+    [label setTextColor:[UIColor whiteColor]];
+    [label setText:@"Your Activity"];
+    [label sizeToFit];
+    [label setCenter:CGPointMake(self.view.center.x, label.frame.size.height*1.5f)];
+    [tableHelpView addSubview:label];
+    
+    
     self.tableView = [[UITableView alloc] init];
     [self.tableView setFrame:CGRectMake(0, self.view.bounds.size.height*0.305,
                                         self.view.bounds.size.width,
@@ -247,6 +273,12 @@ enum PinAnnotationTypeTag {
     } else {
         NSLog(@"Failed to fetch.");
     }
+    
+    [self.tableView addSubview:tableHelpView];
+    [self animateHelpView:tableHelpView];
+    [UIView animateWithDuration:3.0
+                     animations:^{tableHelpView.alpha = 0.0;}
+                     completion:^(BOOL finished){ [tableHelpView removeFromSuperview]; }];
 }
 
 -(void) setupHalfMapView {
@@ -257,28 +289,12 @@ enum PinAnnotationTypeTag {
     self.mapView.layer.borderWidth = 2.0f;
     self.mapView.layer.borderColor = UIColorFromRGB(0x9B90C8).CGColor;
     [self configureOverlay];
-
-    
-    /**
-    UILabel *tileLabel = [[UILabel alloc] initWithFrame:CGRectZero];
-    [tileLabel setText:@"↕"];
-    [tileLabel sizeToFit];
-    tileLabel.layer.cornerRadius = 6.0f;
-    tileLabel.layer.borderWidth = 1.0f;
-    tileLabel.layer.borderColor = UIColorFromRGB(0x4962D6).CGColor;
-    [tileLabel setFont:[UIFont fontWithName:@"AppleSDGothicNeo-Medium" size:18.0]];
-    [tileLabel setTextAlignment:NSTextAlignmentCenter];
-    [tileLabel setTextColor:[UIColor blackColor]];
-    [tileLabel setCenter:CGPointMake(self.view.bounds.size.width -tileLabel.frame.size.width,
-                                     tileLabel.frame.size.height*1.1/2.0)];
-    [self.mapView addSubview:tileLabel];
-    **/
 }
 
 -(void) setupToolBarIcons{
     self.navigationController.toolbarHidden = NO;
 
-    UIColor *violetTulip = [UIColor colorWithRed:155.0/255.0 green:144.0/255.0 blue:182.0/255.0 alpha:1.0];
+    //UIColor *violetTulip = [UIColor colorWithRed:155.0/255.0 green:144.0/255.0 blue:182.0/255.0 alpha:1.0];
     
     // Left CoreCircle button
     FriensoCircleButton *coreCircleBtn = [[FriensoCircleButton alloc]
@@ -334,11 +350,8 @@ enum PinAnnotationTypeTag {
     
     // Left CoreCircle button
     UIButton *ugcTopLeftBtn = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 27, 27)];
-    [ugcTopLeftBtn setTitle:@"💬" forState:UIControlStateNormal];
-    ugcTopLeftBtn.layer.cornerRadius = 4.0;
-    ugcTopLeftBtn.layer.borderWidth =  0.5;
-    ugcTopLeftBtn.layer.borderColor = [UIColor grayColor].CGColor;//[UIColor colorWithRed:540./255.0 green:545.0/255.0 blue:255.0/255.0 alpha:0.25].CGColor;
-    [ugcTopLeftBtn setEnabled:NO];
+    [ugcTopLeftBtn setImage:[UIImage imageNamed:@"ugc-ic-29x2.png"] forState:UIControlStateNormal];
+    [ugcTopLeftBtn setTintColor:UIColorFromRGB(0x007aff)];
     [ugcTopLeftBtn addTarget:self action:@selector(viewCoreCircle:)
             forControlEvents:UIControlEventTouchUpInside];
     UIBarButtonItem *barLeftButton=[[UIBarButtonItem alloc] init];
@@ -468,12 +481,13 @@ enum PinAnnotationTypeTag {
     printf("[ Dashboard: FriensoVC ]\n");
     self.navigationController.navigationBarHidden = NO;
 
+    
     if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"CoreFriendsContactInfoDicKey"] count] == 0)
         [self syncFromParse];
     else
         NSLog(@"all loaded already");
     
-    
+
     [self setupNavigationBarImage];
     [self.locationManager startUpdatingLocation];
     [self setInitialLocation:self.locationManager.location];

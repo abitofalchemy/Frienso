@@ -8,8 +8,9 @@
 
 #import <UIKit/UIKit.h>
 #import <Parse/Parse.h>
+#import <MessageUI/MessageUI.h> 
 
-@interface tstWatchingViewController : UITableViewController
+@interface tstWatchingViewController : UITableViewController<MFMessageComposeViewControllerDelegate>
 - (void) setText:(NSString *)paramText;
 
 @end
