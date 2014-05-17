@@ -26,11 +26,12 @@
                         <segue destination="aY6-gZ-dOi" kind="push" identifier="createEvent" id="KMa-pk-ZOI"/>
                         <segue destination="6kB-Zb-JaQ" kind="modal" identifier="panicEvent" id="n71-eB-Kl2"/>
                         <segue destination="3kY-1V-fX0" kind="push" identifier="instResources" id="Efz-ba-uWS"/>
+                        <segue destination="CWx-7e-tGl" kind="push" id="85X-Sg-fyF"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="65" y="973"/>
+            <point key="canvasLocation" x="-1159" y="925"/>
         </scene>
         <!--Frienso Quick CircleVC-->
         <scene sceneID="dMH-YK-LFt">
@@ -50,7 +51,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="T3R-go-2GS" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="922" y="2096"/>
+            <point key="canvasLocation" x="-294" y="2096"/>
         </scene>
         <!--Panic View Ctrlr-->
         <scene sceneID="rgz-kR-f24">
@@ -69,7 +70,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="gFv-so-a4W" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="922" y="754"/>
+            <point key="canvasLocation" x="-294" y="754"/>
         </scene>
         <!--Search View Controller-->
         <scene sceneID="sxn-B6-CNn">
@@ -100,7 +101,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="9Od-IB-ToZ" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1482" y="1413"/>
+            <point key="canvasLocation" x="266" y="1413"/>
         </scene>
         <!--Frienso ResourcesTVC-->
         <scene sceneID="FUJ-QO-lgv">
@@ -129,7 +130,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dDy-si-0W9" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1482" y="754"/>
+            <point key="canvasLocation" x="266" y="754"/>
         </scene>
         <!--A BoA View Controller-->
         <scene sceneID="FR0-Th-QOX">
@@ -147,7 +148,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="TcM-u6-eLp" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2122" y="2143"/>
+            <point key="canvasLocation" x="906" y="2143"/>
         </scene>
         <!--Tst Watching View Controller-->
         <scene sceneID="Gh7-pq-oZl">
@@ -184,7 +185,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="2tB-6i-jD6" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2498" y="1413"/>
+            <point key="canvasLocation" x="1282" y="1413"/>
         </scene>
         <!--Frienso OptionsTVC-->
         <scene sceneID="2q9-iq-0iH">
@@ -216,7 +217,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="S0i-zL-VfE" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="922" y="1418"/>
+            <point key="canvasLocation" x="-294" y="1418"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="92e-QS-KMV">
@@ -230,12 +231,12 @@
                     </navigationBar>
                     <nil name="viewControllers"/>
                     <connections>
-                        <segue destination="CWx-7e-tGl" kind="relationship" relationship="rootViewController" id="cBX-FH-hys"/>
+                        <segue destination="vXZ-lx-hvc" kind="relationship" relationship="rootViewController" id="s5r-An-Ecx"/>
                     </connections>
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="1ee-ci-5CS" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-2188" y="26"/>
+            <point key="canvasLocation" x="-1702" y="930"/>
         </scene>
         <!--Frienso First Screen View Controller-->
         <scene sceneID="T0h-JY-W6C">
@@ -252,13 +253,12 @@
                     </view>
                     <navigationItem key="navigationItem" id="tQD-XR-lCL"/>
                     <connections>
-                        <segue destination="vXZ-lx-hvc" kind="push" identifier="dashboardView" id="o9C-NA-XSH"/>
                         <segue destination="qAg-ru-ZcY" kind="push" identifier="loginView" id="lLb-2h-PYW"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="0U3-U5-SW7" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1702" y="26"/>
+            <point key="canvasLocation" x="-1686" y="-262"/>
         </scene>
         <!--LoginTVC-->
         <scene sceneID="pLe-NZ-bVp">
@@ -287,12 +287,11 @@
                     <navigationItem key="navigationItem" id="ou8-8h-NJy"/>
                     <connections>
                         <segue destination="Ep9-nV-7ZB" kind="push" identifier="coreCircleSetup" id="tfJ-Tt-Myi"/>
-                        <segue destination="vXZ-lx-hvc" kind="push" identifier="dashboardView" id="qLM-fu-ynb"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="a5X-BM-YQz" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1124" y="26"/>
+            <point key="canvasLocation" x="-1108" y="-262"/>
         </scene>
         <!--New Core CircleTVC-->
         <scene sceneID="biH-MZ-1Wi">
@@ -314,7 +313,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="kYw-v5-41H" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-553" y="26"/>
+            <point key="canvasLocation" x="-537" y="-262"/>
         </scene>
         <!--Alarm Timer TriggersTVC - Alarms-->
         <scene sceneID="cAS-GO-ONe">
@@ -372,7 +371,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dBs-5I-XLK" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="922" y="-686"/>
+            <point key="canvasLocation" x="234" y="26"/>
         </scene>
         <!--Event View Controller-->
         <scene sceneID="Zyd-ts-emK">
@@ -391,7 +390,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="XjJ-4p-EmT" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1386" y="-541"/>
+            <point key="canvasLocation" x="698" y="171"/>
         </scene>
     </scenes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
@@ -400,7 +399,7 @@
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="hk5-85-B4H"/>
-        <segue reference="HKj-DF-MrE"/>
+        <segue reference="ixB-WG-BG7"/>
+        <segue reference="s5r-An-Ecx"/>
     </inferredMetricsTieBreakers>
 </document>

@@ -20,6 +20,6 @@ MKMapViewDelegate,CLLocationManagerDelegate>
 @property (nonatomic, strong) MKMapView *mapView;
 
 - (void)setInitialLocation:(CLLocation *)aLocation;
-
+- (void) actionAddFriensoUserLocation:(PFGeoPoint *)geoPoint forUser:(NSString *)friend;
 
 @end

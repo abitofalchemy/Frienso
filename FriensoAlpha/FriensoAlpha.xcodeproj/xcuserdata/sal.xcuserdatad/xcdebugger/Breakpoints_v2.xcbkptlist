@@ -194,11 +194,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "FriensoAlpha/FriensoOptionsTVC.m"
-            timestampString = "420607506.266287"
+            timestampString = "421868918.609019"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "233"
-            endingLineNumber = "233"
+            startingLineNumber = "220"
+            endingLineNumber = "220"
             landmarkName = "-imageWithString:font:size:"
             landmarkType = "5">
          </BreakpointContent>

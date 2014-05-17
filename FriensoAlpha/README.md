@@ -7,6 +7,17 @@ Version History
 ---------------
 
 
+ver 1.5 build XX    Got rid of the Options/Watching list (it is now integrated in the CoreCircle list)
+                    CoreCircle list now shows your CoreCircle and those uWatch.
+                    Eliminated the icon to 'Chat' with friends, this is now available when you list the CoreCircle.
+                    -Interact with your CorCircle contacts
+                    -Filter out Resources already in CoreCircle
+                    -Add fullscreen button to map
+                    -Add Horizontal scroll for the Active users & the rest of your friends. 
+
+ver 1.5 build 19    Redesign of the Friends/Map view, added bubbles of your core-friends
+                    Got SMS working when you list Those you are Watching
+
 ver 1.4 build 3.2   Added ability to save a resource (contact) and access it via the circle of Friends
                     button, we can decide where else to make this available.
                     -  Fixed the sections view in the CoreCircle viewcontroller
@@ -104,6 +115,9 @@ Referenced Work
 * Colors
     # http://ios7colors.com
     # flatuicolors.com
+* Mapping
+    # https://developer.apple.com/library/ios/samplecode/MapCallouts/Introduction/Intro.html
+    # http://www.highoncoding.com/Articles/804_Introduction_to_MapKit_Framework_for_iPhone_Development.aspx
 * icons
     # http://www.blog.montgomerie.net/iphone-images-from-character-glyphs
 * style

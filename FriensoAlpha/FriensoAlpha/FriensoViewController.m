@@ -18,10 +18,12 @@
 #import "GeoPointAnnotation.h"
 #import "GeoQueryAnnotation.h"
 #import "FriensoResources.h"
-
+#import "FRStringImage.h"
 
 #define ARC4RANDOM_MAX      0x100000000
 #define UIColorFromRGB(rgbValue) [UIColor colorWithRed:((float)((rgbValue & 0xFF0000) >> 16))/255.0 green:((float)((rgbValue & 0xFF00) >> 8))/255.0 blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
+#define CELL_CONTENT_MARGIN 10.0f
+
 static NSString *eventCell = @"eventCell";
 enum PinAnnotationTypeTag {
     PinAnnotationTypeTagGeoPoint = 0,
@@ -35,10 +37,11 @@ enum PinAnnotationTypeTag {
     NSMutableArray *coreFriendsArray;
 }
 @property (nonatomic,retain) NSMutableArray *coreFriendsArray;
-@property (nonatomic, strong) NSFetchedResultsController *frc;
-@property (nonatomic, strong) CLLocation *location;
+@property (nonatomic,strong) NSFetchedResultsController *frc;
+@property (nonatomic,strong) CLLocation *location;
 @property (nonatomic,strong) UITableView *tableView;
 @property (nonatomic,strong) UITableView *rsrcTableView; //frienso resources tableview
+@property (nonatomic,strong) UIButton *selectedBubbleBtn;
 
 -(void)actionPanicEvent: (UIButton *)theButton;
 -(void)viewMenuOptions: (UIButton *)theButton;
@@ -77,6 +80,7 @@ enum PinAnnotationTypeTag {
         [theButton.layer setBorderColor:[UIColor redColor].CGColor];
     }
     [self animateThisButton:theButton];
+    
     [self performSegueWithIdentifier:@"showMyCircle" sender:self];
 }
 
@@ -102,24 +106,22 @@ enum PinAnnotationTypeTag {
     
 }
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
-    
-        if (indexPath.row == 0)
-            return [tableView rowHeight]*2.0f;
-        else
-            return [tableView rowHeight];
-    
+    FriensoEvent *event = [self.frc objectAtIndexPath:indexPath];
+    if([event.eventCategory isEqualToString:@"general"])
+        return [tableView rowHeight]*2.0f + CELL_CONTENT_MARGIN;
+    else
+        return [tableView rowHeight];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)theTableView
          cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    
     
     UITableViewCell *cell = [self.tableView dequeueReusableCellWithIdentifier:eventCell];
     if (cell == nil) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle
                                       reuseIdentifier:eventCell];
     }
-
+    [cell setTag:0];
     FriensoEvent *event = [self.frc objectAtIndexPath:indexPath];
 
     cell.textLabel.text = event.eventTitle;// stringByAppendingFormat:@" %@", person.lastName];
@@ -134,9 +136,9 @@ enum PinAnnotationTypeTag {
         cell.imageView.image = [self imageWithBorderFromImage:[UIImage imageNamed:@"cal-ic-24.png"]];
         cell.backgroundColor = [UIColor clearColor];
     } else if ([event.eventCategory isEqualToString:@"general"]) {
-        NSLog(@"%@", event.eventImage);
+        [cell.textLabel setNumberOfLines:3];
+        [cell.detailTextLabel setNumberOfLines:3];
         NSURL *imageURL = [NSURL URLWithString:event.eventImage];
-        //[NSURL URLWithString:@"http://static01.nyt.com/images/2014/04/29/us/politics/29ASSAULT/29ASSAULT-master315.jpg"];
         NSData *imageData = [NSData dataWithContentsOfURL:imageURL];
         UIImage *img = [UIImage imageWithData:imageData];
         cell.imageView.image = [self imageWithBorderFromImage:img];
@@ -146,12 +148,7 @@ enum PinAnnotationTypeTag {
         cell.imageView.image = [self imageWithBorderFromImage:[UIImage imageNamed:@"profile-24.png"]];
         cell.backgroundColor = [UIColor clearColor];
     }
-//    //
-    if (indexPath.row == 0){
-        [cell.textLabel setNumberOfLines:3];
-        [cell.detailTextLabel setNumberOfLines:3];
-//        [cell setFrame:CGRectMake(0, 0, cell.frame.size.width, cell.frame.size.height*2.0)];
-    }
+
     return cell;
 }
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
@@ -342,13 +339,10 @@ enum PinAnnotationTypeTag {
 }
 -(void) setupNavigationBarImage{
     
-    [[UINavigationBar appearance] setTitleTextAttributes:
-     [NSDictionary dictionaryWithObjectsAndKeys:
-      [UIColor blackColor], NSForegroundColorAttributeName,
-      [UIFont fontWithName:@"AppleSDGothicNeo-Light" size:16.0], NSFontAttributeName,nil]];
+    [[UINavigationBar appearance] setTitleTextAttributes: [NSDictionary dictionaryWithObjectsAndKeys:[UIColor blackColor], NSForegroundColorAttributeName, [UIFont fontWithName:@"AppleSDGothicNeo-Light" size:16.0], NSFontAttributeName,nil]];
     self.navigationItem.title = @"FRIENSO";
     
-    // Left CoreCircle button
+    /********************* Left CoreCircle button
     UIButton *ugcTopLeftBtn = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 27, 27)];
     [ugcTopLeftBtn setImage:[UIImage imageNamed:@"ugc-ic-29x2.png"] forState:UIControlStateNormal];
     [ugcTopLeftBtn setTintColor:UIColorFromRGB(0x007aff)];
@@ -356,8 +350,10 @@ enum PinAnnotationTypeTag {
             forControlEvents:UIControlEventTouchUpInside];
     UIBarButtonItem *barLeftButton=[[UIBarButtonItem alloc] init];
     [barLeftButton setCustomView:ugcTopLeftBtn];
-    self.navigationItem.leftBarButtonItem=barLeftButton;
+    
     [self.navigationItem.leftBarButtonItem setEnabled:NO];
+    **********************/
+    self.navigationItem.leftBarButtonItem=nil;
     
     // Right Options Button
     FriensoOptionsButton *button = [[FriensoOptionsButton alloc] initWithFrame:CGRectMake(0, 0, 27, 27)];
@@ -390,8 +386,7 @@ enum PinAnnotationTypeTag {
     //TODO: save core friends to coredata 
     // sync from parse!
     NSMutableDictionary *udCoreCircleDictionary = [[NSUserDefaults standardUserDefaults] objectForKey:@"CoreFriendsContactInfoDicKey"];
-    
-    if ([udCoreCircleDictionary count] == 0)
+    if ([udCoreCircleDictionary count] == 0 || udCoreCircleDictionary == NULL)
     {
     [PFUser logInWithUsernameInBackground:[[NSUserDefaults standardUserDefaults] objectForKey:@"adminID"]
                                  password:[[NSUserDefaults standardUserDefaults] objectForKey:@"adminPass"]
@@ -422,7 +417,7 @@ enum PinAnnotationTypeTag {
                                                      [self  actionAddFriensoEvent:@"Contacts successfully fetched and restored."];
                                                  } else {
                                                      // Log details of the failure
-                                                     NSLog(@"Error: %@ %@", error, [error userInfo]);
+                                                     NSLog(@"!Error: %@ %@", error, [error userInfo]);
                                                  }
                                              }];
                                             
@@ -481,12 +476,10 @@ enum PinAnnotationTypeTag {
     printf("[ Dashboard: FriensoVC ]\n");
     self.navigationController.navigationBarHidden = NO;
 
-    
     if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"CoreFriendsContactInfoDicKey"] count] == 0)
         [self syncFromParse];
     else
         NSLog(@"all loaded already");
-    
 
     [self setupNavigationBarImage];
     [self.locationManager startUpdatingLocation];
@@ -495,7 +488,7 @@ enum PinAnnotationTypeTag {
     [self setupHalfMapView];
     [self setupEventsTableView];
 
-    [self syncCoreFriendsLocation]; //  from parse to coredata
+    //[self syncCoreFriendsLocation]; //  from parse to coredata
     
 }
 - (void)viewDidUnload {
@@ -564,7 +557,7 @@ enum PinAnnotationTypeTag {
                     firstFriensoEvent.eventModified  = object.createdAt;
                     firstFriensoEvent.eventObjId     = object.objectId;
                     firstFriensoEvent.eventImage     = [object valueForKey:@"rImage"];
-                    firstFriensoEvent.eventPriority  = [NSNumber numberWithInteger:3];
+                    firstFriensoEvent.eventPriority  = [NSNumber numberWithInteger:2];
                     
                     NSError *savingError = nil;
                     if([managedObjectContext save:&savingError]) {
@@ -618,6 +611,38 @@ enum PinAnnotationTypeTag {
         }
     }
 }
+- (void) actionAddFriensoUserLocation:(PFGeoPoint *)geoPoint forUser:(NSString *)friend {
+    /* Method:      actionAddFriensoUserLocation
+       Objective:   Display the user's current location in the Frienso Activity list-view
+     
+     **/
+    FriensoAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+    NSManagedObjectContext *managedObjectContext = appDelegate.managedObjectContext;
+    FriensoEvent *userLocationEvent = [NSEntityDescription insertNewObjectForEntityForName:@"FriensoEvent"
+                                                                    inManagedObjectContext:managedObjectContext];
+    CLLocation *locA = [[CLLocation alloc] initWithLatitude:geoPoint.latitude longitude:geoPoint.longitude];
+    NSDictionary *userLocDic = [[NSUserDefaults standardUserDefaults] objectForKey:@"userLocation"];
+    CLLocation *locB = [[CLLocation alloc] initWithLatitude:(CLLocationDegrees)[[userLocDic objectForKey:@"lat"] doubleValue]
+                                                  longitude:(CLLocationDegrees)[[userLocDic objectForKey:@"long"] doubleValue]];
+    
+    CLLocationDistance distance = [locA distanceFromLocation:locB];
+    if (userLocationEvent != nil){
+        NSString *eventStr = @"";
+        userLocationEvent.eventTitle     = [eventStr stringByAppendingString:[friend componentsSeparatedByString:@"@"][0]];
+        userLocationEvent.eventSubtitle  = [NSString stringWithFormat:@"%.2f %@ away",distance,@"meters" ];
+        userLocationEvent.eventPriority  = [NSNumber numberWithInteger:3];
+        userLocationEvent.eventCreated   = [NSDate date];
+        userLocationEvent.eventModified  = [NSDate date];
+        
+        NSError *savingError = nil;
+        if([managedObjectContext save:&savingError]) {
+            NSLog(@"Successfully saved the context");
+        } else { NSLog(@"Failed to save the context. Error = %@", savingError); }
+    } else {
+        NSLog(@"Failed to create a new event.");
+    }
+}
+
 - (void) actionAddFriensoEvent:(NSString *) message {
     NSLog(@"[ actionAddFriensoEvent ]");
     FriensoAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
@@ -646,17 +671,70 @@ enum PinAnnotationTypeTag {
     }
 }
 -(void) syncCoreFriendsLocation {
-    NSLog(@"[ Sync friends' location to CoreData ]");
+    NSLog(@"--- syncCoreFriendsLocation  [ Sync friends' location to CoreData ]");
     
     FRCoreDataParse *frCDPObject = [[FRCoreDataParse alloc] init];
     [frCDPObject updateThisUserLocation];
     [frCDPObject updateCoreFriendsLocation];
     [frCDPObject showCoreFriendsEntityData];
-     
-    
 }
 
 #pragma mark - core graphics
+//- (UIImage *) createBackgroundImageWithColor:(UIColor *)color andSize:(CGSize)size {
+//    
+//    UIGraphicsBeginImageContext(size); // create a new context to draw in
+//    
+//    CGContextRef context = UIGraphicsGetCurrentContext(); // get a reference to the context
+//    
+//    CGContextSetStrokeColorWithColor(context, [color CGColor]); // set the fill color of the context
+//    // make circle rect 5 px from border
+//    CGRect circleRect = CGRectMake(0, 0,
+//                                   size.width,
+//                                   size.height);
+//    circleRect = CGRectInset(circleRect, 5, 5);
+//    CGContextStrokeEllipseInRect(context, circleRect); // draw a rect to fill the context
+//
+//    /**
+//     CGContextSaveGState(context);
+//    
+//    // Magic blend mode
+//    CGContextSetBlendMode(context, kCGBlendModeDestinationOut);
+//    
+//    // This seemingly random value adjusts the text
+//    // vertically so that it is centered in the circle.
+//    NSString *text = @"SA";
+//    CGFloat Y_OFFSET = -2 * (float)[text length] + 5;
+//    
+//    // Context translation for label
+//    CGFloat LABEL_SIDE = CGRectGetWidth(circleRect);
+//    CGContextTranslateCTM(context, 0, CGRectGetHeight(circleRect)/2-LABEL_SIDE/2+Y_OFFSET);
+//    
+//    // Label to center and adjust font automatically
+//    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, LABEL_SIDE, LABEL_SIDE)];
+//    label.font = [UIFont boldSystemFontOfSize:120];
+//    label.adjustsFontSizeToFitWidth = YES;
+//    label.text = text;
+//    label.textAlignment = NSTextAlignmentCenter;
+//    label.backgroundColor = [UIColor darkGrayColor];
+//    [label.layer drawInContext:context];
+//    
+//    // Restore the state of other drawing operations
+//    CGContextRestoreGState(context);
+//    */
+//    //CGContextStrokePath(c);
+//    UIFont*       font = [UIFont fontWithName:@"AppleSDGothicNeo-Medium" size:16];
+//    UIColor* textColor = [UIColor blueColor];
+//    NSDictionary* stringAttrs = @{ NSFontAttributeName: font, NSForegroundColorAttributeName: textColor};
+//    NSAttributedString* attrStr = [[NSAttributedString alloc] initWithString:@"SA"
+//                                                                  attributes:stringAttrs];
+//    NSLog(@"size-width: %f", attrStr.size.width);
+//    [attrStr drawAtPoint:CGPointMake(size.width*0.22,size.width*0.22)];
+//    UIImage *image = UIGraphicsGetImageFromCurrentImageContext(); // and create an image from the context
+//    
+//    CGContextRelease(context); // don't forget to release the context reference!
+//    
+//    return image; // return an autoreleased UIImage
+//}
 - (UIImage*)imageWithBorderFromImage:(UIImage*)source
 {
     const CGFloat margin = 6.0f;
@@ -836,48 +914,109 @@ enum PinAnnotationTypeTag {
         [self.mapView addOverlay:overlay];
         **/
         
+        //[self addCoreFriendBubblesToMap:self.mapView];
+        
         GeoQueryAnnotation *annotation = [[GeoQueryAnnotation alloc] initWithCoordinate:self.location.coordinate radius:1000];
         [self.mapView addAnnotation:annotation];
         
         [self updateLocations];
     }
 }
+-(void)friendLocInteraction:(UIButton *)sender
+{
+    NSLog(@"friendLocInteraction");
+    NSDictionary *coFrDic = [[NSUserDefaults standardUserDefaults] objectForKey:@"CoreFriendsContactInfoDicKey"];
+    NSArray *keys = [coFrDic allKeys];
+    
+    
+    switch (sender.tag) {
+        case 0:
+        {
+            [self lastKnownLocationForFriend:[coFrDic objectForKey:keys[0]]];
+            break;
+        }
+        case 1:
+        {
+            [self lastKnownLocationForFriend:[coFrDic objectForKey:keys[1]]];
+            break;
+        }
+        case 2:
+            [self lastKnownLocationForFriend:[coFrDic objectForKey:keys[2]]];
+            break;
+        default:
+            break;
+    }
+    
+    
+    if(self.selectedBubbleBtn != NULL) // hold sender and enable last selected bubble
+    {
+        //sender.center = CGPointMake(sender.center.x, sender.center.y + 10.0f);
+        [self.selectedBubbleBtn setEnabled:YES];
+        [sender setEnabled:NO];
+        
+#warning Need to remove last pin
+        
+    } else {
+        [sender setEnabled:NO];
+    }
+    // Animate selected bubble
+    [UIView beginAnimations:nil context:nil];
+    [UIView setAnimationDuration:0.5f];
+    sender.center = CGPointMake(sender.center.x, sender.center.y - 10.0f);
+    self.selectedBubbleBtn.center = CGPointMake(self.selectedBubbleBtn.center.x, self.selectedBubbleBtn.center.y + 10.0f);
+
+    [UIView commitAnimations];
+    self.selectedBubbleBtn = sender;
+}
+- (void) addCoreFriendBubblesToMap:(MKMapView *)mapView {
+    
+    
+    
+    UIButton *mLocBtn = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 44, 44)];
+    UIImage *img =[[FRStringImage alloc] imageWithString:@"👤"
+                                                    font:[UIFont fontWithName:@"AppleSDGothicNeo-Medium" size:32.0]
+                                                    size:mLocBtn.frame.size];
+    [mLocBtn setBackgroundImage:img forState:UIControlStateNormal];
+    [mLocBtn setTitle:@"SA" forState:UIControlStateNormal];
+    [mLocBtn setTitleColor:[UIColor blueColor] forState:UIControlStateNormal];
+    [mLocBtn setTitleColor:UIColorFromRGB(0x8e44ad) forState:UIControlStateHighlighted];
+    [mLocBtn setTitleColor:[UIColor darkGrayColor] forState:UIControlStateDisabled];
+    [mLocBtn setAlpha:0.8];
+    [mLocBtn addTarget:self action:@selector(friendLocInteraction:)
+      forControlEvents:UIControlEventTouchUpInside];
+    [self.mapView addSubview:mLocBtn];
+    [mLocBtn setCenter:CGPointMake(mLocBtn.frame.size.width + mLocBtn.center.x,
+                                   self.mapView.frame.size.height - mLocBtn.center.y)];
+}
+
 - (void)updateLocations {
     // Get geopoints for coreF
+    NSLog(@"updateLocations");
     NSDictionary *retrievedCoreFriendsDictionary = [[NSUserDefaults standardUserDefaults] objectForKey:@"CoreFriendsContactInfoDicKey"];
     
     if ( [retrievedCoreFriendsDictionary count] > 0) {
-        NSArray *connectionKeyArray =  [[NSArray alloc]
-                                        initWithArray:[retrievedCoreFriendsDictionary allValues]];
-        
-        for (NSString *pNumber in connectionKeyArray) {
-            //NSLog(@"CoreF contact: %@", pNumber);
-            PFQuery *query = [PFQuery queryWithClassName:@"UserConnection"];
-            NSRange substrRange = NSMakeRange(pNumber.length-10, 10);
-            [query whereKey:@"userNumber" containsString:[pNumber substringWithRange:substrRange]];
-            [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error)
-             {
-                 if (!error) { // The find succeeded.
-                     for (PFObject *object in objects) { // Do something w/ found objects
-                         //NSLog(@"%@", object);
-                         //NSLog(@"%@", [[object valueForKey:@"user"] objectId]);
-                         [self fetchCurrentLocationForUser:[[object valueForKey:@"user"] objectId]];
-                     }
-                 } else {
-                     // Log details of the failure
-                     NSLog(@"Error: %@ %@", error, [error userInfo]);
-                 }
-             }];
-            
-            
-            
-            
+        NSInteger i = 0;
+        for (NSString *coreFriend in  [retrievedCoreFriendsDictionary allKeys]) {
+            UIButton *mLocBtn = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 44, 44)];
+            UIImage *img =[[FRStringImage alloc] imageTextBubbleOfSize:mLocBtn.frame.size];
+            [mLocBtn setBackgroundImage:img forState:UIControlStateNormal];
+            [mLocBtn setTitle:[coreFriend substringToIndex:3] forState:UIControlStateNormal];
+            [mLocBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+            [mLocBtn setTitleColor:UIColorFromRGB(0x8e44ad) forState:UIControlStateHighlighted];
+            [mLocBtn setAlpha:0.8];
+            [mLocBtn setTag:i];
+            [mLocBtn addTarget:self action:@selector(friendLocInteraction:)
+              forControlEvents:UIControlEventTouchUpInside];
+            [self.mapView addSubview:mLocBtn];
+            [mLocBtn setCenter:CGPointMake(mLocBtn.frame.size.width + mLocBtn.center.x + i*(mLocBtn.frame.size.width), self.mapView.frame.size.height - mLocBtn.center.y)];
+            i++;
             
         }
+        
     }
 }
 -(void) fetchCurrentLocationForUser:(NSString *) coreFriendObjectId {
-    /** fetchCurrentLocationForUser
+    /** Method: fetchCurrentLocationForUser
      coreFriendObjectId: objectId in Parse User class
      the connection has to be done via the phone nbr.
      **/
@@ -887,14 +1026,48 @@ enum PinAnnotationTypeTag {
                                  block:^(PFObject *object, NSError *error)
      {
          if (!error) {
-             NSLog(@"%@, %@", (NSString *)[object valueForKey:@"email"], (PFGeoPoint *)[object valueForKey:@"currentLocation"]);
+             //NSLog(@"%@, %@", (NSString *)[object valueForKey:@"email"], (PFGeoPoint *)[object valueForKey:@"currentLocation"]);
              [self updateCoreFriendEntity:(NSString *)[object valueForKey:@"email"]
                              withLocation:(PFGeoPoint *)[object valueForKey:@"currentLocation"]];
+             // Center the map view around this geopoint:
+             PFGeoPoint *geoPoint = [object valueForKey:@"currentLocation"];
+             [self.mapView setRegion:MKCoordinateRegionMake(
+                                                            CLLocationCoordinate2DMake(geoPoint.latitude, geoPoint.longitude),
+                                                            MKCoordinateSpanMake(0.01, 0.01)
+                                                            )];
+             /*** if we need to remove the last annotation:
+              if([self.mapView.annotations count] > 0)
+                 [self.mapView removeAnnotations:[self.mapView annotations]];
+             ***/
              GeoPointAnnotation *geoPointAnnotation = [[GeoPointAnnotation alloc] initWithObject:object];
              [self.mapView addAnnotation:geoPointAnnotation];
-             
+             // Add friend location event
+             [self actionAddFriensoUserLocation:geoPoint forUser:(NSString *)[object valueForKey:@"username"]];
+            
          } else
-             NSLog(@"Error: %@ %@", error, [error userInfo]); // Log details of the failure
+             NSLog(@"!Error: %@ %@", error, [error userInfo]); // Log details of the failure
+     }];
+}
+-(void) lastKnownLocationForFriend:(NSString *)phoneNumber
+{
+    PFQuery *query = [PFQuery queryWithClassName:@"UserConnection"];
+    //NSString *pNumber = [coFrDic objectForKey:keys[1]];
+    NSRange substrRange = NSMakeRange(phoneNumber.length-10, 10);
+    [query whereKey:@"userNumber" containsString:[phoneNumber substringWithRange:substrRange]];
+    //NSLog(@"%@",[phoneNumber substringWithRange:substrRange]);
+    [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error)
+     {
+         if (!error) { // The find succeeded.
+             //NSLog(@"%@", objects);
+             for (PFObject *object in objects) { // Do something w/ found objects
+                 //NSLog(@"%@", object);
+                 //NSLog(@"%@", [[object valueForKey:@"user"] objectId]);
+                 [self fetchCurrentLocationForUser:[[object valueForKey:@"user"] objectId]];
+             }
+         } else {
+             // Log details of the failure
+             NSLog(@"!!Error: %@ %@", error, [error userInfo]);
+         }
      }];
 }
 /*

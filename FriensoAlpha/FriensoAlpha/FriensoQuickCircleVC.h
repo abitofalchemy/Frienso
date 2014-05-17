@@ -8,10 +8,10 @@
 
 #import <UIKit/UIKit.h>
 #import <CoreData/NSFetchedResultsController.h>
-
+#import <MessageUI/MessageUI.h> 
 
 @interface FriensoQuickCircleVC : UIViewController <NSFetchedResultsControllerDelegate,
-UITableViewDelegate,UITableViewDataSource>
+UITableViewDelegate,UITableViewDataSource,MFMessageComposeViewControllerDelegate,UIAlertViewDelegate>
 
 
 @end

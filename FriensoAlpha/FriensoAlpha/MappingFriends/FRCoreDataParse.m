@@ -44,7 +44,7 @@
     NSLog(@"updating my location");
     [PFGeoPoint geoPointForCurrentLocationInBackground:^(PFGeoPoint *geoPoint, NSError *error) {
         if (!error) {
-            NSLog(@"User is currently at %f, %f", geoPoint.latitude, geoPoint.longitude);
+            NSLog(@"I am currently at %f, %f", geoPoint.latitude, geoPoint.longitude);
             NSNumber *lat = [NSNumber numberWithDouble:geoPoint.latitude];
             NSNumber *lon = [NSNumber numberWithDouble:geoPoint.longitude];
             NSDictionary *userLocation=@{@"lat":lat,@"long":lon};
@@ -109,7 +109,8 @@
      }];
 }
 
--(void) fetchCurrentLocationForUser:(NSString *) coreFriendObjectId includePhone:(NSString *)fPhoneStr
+-(void) fetchCurrentLocationForUser:(NSString *)coreFriendObjectId
+                       includePhone:(NSString *)fPhoneStr
 {
     PFQuery *query = [PFUser query];
     [query getObjectInBackgroundWithId:coreFriendObjectId

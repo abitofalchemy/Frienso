@@ -32,7 +32,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    self.optionsArray = [[NSMutableArray alloc] initWithArray:@[@"Profile",@"Watching", @"Resources",@"Settings",@"About",@"Map"]];
+    self.optionsArray = [[NSMutableArray alloc] initWithArray:@[@"Profile",/*@"Watching",*/ @"Resources",@"Settings",@"About",@"Map"]];
     // Uncomment the following line to preserve selection between presentations.
     // self.clearsSelectionOnViewWillAppear = NO;
  
@@ -77,18 +77,18 @@
                 cell.imageView.image = [UIImage imageNamed:@"profile-24.png"];
                 break;
             case 1:
-                cell.imageView.image = [UIImage imageNamed:@"umbrella-24.png"];
-                break;
-            case 2:
+//                cell.imageView.image = [UIImage imageNamed:@"umbrella-24.png"];
+//                break;
+//            case 2:
                 cell.imageView.image = [UIImage imageNamed:@"lighthouse-24.png"];
                 break;
-            case 3:
+            case 2:
                 cell.imageView.image = [UIImage imageNamed:@"settings-24.png"];
                 break;
-            case 4:
+            case 3:
                 cell.imageView.image = [UIImage imageNamed:@"about-24.png"];
                 break;
-            case 5:
+            case 4:
                 cell.imageView.image = [self imageWithString:@"🌐" font:[UIFont systemFontOfSize:[UIFont systemFontSize]] size:CGSizeMake(24, 24)];
             default:
                 break;
@@ -104,7 +104,6 @@
     switch (indexPath.row) {
         case 0:{
             NSLog(@"%@", [tableView cellForRowAtIndexPath:indexPath].textLabel.text);
-            
             UserProfileViewController *detailViewController = [[UserProfileViewController alloc] initWithNibName:nil bundle:nil];
             
             // Pass the selected object to the new view controller.
@@ -115,49 +114,37 @@
             // Push the view controller.
             [self.navigationController pushViewController:detailViewController
                                                  animated:YES];
-            //[self presentViewController:detailViewController animated:YES completion:nil];
-//            [self.view addSubview:detailViewController];
             break;
         }
-        case 1:{
-            NSLog(@"%@", [tableView cellForRowAtIndexPath:indexPath].textLabel.text);
+        /*case 1:{
+            //NSLog(@"%@", [tableView cellForRowAtIndexPath:indexPath].textLabel.text);
             UIStoryboard *mainStoryboard = [UIStoryboard storyboardWithName:@"Main"  bundle:nil];
             tstWatchingViewController  *wtvc = (tstWatchingViewController*)[mainStoryboard instantiateViewControllerWithIdentifier:@"friensoWatching"];
             [wtvc setText:[tableView cellForRowAtIndexPath:indexPath].textLabel.text];
             [self.navigationController pushViewController:wtvc animated:YES];
             break;
-        }
-        case 2:{
-            NSLog(@"%@", [tableView cellForRowAtIndexPath:indexPath].textLabel.text);
-            /*FriensoResourcesTVC *detailViewController = [[FriensoResourcesTVC alloc] initWithNibName:nil
-                                                                                              bundle:nil];
-            // Pass the selected object to the new view controller.
-            //[detailViewController setText:[tableView cellForRowAtIndexPath:indexPath].textLabel.text];
-            // Push the view controller.
-            [self.navigationController pushViewController:detailViewController
-                                                 animated:YES];
-            */
+        }*/
+        case 1:     {
             UIStoryboard *mainStoryboard = [UIStoryboard storyboardWithName:@"Main"  bundle:nil];
             FriensoResourcesTVC  *rtvc = (FriensoResourcesTVC*)[mainStoryboard instantiateViewControllerWithIdentifier:@"friensoResources"];
             [self.navigationController pushViewController:rtvc animated:YES];
-            break;
-        }
-        case 3:{
-            NSLog(@"%@", [tableView cellForRowAtIndexPath:indexPath].textLabel.text);
+            break;  }
+        case 2:{
+            //NSLog(@"%@", [tableView cellForRowAtIndexPath:indexPath].textLabel.text);
             SettingsViewController *detailViewController = [[SettingsViewController alloc] initWithNibName:nil bundle:nil];
             [detailViewController setText:[tableView cellForRowAtIndexPath:indexPath].textLabel.text];
             [self.navigationController pushViewController:detailViewController animated:YES];
             break;
         }
-        case 4:{
-            NSLog(@"%@", [tableView cellForRowAtIndexPath:indexPath].textLabel.text);
+        case 3:{
+            //NSLog(@"%@", [tableView cellForRowAtIndexPath:indexPath].textLabel.text);
             AboutFriensoViewController *detailViewController = [[AboutFriensoViewController alloc] initWithNibName:nil bundle:nil];
             [detailViewController setText:[tableView cellForRowAtIndexPath:indexPath].textLabel.text];
             [self.navigationController pushViewController:detailViewController
                                                  animated:YES];
             break;
         }
-        case 5: {
+        case 4: {
             [self performSegueWithIdentifier:@"friensoMap" sender:self];
             break;
         }

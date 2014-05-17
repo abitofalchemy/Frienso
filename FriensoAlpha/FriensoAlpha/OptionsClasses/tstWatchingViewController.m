@@ -86,7 +86,6 @@
 {
     [super viewDidLoad];
     self.thoseIWatchArray = [[NSMutableArray alloc] init];
-//    self.watchingPhoneArray = [[NSMutableArray alloc] init];
     
     self.watchingOverDic = [[NSMutableDictionary alloc] init];
     // Uncomment the following line to preserve selection between presentations.
@@ -103,6 +102,7 @@
     [self.loadingView setColor:UIColorFromRGB(0xf47d44)];
     [self.view addSubview:self.loadingView];
     [self.loadingView startAnimating];
+    
     [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         if (!error) {
             // The find succeeded.
