@@ -49,9 +49,7 @@
 - (void) setText:(NSString *)paramText{
     self.title = paramText;
 }
-//- (void) setFrame:(CGRect)frame{
-//    self->_view.frame = frame;
-//}
+
 
 - (void)viewDidLoad
 {
@@ -235,30 +233,39 @@
             NSURL *imageURL = [NSURL URLWithString:[object objectForKey:@"rImage"]];
             NSData *imageData = [NSData dataWithContentsOfURL:imageURL];
             UIImage *img = [UIImage imageWithData:imageData];
-            NSLog(@"img: %2.f, %2.f", img.size.width, img.size.height);
-            NSLog(@"cell:%2.f, %2.f", cell.frame.size.width, cell.frame.size.height);
+            //NSLog(@"img: %2.f, %2.f", img.size.width, img.size.height);
+            //NSLog(@"cell:%2.f, %2.f", cell.frame.size.width, cell.frame.size.height);
             CGFloat ratio = (cell.frame.size.width*0.4*cell.frame.size.height)/cell.frame.size.height;
             cell.imageView.image = [self scaleImage:img
                                              toSize:CGSizeMake(cell.frame.size.width*0.4,ratio)];//[self imageWithBorderFromImage:img];
         }
     } else if ([[object objectForKey:@"categoryType"] isEqualToString:@"inst,contact"]) {
-        UIButton *label = [UIButton buttonWithType:UIButtonTypeCustom];
-        [label setTitle:@"📥" forState:UIControlStateNormal];
-        [label sizeToFit];
-        [label addTarget:self action:@selector(checkButtonTapped:event:)  forControlEvents:UIControlEventTouchUpInside];
+        //NSLog ( @"inst.contact,%@", object.objectId);
+        if ( [self isResourceCached:object.objectId forCell:cell] ){
+            
+            UIButton *label = [UIButton buttonWithType:UIButtonTypeCustom];
+            [label setTitle:@"📥" forState:UIControlStateNormal];
+            [label sizeToFit];
+            [label addTarget:self action:@selector(checkButtonTapped:event:)  forControlEvents:UIControlEventTouchUpInside];
+            
+            cell.accessoryType = UITableViewCellAccessoryDetailButton;
+            cell.accessoryView = label;
+            [cell.detailTextLabel setNumberOfLines:2];
+            PFFile *instImageFile = [object objectForKey:@"image"];
+            [instImageFile getDataInBackgroundWithBlock:^(NSData *imageData, NSError *error) {
+                if (!error) {
+                    UIImage *image = [UIImage imageWithData:imageData];
+                    cell.imageView.image = (imageData) ? image : [UIImage imageNamed:@"und_logo29.png"];
+                } else NSLog(@"Error: %@", [error localizedDescription]);
+            }];
 
-        cell.accessoryType = UITableViewCellAccessoryDetailButton;
-        cell.accessoryView = label;
-        [cell.detailTextLabel setNumberOfLines:2];
-        PFFile *instImageFile = [object objectForKey:@"image"];
-        [instImageFile getDataInBackgroundWithBlock:^(NSData *imageData, NSError *error) {
-            if (!error) {
-                UIImage *image = [UIImage imageWithData:imageData];
-                cell.imageView.image = (imageData) ? image : [UIImage imageNamed:@"und_logo29.png"];
-            } else NSLog(@"Error: %@", [error localizedDescription]);
-        }];
-        
-        
+        } else {
+            NSLog(@"Not Unique!");
+            cell.accessoryType = UITableViewCellAccessoryCheckmark;
+            cell.textLabel.textColor = [UIColor grayColor];
+            cell.detailTextLabel.textColor = [UIColor lightGrayColor];
+            
+        }
     }
     return cell;
 }
@@ -418,6 +425,40 @@
     UIImage *retImage = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
     return retImage;
+}
+-(BOOL) isResourceCached:(NSString *)objectId forCell:(UITableViewCell *)currentCell{
+    FriensoAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+    NSManagedObjectContext *managedObjectContext = appDelegate.managedObjectContext;
+    // First check to see if the objectId already exists
+    NSEntityDescription *entityDescription = [NSEntityDescription entityForName:@"CoreFriends"
+                                                         inManagedObjectContext:managedObjectContext];
+    NSFetchRequest *request = [[NSFetchRequest alloc] init];
+    [request setPredicate:[NSPredicate predicateWithFormat:@"coreObjId like %@",objectId]];//[pfObj objectForKey:@"resObjId"]]];
+    [request setEntity:entityDescription];
+    BOOL unique = YES;
+    NSError  *error;
+    NSArray *items = [managedObjectContext executeFetchRequest:request error:&error];
+    if(items.count > 0){
+        /*for(FriensoEvent *thisFEvent in items){
+         if([thisFEvent.eventObjId isEqualToString: nameToEnter]){
+         unique = NO;
+         }
+         //NSLog(@"%@", thisPerson);
+         }
+         */
+        unique = NO;
+//        NSLog(@"Not unique %d", [items count]);
+////        NSLog(@"Index: %@", [self.t indexPathForCell:currentCell]);
+////        [self.tableView beginUpdates];
+//        currentCell.accessoryView = nil;
+//        currentCell.accessoryType = UITableViewCellAccessoryCheckmark;
+//        NSIndexPath *index = [self.tableView indexPathForCell:currentCell];
+//        [self.tableView reloadRowsAtIndexPaths:@[index] withRowAnimation:UITableViewRowAnimationNone];
+//        [self.tableView endUpdates];
+    } else {
+        NSLog(@"Unique");
+    }
+    return unique;
 }
 #pragma mark - Button Selectors
 - (void)checkButtonTapped:(id)sender event:(id)event

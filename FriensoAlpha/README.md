@@ -7,13 +7,14 @@ Version History
 ---------------
 
 
-ver 1.5 build XX    Got rid of the Options/Watching list (it is now integrated in the CoreCircle list)
+ver 1.5 build 20    Got rid of the Options/Watching list (it is now integrated in the CoreCircle list)
                     CoreCircle list now shows your CoreCircle and those uWatch.
                     Eliminated the icon to 'Chat' with friends, this is now available when you list the CoreCircle.
                     -Interact with your CorCircle contacts
                     -Filter out Resources already in CoreCircle
                     -Add fullscreen button to map
                     -Add Horizontal scroll for the Active users & the rest of your friends. 
+                    -Fixed the Results view: when resource is already cached, don't allow to save it
 
 ver 1.5 build 19    Redesign of the Friends/Map view, added bubbles of your core-friends
                     Got SMS working when you list Those you are Watching

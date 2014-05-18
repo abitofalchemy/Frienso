@@ -164,11 +164,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "FriensoAlpha/OptionsClasses/FriensoResourcesTVC.m"
-            timestampString = "420998781.595684"
+            timestampString = "422106199.065863"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "176"
-            endingLineNumber = "176"
+            startingLineNumber = "174"
+            endingLineNumber = "174"
             landmarkName = "@implementation FriensoResourcesTVC"
             landmarkType = "3">
          </BreakpointContent>

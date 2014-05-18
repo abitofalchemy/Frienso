@@ -50,7 +50,6 @@
 		1879B59018C6CD9400AEA55F /* SettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1879B58F18C6CD9400AEA55F /* SettingsViewController.m */; };
 		1879B59318C7277100AEA55F /* Profile-256.png in Resources */ = {isa = PBXBuildFile; fileRef = 1879B59118C7277100AEA55F /* Profile-256.png */; };
 		1879B59418C7277100AEA55F /* profile.png in Resources */ = {isa = PBXBuildFile; fileRef = 1879B59218C7277100AEA55F /* profile.png */; };
-		1879B59818C7847000AEA55F /* WatchingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1879B59718C7847000AEA55F /* WatchingViewController.m */; };
 		1879B59B18C786DB00AEA55F /* FriensoResourcesTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 1879B59A18C786DB00AEA55F /* FriensoResourcesTVC.m */; };
 		1879B59F18C888BB00AEA55F /* tstWatchingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1879B59E18C888BB00AEA55F /* tstWatchingViewController.m */; };
 		18CD00E518CBB98D007BAC85 /* profile-landscape.png in Resources */ = {isa = PBXBuildFile; fileRef = 18CD00E418CBB98D007BAC85 /* profile-landscape.png */; };
@@ -164,8 +163,6 @@
 		1879B58F18C6CD9400AEA55F /* SettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsViewController.m; sourceTree = "<group>"; };
 		1879B59118C7277100AEA55F /* Profile-256.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Profile-256.png"; sourceTree = "<group>"; };
 		1879B59218C7277100AEA55F /* profile.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = profile.png; sourceTree = "<group>"; };
-		1879B59618C7847000AEA55F /* WatchingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WatchingViewController.h; sourceTree = "<group>"; };
-		1879B59718C7847000AEA55F /* WatchingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WatchingViewController.m; sourceTree = "<group>"; };
 		1879B59918C786DB00AEA55F /* FriensoResourcesTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FriensoResourcesTVC.h; sourceTree = "<group>"; };
 		1879B59A18C786DB00AEA55F /* FriensoResourcesTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FriensoResourcesTVC.m; sourceTree = "<group>"; };
 		1879B59D18C888BB00AEA55F /* tstWatchingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tstWatchingViewController.h; sourceTree = "<group>"; };
@@ -274,14 +271,12 @@
 		1808553618C4EEC30047A8BE /* OptionsClasses */ = {
 			isa = PBXGroup;
 			children = (
+				1879B59918C786DB00AEA55F /* FriensoResourcesTVC.h */,
+				1879B59A18C786DB00AEA55F /* FriensoResourcesTVC.m */,
 				3E4120F618E3005E0058012B /* aBoAViewController.h */,
 				3E4120F718E3005E0058012B /* aBoAViewController.m */,
 				1879B59D18C888BB00AEA55F /* tstWatchingViewController.h */,
 				1879B59E18C888BB00AEA55F /* tstWatchingViewController.m */,
-				1879B59618C7847000AEA55F /* WatchingViewController.h */,
-				1879B59718C7847000AEA55F /* WatchingViewController.m */,
-				1879B59918C786DB00AEA55F /* FriensoResourcesTVC.h */,
-				1879B59A18C786DB00AEA55F /* FriensoResourcesTVC.m */,
 				1879B58E18C6CD9400AEA55F /* SettingsViewController.h */,
 				1879B58F18C6CD9400AEA55F /* SettingsViewController.m */,
 				1808553718C4EEFF0047A8BE /* ProfileViewController.h */,
@@ -665,7 +660,6 @@
 				1827931B18BE06750056C849 /* FriensoViewController.m in Sources */,
 				3E4120F818E3005E0058012B /* aBoAViewController.m in Sources */,
 				180E881E18BF15F3009A570F /* FriensoFirstScreenViewController.m in Sources */,
-				1879B59818C7847000AEA55F /* WatchingViewController.m in Sources */,
 				3EB5C447191A5EE5006557DE /* FRUserGenContentButton.m in Sources */,
 				182E86F018C120CF009AD302 /* ABALoginTVC.m in Sources */,
 				3E21A0541920EE050083F1AC /* FRStringImage.m in Sources */,
