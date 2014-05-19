@@ -6,15 +6,16 @@ Frienso iOS Alpha
 Version History
 ---------------
 
-
-ver 1.5 build 20    Got rid of the Options/Watching list (it is now integrated in the CoreCircle list)
+ver 1.5 build XX    Fixed minor issues with the Profile & CoreCircle views; redoing the way the user 
+                    logs in or registers!
+ver 1.5 build 21    Got rid of the Options/Watching list (it is now integrated in the CoreCircle list)
                     CoreCircle list now shows your CoreCircle and those uWatch.
                     Eliminated the icon to 'Chat' with friends, this is now available when you list the CoreCircle.
-                    -Interact with your CorCircle contacts
-                    -Filter out Resources already in CoreCircle
-                    -Add fullscreen button to map
-                    -Add Horizontal scroll for the Active users & the rest of your friends. 
-                    -Fixed the Results view: when resource is already cached, don't allow to save it
+                    - {working} Interact with your CorCircle contacts
+                    - {Fixed} the Resources view: when resource is already cached, don't allow to save it
+
+                    +Add fullscreen button to map
+                    +Add Horizontal scroll for the Active users & the rest of your friends.
 
 ver 1.5 build 19    Redesign of the Friends/Map view, added bubbles of your core-friends
                     Got SMS working when you list Those you are Watching
@@ -123,5 +124,6 @@ Referenced Work
     # http://www.blog.montgomerie.net/iphone-images-from-character-glyphs
 * style
     # http://www.cs.uakron.edu/~collard/cs489iOS/notes/IOSUITextKit.md
+    # http://www.behance.net/gallery/16217291/7-v1-Mobile-UI-Kit
 * other
     # http://stackoverflow.com/questions/10571786/how-to-update-existing-object-in-core-data/10572134#10572134

@@ -43,7 +43,7 @@ enum PinAnnotationTypeTag {
 @property (nonatomic,strong) UITableView *rsrcTableView; //frienso resources tableview
 @property (nonatomic,strong) UIButton *selectedBubbleBtn;
 
--(void)actionPanicEvent: (UIButton *)theButton;
+-(void)actionPanicEvent:(UIButton *)theButton;
 -(void)viewMenuOptions: (UIButton *)theButton;
 -(void)viewCoreCircle:  (UIButton *)theButton;
 -(void)makeFriensoEvent:(UIButton *)theButton;
@@ -469,6 +469,7 @@ enum PinAnnotationTypeTag {
     
 }
 
+#pragma mark - FriensoViewController
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -476,17 +477,25 @@ enum PinAnnotationTypeTag {
     printf("[ Dashboard: FriensoVC ]\n");
     self.navigationController.navigationBarHidden = NO;
 
-    if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"CoreFriendsContactInfoDicKey"] count] == 0)
-        [self syncFromParse];
-    else
-        NSLog(@"all loaded already");
+    NSString       *adminKey    = [[NSUserDefaults standardUserDefaults] objectForKey:@"adminID"];
+    if ([adminKey isEqualToString:@""] || adminKey == NULL || adminKey == nil){
+        [self performSegueWithIdentifier:@"showLoginView" sender:self];
 
-    [self setupNavigationBarImage];
-    [self.locationManager startUpdatingLocation];
-    [self setInitialLocation:self.locationManager.location];
+    } else {
+        if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"CoreFriendsContactInfoDicKey"] count] == 0)
+            [self syncFromParse];
+        else
+            NSLog(@"all loaded already");
+        
+        [self setupNavigationBarImage];
+        [self.locationManager startUpdatingLocation];
+        [self setInitialLocation:self.locationManager.location];
+        
+        [self setupHalfMapView];
+        [self setupEventsTableView];
+        
+    }
 
-    [self setupHalfMapView];
-    [self setupEventsTableView];
 
     //[self syncCoreFriendsLocation]; //  from parse to coredata
     

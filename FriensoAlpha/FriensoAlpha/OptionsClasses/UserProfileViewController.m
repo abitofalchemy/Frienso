@@ -7,7 +7,7 @@
 //
 
 #import "UserProfileViewController.h"
-//#import "CoreCircleTVC.h"
+#import "NewCoreCircleTVC.h"
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <AssetsLibrary/AssetsLibrary.h>
 
@@ -42,9 +42,9 @@
 
 - (void) coreFriendsAction:(id) sender {
     
-//    UIStoryboard *mainStoryboard = [UIStoryboard storyboardWithName:@"Main"  bundle:nil];
-//    CoreCircleTVC  *coreCircleController = (CoreCircleTVC*)[mainStoryboard instantiateViewControllerWithIdentifier: @"coreCircleView"];
-//    [self.navigationController pushViewController:coreCircleController animated:YES];
+    UIStoryboard *mainStoryboard = [UIStoryboard storyboardWithName:@"Main"  bundle:nil];
+    NewCoreCircleTVC  *coreCircleController = (NewCoreCircleTVC*)[mainStoryboard instantiateViewControllerWithIdentifier: @"coreCircleView"];
+    [self.navigationController pushViewController:coreCircleController animated:YES];
     
 }
 
@@ -362,14 +362,18 @@
     // Profile photo
     UIImageView __block  *profilePhoto = [[UIImageView alloc] initWithFrame:CGRectZero];
     [profilePhoto setImage:[UIImage imageNamed:@"profile-landscape-1.png"]];
-    [profilePhoto setFrame:CGRectMake(0, 0,self.view.bounds.size.width, self.view.bounds.size.width/2)];
+    [profilePhoto setFrame:CGRectMake(0,0,self.view.bounds.size.width/3,self.view.bounds.size.width/3)];
+    [profilePhoto setCenter:CGPointMake(self.view.center.x, self.view.center.x * 0.4)];
     profilePhoto.layer.borderColor  = [UIColor whiteColor].CGColor;
 #warning crop the image to look more normal
-    profilePhoto.contentMode = UIViewContentModeScaleAspectFit;
+    profilePhoto.contentMode = UIViewContentModeScaleAspectFill;
     
-    profilePhoto.layer.borderWidth  = 1.0f;
-    profilePhoto.layer.cornerRadius = 8.0f;
-    profilePhoto.layer.borderColor = [UIColor lightGrayColor].CGColor;
+    CALayer *imageLayer = profilePhoto.layer;
+    [imageLayer setCornerRadius:20];
+    [imageLayer setBorderWidth:1];
+    [imageLayer setMasksToBounds:YES];
+    [imageLayer setBorderColor:UIColorFromRGB(0x3498db).CGColor];
+    
     [self.view addSubview:profilePhoto];
     
     NSURL *assetURL = [[NSUserDefaults standardUserDefaults] URLForKey:@"profileImageUrl"];
@@ -392,6 +396,14 @@
     
     
     // Credentials
+    UILabel *imageLabel = [[UILabel alloc] initWithFrame:CGRectZero];
+    [imageLabel setFont:[UIFont fontWithName:@"AppleSDGothicNeo-Light" size:18]];
+    [imageLabel setText:@"Me"];
+    [imageLabel setTextAlignment:NSTextAlignmentCenter];
+    [imageLabel sizeToFit];
+    [imageLabel setCenter:CGPointMake(self.view.center.x, profilePhoto.frame.size.height + 3*imageLabel.center.y)];
+    [self.view addSubview:imageLabel];
+    
     NSString *userInfo = [NSString stringWithFormat:@"UserName: %@\nEmail: %@\nPhone: %@\n"
                      "First Name: %@\nLast Name: %@",
                      ([[NSUserDefaults standardUserDefaults] objectForKey:@"userName"]== NULL) ? [[NSUserDefaults standardUserDefaults] objectForKey:@"userEmail"] : [[NSUserDefaults standardUserDefaults] objectForKey:@"userName"],

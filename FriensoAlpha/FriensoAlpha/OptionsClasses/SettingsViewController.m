@@ -241,7 +241,7 @@
     [self.navigationController popToRootViewControllerAnimated:YES];
 }
 -(void) shareFriensoAction:(id) sender {
-    NSArray *recipientsArray = [NSArray arrayWithObject:@"frienso@gmail.com"];
+    NSArray *recipientsArray = [NSArray arrayWithObject:@""];
     [self sendEmailTo:recipientsArray
           withSubject:@"Frienso: The safety app for colleges and university campuses"
        withBodyHeader:@"-- Learn about what Frienso is and "

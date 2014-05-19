@@ -70,7 +70,7 @@
     NSLog(@"[ ABALoginTVC ]");
     
     // Initialization
-    loginSections = [[NSArray alloc] initWithObjects:@"Frienso", @"Log In",@"Options",@"Footer", nil];
+    loginSections = [[NSArray alloc] initWithObjects:@"FRIENSO", @"Log In",@"Options",@"Footer", nil];
     loginFields   = [[NSArray alloc] initWithObjects:@"Email", @"Password", @"(312) 555 0123", nil];
     loginBtnLabel = [[NSMutableArray alloc] initWithObjects:@"Sign In", @"Register", nil];
     
@@ -78,17 +78,6 @@
     [self.navigationController.navigationBar setHidden:YES];
     
     [self getDeviceLocationInfo];
-    
-//    NSError *error;
-//    if (![[self fetchedResultsController] performFetch:&error]) {
-//        /*
-//         Replace this implementation with code to handle the error appropriately.
-//         
-//         abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-//         */
-//        NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
-//        abort();
-//    }
     
 }
 
@@ -891,8 +880,10 @@
 }
 - (void) popDashboardVC
 {
-    [self performSegueWithIdentifier:@"dashboardView" sender:self];
-    
+    //[self performSegueWithIdentifier:@"dashboardView" sender:self];
+    [self.navigationController dismissViewControllerAnimated:YES completion:nil];
+//    [self.navigationController popToRootViewControllerAnimated:YES];
+
 }
 
 - (void) popCoreCircleSetupVC

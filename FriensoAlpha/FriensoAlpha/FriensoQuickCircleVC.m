@@ -61,7 +61,7 @@ static NSString *coreFriendsCell = @"coreFriendsCell";
 	//  Add new table view
     self.tableView = [[UITableView alloc] init];
     [self.tableView setFrame:CGRectMake(0, 0, self.view.bounds.size.width,
-                                        self.view.bounds.size.height*0.70)];
+                                        self.view.bounds.size.height)];
     
     self.tableView.dataSource = self;
     self.tableView.delegate   = self;

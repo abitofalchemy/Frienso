@@ -97,7 +97,7 @@
     [self CheckUserDefaults];
     
     // This will fix the view from being framed underneath the navigation bar and status bar.
-    self.navigationController.navigationBar.translucent = YES;
+    //self.navigationController.navigationBar.translucent = YES;
     
     [[self view] setBackgroundColor: [UIColor colorWithPatternImage: [UIImage imageNamed:@"first-view-cover.png"]]];
     

@@ -10,7 +10,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "FriensoAlpha/OptionsClasses/UserProfileViewController.m"
-            timestampString = "417829968.423097"
+            timestampString = "422184097.754594"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "68"
@@ -42,11 +42,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "FriensoAlpha/ABALoginTVC.m"
-            timestampString = "419514989.389418"
+            timestampString = "422187667.316715"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "855"
-            endingLineNumber = "855"
+            startingLineNumber = "844"
+            endingLineNumber = "844"
             landmarkName = "-loginThisUserToParse:withPassword:"
             landmarkType = "5">
             <Locations>
