@@ -52,6 +52,12 @@ enum PinAnnotationTypeTag {
     self.mapView.region = MKCoordinateRegionMake(self.location.coordinate, MKCoordinateSpanMake(0.05f, 0.05f));
     [self configureOverlay];
 }
+- (void) viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    [self.navigationController setToolbarHidden:NO];
+
+}
 
 -(void) fetchCurrentLocationForUser:(NSString *) coreFriendObjectId {
     /** fetchCurrentLocationForUser

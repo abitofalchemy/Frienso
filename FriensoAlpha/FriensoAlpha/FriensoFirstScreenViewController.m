@@ -39,11 +39,19 @@
         
     }
 }
--(void) pushNextViewController {
-    [self performSegueWithIdentifier:@"loginView" sender:self];
+
+#pragma mark - Navigation
+-(void) pushNextViewController:(UIButton *)sender {
+//    [self performSegueWithIdentifier:@"loginView" sender:self];
+    [sender setBackgroundColor:[UIColor clearColor]];
+    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"WelcomeViewShown"];
+//    [self.navigationController popViewControllerAnimated:YES];
+    [self dismissViewControllerAnimated:YES completion:nil];
+    [self.parentViewController performSegueWithIdentifier:@"loginView" sender:self];
 }
 
 -(void) popDashboardVC{
+
     [self performSegueWithIdentifier:@"dashboardView" sender:self];
 }
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -94,7 +102,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    [self CheckUserDefaults];
+    //[self CheckUserDefaults];
     
     // This will fix the view from being framed underneath the navigation bar and status bar.
     //self.navigationController.navigationBar.translucent = YES;
@@ -122,7 +130,7 @@
     [button.titleLabel setTextColor:[UIColor whiteColor]];
     [button.titleLabel setTintColor:[UIColor whiteColor]];
     [button addTarget:self
-               action:@selector(pushNextViewController)
+               action:@selector(pushNextViewController:)
      forControlEvents:UIControlEventTouchUpInside];
     [button setTitle:@"Join the Movement" forState:UIControlStateNormal];
     [button.titleLabel setFont:[UIFont fontWithName:@"AppleSDGothicNeo-Medium" size:16.0]];

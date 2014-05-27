@@ -147,7 +147,11 @@
     self.alertView = nil; // release it
     
 }
-
+- (void) viewWillDisappear:(BOOL)animated
+{
+    [super viewDidAppear:YES];
+    [self.navigationController setToolbarHidden:NO];
+}
 // This method is called when the user selects an event in the table view.
 // It configures the destination event view controller with this event.
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender

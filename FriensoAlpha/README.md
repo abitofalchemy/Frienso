@@ -8,14 +8,16 @@ Version History
 
 ver 1.5 build XX    Fixed minor issues with the Profile & CoreCircle views; redoing the way the user 
                     logs in or registers!
+                    - Fixed bugs related to the hidding of the bootom tool-bar
+                    - Redesigned the way the login comes up and the way views go from welcome to the
+                    homeview
+
 ver 1.5 build 21    Got rid of the Options/Watching list (it is now integrated in the CoreCircle list)
                     CoreCircle list now shows your CoreCircle and those uWatch.
                     Eliminated the icon to 'Chat' with friends, this is now available when you list the CoreCircle.
                     - {working} Interact with your CorCircle contacts
                     - {Fixed} the Resources view: when resource is already cached, don't allow to save it
 
-                    +Add fullscreen button to map
-                    +Add Horizontal scroll for the Active users & the rest of your friends.
 
 ver 1.5 build 19    Redesign of the Friends/Map view, added bubbles of your core-friends
                     Got SMS working when you list Those you are Watching
@@ -62,6 +64,8 @@ ver 1.0 build 1.0   Initial release
 ToDo
 ----
 * Don't track users, 
++Add fullscreen button to map
++Add Horizontal scroll for the Active users & the rest of your friends.
 * Add event creation
   Create a full event
     Go for a run, etc.

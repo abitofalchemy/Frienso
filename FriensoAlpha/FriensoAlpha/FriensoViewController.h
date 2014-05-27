@@ -11,10 +11,11 @@
 #import <Parse/Parse.h>
 #import <MapKit/MapKit.h>
 #import <CoreLocation/CoreLocation.h>
+#import "ABALoginTVC.h"
 
 @interface FriensoViewController : UIViewController <NSFetchedResultsControllerDelegate,
 UITableViewDelegate,UITableViewDataSource,
-MKMapViewDelegate,CLLocationManagerDelegate>
+MKMapViewDelegate,CLLocationManagerDelegate,UIScrollViewDelegate>
 
 @property (nonatomic, retain) CLLocationManager *locationManager;
 @property (nonatomic, strong) MKMapView *mapView;

@@ -30,6 +30,10 @@
 #import "FriensoEvent.h"
 #import "FriensoAppDelegate.h"
 #import <CoreLocation/CoreLocation.h>
+#import "FriensoViewController.h"
+#import "CoreFriends.h"
+
+#define UIColorFromRGB(rgbValue) [UIColor colorWithRed:((float)((rgbValue & 0xFF0000) >> 16))/255.0 green:((float)((rgbValue & 0xFF00) >> 8))/255.0 blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
 
 @interface ABALoginTVC () <CLLocationManagerDelegate>
@@ -39,6 +43,12 @@
 @property (nonatomic, strong) CLLocationManager *myLocationManager;
 @property (nonatomic) CLLocationCoordinate2D coordinate;
 @property (nonatomic, strong) PFGeoPoint *geoPoint;
+@property (nonatomic,strong) UIView *welcomeView;
+@property (nonatomic,retain) NSMutableArray *coreFriendsArray;
+@property (nonatomic,retain) UISwitch *locationSwitch;
+@property (nonatomic,strong) CLLocation *location;
+
+
 @end
 
 @implementation ABALoginTVC
@@ -51,6 +61,7 @@
 @synthesize loginLabel      = _loginLabel;
 @synthesize retVal          = _retVal;
 @synthesize keepMeLoggedin = _keepMeLoggedin;
+@synthesize welcomeView = _welcomeView;
 
 
 - (id)initWithStyle:(UITableViewStyle)style
@@ -69,15 +80,19 @@
     
     NSLog(@"[ ABALoginTVC ]");
     
+    _welcomeView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, self.view.bounds.size.height)];
+    [_welcomeView setBackgroundColor: [UIColor colorWithPatternImage: [UIImage imageNamed:@"first-view-cover.png"]]];
+    [self configureView:_welcomeView];
+    
     // Initialization
     loginSections = [[NSArray alloc] initWithObjects:@"FRIENSO", @"Log In",@"Options",@"Footer", nil];
     loginFields   = [[NSArray alloc] initWithObjects:@"Email", @"Password", @"(312) 555 0123", nil];
     loginBtnLabel = [[NSMutableArray alloc] initWithObjects:@"Sign In", @"Register", nil];
     
-    // Defaulting the 'keep me logged in switch to ON'
     [self.navigationController.navigationBar setHidden:YES];
     
-    [self getDeviceLocationInfo];
+    //[self getDeviceLocationInfo];
+    
     
 }
 
@@ -85,6 +100,12 @@
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+- (NSManagedObjectContext *) managedObjectContext{
+    
+    FriensoAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+    return appDelegate.managedObjectContext;
+    
 }
 
 #pragma mark - Table view data source
@@ -103,7 +124,7 @@
     else if (section == 1 || section == 3)
         return 1;
     else
-        return 2;
+        return 3;
 }
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
     //NSLog(@"%f",[tableView rowHeight]);
@@ -191,6 +212,21 @@
         }
     } else if (indexPath.section == 2){
         if (indexPath.row == 0) {
+            NSString *myString = @"Turn on Location";
+            cell.textLabel.text = myString;
+            cell.textLabel.textAlignment = NSTextAlignmentCenter;
+            UIFont *myFont = [ UIFont fontWithName: @"HelveticaNeue-Light" size: 16.0 ];
+            cell.textLabel.font  = myFont;
+            cell.textLabel.textColor = [UIColor colorWithRed:0 green:0 blue:0.6 alpha:1];
+            cell.selectionStyle = UITableViewCellSelectionStyleNone;
+            self.locationSwitch = [[UISwitch alloc] initWithFrame:CGRectZero];
+            [self.locationSwitch setOn:NO animated:YES];
+            self.locationSwitch.tag = 10;
+            [self.locationSwitch addTarget:self action:@selector(switchChanged:) forControlEvents:UIControlEventValueChanged];
+            cell.accessoryView = self.locationSwitch;
+            //[self switchChanged:self.locationSwitch];
+            
+        }else if (indexPath.row == 1) {
             NSString *myString = @"Stayed Logged In";
             cell.textLabel.text = myString;
             cell.textLabel.textAlignment = NSTextAlignmentCenter;
@@ -200,8 +236,10 @@
             cell.selectionStyle = UITableViewCellSelectionStyleNone;
             UISwitch *switchView = [[UISwitch alloc] initWithFrame:CGRectZero];
             [switchView setOn:YES animated:NO];
+            switchView.tag = 11;
             [switchView addTarget:self action:@selector(switchChanged:) forControlEvents:UIControlEventValueChanged];
             cell.accessoryView = switchView;
+            
             [self switchChanged:switchView];
             
         } else if (indexPath.row == 1) {
@@ -453,7 +491,7 @@
                 
                 [loginBtnLabel replaceObjectAtIndex:0 withObject:@"Sign In"];
                 [self reloadSection:1 withRowAnimation:UITableViewRowAnimationNone];
-                //for (PFObject *object in objects)
+
                 NSLog(@"existingUser set");
                 // Sign In and skip coreCircle View Controller
                 [userInLocal setObject:@"1" forKey:@"existingUser"];
@@ -552,7 +590,7 @@
 
 -(BOOL) forgotPasswordValidInput:(NSString *)emailInput{
 //  Reference [1]
-    NSString *emailRegex = @"[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}";
+    NSString *emailRegex   = @"[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}";
     NSPredicate *emailTest = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", emailRegex];
     
     return [emailTest evaluateWithObject:emailInput];
@@ -880,10 +918,16 @@
 }
 - (void) popDashboardVC
 {
-    //[self performSegueWithIdentifier:@"dashboardView" sender:self];
-    [self.navigationController dismissViewControllerAnimated:YES completion:nil];
-//    [self.navigationController popToRootViewControllerAnimated:YES];
-
+    if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"CoreFriendsContactInfoDicKey"] count] == 0)
+        [self syncFromParse];
+    else
+        NSLog(@"all loaded already");
+    
+//  [self performSegueWithIdentifier:@"dashboardView" sender:self];
+//    [self.delegate afterLoginConfigureUI];
+//    FriensoViewController *parentVC = [[FriensoViewController alloc] init];
+//    [parentVC afterLoginConfigureUI];
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (void) popCoreCircleSetupVC
@@ -993,7 +1037,13 @@
 - (void) switchChanged:(id)sender {
     UISwitch* switchControl = sender;
     
-    
+    if (switchControl.tag == 10)
+    {
+        NSLog(@"loc switch activated");
+        [self.locationManager startUpdatingLocation];
+        [self setInitialLocation:self.locationManager.location];
+
+    }else {
     BOOL keepLoggedIn = NO;
     if ( switchControl.on )
         keepLoggedIn = YES;
@@ -1004,6 +1054,7 @@
     [userInLocal setBool:keepLoggedIn forKey:@"keepUserLoggedIn"];
     [userInLocal synchronize];
     NSLog( @"The switch is %@", switchControl.on ? @"ON" : @"OFF" );
+    }
 }
 - (BOOL) userInParse{
     NSUserDefaults *userInLocal = [NSUserDefaults standardUserDefaults];
@@ -1016,6 +1067,24 @@
 
 
 #pragma mark * Actions
+- (void)setInitialLocation:(CLLocation *)aLocation {
+    self.location = aLocation;
+    //    self.radius = 1000;
+    //NSLog(@"%.2f,%.2f",self.location.coordinate.latitude, self.location.coordinate.longitude);
+    [PFGeoPoint geoPointForCurrentLocationInBackground:^(PFGeoPoint *geoPoint, NSError *error) {
+        if (!error) {
+            NSLog(@"My geo-location: %f, %f", geoPoint.latitude, geoPoint.longitude);
+            NSNumber *lat = [NSNumber numberWithDouble:geoPoint.latitude];
+            NSNumber *lon = [NSNumber numberWithDouble:geoPoint.longitude];
+            NSDictionary *userLocation=@{@"lat":lat,@"long":lon};
+            
+            [[NSUserDefaults standardUserDefaults] setObject:userLocation forKey:@"userLocation"];
+            [[NSUserDefaults standardUserDefaults] synchronize];
+            [[PFUser currentUser] setObject:geoPoint forKey:@"currentLocation"];
+            [[PFUser currentUser] saveInBackground];
+        }
+    }];
+}
 -(void) addPhoneNumberToCloudForEmail:(NSString *)userEmail  withPhoneNumber:(NSString *)userPhone {
     PFObject *userCoreFriends = [PFObject objectWithClassName:@"UserConnection"]; //connection = phone number
     [userCoreFriends setObject:userPhone forKey:@"userNumber"];
@@ -1158,7 +1227,76 @@
         }
     }];
 }
-
+#pragma mark - Configure UIView
+-(void) setupTopLabel{
+    UILabel *welcomeLabel = [[UILabel alloc] init];
+    welcomeLabel.backgroundColor = [UIColor clearColor];
+    welcomeLabel.text = @"Frienso";
+    welcomeLabel.font = [UIFont fontWithName:@"AppleSDGothicNeo-Medium" size:28.0];
+    welcomeLabel.textColor = [UIColor whiteColor];
+    [welcomeLabel setTextAlignment:NSTextAlignmentCenter];
+    [welcomeLabel sizeToFit];
+    
+    UILabel *welcomeLabel2 = [[UILabel alloc] init];
+    welcomeLabel2.backgroundColor = [UIColor clearColor];
+    welcomeLabel2.text = @"Your μSocial Safety Network\nfor College Campus";
+    welcomeLabel2.font = [UIFont fontWithName:@"AppleSDGothicNeo-Light" size:20.0];
+    welcomeLabel2.textColor = [UIColor whiteColor];
+    [welcomeLabel2 setTextAlignment:NSTextAlignmentCenter];
+    [welcomeLabel2 setNumberOfLines:2];
+    [welcomeLabel2 sizeToFit];
+    welcomeLabel.center = CGPointMake(self.view.center.x,self.view.bounds.size.height*0.125);
+    welcomeLabel2.center = CGPointMake(self.view.center.x,self.view.bounds.size.height*0.20);
+    
+    [self.view addSubview:welcomeLabel];
+    [self.view addSubview:welcomeLabel2];
+}
+-(void) configureView:(UIView *)welcomeView
+{
+    UILabel *welcomeLabel = [[UILabel alloc] init];
+    welcomeLabel.backgroundColor = [UIColor clearColor];
+    welcomeLabel.text = @"Frienso";
+    welcomeLabel.font = [UIFont fontWithName:@"AppleSDGothicNeo-Medium" size:28.0];
+    welcomeLabel.textColor = [UIColor whiteColor];
+    [welcomeLabel setTextAlignment:NSTextAlignmentCenter];
+    [welcomeLabel sizeToFit];
+    
+    UILabel *welcomeLabel2 = [[UILabel alloc] init];
+    welcomeLabel2.backgroundColor = [UIColor clearColor];
+    welcomeLabel2.text = @"Your μSocial Safety Network\nfor College Campus";
+    welcomeLabel2.font = [UIFont fontWithName:@"AppleSDGothicNeo-Light" size:20.0];
+    welcomeLabel2.textColor = [UIColor whiteColor];
+    [welcomeLabel2 setTextAlignment:NSTextAlignmentCenter];
+    [welcomeLabel2 setNumberOfLines:2];
+    [welcomeLabel2 sizeToFit];
+    welcomeLabel.center = CGPointMake(self.view.center.x,self.view.bounds.size.height*0.125);
+    welcomeLabel2.center = CGPointMake(self.view.center.x,self.view.bounds.size.height*0.20);
+    
+    [welcomeView addSubview:welcomeLabel];
+    [welcomeView addSubview:welcomeLabel2];
+    
+    
+    UIButton *button= [UIButton buttonWithType:UIButtonTypeCustom];
+    button.frame = CGRectMake(0, 0, self.view.bounds.size.width/2.0f, 50);
+    [button.titleLabel setTextColor:[UIColor whiteColor]];
+    [button.titleLabel setTintColor:[UIColor whiteColor]];
+    [button addTarget:self
+               action:@selector(pushNextViewController:)
+     forControlEvents:UIControlEventTouchUpInside];
+    [button setTitle:@"Join the Movement" forState:UIControlStateNormal];
+    [button.titleLabel setFont:[UIFont fontWithName:@"AppleSDGothicNeo-Medium" size:16.0]];
+    button.layer.cornerRadius = 6.0f;
+    button.backgroundColor = UIColorFromRGB(0x4962D6);
+    //    [button setCenter:CGPointMake([UIScreen mainScreen].bounds.size.width/2,
+    //                                  [UIScreen mainScreen].bounds.size.height*0.9)];
+    [welcomeView addSubview:button];
+    
+    [self.view addSubview:welcomeView];
+    
+    [UIView animateWithDuration:1.5 animations:^{
+        [button setCenter:CGPointMake(self.view.center.x, self.view.bounds.size.height*0.9)];
+    }];
+}
 //#pragma mark - Fetched results controller
 /*
  Returns the fetched results controller. Creates and configures the controller if necessary.
@@ -1193,6 +1331,28 @@
     References
     [1] http://stackoverflow.com/questions/800123/what-are-best-practices-for-validating-email-addresses-in-objective-c-for-ios-2
  
+ [[self view] setBackgroundColor: [UIColor colorWithPatternImage: [UIImage imageNamed:@"first-view-cover.png"]]];
+ [self setupTopLabel];
+ 
+ UIButton *button= [UIButton buttonWithType:UIButtonTypeCustom];
+ button.frame = CGRectMake(0, 0, self.view.bounds.size.width/2.0f, 50);
+ [button.titleLabel setTextColor:[UIColor whiteColor]];
+ [button.titleLabel setTintColor:[UIColor whiteColor]];
+ [button addTarget:self
+ action:@selector(pushNextViewController:)
+ forControlEvents:UIControlEventTouchUpInside];
+ [button setTitle:@"Join the Movement" forState:UIControlStateNormal];
+ [button.titleLabel setFont:[UIFont fontWithName:@"AppleSDGothicNeo-Medium" size:16.0]];
+ button.layer.cornerRadius = 6.0f;
+ button.backgroundColor = UIColorFromRGB(0x4962D6);
+ //    [button setCenter:CGPointMake([UIScreen mainScreen].bounds.size.width/2,
+ //                                  [UIScreen mainScreen].bounds.size.height*0.9)];
+ [self.view addSubview:button];
+ 
+ [UIView animateWithDuration:1.5 animations:^{
+ [button setCenter:CGPointMake(self.view.center.x, self.view.bounds.size.height*0.9)];
+ }];
+ 
  
  Override the View background
 CAGradientLayer *gradient = [CAGradientLayer layer];
@@ -1219,4 +1379,131 @@ gradient.colors = [NSArray arrayWithObjects:(id)[startColour CGColor],(id)[endCo
  [cell setSelectedBackgroundView:[[UIView alloc] init]];
  [cell.selectedBackgroundView.layer insertSublayer:selectedGrad atIndex:0];
  */
+
+#pragma mark - Navigation
+-(void) pushNextViewController:(UIButton *)sender {
+    [sender setBackgroundColor:[UIColor clearColor]];
+    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"WelcomeViewShown"];
+    [UIView animateWithDuration:1.0 animations:^{
+        [self.welcomeView removeFromSuperview];
+    }];
+    
+}
+#pragma mark - Sync from Parse Methods
+- (void) syncFromParse {
+    printf(" -- syncFromParse --\n");
+    //TODO: save core friends to coredata
+    // sync from parse!
+    NSMutableDictionary *udCoreCircleDictionary = [[NSUserDefaults standardUserDefaults] objectForKey:@"CoreFriendsContactInfoDicKey"];
+    if ([udCoreCircleDictionary count] == 0 || udCoreCircleDictionary == NULL)
+    {
+        [PFUser logInWithUsernameInBackground:[[NSUserDefaults standardUserDefaults] objectForKey:@"adminID"]
+                                     password:[[NSUserDefaults standardUserDefaults] objectForKey:@"adminPass"]
+                                        block:^(PFUser *user, NSError *error) {
+                                            if (user) {
+                                                NSLog(@"[ Parse successful login ]"); // Do stuff after successful login.
+                                                
+                                                // sync from parse!
+                                                PFQuery *query = [PFQuery queryWithClassName:@"UserCoreFriends"];
+                                                [query whereKey:@"user" equalTo:user];
+                                                [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error)
+                                                 {
+                                                     if (!error) { // The find succeeded.
+                                                         NSDictionary *parseCoreFriendsDic = [[NSDictionary alloc] init];
+                                                         for (PFObject *object in objects) { // Do something w/ found objects
+                                                             //NSLog(@"%@",[object valueForKey:@"userCoreFriends"]);
+                                                             parseCoreFriendsDic = [object valueForKey:@"userCoreFriends"];
+                                                             
+                                                         }
+                                                         if ( parseCoreFriendsDic != NULL) {
+                                                             // Save core friends dictionary to NSUserDefaults
+                                                             [self saveCFDictionaryToNSUserDefaults:parseCoreFriendsDic];
+                                                             self.coreFriendsArray = [[NSMutableArray alloc] initWithArray:[parseCoreFriendsDic allKeys]];
+                                                             
+                                                             
+                                                         }
+                                                         // Notify that records were fetched from Parse
+                                                         [self  actionAddFriensoEvent:@"Contacts successfully fetched and restored."];
+                                                     } else {
+                                                         // Log details of the failure
+                                                         NSLog(@"!Error: %@ %@", error, [error userInfo]);
+                                                     }
+                                                 }];
+                                                
+                                                
+                                            } else {
+                                                NSLog(@"[ ERROR: Login failed | %@",error);// The login failed. Check error to see why.
+                                            }
+                                        }];
+    }// testing if core circle dic is in nsuserdefaults
+    else        NSLog(@"not nil");
+}
+-(void) saveCFDictionaryToNSUserDefaults:(NSDictionary *)friendsDic {
+    // From Parse
+    NSLog(@"[ saveCFDictionaryToNSUserDefaults ]");
+    
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+    [userDefaults setObject:friendsDic forKey:@"CoreFriendsContactInfoDicKey"];
+    [userDefaults setBool:YES forKey:@"coreFriendsSet"];
+    [userDefaults synchronize];
+    
+    // Save dictionary to CoreFriends Entity (CoreData)
+    NSEnumerator    *enumerator = [friendsDic keyEnumerator];
+    NSMutableArray  *coreCircle = [[NSMutableArray alloc] initWithArray:[enumerator allObjects]];
+    NSArray *valueArray         = [friendsDic allValues]; // holds phone numbers
+    
+    // Access to CoreData
+    for (int i=0; i<[coreCircle count]; i++) {
+        CoreFriends *cFriends = [NSEntityDescription insertNewObjectForEntityForName:@"CoreFriends"
+                                                              inManagedObjectContext:[self managedObjectContext]];
+        if (cFriends != nil){
+            cFriends.coreFirstName = [coreCircle objectAtIndex:i];
+            cFriends.coreLastName  = @"";
+            cFriends.corePhone     = [valueArray objectAtIndex:i];
+            cFriends.coreCreated   =  [NSDate date];
+            cFriends.coreModified  = [NSDate date];
+            cFriends.coreType      = @"Person";
+            //NSLog(@"%@",[coreCircle objectAtIndex:i] );
+            NSError *savingError = nil;
+            
+            if ([[self managedObjectContext] save:&savingError]){
+                NSLog(@"Successfully saved contacts to CoreCircle.");
+            } else {
+                NSLog(@"Failed to save the managed object context.");
+            }
+        } else {
+            NSLog(@"Failed to create the new person object.");
+        }
+    }
+    
+}
+- (void) actionAddFriensoEvent:(NSString *) message {
+    NSLog(@"[ actionAddFriensoEvent ]");
+    FriensoAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+    
+    NSManagedObjectContext *managedObjectContext =
+    appDelegate.managedObjectContext;
+    
+    FriensoEvent *firstFriensoEvent = [NSEntityDescription insertNewObjectForEntityForName:@"FriensoEvent"
+                                                                    inManagedObjectContext:managedObjectContext];
+    
+    if (firstFriensoEvent != nil){
+        NSString *loginFriensoEvent = @"";
+        firstFriensoEvent.eventTitle     = [loginFriensoEvent stringByAppendingString:message];
+        firstFriensoEvent.eventSubtitle  = @"Review these data";
+        firstFriensoEvent.eventLocation  = @"Right here";
+        firstFriensoEvent.eventContact   = @"me";
+        firstFriensoEvent.eventCreated   = [NSDate date];
+        firstFriensoEvent.eventModified  = [NSDate date];
+        
+        NSError *savingError = nil;
+        if([managedObjectContext save:&savingError]) {
+            NSLog(@"Successfully saved the context");
+        } else { NSLog(@"Failed to save the context. Error = %@", savingError); }
+    } else {
+        NSLog(@"Failed to create a new event.");
+    }
+    //[self configureOverlay]; NSLog(@"calling configureOverlay");
+    
+}
 @end

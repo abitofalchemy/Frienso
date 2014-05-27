@@ -26,7 +26,8 @@
                         <segue destination="aY6-gZ-dOi" kind="push" identifier="createEvent" id="KMa-pk-ZOI"/>
                         <segue destination="6kB-Zb-JaQ" kind="modal" identifier="panicEvent" id="n71-eB-Kl2"/>
                         <segue destination="3kY-1V-fX0" kind="push" identifier="instResources" id="Efz-ba-uWS"/>
-                        <segue destination="CWx-7e-tGl" kind="push" identifier="showLoginView" id="85X-Sg-fyF"/>
+                        <segue destination="CWx-7e-tGl" kind="modal" identifier="showWelcomeView" id="85X-Sg-fyF"/>
+                        <segue destination="qAg-ru-ZcY" kind="modal" identifier="loginView" id="EUB-wM-2II"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
@@ -252,9 +253,6 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
                     <navigationItem key="navigationItem" id="tQD-XR-lCL"/>
-                    <connections>
-                        <segue destination="qAg-ru-ZcY" kind="push" identifier="loginView" id="lLb-2h-PYW"/>
-                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="0U3-U5-SW7" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -399,7 +397,7 @@
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="ixB-WG-BG7"/>
+        <segue reference="HKj-DF-MrE"/>
         <segue reference="hk5-85-B4H"/>
     </inferredMetricsTieBreakers>
 </document>

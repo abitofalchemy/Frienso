@@ -7,12 +7,15 @@
 //
 
 #import "FriensoOptionsTVC.h"
+#import <QuartzCore/QuartzCore.h>
 #import "UserProfileViewController.h"
 #import "SettingsViewController.h"
 #import "tstWatchingViewController.h"
 #import "FriensoResourcesTVC.h"
 #import "AboutFriensoViewController.h"
 #import "SearchViewController.h"
+#import "FRStringImage.h"
+
 
 @interface FriensoOptionsTVC ()
 @property (nonatomic,retain) NSMutableArray *optionsArray;
@@ -32,7 +35,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    self.optionsArray = [[NSMutableArray alloc] initWithArray:@[@"Profile",/*@"Watching",*/ @"Resources",@"Settings",@"About",@"Map"]];
+    self.optionsArray = [[NSMutableArray alloc] initWithArray:@[@"Profile",/*@"Watching",*/ @"Resources",@"Settings",@"About",@"Map",@"Event"]];
     // Uncomment the following line to preserve selection between presentations.
     // self.clearsSelectionOnViewWillAppear = NO;
  
@@ -90,6 +93,10 @@
                 break;
             case 4:
                 cell.imageView.image = [self imageWithString:@"🌐" font:[UIFont systemFontOfSize:[UIFont systemFontSize]] size:CGSizeMake(24, 24)];
+                break;
+            case 5:
+                cell.imageView.image = [[FRStringImage alloc] calendarDrawRectImage:CGSizeMake(24,24)];
+                break;
             default:
                 break;
         }

@@ -8,9 +8,10 @@
 
 #import <UIKit/UIKit.h>
 #import <CoreData/NSFetchedResultsController.h>
+#import <CoreLocation/CoreLocation.h>
 
 
-@interface ABALoginTVC : UITableViewController <UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate, NSURLConnectionDelegate, UIAlertViewDelegate,NSFetchedResultsControllerDelegate>
+@interface ABALoginTVC : UITableViewController <UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate, NSURLConnectionDelegate, UIAlertViewDelegate,NSFetchedResultsControllerDelegate,CLLocationManagerDelegate>
 {
     NSArray *loginSections;
     NSArray *loginFields;
@@ -32,7 +33,8 @@
 @property(nonatomic, weak) IBOutlet UILabel *loginLabel;
 @property(nonatomic, assign) BOOL retVal;
 @property(nonatomic, retain) IBOutlet UISwitch *keepMeLoggedin;
-//@property (nonatomic, strong) NSManagedObjectContext *managedObjectContext;
+@property (nonatomic, retain) CLLocationManager *locationManager;
+
 
 - (void) reloadSection:(NSInteger)section withRowAnimation:(UITableViewRowAnimation)rowAnimation;
 - (NSString *)stringFromDict:(NSDictionary *)dict;

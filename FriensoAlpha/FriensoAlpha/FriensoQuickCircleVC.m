@@ -93,7 +93,11 @@ static NSString *coreFriendsCell = @"coreFriendsCell";
     }
     
 }
-
+- (void) viewWillDisappear:(BOOL)animated
+{
+    [super viewDidAppear:YES];
+    [self.navigationController setToolbarHidden:NO];
+}
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];

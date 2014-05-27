@@ -12,6 +12,62 @@
 
 
 @implementation FRStringImage
+- (UIImage *)calendarDrawRectImage:(CGSize)size
+{
+    // Create a context to render into.
+    UIGraphicsBeginImageContext(size);
+    
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    
+    //CGContextRef context = UIGraphicsGetCurrentContext();
+    CGContextSetStrokeColorWithColor(context, [UIColor redColor].CGColor);
+    
+    // Draw them with a 2.0 stroke width so they are a bit more visible.
+    CGContextSetLineWidth(context, 1.0);
+    
+    CGContextMoveToPoint(context, 0,size.height*.25); //start at this point
+    CGContextAddLineToPoint(context, size.width, size.height*.25); //draw to this point
+    CGContextStrokePath(context);
+    
+    CGContextSetStrokeColorWithColor(context, [UIColor blackColor].CGColor);
+    CGContextMoveToPoint(context, size.width*0.2, 0);
+    
+    CGContextAddLineToPoint(context, size.width*0.9, 0);
+    CGContextAddArc(context, size.width*0.80, size.height*.2, size.height*.2,M_PI*1.5,0,NO);
+    CGContextAddLineToPoint(context, size.width, size.height*0.80);
+    CGContextAddArc(context, size.width*0.80, size.height*0.8, size.height*.2,0,M_PI/2.0,NO);
+    CGContextAddLineToPoint(context, size.width*0.2, size.width);
+    CGContextAddArc(context, size.width*0.2, size.height*0.80, size.height*.2,M_PI/2.0,M_PI,NO);
+    CGContextAddLineToPoint(context, 0, size.height*0.2);
+    CGContextAddArc(context, size.width*0.2, size.height*0.2, size.height*.2,M_PI,M_PI*1.5,NO);
+    
+    // and now draw the Path!
+    CGContextStrokePath(context);
+    
+    
+    
+    // setting the date
+    NSDate *now = [NSDate date];
+    NSDateFormatter *weekday = [[NSDateFormatter alloc] init];
+    [weekday setDateFormat:@"dd"];
+    //[weekday setLocale:NSLocale];
+    NSString * dateString = [weekday stringFromDate:now];
+    
+    UIFont*       font = [UIFont fontWithName:@"AppleSDGothicNeo-Light" size:16];
+    UIColor* textColor = [UIColor redColor];
+    NSDictionary* stringAttrs = @{ NSFontAttributeName: font, NSForegroundColorAttributeName: textColor };
+    NSAttributedString* attrStr = [[NSAttributedString alloc] initWithString:dateString
+                                                                  attributes:stringAttrs];
+    CGFloat txtX = (size.width - attrStr.size.width)/2;
+    [attrStr drawAtPoint:CGPointMake(txtX, 7.0f)];
+    
+    // We're done!  Grab the image and return it!
+    // (Don't forget to end the image context first though!)
+    UIImage *retImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return retImage;
+}
+
 - (UIImage *)imageTextBubbleOfSize:(CGSize)size       // Size of the desired image.
 {
     // Create a context to render into.

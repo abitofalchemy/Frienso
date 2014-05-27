@@ -140,14 +140,15 @@
                  //NSLog(@"from coredata: %@",fetchedObjects);
                  for (NSManagedObject *mObject in fetchedObjects) {
                      
-                     CLLocation *locA = [[CLLocation alloc] initWithLatitude:friendLocation.latitude longitude:friendLocation.longitude];
-                     NSDictionary *userLocDic = [[NSUserDefaults standardUserDefaults] objectForKey:@"userLocation"];
-                     CLLocation *locB = [[CLLocation alloc] initWithLatitude:(CLLocationDegrees)[[userLocDic objectForKey:@"lat"] doubleValue]
-                                                                   longitude:(CLLocationDegrees)[[userLocDic objectForKey:@"long"] doubleValue]];
-                     
-                     CLLocationDistance distance = [locA distanceFromLocation:locB];
+//                     CLLocation *locA = [[CLLocation alloc] initWithLatitude:friendLocation.latitude longitude:friendLocation.longitude];
+//                     NSDictionary *userLocDic = [[NSUserDefaults standardUserDefaults] objectForKey:@"userLocation"];
+//                     CLLocation *locB = [[CLLocation alloc] initWithLatitude:(CLLocationDegrees)[[userLocDic objectForKey:@"lat"] doubleValue]
+//                                                                   longitude:(CLLocationDegrees)[[userLocDic objectForKey:@"long"] doubleValue]];
+//                     
+//                     CLLocationDistance distance = [locA distanceFromLocation:locB];
                      //NSLog(@"%@", [NSString stringWithFormat:@"%.2f meters away from you", distance]);
-                     [mObject setValue:[NSString stringWithFormat:@"%.2f meters away from you", distance] forKey:@"coreLocation"];
+                     //[mObject setValue:[NSString stringWithFormat:@"%.2f meters away from you", distance] forKey:@"coreLocation"];
+                     [mObject setValue:[NSString stringWithFormat:@"%.6f,%.6f", friendLocation.latitude,friendLocation.longitude] forKey:@"coreLocation"];
                      
                      NSError *savingError = nil;
                      

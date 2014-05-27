@@ -18,4 +18,6 @@
                overlayString:(NSString *)overlayText
                         font:(UIFont *)font     // The font we'd like it in.
                         size:(CGSize)size;
+- (UIImage *)calendarDrawRectImage:(CGSize)size;
+
 @end
