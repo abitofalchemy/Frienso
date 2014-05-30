@@ -32,6 +32,8 @@
 #import <CoreLocation/CoreLocation.h>
 #import "FriensoViewController.h"
 #import "CoreFriends.h"
+#import "FRSyncFriendConnections.h"
+
 
 #define UIColorFromRGB(rgbValue) [UIColor colorWithRed:((float)((rgbValue & 0xFF0000) >> 16))/255.0 green:((float)((rgbValue & 0xFF00) >> 8))/255.0 blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
@@ -86,7 +88,7 @@
     
     // Initialization
     loginSections = [[NSArray alloc] initWithObjects:@"FRIENSO", @"Log In",@"Options",@"Footer", nil];
-    loginFields   = [[NSArray alloc] initWithObjects:@"Email", @"Password", @"(312) 555 0123", nil];
+    loginFields   = [[NSArray alloc] initWithObjects:@"Email", @"Password", @"(312) 555 0123",@"Location", nil];
     loginBtnLabel = [[NSMutableArray alloc] initWithObjects:@"Sign In", @"Register", nil];
     
     [self.navigationController.navigationBar setHidden:YES];
@@ -200,8 +202,20 @@
             [phoneNumber setClearButtonMode:UITextFieldViewModeWhileEditing];
             //password.delegate = self;
             cell.accessoryView = phoneNumber;
+        } else if (indexPath.row == 3) {
+            NSString *myString = @"Turn on Location";
+            cell.textLabel.text = myString;
+            cell.textLabel.textAlignment = NSTextAlignmentCenter;
+            UIFont *myFont = [ UIFont fontWithName: @"HelveticaNeue-Light" size: 16.0 ];
+            cell.textLabel.font  = myFont;
+            cell.textLabel.textColor = [UIColor colorWithRed:0 green:0 blue:0.6 alpha:1];
+            cell.selectionStyle = UITableViewCellSelectionStyleNone;
+            self.locationSwitch = [[UISwitch alloc] initWithFrame:CGRectZero];
+            [self.locationSwitch setOn:NO animated:YES];
+            self.locationSwitch.tag = 10;
+            [self.locationSwitch addTarget:self action:@selector(switchChanged:) forControlEvents:UIControlEventValueChanged];
+            cell.accessoryView = self.locationSwitch;
         }
-        //cell.backgroundColor = [UIColor colorWithRed:1.0 green:1.0 blue:1.0 alpha:0.3];
     } else if (indexPath.section == 1) {
         if (indexPath.row == 0) {
             NSString *myString = [loginBtnLabel objectAtIndex:0];
@@ -211,7 +225,7 @@
             
         }
     } else if (indexPath.section == 2){
-        if (indexPath.row == 0) {
+        /*if (indexPath.row == 0) {
             NSString *myString = @"Turn on Location";
             cell.textLabel.text = myString;
             cell.textLabel.textAlignment = NSTextAlignmentCenter;
@@ -226,7 +240,9 @@
             cell.accessoryView = self.locationSwitch;
             //[self switchChanged:self.locationSwitch];
             
-        }else if (indexPath.row == 1) {
+        }else*/
+        if (indexPath.row == 0)
+        {
             NSString *myString = @"Stayed Logged In";
             cell.textLabel.text = myString;
             cell.textLabel.textAlignment = NSTextAlignmentCenter;
@@ -1391,9 +1407,8 @@ gradient.colors = [NSArray arrayWithObjects:(id)[startColour CGColor],(id)[endCo
 }
 #pragma mark - Sync from Parse Methods
 - (void) syncFromParse {
-    printf(" -- syncFromParse --\n");
-    //TODO: save core friends to coredata
-    // sync from parse!
+    printf(" -- syncFromParse --\n");     // sync from parse!
+    
     NSMutableDictionary *udCoreCircleDictionary = [[NSUserDefaults standardUserDefaults] objectForKey:@"CoreFriendsContactInfoDicKey"];
     if ([udCoreCircleDictionary count] == 0 || udCoreCircleDictionary == NULL)
     {
@@ -1402,7 +1417,6 @@ gradient.colors = [NSArray arrayWithObjects:(id)[startColour CGColor],(id)[endCo
                                         block:^(PFUser *user, NSError *error) {
                                             if (user) {
                                                 NSLog(@"[ Parse successful login ]"); // Do stuff after successful login.
-                                                
                                                 // sync from parse!
                                                 PFQuery *query = [PFQuery queryWithClassName:@"UserCoreFriends"];
                                                 [query whereKey:@"user" equalTo:user];
@@ -1410,8 +1424,7 @@ gradient.colors = [NSArray arrayWithObjects:(id)[startColour CGColor],(id)[endCo
                                                  {
                                                      if (!error) { // The find succeeded.
                                                          NSDictionary *parseCoreFriendsDic = [[NSDictionary alloc] init];
-                                                         for (PFObject *object in objects) { // Do something w/ found objects
-                                                             //NSLog(@"%@",[object valueForKey:@"userCoreFriends"]);
+                                                         for (PFObject *object in objects) {
                                                              parseCoreFriendsDic = [object valueForKey:@"userCoreFriends"];
                                                              
                                                          }
@@ -1420,7 +1433,9 @@ gradient.colors = [NSArray arrayWithObjects:(id)[startColour CGColor],(id)[endCo
                                                              [self saveCFDictionaryToNSUserDefaults:parseCoreFriendsDic];
                                                              self.coreFriendsArray = [[NSMutableArray alloc] initWithArray:[parseCoreFriendsDic allKeys]];
                                                              
-                                                             
+                                                             /* cache those uWatch
+                                                             [[[FRSyncFriendConnections alloc] init] syncUWatchToCoreFriends]; // Sync those uWatch
+                                                              */
                                                          }
                                                          // Notify that records were fetched from Parse
                                                          [self  actionAddFriensoEvent:@"Contacts successfully fetched and restored."];

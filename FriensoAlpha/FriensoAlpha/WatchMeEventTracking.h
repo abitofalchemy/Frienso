@@ -17,18 +17,19 @@
 
 @interface WatchMeEventTracking : NSObject
 
-@property (nonatomic, copy, readonly) NSString *eventType, *friensoUser;//, *genre, *coverUrl, *year;
+@property (nonatomic, copy, readonly) NSString *alertType, *friensoUser;//, *genre, *coverUrl, *year;
 @property (nonatomic, copy, readonly) NSDate   *startDateTime;//, *genre, *coverUrl, *year;
 
 
-- (id)initWithEventType:(NSString*)eventType eventStartDateTime:(NSDate *)startDateTime;
+- (id)initWithAlertType:(NSString*)alertType eventStartDateTime:(NSDate *)startDateTime;
 - (void) setPersonalEvent;
 - (void) sendToCloud;
 - (void) disableEvent;
+- (BOOL) activeAlertCheck;
 
 @end
 
-//initWithEventType: watchTrackMe
+//initWithalertType: watchTrackMe
 //userName:  currentUser
 //startDateTime: now()
 

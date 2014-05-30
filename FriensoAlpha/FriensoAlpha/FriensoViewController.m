@@ -21,6 +21,7 @@
 #import "FriensoResources.h"
 #import "FRStringImage.h"
 #import "WatchMeEventTracking.h"
+#import "FRSyncFriendConnections.h"
 
 
 
@@ -188,13 +189,13 @@ enum PinAnnotationTypeTag {
                      completion:^(BOOL finished){ [trackMeLabel removeFromSuperview]; }];
     
     // Watch Me event tracking
-    WatchMeEventTracking *watchMeEvent = [[WatchMeEventTracking alloc] initWithEventType:@"watchMe"
+    WatchMeEventTracking *watchMeEvent = [[WatchMeEventTracking alloc] initWithAlertType:@"watchMe"
                                                                       eventStartDateTime:[NSDate date] ];
     [watchMeEvent setPersonalEvent];
     [watchMeEvent sendToCloud];
     } else {
         NSLog(@"Stop the watch");
-        WatchMeEventTracking *watchMeEvent = [[WatchMeEventTracking alloc] initWithEventType:@"watchMe"
+        WatchMeEventTracking *watchMeEvent = [[WatchMeEventTracking alloc] initWithAlertType:@"watchMe"
                                                                           eventStartDateTime:[NSDate date] ];
         [watchMeEvent disableEvent];
     }
@@ -370,11 +371,19 @@ enum PinAnnotationTypeTag {
     [calEventBtn setCenter:CGPointMake(self.navigationController.toolbar.bounds.size.width - 44.0f,22)];
     [calEventBtn setTitleShadowColor:[UIColor grayColor] forState:UIControlStateHighlighted];
     **/
+    
     UISwitch *trackMeOnOff = [[UISwitch alloc] init];
-    [trackMeOnOff setOn:NO animated:YES];
+    
     [trackMeOnOff addTarget:self action:@selector(trackMeSwitchEnabled:)
            forControlEvents:UIControlEventValueChanged];
     [trackMeOnOff setCenter:CGPointMake(self.navigationController.toolbar.bounds.size.width*0.85, 22)];
+    
+    // Local store check for active event
+    if( [[[WatchMeEventTracking alloc] init] activeAlertCheck]) {
+        NSLog(@"Yes, an alert is active!");
+        [trackMeOnOff setOn:YES animated:YES];
+    } else
+        [trackMeOnOff setOn:NO animated:YES];
     
     
     // center toolbar btn
@@ -453,6 +462,7 @@ enum PinAnnotationTypeTag {
     [super viewDidLoad];
     
     printf("[ Dashboard: FriensoVC ]\n");
+    
     self.navigationController.navigationBarHidden = NO;
     self.friendsLocationArray = [[NSMutableArray alloc] init]; // friends location cache
     
@@ -465,12 +475,16 @@ enum PinAnnotationTypeTag {
     
     [self setupToolBarIcons];
     [self setupNavigationBarImage];
-//    [self setupHalfMapView];
+    /*[self setupHalfMapView]; */
     [self trackFriendsView];  // who is active?
     [self setupEventsTableView];
     
     //[self syncCoreFriendsLocation]; // from parse to coredata
+
     
+    
+    // Check if friends have ongoing event
+    //[[ParseAlertEvent alloc] init] ongoingAlertEventCheck];
     
     
 }
@@ -1011,32 +1025,8 @@ enum PinAnnotationTypeTag {
 
 - (void)updateLocations {
     NSLog(@"... updateLocations");
-//    NSDictionary *retrievedCoreFriendsDictionary = [[NSUserDefaults standardUserDefaults] objectForKey:@"CoreFriendsContactInfoDicKey"];
-//    
-//    if ( [retrievedCoreFriendsDictionary count] > 0) {
-//        NSInteger i = 0;
-//        for (NSString *coreFriend in  [retrievedCoreFriendsDictionary allKeys]) {
-//            UIButton *mLocBtn = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 44, 44)];
-//            UIImage *img =[[FRStringImage alloc] imageTextBubbleOfSize:mLocBtn.frame.size];
-//            [mLocBtn setBackgroundImage:img forState:UIControlStateNormal];
-//            [mLocBtn setTitle:[coreFriend substringToIndex:3] forState:UIControlStateNormal];
-//            [mLocBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-//            [mLocBtn setTitleColor:UIColorFromRGB(0x8e44ad) forState:UIControlStateHighlighted];
-//            [mLocBtn setAlpha:0.8];
-//            [mLocBtn setTag:i];
-//            [mLocBtn addTarget:self action:@selector(friendLocInteraction:)
-//              forControlEvents:UIControlEventTouchUpInside];
-//            [self.trackingStatusView addSubview:mLocBtn];
-//            [mLocBtn setCenter:CGPointMake(mLocBtn.frame.size.width + mLocBtn.center.x + i*(mLocBtn.frame.size.width), self.trackingStatusView.frame.size.height - mLocBtn.center.y)];
-//            i++;
-//            
-//        }
-//        
-//    } else
-//        NSLog(@"!!! CoreFriends' locations unavailable");
-    // Those you watch
-    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init]; // Create the fetch request
     
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init]; // Create the fetch request
     NSEntityDescription *entity = [NSEntityDescription entityForName:@"CoreFriends"
                                               inManagedObjectContext:[self managedObjectContext]];
     
@@ -1083,6 +1073,7 @@ enum PinAnnotationTypeTag {
     
     NSLog(@"subviews: %ld", [[self.trackingStatusView subviews] count]);
 
+    // Async update locations from cloud
 }
 -(void) fetchCurrentLocationForUser:(NSString *) coreFriendObjectId {
     /** Method: fetchCurrentLocationForUser

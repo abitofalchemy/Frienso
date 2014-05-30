@@ -13,8 +13,8 @@
 #import "CoreFriends.h"
 #import "FRCoreDataParse.h"
 #import <Parse/Parse.h>
-#import "FRSyncFriendConnections.h"
 #import "FRStringImage.h"
+#import "FRSyncFriendConnections.h"
 
 static NSString *coreFriendsCell = @"coreFriendsCell";
 
@@ -50,8 +50,8 @@ static NSString *coreFriendsCell = @"coreFriendsCell";
     [super viewDidLoad];
     
     [self.navigationController setToolbarHidden:YES];
-    // Sync those uWatch with CoreFriends
-    [[[FRSyncFriendConnections alloc] init] syncUWatchToCoreFriends];
+    
+    [[[FRSyncFriendConnections alloc] init] syncUWatchToCoreFriends]; // Sync those uWatch
 
     // Update this user's current location
     FRCoreDataParse *frCDPObject = [[FRCoreDataParse alloc] init];
@@ -304,7 +304,7 @@ static NSString *coreFriendsCell = @"coreFriendsCell";
 #pragma mark - UIAlert delegate methods
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
     NSString *title = [alertView buttonTitleAtIndex:buttonIndex];
-    NSLog(@"button index: %ld, %@", buttonIndex, title );
+    NSLog(@"button index: %ld, %@", (long)buttonIndex, title );
     
     switch (buttonIndex) {
         case 0:

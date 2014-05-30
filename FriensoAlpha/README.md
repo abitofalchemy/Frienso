@@ -6,11 +6,15 @@ Frienso iOS Alpha
 Version History
 ---------------
 
-ver 1.5 build XX    Fixed minor issues with the Profile & CoreCircle views; redoing the way the user 
+ver 1.5 build XX    - Fixed minor issues with the Profile & CoreCircle views; redoing the way the user
                     logs in or registers!
                     - Fixed bugs related to the hidding of the bootom tool-bar
                     - Redesigned the way the login comes up and the way views go from welcome to the
                     homeview
+                    - Added another view to handle status of your friends (core and other you watch)
+                    - Currently, we can access their location on a map if location is available
+                    - Fixed issue with duplicates when querying for a list of those uWatch (you in their
+                    micro network)
 
 ver 1.5 build 21    Got rid of the Options/Watching list (it is now integrated in the CoreCircle list)
                     CoreCircle list now shows your CoreCircle and those uWatch.
@@ -63,10 +67,14 @@ ver 1.0 build 1.0   Initial release
 
 ToDo
 ----
+* Add alarm timer to AlertEvent 
+* Test/review 'new user registration' process
 * Don't track users, 
+* Async update locations from cloud
 +Add fullscreen button to map
 +Add Horizontal scroll for the Active users & the rest of your friends.
-* Add event creation
+
+* Add event creation -------------
   Create a full event
     Go for a run, etc.
     {working} - added a button to top left of right bar button, need to connect it to an event generation
@@ -92,6 +100,7 @@ ToDo
 
 Tasks Done / Project Log:
 -------------------------
+* { Done } Don't duplicate User if it is in CoreGroup or in the UWatchGroup
 * { Done } Fully logout
 * When app is launched, the user's current location and his/her friends' are cached
   Also when the user clicks on the quick-view of his/her circle, the user's current loc is updated

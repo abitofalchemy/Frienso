@@ -11,7 +11,7 @@
 @interface FRSyncFriendConnections : NSObject
 
 //@property (readonly) NSInteger *count;
-//@property (nonatomic,strong) NSDictionary   *watchingOverDic;
+//@property (nonatomic,strong) ;
 
 - (id) init;
 - (void) syncUWatchToCoreFriends;
