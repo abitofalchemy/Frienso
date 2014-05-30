@@ -263,10 +263,8 @@ enum PinAnnotationTypeTag {
     [self.trackingStatusView.layer insertSublayer:gradient atIndex:0];
     [self.view addSubview:self.trackingStatusView];
 
-    // Add widgets to this view
-//    NSLog(@"coreFriendsArray: %@", coreFriendsArray);
-    
 }
+
 -(void) setupEventsTableView {
     UIView *tableHelpView = [[UIView alloc] initWithFrame:CGRectMake(0, self.view.frame.size.height * 0.5,
                                                                      self.view.frame.size.width, self.view.frame.size.height * 0.5)];// help view
@@ -304,25 +302,23 @@ enum PinAnnotationTypeTag {
     ***/
     
     
-    /* Create the fetch request first */
+    /* Create the fetch request first; set a predicate to filter priority level 3 items (sponsored events) */
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc]
                                     initWithEntityName:@"FriensoEvent"];
-    
+
     NSSortDescriptor *createdSort =
     [[NSSortDescriptor alloc] initWithKey:@"eventCreated"
                                 ascending:NO];
     
-    NSSortDescriptor *prioritySort =
-    [[NSSortDescriptor alloc] initWithKey:@"eventPriority"
+    NSSortDescriptor *prioritySort = [[NSSortDescriptor alloc] initWithKey:@"eventPriority"
                                 ascending:NO];
     
     fetchRequest.sortDescriptors = @[prioritySort,createdSort];
     
-    self.frc = [[NSFetchedResultsController alloc]
-     initWithFetchRequest:fetchRequest
-     managedObjectContext:[self managedObjectContext]
-     sectionNameKeyPath:nil
-     cacheName:nil];
+    self.frc = [[NSFetchedResultsController alloc] initWithFetchRequest:fetchRequest
+                                                   managedObjectContext:[self managedObjectContext]
+                                                     sectionNameKeyPath:nil
+                                                              cacheName:nil];
     
     self.frc.delegate = self;
     NSError *fetchingError = nil;
@@ -506,6 +502,12 @@ enum PinAnnotationTypeTag {
     if ([adminKey isEqualToString:@""] || adminKey == NULL || adminKey == nil){
         [self performSegueWithIdentifier:@"loginView" sender:self];
         NSLog(@"{Presenting loginView}");
+    } else {
+        BOOL newUser = [[NSUserDefaults standardUserDefaults] boolForKey:@"newUserFlag"];
+        if (newUser == YES){
+            [self performSegueWithIdentifier:@"newCoreCircle" sender:self];
+            NSLog(@"{Presenting newCoreCircle}");
+        }
     }
     
     if ([[NSUserDefaults standardUserDefaults] objectForKey:@"userLocation"] != NULL) {
@@ -1052,10 +1054,12 @@ enum PinAnnotationTypeTag {
             UIImage *img =[[FRStringImage alloc] imageTextBubbleOfSize:mLocBtn.frame.size];
             [mLocBtn setBackgroundImage:img forState:UIControlStateNormal];
             NSString *bubbleLabel = ([mObject valueForKey:@"coreNickName"] == NULL) ? [mObject valueForKey:@"coreFirstName"] :  [mObject valueForKey:@"coreNickName"];
-            NSLog(@"coreLocation: %@, name: %@, objId:%@",[mObject valueForKey:@"coreLocation"], [[bubbleLabel substringToIndex:2] uppercaseString],
-                  [mObject valueForKey:@"coreObjId"]);
-            
+//            NSLog(@"coreLocation: %@, name: %@, objId:%@",[mObject valueForKey:@"coreLocation"], [[bubbleLabel substringToIndex:2] uppercaseString],
+//                  [mObject valueForKey:@"coreObjId"]);
+            if (bubbleLabel.length >1 )
             [mLocBtn setTitle:[[bubbleLabel substringToIndex:2] uppercaseString] forState:UIControlStateNormal];
+            else
+                [mLocBtn setTitle:[bubbleLabel uppercaseString] forState:UIControlStateNormal];
             [mLocBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
             [mLocBtn setTitleColor:UIColorFromRGB(0x8e44ad) forState:UIControlStateHighlighted];
             [mLocBtn setAlpha:0.8];

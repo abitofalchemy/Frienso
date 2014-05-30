@@ -72,6 +72,11 @@
 #pragma mark - Navigation bar actions
 - (void) save {
     NSLog(@"[ Save Core Circle of Friends ]");
+    
+    // Update newUserFlag
+    [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"newUserFlag"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    
     /* Save the circle of friends to NSUserDefaults &
      * push them to Parse encrypted                     */
     
@@ -86,14 +91,13 @@
         i += 1;
     }
     
-    NSLog(@"%@", self.coreCircleContacts);
+    NSLog(@"%@", coreCircleDic);
     
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
     [userDefaults setObject:coreCircleDic forKey:@"CoreFriendsContactInfoDicKey"];
     [userDefaults synchronize];
     
     //if ([self liveNetCon]) {
-    NSLog(@"-- coreCircleDic: %@",coreCircleDic);
     [self uploadCoreFriends:coreCircleDic]; // upload to Parse
     //}
     
@@ -102,35 +106,39 @@
     FriensoViewController  *nxtVC = (FriensoViewController*)[mainStoryboard instantiateViewControllerWithIdentifier: @"dashboardVC"];
     [self.navigationController pushViewController:nxtVC animated:YES];
      */
-    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"isUserNew"])
-        [self presentDashboardViewController];
-    else
-        [self.navigationController popViewControllerAnimated:YES];
+//    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"isUserNew"])
+//        [self presentDashboardViewController];
+//    else
+//        [self.navigationController popViewControllerAnimated:YES];
+    
+
 }
--(void) presentDashboardViewController {
-    [self performSegueWithIdentifier:@"presentDashboard" sender:self];
-}
+//-(void) presentDashboardViewController {
+//    [self performSegueWithIdentifier:@"presentDashboard" sender:self];
+//}
 
 - (void) cancel {
-    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"coreCircleSet"])
+//    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"coreCircleSet"])
         [self.navigationController popViewControllerAnimated:YES];
-    else {
-        // set default values
-        NSMutableDictionary *coreCircleDic = [[NSMutableDictionary  alloc] init];
-        NSInteger i = 0;
-        for (NSString *circleContactName in self.coreCircleOfFriends){
-            [coreCircleDic setValue:[self.coreCircleContacts objectAtIndex:i++] forKey:circleContactName];
-        }
-        
-        NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-        [userDefaults setObject:coreCircleDic forKey:@"CoreFriendsContactInfoDicKey"];
-        [userDefaults synchronize];
-        
-    UIStoryboard *mainStoryboard = [UIStoryboard storyboardWithName:@"Main"  bundle:nil];
-    FriensoViewController  *nxtVC = (FriensoViewController*)[mainStoryboard instantiateViewControllerWithIdentifier: @"dashboardVC"];
-    [self.navigationController pushViewController:nxtVC animated:YES];
-        
-    }
+//        [self.navigationController dismissViewControllerAnimated:YES completion:nil];
+//    else {
+//        // set default values
+//        NSMutableDictionary *coreCircleDic = [[NSMutableDictionary  alloc] init];
+//        NSInteger i = 0;
+//        for (NSString *circleContactName in self.coreCircleOfFriends){
+//            [coreCircleDic setValue:[self.coreCircleContacts objectAtIndex:i++] forKey:circleContactName];
+//        }
+//        
+//        NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+//        [userDefaults setObject:coreCircleDic forKey:@"CoreFriendsContactInfoDicKey"];
+//        [userDefaults synchronize];
+//    }
+//    UIStoryboard *mainStoryboard = [UIStoryboard storyboardWithName:@"Main"  bundle:nil];
+//    FriensoViewController  *nxtVC = (FriensoViewController*)[mainStoryboard instantiateViewControllerWithIdentifier: @"dashboardVC"];
+//    [self.navigationController pushViewController:nxtVC animated:YES];
+
+
+
 }
 
 
@@ -334,7 +342,9 @@
             // Log details of the failure
             NSLog(@"Error: %@ %@", error, [error userInfo]);
         }
+        [self.navigationController popViewControllerAnimated:YES];
     }];
+    
 }
 
 -(void) updateLocalArray:(NSArray *)localCoreFriendsArray
@@ -476,6 +486,9 @@
         cFriends.coreLastName  = ([contactInfo objectAtIndex:1] == nil) ? @"" : [contactInfo objectAtIndex:1];
         cFriends.corePhone     = ([contactInfo objectAtIndex:2] == nil) ? @"" : [contactInfo objectAtIndex:2];
         cFriends.coreModified  = [NSDate date];
+        NSString *lastInitial  = [cFriends.coreLastName isEqualToString:@""] ? @"" : [cFriends.coreLastName substringToIndex:1];
+        cFriends.coreNickName  = [NSString stringWithFormat:@"%@%@",[[contactInfo objectAtIndex:0] substringToIndex:1], lastInitial];
+        cFriends.coreType      = @"Person";
         
         NSError *savingError = nil;
         

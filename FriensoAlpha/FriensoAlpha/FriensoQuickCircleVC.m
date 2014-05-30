@@ -138,9 +138,10 @@ static NSString *coreFriendsCell = @"coreFriendsCell";
     }
     
     CoreFriends *friend = [self.frc objectAtIndexPath:indexPath];
-//    NSLog(@"%@", friend.corePhone);
+    NSLog(@"%@", friend.coreFirstName);
+    NSLog(@"%@", friend.coreNickName);
     if ([friend.coreType isEqualToString:@"Person"])
-        cell.textLabel.text = friend.coreFirstName; // : // stringByAppendingFormat:@" %@", person.lastName];
+        cell.textLabel.text = friend.coreNickName; // : // stringByAppendingFormat:@" %@", person.lastName];
     else if ( [friend.coreType isEqualToString:@"OnWatch"])
         cell.textLabel.text = friend.coreNickName;
     else

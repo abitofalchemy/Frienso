@@ -1,8 +1,8 @@
 //
-//  FriensoViewController.h
+//  HomeViewController.h
 //  FriensoAlpha
 //
-//  Created by Sal Aguinaga on 2/26/14.
+//  Created by Salvador Aguinaga on 5/29/14.
 //  Copyright (c) 2014 ABitOfAlchemy. All rights reserved.
 //
 
@@ -13,9 +13,7 @@
 #import <CoreLocation/CoreLocation.h>
 #import "ABALoginTVC.h"
 
-@interface FriensoViewController : UIViewController <NSFetchedResultsControllerDelegate,
-UITableViewDelegate,UITableViewDataSource,
-MKMapViewDelegate,CLLocationManagerDelegate,UIScrollViewDelegate>
+@interface HomeViewController : UIViewController <NSFetchedResultsControllerDelegate, UITableViewDelegate,UITableViewDataSource, MKMapViewDelegate,CLLocationManagerDelegate,UIScrollViewDelegate>
 
 @property (nonatomic, retain) CLLocationManager *locationManager;
 @property (nonatomic, strong) MKMapView *mapView;

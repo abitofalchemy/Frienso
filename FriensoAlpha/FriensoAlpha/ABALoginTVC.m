@@ -948,11 +948,14 @@
 
 - (void) popCoreCircleSetupVC
 {
-    UIStoryboard *mainStoryboard = [UIStoryboard storyboardWithName:@"Main"  bundle:nil];
-    NewCoreCircleTVC  *coreCircleController = (NewCoreCircleTVC*)[mainStoryboard instantiateViewControllerWithIdentifier: @"coreCircleView"];
-    coreCircleController.checkCloud = NO;
-    [self.navigationController pushViewController:coreCircleController animated:YES];
+    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"newUserFlag"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
     
+//    UIStoryboard *mainStoryboard = [UIStoryboard storyboardWithName:@"Main"  bundle:nil];
+//    NewCoreCircleTVC  *coreCircleController = (NewCoreCircleTVC*)[mainStoryboard instantiateViewControllerWithIdentifier: @"coreCircleView"];
+//    coreCircleController.checkCloud = NO;
+//    [self.navigationController pushViewController:coreCircleController animated:YES];
+    [self dismissViewControllerAnimated:YES completion:nil];
 //    [self presentViewController:coreCircleController animated:YES completion:nil];
 //    [self performSegueWithIdentifier:@"coreFriendsView" sender:self];
 }
