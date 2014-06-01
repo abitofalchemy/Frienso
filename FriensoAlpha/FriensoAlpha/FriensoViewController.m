@@ -234,7 +234,7 @@ enum PinAnnotationTypeTag {
         [self setInitialLocation:self.locationManager.location];
     }
     self.mapView = [[MKMapView alloc] initWithFrame:CGRectZero];
-    [self.mapView setFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height * 0.25)];
+    [self.mapView setFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height * 0.40)];
 
     self.mapView.region = MKCoordinateRegionMake(self.location.coordinate,MKCoordinateSpanMake(0.05f,0.05f));
     self.mapView.layer.borderWidth = 2.0f;
@@ -267,7 +267,7 @@ enum PinAnnotationTypeTag {
 
 -(void) setupEventsTableView {
     UIView *tableHelpView = [[UIView alloc] initWithFrame:CGRectMake(0, self.view.frame.size.height * 0.5,
-                                                                     self.view.frame.size.width, self.view.frame.size.height * 0.5)];// help view
+                                                                     self.view.frame.size.width, self.view.frame.size.height * 0.6)];// help view
     [tableHelpView setBackgroundColor:UIColorFromRGB(0x006bb6)];
     [tableHelpView setAlpha:0.8f];
     tableHelpView.layer.borderWidth = 2.0f;
@@ -472,7 +472,7 @@ enum PinAnnotationTypeTag {
     [self setupToolBarIcons];
     [self setupNavigationBarImage];
     /*[self setupHalfMapView]; */
-    [self trackFriendsView];  // who is active?
+//    [self trackFriendsView];  // who is active?
     [self setupEventsTableView];
     
     //[self syncCoreFriendsLocation]; // from parse to coredata
@@ -1033,19 +1033,17 @@ enum PinAnnotationTypeTag {
                                               inManagedObjectContext:[self managedObjectContext]];
     
     [fetchRequest setEntity:entity];
+    [fetchRequest setPredicate:[NSPredicate predicateWithFormat:@"coreType like 'Person' || coreType like 'OnWatch'"]];
     NSSortDescriptor *phoneSort =  [[NSSortDescriptor alloc] initWithKey:@"corePhone"
                                                                   ascending:YES];
-    
-//    NSSortDescriptor *eventTitleSort =  [[NSSortDescriptor alloc] initWithKey:@"coreFirstName"
-//                                                                    ascending:NO];
-    
+        
     fetchRequest.sortDescriptors = @[phoneSort];
     
     NSError *error;
     NSArray *fetchedObjects = [[self managedObjectContext] executeFetchRequest:fetchRequest error:&error];
     if (fetchedObjects == nil) {
         // Handle the error.
-    } else if ( [[self.trackingStatusView subviews] count] < [fetchedObjects count]){
+    } else if ( [[self.mapView subviews] count] < [fetchedObjects count]){
         NSInteger i = 0;
         for (NSManagedObject *mObject in fetchedObjects) {
             
@@ -1066,8 +1064,8 @@ enum PinAnnotationTypeTag {
             [mLocBtn setTag:i];
             [mLocBtn addTarget:self action:@selector(friendLocInteraction:)
               forControlEvents:UIControlEventTouchUpInside];
-            [self.trackingStatusView addSubview:mLocBtn];
-            [mLocBtn setCenter:CGPointMake(mLocBtn.frame.size.width + mLocBtn.center.x + i*(mLocBtn.frame.size.width), self.trackingStatusView.frame.size.height - mLocBtn.center.y)];
+            [self.mapView addSubview:mLocBtn];
+            [mLocBtn setCenter:CGPointMake(mLocBtn.frame.size.width + mLocBtn.center.x + i*(mLocBtn.frame.size.width), self.mapView.frame.size.height - mLocBtn.center.y)];
             
                 
             [self.friendsLocationArray insertObject:([mObject valueForKey:@"coreLocation"] == NULL)  ? @"0,0" : [mObject valueForKey:@"coreLocation"]  atIndex:i];
@@ -1075,7 +1073,7 @@ enum PinAnnotationTypeTag {
         }
     }
     
-    NSLog(@"subviews: %ld", [[self.trackingStatusView subviews] count]);
+    NSLog(@"subviews: %ld", [[self.mapView subviews] count]);
 
     // Async update locations from cloud
 }
