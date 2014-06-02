@@ -91,6 +91,7 @@
 		3EB5C447191A5EE5006557DE /* FRUserGenContentButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 3EB5C446191A5EE5006557DE /* FRUserGenContentButton.m */; };
 		3ECD3998192416F000A61B83 /* FRSyncFriendConnections.m in Sources */ = {isa = PBXBuildFile; fileRef = 3ECD3997192416F000A61B83 /* FRSyncFriendConnections.m */; };
 		3ED77E6F193C86DD00E0BB87 /* CloudUsrEvnts.m in Sources */ = {isa = PBXBuildFile; fileRef = 3ED77E6E193C86DD00E0BB87 /* CloudUsrEvnts.m */; };
+		3ED77E71193CC9AD00E0BB87 /* 01splashscreen.png in Resources */ = {isa = PBXBuildFile; fileRef = 3ED77E70193CC9AD00E0BB87 /* 01splashscreen.png */; };
 		3EEA2280191F7DFC00DC8C54 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3EEA227F191F7DFC00DC8C54 /* MessageUI.framework */; };
 		3EF1D0D91907FA1200FC8544 /* FRCoreDataParse.m in Sources */ = {isa = PBXBuildFile; fileRef = 3EF1D0D81907FA1200FC8544 /* FRCoreDataParse.m */; };
 		3EFEC30A19152633002A709D /* FriensoEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 3EFEC30919152633002A709D /* FriensoEvent.m */; };
@@ -225,6 +226,7 @@
 		3ECD3997192416F000A61B83 /* FRSyncFriendConnections.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FRSyncFriendConnections.m; sourceTree = "<group>"; };
 		3ED77E6D193C86DD00E0BB87 /* CloudUsrEvnts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CloudUsrEvnts.h; sourceTree = "<group>"; };
 		3ED77E6E193C86DD00E0BB87 /* CloudUsrEvnts.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CloudUsrEvnts.m; sourceTree = "<group>"; };
+		3ED77E70193CC9AD00E0BB87 /* 01splashscreen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = 01splashscreen.png; path = ../../../DesignDocs/MuditAssets/01splashscreen.png; sourceTree = "<group>"; };
 		3EEA227F191F7DFC00DC8C54 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
 		3EF1D0D71907FA1200FC8544 /* FRCoreDataParse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FRCoreDataParse.h; path = MappingFriends/FRCoreDataParse.h; sourceTree = "<group>"; };
 		3EF1D0D81907FA1200FC8544 /* FRCoreDataParse.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FRCoreDataParse.m; path = MappingFriends/FRCoreDataParse.m; sourceTree = "<group>"; };
@@ -408,6 +410,7 @@
 		1827933918BE07A70056C849 /* Media */ = {
 			isa = PBXGroup;
 			children = (
+				3ED77E70193CC9AD00E0BB87 /* 01splashscreen.png */,
 				3E18547F192544B70059817D /* cell-phone-ic32.png */,
 				3E3BCA5E191E3402008D8ED0 /* ugc-ic-29x2.png */,
 				3EFEC30B1917877E002A709D /* und_logo29.png */,
@@ -616,6 +619,7 @@
 				3E9F893F1903E17700DA190C /* frienso-ic-2x29.png in Resources */,
 				3E3BCA5F191E3402008D8ED0 /* ugc-ic-29x2.png in Resources */,
 				18DF84A218C27D58003F431F /* watching-24.png in Resources */,
+				3ED77E71193CC9AD00E0BB87 /* 01splashscreen.png in Resources */,
 				18DF849818C2718D003F431F /* settings-24.png in Resources */,
 				3E4120FE18E306630058012B /* frienso-info-2.png in Resources */,
 			);

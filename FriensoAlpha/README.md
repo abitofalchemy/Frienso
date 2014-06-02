@@ -6,8 +6,11 @@ Frienso iOS Alpha
 Version History
 ---------------
 
-* ver 1.5 build XX  - Moved bubbles back to the mapView
-
+* ver 1.5 build XX  - Moved bubbles back to the mapView (but will only show one for a friend with an ongoing 
+                    alert/event)
+                    - Added a fullscreen button to the mapView
+                    - Switched the Settings button with the WatchMe now button!
+                    
 * ver 1.5 build 25  - Fixed minor issues with the Profile & CoreCircle views; redoing the way the user
                     logs in or registers!
                     - Fixed bugs related to the hidding of the bootom tool-bar

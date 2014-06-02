@@ -169,13 +169,39 @@ enum PinAnnotationTypeTag {
 }
 
 #pragma mark - Local Actions
+-(void) mapViewFSToggle:(UIButton *) sender {
+    NSLog(@"Toggle FS Mode");
+}
+
+-(void) addUserBubbleToMap:(PFUser *)parseUser withTag:(NSInteger)tagNbr {
+    
+    UIButton *mLocBtn = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 44, 44)];
+    UIImage *img =[[FRStringImage alloc] imageTextBubbleOfSize:mLocBtn.frame.size];
+    [mLocBtn setBackgroundImage:img forState:UIControlStateNormal];
+    NSString *bubbleLabel = [[parseUser.username substringToIndex:2] uppercaseString];
+    [mLocBtn setTitle:bubbleLabel forState:UIControlStateNormal];
+    
+    [mLocBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [mLocBtn setTitleColor:UIColorFromRGB(0x8e44ad) forState:UIControlStateHighlighted];
+    [mLocBtn setAlpha:0.8];
+    [mLocBtn setTag:tagNbr];
+    [mLocBtn addTarget:self action:@selector(friendLocInteraction:)
+      forControlEvents:UIControlEventTouchUpInside];
+    [self.mapView addSubview:mLocBtn];
+    CGFloat btnCenterX = mLocBtn.center.x*2 + mLocBtn.center.x*2*tagNbr;
+    [mLocBtn setCenter:CGPointMake(btnCenterX, self.mapView.frame.size.height - mLocBtn.center.y)];
+    
+    
+    [self.friendsLocationArray insertObject:([parseUser valueForKey:@"currentLocation"] == NULL)  ? @"0,0" : [parseUser valueForKey:@"currentLocation"]  atIndex:tagNbr];
+    
+}
 -(void) trackMeSwitchEnabled:(UISwitch *)sender {
     if ([sender isOn]){
     UILabel *trackMeLabel = [[UILabel alloc] initWithFrame:CGRectZero];
     [trackMeLabel setText:@"Watch Me"];
     [trackMeLabel setFont:[UIFont fontWithName:@"AppleSDGothicNeo-Thin" size:14.0]];
     [trackMeLabel sizeToFit];
-    [self.navigationController.toolbar addSubview:trackMeLabel];
+    [self.navigationController.navigationBar addSubview:trackMeLabel];
     [trackMeLabel setBackgroundColor:[UIColor colorWithWhite:1.0 alpha:1.0]];
     [trackMeLabel setCenter:sender.center];
 
@@ -224,6 +250,21 @@ enum PinAnnotationTypeTag {
     [self performSegueWithIdentifier:@"showFriesoMap" sender:self];
 }
 
+#pragma mark - Intaction with NSUserDefaults
+-(BOOL) inYourCoreUserWithPhNumber:(NSString *)phNumberOnWatch  {
+    BOOL inYourCoreBool = NO;
+#warning need to query person and onwatch sections of my CoreFriends
+//    for (NSString *corePhNbr in coreFriendsPhoneNbrs) {
+//        if ([corePhNbr isEqualToString:phNumberOnWatch]) {
+//            // add an overlay
+//            inYourCoreBool = YES;
+//            break;
+//        } else
+//            NSLog(@" ... user does not match my contacts!");
+//    }
+    return inYourCoreBool;
+}
+
 #pragma mark - Setup view widgets
 -(void) setupMapView {
     if ([[NSUserDefaults standardUserDefaults] objectForKey:@"userLocation"] != NULL) {
@@ -237,6 +278,26 @@ enum PinAnnotationTypeTag {
     self.mapView.layer.borderWidth = 2.0f;
     self.mapView.layer.borderColor = [UIColor whiteColor].CGColor;//UIColorFromRGB(0x9B90C8).CGColor;
     [self.view addSubview:self.mapView];
+    
+    //Add fullscreen mode
+    UIButton *fullScreenBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [fullScreenBtn addTarget:self action:@selector(mapViewFSToggle:) forControlEvents:UIControlEventTouchUpInside];
+    [fullScreenBtn setTitle:@"" forState:UIControlStateNormal];
+    [fullScreenBtn.titleLabel setFont:[UIFont fontWithName:@"AppleSDGothicNeo-Bold" size:32.0]];
+    fullScreenBtn.layer.shadowColor =[UIColor blackColor].CGColor;
+    fullScreenBtn.layer.shadowOffset =CGSizeMake(1.5f, 1.5f);
+    fullScreenBtn.layer.shadowOpacity = 1.0;
+    fullScreenBtn.layer.shadowRadius = 4.0;
+    [fullScreenBtn sizeToFit];
+    [fullScreenBtn.titleLabel setTextColor:[UIColor blackColor]];
+//    fullScreenBtn.layer.borderWidth = 0.5f;
+//    fullScreenBtn.layer.cornerRadius = fullScreenBtn.frame.size.height*.20;
+//    fullScreenBtn.layer.borderColor = [UIColor whiteColor].CGColor;
+    [fullScreenBtn setCenter:CGPointMake(self.mapView.frame.size.width - fullScreenBtn.center.x * 2.0,
+                                         self.mapView.frame.size.height- fullScreenBtn.center.y ) ];
+    
+    [self.mapView addSubview:fullScreenBtn];
+    
     
     [self configureOverlay];
     
@@ -353,6 +414,15 @@ enum PinAnnotationTypeTag {
     [coreCircleBtn setCenter:CGPointMake(44.0f,22)];
     
     // Right tool bar btn
+    FriensoOptionsButton *button = [[FriensoOptionsButton alloc] initWithFrame:CGRectMake(0, 0, 27, 27)];
+    button.layer.cornerRadius = 4.0;
+    button.layer.borderWidth =  1.0;
+    button.layer.borderColor = [UIColor blackColor].CGColor;
+    [button addTarget:self action:@selector(viewMenuOptions:)
+     forControlEvents:UIControlEventTouchUpInside];
+    [button setCenter:CGPointMake(self.navigationController.toolbar.frame.size.width - button.center.x*2.0, 22)];
+        //self.navigationItem.rightBarButtonItem=barButton;
+    
     /**
     FriensoPersonalEvent *calEventBtn = [[FriensoPersonalEvent alloc]
                                             initWithFrame:CGRectMake(0, 0, 27, 27)];
@@ -365,18 +435,7 @@ enum PinAnnotationTypeTag {
     [calEventBtn setTitleShadowColor:[UIColor grayColor] forState:UIControlStateHighlighted];
     **/
     
-    UISwitch *trackMeOnOff = [[UISwitch alloc] init];
     
-    [trackMeOnOff addTarget:self action:@selector(trackMeSwitchEnabled:)
-           forControlEvents:UIControlEventValueChanged];
-    [trackMeOnOff setCenter:CGPointMake(self.navigationController.toolbar.bounds.size.width*0.85, 22)];
-    
-    // Local store check for active event
-    if( [[[CloudUsrEvnts alloc] init] activeAlertCheck]) {
-        NSLog(@"Yes, an alert is active!");
-        [trackMeOnOff setOn:YES animated:YES];
-    } else
-        [trackMeOnOff setOn:NO animated:YES];
     
     
     // center toolbar btn
@@ -391,7 +450,7 @@ enum PinAnnotationTypeTag {
     [panicButton setCenter:CGPointMake(self.navigationController.toolbar.center.x, 22)];
     
     [self.navigationController.toolbar addSubview:coreCircleBtn]; // left
-    [self.navigationController.toolbar addSubview:trackMeOnOff]; // right
+    [self.navigationController.toolbar addSubview:button]; // right
     [self.navigationController.toolbar addSubview:panicButton]; // center
 
 }
@@ -400,6 +459,25 @@ enum PinAnnotationTypeTag {
     [[UINavigationBar appearance] setTitleTextAttributes: [NSDictionary dictionaryWithObjectsAndKeys:[UIColor blackColor], NSForegroundColorAttributeName, [UIFont fontWithName:@"AppleSDGothicNeo-Light" size:16.0], NSFontAttributeName,nil]];
     self.navigationItem.title = @"FRIENSO";
     
+    // Right Options Button
+    UISwitch *trackMeOnOff = [[UISwitch alloc] init];
+    
+    [trackMeOnOff addTarget:self action:@selector(trackMeSwitchEnabled:)
+           forControlEvents:UIControlEventValueChanged];
+    [trackMeOnOff setCenter:CGPointMake(self.navigationController.toolbar.bounds.size.width*0.85, 22)];
+    trackMeOnOff.layer.cornerRadius = trackMeOnOff.frame.size.height/2.0;
+    trackMeOnOff.layer.borderWidth =  1.0;
+    trackMeOnOff.layer.borderColor = [UIColor whiteColor].CGColor;
+    
+    // Local store check for active event
+    if( [[[CloudUsrEvnts alloc] init] activeAlertCheck]) {
+        NSLog(@"Yes, an alert is active!");
+        [trackMeOnOff setOn:YES animated:YES];
+    } else
+        [trackMeOnOff setOn:NO animated:YES];
+    UIBarButtonItem *barButton=[[UIBarButtonItem alloc] init];
+    [barButton setCustomView:trackMeOnOff];
+
     /********************* Left CoreCircle button
     UIButton *ugcTopLeftBtn = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 27, 27)];
     [ugcTopLeftBtn setImage:[UIImage imageNamed:@"ugc-ic-29x2.png"] forState:UIControlStateNormal];
@@ -413,16 +491,7 @@ enum PinAnnotationTypeTag {
     **********************/
     self.navigationItem.leftBarButtonItem=nil;
     
-    // Right Options Button
-    FriensoOptionsButton *button = [[FriensoOptionsButton alloc] initWithFrame:CGRectMake(0, 0, 27, 27)];
-    button.layer.cornerRadius = 4.0;
-    button.layer.borderWidth =  1.0;
-    button.layer.borderColor = [UIColor blackColor].CGColor;
-    [button addTarget:self action:@selector(viewMenuOptions:)
-     forControlEvents:UIControlEventTouchUpInside];
-    UIBarButtonItem *barButton=[[UIBarButtonItem alloc] init];
-    [barButton setCustomView:button];
-    //self.navigationItem.rightBarButtonItem=barButton;
+    
     
     
     
@@ -474,21 +543,7 @@ enum PinAnnotationTypeTag {
     
     //[self syncCoreFriendsLocation]; // from parse to coredata
 
-    // Check if friends have ongoing event
-    //NSArray *friendsObjIds = [[CloudUsrEvnts alloc] init] ongoingAlertsCheck];
-    PFQuery *query = [PFQuery queryWithClassName:@"UserEvent"];
-    [query whereKey:@"eventActive" equalTo:[NSNumber numberWithBool:YES]];
-    [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
-        if (!error) {
-            for (PFObject *userAlert in objects)
-                NSLog(@"%@ has an activeAlarm of type", [userAlert]);
-            
-        } else {
-            // Did not find any UserStats for the current user
-            NSLog(@"Error: %@", error);
-            
-        }
-    }];
+    
     
 }
 - (void)viewDidUnload {
@@ -891,7 +946,7 @@ enum PinAnnotationTypeTag {
         MKPinAnnotationView *pinAnnotationView = (MKPinAnnotationView *)view;
         GeoQueryAnnotation *geoQueryAnnotation = (GeoQueryAnnotation *)pinAnnotationView.annotation;
         self.location = [[CLLocation alloc] initWithLatitude:geoQueryAnnotation.coordinate.latitude longitude:geoQueryAnnotation.coordinate.longitude];
-//        [self configureOverlay];
+        [self configureOverlay];
     }
 }
 
@@ -928,22 +983,48 @@ enum PinAnnotationTypeTag {
 }
 
 - (void)configureOverlay {
-    if (self.location) {
-        [self.mapView removeAnnotations:self.mapView.annotations];
-        [self.mapView removeOverlays:self.mapView.overlays];
-        
-        /**CircleOverlay *overlay = [[CircleOverlay alloc] initWithCoordinate:self.location.coordinate radius:self.radius];
-        [self.mapView addOverlay:overlay];
-        **/
-        
-        //[self addCoreFriendBubblesToMap:self.mapView];
-        
-        GeoQueryAnnotation *annotation = [[GeoQueryAnnotation alloc] initWithCoordinate:self.location.coordinate radius:1000];
-        [self.mapView addAnnotation:annotation];
-        
-        [self updateLocations];
-    } else
-        NSLog(@"! no location ");
+    
+    PFQuery *query = [PFQuery queryWithClassName:@"UserEvent"];
+    [query whereKey:@"eventActive" equalTo:[NSNumber numberWithBool:YES]];
+    [query includeKey:@"friensoUser"];
+    query.limit = 10;
+    [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+        if (!error) {
+            NSInteger i = 0;
+            NSLog(@"%ld", [objects count]);
+            for (PFObject *objWithAlert in objects){
+                
+                //PFUser *user = [objWithAlert valueForKey:@"friensoUser"];
+                PFUser *friensoUser    = [objWithAlert valueForKey:@"friensoUser"];
+                NSLog(@"%@: has an activeAlert of type-> %@", friensoUser.username, [objWithAlert objectForKey:@"alertType"]);
+                if ([self inYourCoreUserWithPhNumber:[friensoUser valueForKey:@"phoneNumber"]]){
+                    [self addUserBubbleToMap:friensoUser withTag:i];
+                    i++;
+                }
+            }
+        } else {
+            // Did not find any UserStats for the current user
+            NSLog(@"Error: %@", error);
+            
+        }
+    }];
+    
+//    if (self.location) {
+//        [self.mapView removeAnnotations:self.mapView.annotations];
+//        [self.mapView removeOverlays:self.mapView.overlays];
+//        
+//        /**CircleOverlay *overlay = [[CircleOverlay alloc] initWithCoordinate:self.location.coordinate radius:self.radius];
+//        [self.mapView addOverlay:overlay];
+//        **/
+//        
+//        //[self addCoreFriendBubblesToMap:self.mapView];
+//        
+//        GeoQueryAnnotation *annotation = [[GeoQueryAnnotation alloc] initWithCoordinate:self.location.coordinate radius:1000];
+//        [self.mapView addAnnotation:annotation];
+//        
+//        //[self updateLocations];
+//    } else
+//        NSLog(@"! no location ");
 }
 -(void)friendLocInteraction:(UIButton *)sender
 {
@@ -1033,8 +1114,7 @@ enum PinAnnotationTypeTag {
 }
 
 - (void)updateLocations {
-    NSLog(@"... updateLocations");
-    
+    /** this adds bubbles to the map for all Persons in your CoreFriends list (local core data store) **/
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init]; // Create the fetch request
     NSEntityDescription *entity = [NSEntityDescription entityForName:@"CoreFriends"
                                               inManagedObjectContext:[self managedObjectContext]];
