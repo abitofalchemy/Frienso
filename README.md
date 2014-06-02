@@ -1,4 +1,4 @@
 Frienso
 =======
 
-Frienso iOS Nu
+Frienso iOS Alpha

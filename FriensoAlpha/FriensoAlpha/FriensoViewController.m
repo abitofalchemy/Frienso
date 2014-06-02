@@ -20,7 +20,7 @@
 #import "GeoQueryAnnotation.h"
 #import "FriensoResources.h"
 #import "FRStringImage.h"
-#import "WatchMeEventTracking.h"
+#import "CloudUsrEvnts.h"
 #import "FRSyncFriendConnections.h"
 
 
@@ -43,12 +43,11 @@ enum PinAnnotationTypeTag {
 }
 @property (nonatomic,retain) NSMutableArray *friendsLocationArray;
 @property (nonatomic,strong) NSFetchedResultsController *frc;
-@property (nonatomic,strong) CLLocation *location;
-@property (nonatomic,strong) UITableView *tableView;
-//@property (nonatomic,strong) UITableView *rsrcTableView; //frienso resources tableview
-@property (nonatomic,strong) UIButton *selectedBubbleBtn;
+@property (nonatomic,strong) CLLocation     *location;
+@property (nonatomic,strong) UITableView    *tableView;
+@property (nonatomic,strong) UIButton       *selectedBubbleBtn;
 @property (nonatomic,strong) UIActivityIndicatorView *loadingView;
-@property (nonatomic,strong) UIScrollView *trackingStatusView;
+//@property (nonatomic,strong) UIScrollView *trackingStatusView; 
 
 -(void)actionPanicEvent:(UIButton *)theButton;
 -(void)viewMenuOptions: (UIButton *)theButton;
@@ -93,14 +92,12 @@ enum PinAnnotationTypeTag {
 #pragma mark - UITableViewDataSource Methods
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    //return 1;
     return [[self.frc sections] count];
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     id <NSFetchedResultsSectionInfo> sectionInfo = self.frc.sections[section];
-    //NSLog(@"%lu",sectionInfo.numberOfObjects);
     return sectionInfo.numberOfObjects;
     
 }
@@ -189,13 +186,13 @@ enum PinAnnotationTypeTag {
                      completion:^(BOOL finished){ [trackMeLabel removeFromSuperview]; }];
     
     // Watch Me event tracking
-    WatchMeEventTracking *watchMeEvent = [[WatchMeEventTracking alloc] initWithAlertType:@"watchMe"
+    CloudUsrEvnts *watchMeEvent = [[CloudUsrEvnts alloc] initWithAlertType:@"watchMe"
                                                                       eventStartDateTime:[NSDate date] ];
     [watchMeEvent setPersonalEvent];
     [watchMeEvent sendToCloud];
     } else {
         NSLog(@"Stop the watch");
-        WatchMeEventTracking *watchMeEvent = [[WatchMeEventTracking alloc] initWithAlertType:@"watchMe"
+        CloudUsrEvnts *watchMeEvent = [[CloudUsrEvnts alloc] initWithAlertType:@"watchMe"
                                                                           eventStartDateTime:[NSDate date] ];
         [watchMeEvent disableEvent];
     }
@@ -228,7 +225,7 @@ enum PinAnnotationTypeTag {
 }
 
 #pragma mark - Setup view widgets
--(void) setupHalfMapView {
+-(void) setupMapView {
     if ([[NSUserDefaults standardUserDefaults] objectForKey:@"userLocation"] != NULL) {
         [self.locationManager startUpdatingLocation];
         [self setInitialLocation:self.locationManager.location];
@@ -247,6 +244,7 @@ enum PinAnnotationTypeTag {
         [self.loadingView stopAnimating];
 
 }
+/**
 -(void) trackFriendsView
 {
     self.trackingStatusView = [[UIScrollView alloc] initWithFrame:CGRectZero];
@@ -264,8 +262,8 @@ enum PinAnnotationTypeTag {
     [self.view addSubview:self.trackingStatusView];
 
 }
-
--(void) setupEventsTableView {
+*/
+-(void) setupEventsTableView { /* this user's events */
     UIView *tableHelpView = [[UIView alloc] initWithFrame:CGRectMake(0, self.view.frame.size.height * 0.5,
                                                                      self.view.frame.size.width, self.view.frame.size.height * 0.6)];// help view
     [tableHelpView setBackgroundColor:UIColorFromRGB(0x006bb6)];
@@ -339,7 +337,6 @@ enum PinAnnotationTypeTag {
     self.navigationController.toolbarHidden = NO;
 
     //UIColor *violetTulip = [UIColor colorWithRed:155.0/255.0 green:144.0/255.0 blue:182.0/255.0 alpha:1.0];
-    
     // Left CoreCircle button
     FriensoCircleButton *coreCircleBtn = [[FriensoCircleButton alloc]
                                           initWithFrame:CGRectMake(0, 0, 27, 27)];
@@ -375,7 +372,7 @@ enum PinAnnotationTypeTag {
     [trackMeOnOff setCenter:CGPointMake(self.navigationController.toolbar.bounds.size.width*0.85, 22)];
     
     // Local store check for active event
-    if( [[[WatchMeEventTracking alloc] init] activeAlertCheck]) {
+    if( [[[CloudUsrEvnts alloc] init] activeAlertCheck]) {
         NSLog(@"Yes, an alert is active!");
         [trackMeOnOff setOn:YES animated:YES];
     } else
@@ -471,17 +468,27 @@ enum PinAnnotationTypeTag {
     
     [self setupToolBarIcons];
     [self setupNavigationBarImage];
-    /*[self setupHalfMapView]; */
+    /*[self setupMapView]; */
 //    [self trackFriendsView];  // who is active?
     [self setupEventsTableView];
     
     //[self syncCoreFriendsLocation]; // from parse to coredata
 
-    
-    
     // Check if friends have ongoing event
-    //[[ParseAlertEvent alloc] init] ongoingAlertEventCheck];
-    
+    //NSArray *friendsObjIds = [[CloudUsrEvnts alloc] init] ongoingAlertsCheck];
+    PFQuery *query = [PFQuery queryWithClassName:@"UserEvent"];
+    [query whereKey:@"eventActive" equalTo:[NSNumber numberWithBool:YES]];
+    [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+        if (!error) {
+            for (PFObject *userAlert in objects)
+                NSLog(@"%@ has an activeAlarm of type", [userAlert]);
+            
+        } else {
+            // Did not find any UserStats for the current user
+            NSLog(@"Error: %@", error);
+            
+        }
+    }];
     
 }
 - (void)viewDidUnload {
@@ -511,7 +518,7 @@ enum PinAnnotationTypeTag {
     }
     
     if ([[NSUserDefaults standardUserDefaults] objectForKey:@"userLocation"] != NULL) {
-        [self setupHalfMapView];
+        [self setupMapView];
 //        [self.locationManager startUpdatingLocation];
 //        [self setInitialLocation:self.locationManager.location];
     }

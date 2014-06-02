@@ -7,6 +7,10 @@
 //  http://www.appcoda.com/customize-table-view-cells-for-uitableview/
 
 /** Notes
+    AlarmTimerTriggersTVC
+    TVC to handle detail event/alart setting for the user 
+    Currently, relegated to the bench.
+ 
  ** EKEventViewController does not get displayed when one selects the 
  ** row.  Might have to copy try to implement this on something else.
  ** -- The problem and fix for this class is listed under: 

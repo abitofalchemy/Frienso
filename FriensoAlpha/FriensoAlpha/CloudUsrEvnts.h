@@ -1,21 +1,14 @@
 //
-//  WatchMeEventTracking.h
+//  CloudUsrEvnts.h
 //  FriensoAlpha
 //
-//  Created by Salvador Aguinaga on 5/24/14.
+//  Created by Salvador Aguinaga on 6/2/14.
 //  Copyright (c) 2014 ABitOfAlchemy. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
-//#import <Parse/Parse.h>
-//
-//@interface UserEvents : PFObject<PFSubclassing>
-//
-//+ (NSString *)parseClassName;
-//@property BOOL eventActive;
-//@property (nonatomic,strong) PFUser *user;
 
-@interface WatchMeEventTracking : NSObject
+@interface CloudUsrEvnts : NSObject
 
 @property (nonatomic, copy, readonly) NSString *alertType, *friensoUser;//, *genre, *coverUrl, *year;
 @property (nonatomic, copy, readonly) NSDate   *startDateTime;//, *genre, *coverUrl, *year;
@@ -26,10 +19,6 @@
 - (void) sendToCloud;
 - (void) disableEvent;
 - (BOOL) activeAlertCheck;
+//- (NSArray *) ongoingAlertsCheck;
 
 @end
-
-//initWithalertType: watchTrackMe
-//userName:  currentUser
-//startDateTime: now()
-

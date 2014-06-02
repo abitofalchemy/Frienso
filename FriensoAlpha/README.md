@@ -6,7 +6,9 @@ Frienso iOS Alpha
 Version History
 ---------------
 
-ver 1.5 build 25    - Fixed minor issues with the Profile & CoreCircle views; redoing the way the user
+* ver 1.5 build XX  - Moved bubbles back to the mapView
+
+* ver 1.5 build 25  - Fixed minor issues with the Profile & CoreCircle views; redoing the way the user
                     logs in or registers!
                     - Fixed bugs related to the hidding of the bootom tool-bar
                     - Redesigned the way the login comes up and the way views go from welcome to the
@@ -18,17 +20,17 @@ ver 1.5 build 25    - Fixed minor issues with the Profile & CoreCircle views; re
                     - Fixed the way a new user registers and creates a CoreGroup (micro-Circle): changed the
                     navigation, so that it is under the control of the Home view (FriensoViewController).
 
-ver 1.5 build 21    Got rid of the Options/Watching list (it is now integrated in the CoreCircle list)
+* ver 1.5 build 21    Got rid of the Options/Watching list (it is now integrated in the CoreCircle list)
                     CoreCircle list now shows your CoreCircle and those uWatch.
                     Eliminated the icon to 'Chat' with friends, this is now available when you list the CoreCircle.
                     - {working} Interact with your CorCircle contacts
                     - {Fixed} the Resources view: when resource is already cached, don't allow to save it
 
 
-ver 1.5 build 19    Redesign of the Friends/Map view, added bubbles of your core-friends
+* ver 1.5 build 19    Redesign of the Friends/Map view, added bubbles of your core-friends
                     Got SMS working when you list Those you are Watching
 
-ver 1.4 build 3.2   Added ability to save a resource (contact) and access it via the circle of Friends
+* ver 1.4 build 3.2   Added ability to save a resource (contact) and access it via the circle of Friends
                     button, we can decide where else to make this available.
                     -  Fixed the sections view in the CoreCircle viewcontroller
                     -  Fully logout and reset the local database now working 
@@ -36,32 +38,32 @@ ver 1.4 build 3.2   Added ability to save a resource (contact) and access it via
                     -  Fixed the 'Watching' (which we might want to rename to something like On Watch, 
                     or something) to click on these cells and engage in comm with them.
 
-ver 1.4 build 2.0   Adding resources view to Home View
+* ver 1.4 build 2.0   Adding resources view to Home View
 
-ver 1.4 build 1.0   New layout after input from team;
+* ver 1.4 build 1.0   New layout after input from team;
 
-ver 1.3 build 1.0   Updates to the friends list (coreData), we cache coreFriends location locally
+* ver 1.3 build 1.0   Updates to the friends list (coreData), we cache coreFriends location locally
                     When app is launched, the user's current location and his/her friends' are cached
                     Also when the user clicks on the quick-view of his/her circle, the user's current loc is updated
                     When the Map view is loaded, 1) the user's current location is update and the friends' locations are cached
                     Added *basic* event creation with local alarms
                     
-ver 1.2 build 1.0   Added location information @ user signup or login
+* ver 1.2 build 1.0   Added location information @ user signup or login
                     Fixed issued when creating a new account and building your core friends group
                     Added Mapping of your core Friends
                     Added icon (working, not final)
 
-ver 1.1 build 1.1   Fixed issues with Setup Core Circle and Profile images
+* ver 1.1 build 1.1   Fixed issues with Setup Core Circle and Profile images
                     Fixed bug when you login and your already stored coreCircle of friends isn't fetched elegantly, now it's fetched and stored locally.
                     When a single core circle friend is updated, the whole set of core friends is correctly update in the cloud.
                     Connected the privacy policy and terms of use buttons to a web link that will host the document for now.
 
-ver 1.1 build 1.0   Fixes: Added more functionality to the Profile view; user can edit it.
+* ver 1.1 build 1.0   Fixes: Added more functionality to the Profile view; user can edit it.
                     Worked on the About view and have functionality working.
                     Settings View updated with more functionality working.
 
 
-ver 1.0 build 1.0   Initial release
+* ver 1.0 build 1.0   Initial release
 
 
 
@@ -92,8 +94,6 @@ ToDo
     Try to make this work at searchviewcontroller or at FriensoQuickCircle
     ...
 * Cache Resources and update if new from Parse!
-
-
 
 * Handle Parse time-outs
     Trap parse calls to the network - network outage
