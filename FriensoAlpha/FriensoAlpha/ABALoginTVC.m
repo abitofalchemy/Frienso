@@ -1018,6 +1018,9 @@
     user.email     = newUserEmail;
     user.username  = newUserEmail;
     user.password  = newUserPassword;
+    //remove dashes
+    userPhoneNumber = [userPhoneNumber stringByReplacingOccurrencesOfString:@"-" withString:@""];
+    user[@"phoneNumber"] = userPhoneNumber;
     
     
     [self insertCurrentLocation:user];// MIGHT NOT BE NEEDED

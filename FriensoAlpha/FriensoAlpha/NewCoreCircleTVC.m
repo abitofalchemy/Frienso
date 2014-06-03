@@ -437,11 +437,55 @@
     NSArray *contactArray = [[NSArray alloc] initWithObjects:firstName, (lastName == NULL) ? @"" : lastName, contactPhoneNumber, nil];
     [self coreDataAddContact:contactArray];
     
+    NSLog(@"%@",contactPhoneNumber);
+    //send the core friend request to Parse.
+    [self sendCoreFriendRequest:contactPhoneNumber];
+    
+    
     [self dismissViewControllerAnimated:YES completion:nil];
     [self.tableView reloadRowsAtIndexPaths:[self.tableView indexPathsForVisibleRows]
                           withRowAnimation:UITableViewRowAnimationNone];
     
     return NO;
+}
+- (void) sendCoreFriendRequest:(NSString *) phoneNumber {
+    if(phoneNumber == nil) {
+        NSLog(@"Invalid number. no request send to parse");
+        return;
+    }
+    //Remove dash from phone Number
+    phoneNumber = [phoneNumber stringByReplacingOccurrencesOfString:@"-" withString:@""];
+    
+    //TODO: check if this request already exists.
+    
+    PFUser *curUser = [PFUser currentUser];
+    if(curUser == nil) {
+        NSLog(@"current user object is nill");
+        return;
+    }
+    
+    PFQuery * pfquery = [PFUser query];
+    //it should be phone number instead of username
+    [pfquery whereKey:@"phoneNumber" equalTo:phoneNumber];
+    [pfquery findObjectsInBackgroundWithBlock:^(NSArray *objects,
+                                                NSError *error) {
+        if (!error && objects != nil) {
+            //A user was found
+            PFUser * pfuser = [objects firstObject];
+            //TODO: remove this log
+            NSLog(pfuser.email );
+            PFObject * pfobject = [PFObject
+                                   objectWithClassName:@"CoreFriendRequest"];
+            [pfobject setObject:[PFUser currentUser] forKey:@"sender"];
+            [pfobject setObject:pfuser forKey:@"recipient"];
+            [pfobject setObject:@"send" forKey:@"status"];
+            [pfobject setObject:@"recipient" forKey:@"awaitingResponseFrom" ];
+            [pfobject saveInBackground];
+        } else {
+            NSLog(@"%@", error);
+            //TODO: we can send pending requests here, for users who donot exist in parse yet.
+        }
+    }];
 }
 
 - (BOOL)peoplePickerNavigationController:(ABPeoplePickerNavigationController *)peoplePicker shouldContinueAfterSelectingPerson:(ABRecordRef)person property:(ABPropertyID)property identifier:(ABMultiValueIdentifier)identifier
