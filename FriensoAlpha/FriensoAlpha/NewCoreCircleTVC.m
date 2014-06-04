@@ -469,21 +469,31 @@
     [pfquery whereKey:@"phoneNumber" equalTo:phoneNumber];
     [pfquery findObjectsInBackgroundWithBlock:^(NSArray *objects,
                                                 NSError *error) {
-        if (!error && objects != nil) {
-            //A user was found
+        if (!error) {
             PFUser * pfuser = [objects firstObject];
+            if(pfuser == nil) {
+                NSLog(@"User not found in the User list");
+                //we are sending pending requests here, for users who do not exist in parse yet.
+                PFObject * pfobject = [PFObject
+                                       objectWithClassName:@"CoreFriendNotOnFriensoYet"];
+                [pfobject setObject:curUser forKey:@"sender"];
+                [pfobject setObject:phoneNumber forKey:@"recipientPhoneNumber"];
+                [pfobject saveInBackground];
+                return;
+            }
+
+            //A user was found
             //TODO: remove this log
             NSLog(pfuser.email );
             PFObject * pfobject = [PFObject
                                    objectWithClassName:@"CoreFriendRequest"];
-            [pfobject setObject:[PFUser currentUser] forKey:@"sender"];
+            [pfobject setObject:curUser forKey:@"sender"];
             [pfobject setObject:pfuser forKey:@"recipient"];
             [pfobject setObject:@"send" forKey:@"status"];
             [pfobject setObject:@"recipient" forKey:@"awaitingResponseFrom" ];
             [pfobject saveInBackground];
         } else {
             NSLog(@"%@", error);
-            //TODO: we can send pending requests here, for users who donot exist in parse yet.
         }
     }];
 }
