@@ -113,9 +113,6 @@
     
 
 }
-//-(void) presentDashboardViewController {
-//    [self performSegueWithIdentifier:@"presentDashboard" sender:self];
-//}
 
 - (void) cancel {
 //    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"coreCircleSet"])
@@ -410,7 +407,7 @@
     
     return NO;
 }
-- (void) sendCoreFriendRequest:(NSString *) phoneNumber { /* UK */
+- (void) sendCoreFriendRequest:(NSString *) phoneNumber {
     if(phoneNumber == nil) {
         NSLog(@"Invalid number. no request send to parse");
         return;
