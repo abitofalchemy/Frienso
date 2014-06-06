@@ -831,6 +831,7 @@
         }
         
         if ( [self isUserInNSUserDefaults: username.text havingPassword:password.text]){
+            // Case might occur when user created an account but did not complete coreCircle
             NSLog(@"Already Stored Locally, check cloud if a circle exists");
             [self presentCoreCircleSetupAndCheckCloudVC];
             //add logic to handle if the user is already in Parse!
@@ -1018,6 +1019,9 @@
     user.email     = newUserEmail;
     user.username  = newUserEmail;
     user.password  = newUserPassword;
+    //remove dashes
+    userPhoneNumber = [userPhoneNumber stringByReplacingOccurrencesOfString:@"-" withString:@""];
+    user[@"phoneNumber"] = userPhoneNumber;
     
     
     [self insertCurrentLocation:user];// MIGHT NOT BE NEEDED

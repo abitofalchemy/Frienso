@@ -22,9 +22,9 @@
 #import "FRStringImage.h"
 #import "CloudUsrEvnts.h"
 #import "FRSyncFriendConnections.h"
+#import "UserResponseScrollView.h"
 
-
-
+#define MAPVIEW_DEFAULT_BOUNDS CGRectMake(0,0,self.view.bounds.size.width,self.view.bounds.size.height * 0.5)
 #define ARC4RANDOM_MAX      0x100000000
 #define UIColorFromRGB(rgbValue) [UIColor colorWithRed:((float)((rgbValue & 0xFF0000) >> 16))/255.0 green:((float)((rgbValue & 0xFF00) >> 8))/255.0 blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 #define CELL_CONTENT_MARGIN 10.0f
@@ -41,13 +41,17 @@ enum PinAnnotationTypeTag {
 {
     NSMutableArray *coreFriendsArray;
 }
+@property (nonatomic,retain) NSArray *appFrameProperties;
 @property (nonatomic,retain) NSMutableArray *friendsLocationArray;
 @property (nonatomic,strong) NSFetchedResultsController *frc;
 @property (nonatomic,strong) CLLocation     *location;
 @property (nonatomic,strong) UITableView    *tableView;
 @property (nonatomic,strong) UIButton       *selectedBubbleBtn;
 @property (nonatomic,strong) UIActivityIndicatorView *loadingView;
-//@property (nonatomic,strong) UIScrollView *trackingStatusView; 
+@property (nonatomic,strong) UIButton       *fullScreenBtn;
+@property (nonatomic,strong) UserResponseScrollView   *scrollView;
+@property (nonatomic,strong) UILabel *drawerLabel;
+@property (nonatomic)        CGFloat scrollViewY;
 
 -(void)actionPanicEvent:(UIButton *)theButton;
 -(void)viewMenuOptions: (UIButton *)theButton;
@@ -58,6 +62,10 @@ enum PinAnnotationTypeTag {
 
 @implementation FriensoViewController
 @synthesize locationManager  = _locationManager;
+
+/** useful calls:
+ ** CGRect fullScreenRect=[[UIScreen mainScreen] applicationFrame];
+ ** **/
 
 
 -(void)actionPanicEvent:(UIButton *)theButton {
@@ -169,8 +177,57 @@ enum PinAnnotationTypeTag {
 }
 
 #pragma mark - Local Actions
+-(void) openCloseDrawer
+{
+    CGFloat yOffset = self.view.frame.size.height*0.1;
+    CGFloat y_tableViewOffset = yOffset - _drawerLabel.frame.size.height*0.9;
+    
+    if (self.scrollView.frame.size.height>self.view.bounds.size.height*0.05)
+    {
+        CGRect closeDrawerRect = CGRectMake(0, self.scrollView.frame.origin.y, self.view.bounds.size.width,_drawerLabel.frame.size.height*0.9);
+        [self.scrollView setFrame:closeDrawerRect];
+        self.scrollView.contentSize = self.scrollView.frame.size;
+        
+        [_drawerLabel setTextColor:[UIColor whiteColor]];
+        [self.tableView setCenter:CGPointMake(self.tableView.center.x, self.tableView.center.y - y_tableViewOffset)];// remove tableview yOffset
+        
+    } else { // Open Drawer
+        
+        CGRect openDrawerRect = CGRectMake(0, self.scrollView.frame.origin.y, self.view.bounds.size.width,
+                                           yOffset);
+        [self.tableView setCenter:CGPointMake(self.tableView.center.x, self.tableView.center.y + y_tableViewOffset)];
+        [self.scrollView setFrame:openDrawerRect];
+        self.scrollView.contentSize = self.scrollView.frame.size;
+        [_drawerLabel setTextColor:[UIColor darkGrayColor]];
+        
+    }
+}
+
 -(void) mapViewFSToggle:(UIButton *) sender {
+    [self animateThisButton:sender];
     NSLog(@"Toggle FS Mode");
+    if (self.mapView.frame.size.height < self.view.bounds.size.height){
+        [self.mapView setFrame:self.view.bounds];
+        [self.fullScreenBtn setTitle:@"┓"/*@""*/ forState:UIControlStateNormal];
+        [self.fullScreenBtn sizeToFit];
+        [self.fullScreenBtn.titleLabel setTextColor:[UIColor blackColor]];
+        [self.fullScreenBtn setCenter:CGPointMake(self.fullScreenBtn.center.x,40.0)];
+        [self.tableView setHidden:YES];
+        [self openCloseDrawer];
+        [self.scrollView setCenter:CGPointMake(self.view.center.x, self.navigationController.toolbar.frame.origin.y - self.scrollView.frame.size.height*1.5)];
+    } else {
+        [self.mapView setFrame:MAPVIEW_DEFAULT_BOUNDS];
+        [self.fullScreenBtn setTitle:@"┛"/*@""*/ forState:UIControlStateNormal];
+        [self.fullScreenBtn sizeToFit];
+        [self.fullScreenBtn setCenter:CGPointMake(_fullScreenBtn.center.x,
+                                                  self.mapView.frame.size.height -_fullScreenBtn.frame.size.height/2 * 1.2) ];
+        [self.fullScreenBtn.titleLabel setTextColor:[UIColor blackColor]];
+        [self.tableView setHidden:NO];
+        [self openCloseDrawer];
+        CGRect fullScreenRect=[[UIScreen mainScreen] applicationFrame];
+        [self.scrollView setCenter:CGPointMake(fullScreenRect.size.width/2.0,
+                                               self.scrollViewY)];
+    }
 }
 
 -(void) addUserBubbleToMap:(PFUser *)parseUser withTag:(NSInteger)tagNbr {
@@ -266,37 +323,66 @@ enum PinAnnotationTypeTag {
 }
 
 #pragma mark - Setup view widgets
+-(void) setupRequestScrollView{
+    _drawerLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 29, 24)];
+    [_drawerLabel setText:@"≡"];
+    [_drawerLabel setTextAlignment:NSTextAlignmentCenter];
+    [_drawerLabel setFont:[UIFont fontWithName:@"AppleSDGothicNeo-Thin" size:29]];
+    [_drawerLabel setTextColor:[UIColor whiteColor]];
+    CGRect defaultDrawerRect=CGRectMake(0, 0, self.view.bounds.size.width,_drawerLabel.frame.size.height*0.9);
+    self.scrollView = [[UserResponseScrollView alloc] initWithFrame:defaultDrawerRect];
+    self.scrollView.contentSize = self.scrollView.frame.size;
+    CGRect fullScreenRect=[[UIScreen mainScreen] applicationFrame];
+    self.scrollViewY = self.mapView.frame.size.height + self.scrollView.center.y;
+    [self.scrollView setCenter:CGPointMake(fullScreenRect.size.width/2.0,
+                                           self.scrollViewY)];
+    
+    [self.view addSubview:self.scrollView];
+    [self.scrollView setPendingRequests:@[@"one",@"two"]];
+    
+    UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(openCloseDrawer)];
+    // prevents the scroll view from swallowing up the touch event of child buttons
+    tapGesture.cancelsTouchesInView = NO;
+    
+    [self.scrollView addGestureRecognizer:tapGesture];
+    [_drawerLabel setCenter:CGPointMake(self.scrollView.center.x, _drawerLabel.frame.size.height/2.0)];
+    [self.scrollView addSubview:_drawerLabel];
+    
+    
+    
+                              
+}
 -(void) setupMapView {
     if ([[NSUserDefaults standardUserDefaults] objectForKey:@"userLocation"] != NULL) {
         [self.locationManager startUpdatingLocation];
         [self setInitialLocation:self.locationManager.location];
     }
     self.mapView = [[MKMapView alloc] initWithFrame:CGRectZero];
-    [self.mapView setFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height * 0.40)];
+    [self.mapView setFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.bounds.size.height * 0.5)];
 
     self.mapView.region = MKCoordinateRegionMake(self.location.coordinate,MKCoordinateSpanMake(0.05f,0.05f));
     self.mapView.layer.borderWidth = 2.0f;
     self.mapView.layer.borderColor = [UIColor whiteColor].CGColor;//UIColorFromRGB(0x9B90C8).CGColor;
     [self.view addSubview:self.mapView];
     
-    //Add fullscreen mode
-    UIButton *fullScreenBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    [fullScreenBtn addTarget:self action:@selector(mapViewFSToggle:) forControlEvents:UIControlEventTouchUpInside];
-    [fullScreenBtn setTitle:@"" forState:UIControlStateNormal];
-    [fullScreenBtn.titleLabel setFont:[UIFont fontWithName:@"AppleSDGothicNeo-Bold" size:32.0]];
-    fullScreenBtn.layer.shadowColor =[UIColor blackColor].CGColor;
-    fullScreenBtn.layer.shadowOffset =CGSizeMake(1.5f, 1.5f);
-    fullScreenBtn.layer.shadowOpacity = 1.0;
-    fullScreenBtn.layer.shadowRadius = 4.0;
-    [fullScreenBtn sizeToFit];
-    [fullScreenBtn.titleLabel setTextColor:[UIColor blackColor]];
-//    fullScreenBtn.layer.borderWidth = 0.5f;
-//    fullScreenBtn.layer.cornerRadius = fullScreenBtn.frame.size.height*.20;
-//    fullScreenBtn.layer.borderColor = [UIColor whiteColor].CGColor;
-    [fullScreenBtn setCenter:CGPointMake(self.mapView.frame.size.width - fullScreenBtn.center.x * 2.0,
-                                         self.mapView.frame.size.height- fullScreenBtn.center.y ) ];
-    
-    [self.mapView addSubview:fullScreenBtn];
+    // Adding fullscreen mode button to the mapview
+    self.fullScreenBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [self.fullScreenBtn addTarget:self action:@selector(mapViewFSToggle:)
+                 forControlEvents:UIControlEventTouchUpInside];
+    [self.fullScreenBtn setTitle:@"┛"/*@""*/ forState:UIControlStateNormal];
+    [self.fullScreenBtn.titleLabel setFont:[UIFont fontWithName:@"AppleSDGothicNeo-Bold" size:24.0]];
+    self.fullScreenBtn.titleLabel.textAlignment = NSTextAlignmentCenter;
+    self.fullScreenBtn.layer.shadowOffset  = CGSizeMake(1.5f, 1.5f);
+    self.fullScreenBtn.layer.shadowOpacity = 1.0;
+    self.fullScreenBtn.layer.shadowRadius  = 4.0;
+    [self.fullScreenBtn sizeToFit];
+//    [self.fullScreenBtn setBackgroundColor:[UIColor colorWithWhite:1.0 alpha:.5]];
+//    self.fullScreenBtn.layer.borderWidth = 0.5f;
+//    self.fullScreenBtn.layer.cornerRadius = self.fullScreenBtn.frame.size.height*.20;
+//    self.fullScreenBtn.layer.borderColor = [UIColor blackColor].CGColor;
+    [self.fullScreenBtn setCenter:CGPointMake(self.mapView.frame.size.width - _fullScreenBtn.center.x * 2.0,
+                                         self.mapView.frame.size.height- _fullScreenBtn.center.y *1.2 ) ];
+    [self.mapView addSubview:self.fullScreenBtn];
     
     
     [self configureOverlay];
@@ -325,8 +411,11 @@ enum PinAnnotationTypeTag {
 }
 */
 -(void) setupEventsTableView { /* this user's events */
-    UIView *tableHelpView = [[UIView alloc] initWithFrame:CGRectMake(0, self.view.frame.size.height * 0.5,
-                                                                     self.view.frame.size.width, self.view.frame.size.height * 0.6)];// help view
+    CGRect appFrame = [[self.appFrameProperties objectAtIndex:0] CGRectValue];
+    
+    UIView *tableHelpView = [[UIView alloc] initWithFrame:CGRectMake(0, self.scrollView.frame.size.height +
+                                                                     self.mapView.frame.size.height,
+                                                                     self.view.frame.size.width, self.view.bounds.size.height * 0.4)];// help view
     [tableHelpView setBackgroundColor:UIColorFromRGB(0x006bb6)];
     [tableHelpView setAlpha:0.8f];
     tableHelpView.layer.borderWidth = 2.0f;
@@ -340,25 +429,13 @@ enum PinAnnotationTypeTag {
     [tableHelpView addSubview:label];
     
     self.tableView = [[UITableView alloc] init];
-    [self.tableView setFrame:CGRectMake(0, self.view.frame.size.height * 0.5,
-                                         self.view.frame.size.width, self.view.frame.size.height * 0.5)];
+    [self.tableView setFrame:CGRectMake(0, self.scrollView.frame.size.height + self.mapView.frame.size.height,
+                                         self.view.frame.size.width, self.view.bounds.size.height * 0.4)];
     self.tableView.dataSource = self;
     self.tableView.delegate   = self;
     self.tableView.layer.borderWidth = 2.0f;
     self.tableView.layer.borderColor = [UIColor whiteColor].CGColor;// UIColorFromRGB(0x9B90C8).CGColor;
     [self.view addSubview:self.tableView];
-    
-    /*** Tile label
-    UILabel *tileLabel = [[UILabel alloc] initWithFrame:CGRectZero];
-    [tileLabel setText:@"ACTIVITY"];
-    [tileLabel sizeToFit];
-    [tileLabel setFont:[UIFont fontWithName:@"AppleSDGothicNeo-Medium" size:16.0]];
-    [tileLabel setTextColor:UIColorFromRGB(0x006bb6)];
-    [tileLabel setTextAlignment:NSTextAlignmentRight];
-    [tileLabel setCenter:CGPointMake(self.view.bounds.size.width -tileLabel.frame.size.width/1.5,
-                                     self.tableView.frame.origin.y+tileLabel.frame.size.height*1.3/2.0)];
-    [self.view addSubview:tileLabel];
-    ***/
     
     
     /* Create the fetch request first; set a predicate to filter priority level 3 items (sponsored events) */
@@ -508,22 +585,26 @@ enum PinAnnotationTypeTag {
     self.navigationItem.rightBarButtonItems=[NSArray arrayWithObjects:barButton, nil];
 }
 
-//- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-//{
-//    // Make sure your segue name in storyboard is the same as this line
-//    if ([[segue identifier] isEqualToString:@"viewLogin"])
-//    {
-//        // Get reference to the destination view controller
-//        ABALoginTVC *vc = [segue destinationViewController];
-//        vc.delegate = self;
-//    }
-//}
+
 #pragma mark - FriensoViewController
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     
-    printf("[ Dashboard: FriensoVC ]\n");
+    printf("[ HomeView: FriensoVC ]\n");
+    
+    // Check if self is currentUser (Parse)
+    PFUser *currentUser = [PFUser currentUser];
+    if (currentUser) {
+        NSLog(@"Successful login to Parse:%@",currentUser.email);
+    } else
+        NSLog(@"no current user");
+    
+    // Determine App Frame
+    self.appFrameProperties = [[NSArray alloc] initWithObjects:
+                                [NSValue valueWithCGRect:[[UIScreen mainScreen] applicationFrame]],
+                                [NSValue valueWithCGRect:self.navigationController.navigationBar.frame],
+                                [NSValue valueWithCGRect:self.navigationController.toolbar.frame], nil];
     
     self.navigationController.navigationBarHidden = NO;
     self.friendsLocationArray = [[NSMutableArray alloc] init]; // friends location cache
@@ -537,28 +618,24 @@ enum PinAnnotationTypeTag {
     
     [self setupToolBarIcons];
     [self setupNavigationBarImage];
-    /*[self setupMapView]; */
-//    [self trackFriendsView];  // who is active?
-    [self setupEventsTableView];
-    
     //[self syncCoreFriendsLocation]; // from parse to coredata
-
+    
     
     
 }
 - (void)viewDidUnload {
     [super viewDidUnload];
-    NSLog(@"viewDidUnload");
+    //NSLog(@"viewDidUnload");
     self.tableView = nil;
 }
 -(void) viewWillAppear:(BOOL)animated {
     [super viewWillAppear:YES];
-    NSLog(@"viewWillAppear");
+    //NSLog(@"viewWillAppear");
 }
 
 -(void) viewDidAppear:(BOOL)animated{
     [super viewDidAppear:animated];
-    NSLog(@"viewDidAppear");
+    //NSLog(@"viewDidAppear");
     
     NSString       *adminKey    = [[NSUserDefaults standardUserDefaults] objectForKey:@"adminID"];
     if ([adminKey isEqualToString:@""] || adminKey == NULL || adminKey == nil){
@@ -576,10 +653,13 @@ enum PinAnnotationTypeTag {
         [self setupMapView];
 //        [self.locationManager startUpdatingLocation];
 //        [self setInitialLocation:self.locationManager.location];
+        
+        [self setupRequestScrollView];
+        [self setupEventsTableView];
+        
     }
     
-    //  cache resources from parse
-    // The className to query on
+    //  cache resources from parse // The className to query on
     PFQuery *query = [PFQuery queryWithClassName:@"Resources"];
     [query orderByDescending:@"createdAt"];
     query.cachePolicy = kPFCachePolicyNetworkElseCache;
@@ -964,12 +1044,15 @@ enum PinAnnotationTypeTag {
 	return _locationManager;
 }
 - (void)setInitialLocation:(CLLocation *)aLocation {
+/* setInitialLocation
+ *   Here I update my User object (in parse) with my current Location when HomeView is on the foreground
+ *   PFUser currentUser should be me, but needs double checked
+ */
+    
     self.location = aLocation;
-//    self.radius = 1000;
-    //NSLog(@"%.2f,%.2f",self.location.coordinate.latitude, self.location.coordinate.longitude);
     [PFGeoPoint geoPointForCurrentLocationInBackground:^(PFGeoPoint *geoPoint, NSError *error) {
         if (!error) {
-            NSLog(@"My geo-location: %f, %f", geoPoint.latitude, geoPoint.longitude);
+            
             NSNumber *lat = [NSNumber numberWithDouble:geoPoint.latitude];
             NSNumber *lon = [NSNumber numberWithDouble:geoPoint.longitude];
             NSDictionary *userLocation=@{@"lat":lat,@"long":lon};
@@ -983,7 +1066,7 @@ enum PinAnnotationTypeTag {
 }
 
 - (void)configureOverlay {
-    
+    // Check for friends with active alerts
     PFQuery *query = [PFQuery queryWithClassName:@"UserEvent"];
     [query whereKey:@"eventActive" equalTo:[NSNumber numberWithBool:YES]];
     [query includeKey:@"friensoUser"];
@@ -991,12 +1074,12 @@ enum PinAnnotationTypeTag {
     [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         if (!error) {
             NSInteger i = 0;
-            NSLog(@"%ld", [objects count]);
             for (PFObject *objWithAlert in objects){
-                
                 //PFUser *user = [objWithAlert valueForKey:@"friensoUser"];
                 PFUser *friensoUser    = [objWithAlert valueForKey:@"friensoUser"];
                 NSLog(@"%@: has an activeAlert of type-> %@", friensoUser.username, [objWithAlert objectForKey:@"alertType"]);
+                // temporarily add these to the map and sliding drawer
+                
                 if ([self inYourCoreUserWithPhNumber:[friensoUser valueForKey:@"phoneNumber"]]){
                     [self addUserBubbleToMap:friensoUser withTag:i];
                     i++;
@@ -1160,7 +1243,7 @@ enum PinAnnotationTypeTag {
         }
     }
     
-    NSLog(@"subviews: %ld", [[self.mapView subviews] count]);
+//    NSLog(@"subviews: %ld", [[self.mapView subviews] count]);
 
     // Async update locations from cloud
 }

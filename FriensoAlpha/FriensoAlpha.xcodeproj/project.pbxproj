@@ -79,6 +79,7 @@
 		3E5EA0B7190D0CDA004A710C /* cal-ic-24.png in Resources */ = {isa = PBXBuildFile; fileRef = 3E5EA0B6190D0CDA004A710C /* cal-ic-24.png */; };
 		3E68DF5C190666FF00DF3992 /* map-btn-1.png in Resources */ = {isa = PBXBuildFile; fileRef = 3E68DF5B190666FF00DF3992 /* map-btn-1.png */; };
 		3E68DF621907C64400DF3992 /* FriensoResources.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E68DF611907C64400DF3992 /* FriensoResources.m */; };
+		3E9B0F47193E05900019ED6A /* UserResponseScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E9B0F46193E05900019ED6A /* UserResponseScrollView.m */; };
 		3E9F892318FE8D5E00DA190C /* map-btn-0.png in Resources */ = {isa = PBXBuildFile; fileRef = 3E9F892118FE8D5E00DA190C /* map-btn-0.png */; };
 		3E9F892F18FE99E700DA190C /* SearchViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E9F892818FE99E700DA190C /* SearchViewController.m */; };
 		3E9F893018FE99E700DA190C /* GeoPointAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E9F892A18FE99E700DA190C /* GeoPointAnnotation.m */; };
@@ -207,6 +208,8 @@
 		3E68DF5B190666FF00DF3992 /* map-btn-1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "map-btn-1.png"; sourceTree = "<group>"; };
 		3E68DF601907C64400DF3992 /* FriensoResources.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FriensoResources.h; path = FriensoAlpha/FriensoResources.h; sourceTree = SOURCE_ROOT; };
 		3E68DF611907C64400DF3992 /* FriensoResources.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FriensoResources.m; path = FriensoAlpha/FriensoResources.m; sourceTree = SOURCE_ROOT; };
+		3E9B0F45193E05900019ED6A /* UserResponseScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserResponseScrollView.h; sourceTree = "<group>"; };
+		3E9B0F46193E05900019ED6A /* UserResponseScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserResponseScrollView.m; sourceTree = "<group>"; };
 		3E9F892118FE8D5E00DA190C /* map-btn-0.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "map-btn-0.png"; sourceTree = "<group>"; };
 		3E9F892718FE99E700DA190C /* SearchViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchViewController.h; sourceTree = "<group>"; };
 		3E9F892818FE99E700DA190C /* SearchViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SearchViewController.m; sourceTree = "<group>"; };
@@ -480,6 +483,8 @@
 				3EB5C446191A5EE5006557DE /* FRUserGenContentButton.m */,
 				3E21A0521920EE050083F1AC /* FRStringImage.h */,
 				3E21A0531920EE050083F1AC /* FRStringImage.m */,
+				3E9B0F45193E05900019ED6A /* UserResponseScrollView.h */,
+				3E9B0F46193E05900019ED6A /* UserResponseScrollView.m */,
 			);
 			name = FriensoHelperClasses;
 			sourceTree = "<group>";
@@ -684,6 +689,7 @@
 				1827931B18BE06750056C849 /* FriensoViewController.m in Sources */,
 				3E4120F818E3005E0058012B /* aBoAViewController.m in Sources */,
 				180E881E18BF15F3009A570F /* FriensoFirstScreenViewController.m in Sources */,
+				3E9B0F47193E05900019ED6A /* UserResponseScrollView.m in Sources */,
 				3EB5C447191A5EE5006557DE /* FRUserGenContentButton.m in Sources */,
 				182E86F018C120CF009AD302 /* ABALoginTVC.m in Sources */,
 				3E21A0541920EE050083F1AC /* FRStringImage.m in Sources */,

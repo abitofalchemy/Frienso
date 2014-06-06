@@ -8,8 +8,11 @@ Version History
 
 * ver 1.5 build XX  - Moved bubbles back to the mapView (but will only show one for a friend with an ongoing 
                     alert/event)
-                    - Added a fullscreen button to the mapView
+                    - Added a fullscreen button to the mapView; button is toggling the mapview between default
+                    and FS.
                     - Switched the Settings button with the WatchMe now button!
+                    - Merged with Udayan's commits
+                    - Added a pending requests drawer+slider 
                     
 * ver 1.5 build 25  - Fixed minor issues with the Profile & CoreCircle views; redoing the way the user
                     logs in or registers!

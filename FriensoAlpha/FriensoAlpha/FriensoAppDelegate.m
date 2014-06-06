@@ -24,6 +24,26 @@
     
     [PFAnalytics trackAppOpenedWithLaunchOptions:launchOptions];
     
+    // Login to Parse
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+    if ( [userDefaults objectForKey:@"adminID"] != NULL ) {
+        [PFUser logInWithUsernameInBackground:[userDefaults objectForKey:@"adminID"]
+                                     password:[userDefaults objectForKey:@"adminPass"]
+                                        block:^(PFUser *user, NSError *error) {
+                                            if (!user) {
+                                                NSLog(@"Login to Parse failed with this error: %@",error);
+                                            }
+                                        }];
+        
+        // If the following ACL settins are required: Set the proper ACLs
+        PFACL *ACL = [PFACL ACLWithUser:[PFUser currentUser]];
+        [ACL setPublicReadAccess:YES];
+        [PFACL setDefaultACL:ACL withAccessForCurrentUser:YES];
+        
+    } // otherwise do nothing
+    
+    
+    
     // Override point for customization after application launch.
     return YES;
 }

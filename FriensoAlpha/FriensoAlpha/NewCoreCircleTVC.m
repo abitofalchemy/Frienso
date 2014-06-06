@@ -217,44 +217,6 @@
     return cell;
 }
 
-/*
-// Override to support conditional editing of the table view.
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    // Return NO if you do not want the specified item to be editable.
-    return YES;
-}
-*/
-
-/*
-// Override to support editing the table view.
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    if (editingStyle == UITableViewCellEditingStyleDelete) {
-        // Delete the row from the data source
-        [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-    }   
-    else if (editingStyle == UITableViewCellEditingStyleInsert) {
-        // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-    }   
-}
-*/
-
-/*
-// Override to support rearranging the table view.
-- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath
-{
-}
-*/
-
-/*
-// Override to support conditional rearranging of the table view.
-- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    // Return NO if you do not want the item to be re-orderable.
-    return YES;
-}
-*/
 
 /*
 #pragma mark - Navigation
@@ -299,7 +261,7 @@
 #pragma mark - Parse related methods
 -(void) uploadCoreFriends:(NSDictionary *)friendsDictionary
 {
-    NSLog(@"dictionary: %@", friendsDictionary);
+    NSLog(@"uploadCoreFriends; dictionary: %@", friendsDictionary);
     PFObject *userCoreFriends = [PFObject objectWithClassName:@"UserCoreFriends"];
     [userCoreFriends setObject:friendsDictionary forKey:@"userCoreFriends"];
     
@@ -437,11 +399,65 @@
     NSArray *contactArray = [[NSArray alloc] initWithObjects:firstName, (lastName == NULL) ? @"" : lastName, contactPhoneNumber, nil];
     [self coreDataAddContact:contactArray];
     
+    NSLog(@"%@",contactPhoneNumber);
+    //send the core friend request to Parse.
+    [self sendCoreFriendRequest:contactPhoneNumber];
+    
+    
     [self dismissViewControllerAnimated:YES completion:nil];
     [self.tableView reloadRowsAtIndexPaths:[self.tableView indexPathsForVisibleRows]
                           withRowAnimation:UITableViewRowAnimationNone];
     
     return NO;
+}
+- (void) sendCoreFriendRequest:(NSString *) phoneNumber { /* UK */
+    if(phoneNumber == nil) {
+        NSLog(@"Invalid number. no request send to parse");
+        return;
+    }
+    //Remove dash from phone Number
+    phoneNumber = [phoneNumber stringByReplacingOccurrencesOfString:@"-" withString:@""];
+    
+    //TODO: check if this request already exists.
+    
+    PFUser *curUser = [PFUser currentUser];
+    if(curUser == nil) {
+        NSLog(@"current user object is nill");
+        return;
+    }
+    
+    PFQuery * pfquery = [PFUser query];
+    //it should be phone number instead of username
+    [pfquery whereKey:@"phoneNumber" equalTo:phoneNumber];
+    [pfquery findObjectsInBackgroundWithBlock:^(NSArray *objects,
+                                                NSError *error) {
+        if (!error) {
+            PFUser * pfuser = [objects firstObject];
+            if(pfuser == nil) {
+                NSLog(@"User not found in the User list");
+                //we are sending pending requests here, for users who do not exist in parse yet.
+                PFObject * pfobject = [PFObject
+                                       objectWithClassName:@"CoreFriendNotOnFriensoYet"];
+                [pfobject setObject:curUser forKey:@"sender"];
+                [pfobject setObject:phoneNumber forKey:@"recipientPhoneNumber"];
+                [pfobject saveInBackground];
+                return;
+            }
+
+            //A user was found
+            //TODO: remove this log
+            NSLog(pfuser.email );
+            PFObject * pfobject = [PFObject
+                                   objectWithClassName:@"CoreFriendRequest"];
+            [pfobject setObject:curUser forKey:@"sender"];
+            [pfobject setObject:pfuser forKey:@"recipient"];
+            [pfobject setObject:@"send" forKey:@"status"];
+            [pfobject setObject:@"recipient" forKey:@"awaitingResponseFrom" ];
+            [pfobject saveInBackground];
+        } else {
+            NSLog(@"%@", error);
+        }
+    }];
 }
 
 - (BOOL)peoplePickerNavigationController:(ABPeoplePickerNavigationController *)peoplePicker shouldContinueAfterSelectingPerson:(ABRecordRef)person property:(ABPropertyID)property identifier:(ABMultiValueIdentifier)identifier
