@@ -320,12 +320,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "FriensoAlpha/FriensoViewController.m"
-            timestampString = "423739214.986713"
+            timestampString = "424021239.523899"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1091"
-            endingLineNumber = "1091"
-            landmarkName = "-configureOverlay"
+            startingLineNumber = "1097"
+            endingLineNumber = "1097"
+            landmarkName = "-setInitialLocation:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

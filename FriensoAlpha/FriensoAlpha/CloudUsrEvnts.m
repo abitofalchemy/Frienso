@@ -9,7 +9,6 @@
 #import "CloudUsrEvnts.h"
 #import "FriensoAppDelegate.h"
 #import "FriensoEvent.h"
-#import <Parse/Parse.h>
 
 
 @implementation CloudUsrEvnts
@@ -39,6 +38,41 @@
 //
 //    
 //}
+
+- (void) trackRequestOfType:(NSString *)requestType
+                    forUser:(PFUser *)cloudUser
+                 withStatus:(NSString *)status
+{
+    // update the cloud-store for pfuser with new state
+    PFQuery *query = [PFQuery queryWithClassName:@"TrackRequest"];
+    [query whereKey:@"SenderPh" equalTo:[cloudUser objectForKey:@"phoneNumber"]];
+    [query getFirstObjectInBackgroundWithBlock:^(PFObject *requestTrack, NSError *error) {
+        if (!error) {
+            // Found requestTrack
+            NSLog(@"%@", requestType);
+            [requestTrack setObject:status forKey:@"status"];
+            [requestTrack setObject:requestType forKey:@"requestType"];
+            [requestTrack saveInBackground];
+        } else {
+            // Did not find any TrackRequest for the user, so we need to create it.
+            NSLog(@"Error: %@", error);
+            PFObject *requestTrack = [PFObject objectWithClassName:@"TrackRequest" ];
+            [requestTrack setObject:[cloudUser objectForKey:@"phoneNumber"] forKey:@"SenderPh"];
+            [requestTrack setObject:[[NSUserDefaults standardUserDefaults] objectForKey:@"userPhone"]
+                             forKey:@"RecipientPh"];
+            [requestTrack setObject:status forKey:@"status"];
+            [requestTrack setObject:requestType forKey:@"requestType"];
+            [requestTrack saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+                if (succeeded) {
+                    NSLog(@"Tracking event record added");
+                } else {
+                    NSLog(@"%@", error);
+                }
+            }];
+        }
+    }];
+}
+
 -(void) setPersonalEvent
 {
     NSDictionary *dic = [[NSDictionary alloc] initWithObjects:@[_alertType,_startDateTime,[self nextHourDate:_startDateTime]]

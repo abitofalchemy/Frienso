@@ -4,7 +4,9 @@
 //
 //  Created by Sal Aguinaga on 2/26/14.
 //  Copyright (c) 2014 ABitOfAlchemy. All rights reserved.
-//
+/** https://help.github.com/articles/fork-a-repo
+ **
+ ** */
 
 #import "FriensoAppDelegate.h"
 #import <Parse/Parse.h>

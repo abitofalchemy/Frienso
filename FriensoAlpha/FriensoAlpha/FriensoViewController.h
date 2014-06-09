@@ -14,8 +14,7 @@
 #import "ABALoginTVC.h"
 
 @interface FriensoViewController : UIViewController <NSFetchedResultsControllerDelegate,
-UITableViewDelegate,UITableViewDataSource,
-MKMapViewDelegate,CLLocationManagerDelegate,UIScrollViewDelegate>
+UITableViewDelegate,UITableViewDataSource,MKMapViewDelegate,CLLocationManagerDelegate,UIAlertViewDelegate>
 
 @property (nonatomic, retain) CLLocationManager *locationManager;
 @property (nonatomic, strong) MKMapView *mapView;

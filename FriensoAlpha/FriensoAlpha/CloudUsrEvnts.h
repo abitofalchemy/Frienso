@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <Parse/Parse.h>
 
 @interface CloudUsrEvnts : NSObject
 
@@ -19,6 +20,8 @@
 - (void) sendToCloud;
 - (void) disableEvent;
 - (BOOL) activeAlertCheck;
+- (void) trackRequestOfType:(NSString *)requestType forUser:(PFUser *)cloudUser withStatus:(NSString *)status;
+
 //- (NSArray *) ongoingAlertsCheck;
 
 @end

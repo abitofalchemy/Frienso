@@ -43,7 +43,7 @@
 }
 -(void) setPendingRequests:(NSArray *) pendingRequestsArray {
     UILabel *pendingReq = [[UILabel alloc] initWithFrame:CGRectZero];
-    [pendingReq setText:[NSString stringWithFormat:@"Pending:%ld", [pendingRequestsArray count]]];
+    [pendingReq setText:[NSString stringWithFormat:@"Pending:%ld", (long)[pendingRequestsArray count]]];
     [pendingReq setFont:[UIFont fontWithName:@"AppleSDGothicNeo-Light" size:16.0]];
     [pendingReq sizeToFit];
     [pendingReq setCenter:CGPointMake(self.frame.size.width - pendingReq.frame.size.width* 0.6,
@@ -51,9 +51,16 @@
     [self addSubview:pendingReq];
     
 }
+-(void) updatePendingRequests:(NSArray *) pendingRequestsArray {
+    for (id subview in [self subviews]){
+        if ( [subview isKindOfClass:[UILabel class]] ) {
+            [subview setText:[NSString stringWithFormat:@"Pending:%ld", (long)[pendingRequestsArray count]]];
+        }
+        
+    }
+}
 
 #pragma mark -
-
 #pragma mark UIScrollView delegate methods
 - (void)scrollViewWillBeginDecelerating:(UIScrollView *)scrollView{
     NSLog(@"scrollViewWillBeginDecelerating ...");

@@ -14,5 +14,6 @@
 @property (nonatomic) CGRect drawerRect;
 
 -(void) setPendingRequests:(NSArray *) pendingRequestsArray;
+-(void) updatePendingRequests:(NSArray *) pendingRequestsArray;
 
 @end

@@ -24,10 +24,10 @@
 #import "FRSyncFriendConnections.h"
 #import "UserResponseScrollView.h"
 
-#define MAPVIEW_DEFAULT_BOUNDS CGRectMake(0,0,self.view.bounds.size.width,self.view.bounds.size.height * 0.5)
-#define ARC4RANDOM_MAX      0x100000000
-#define UIColorFromRGB(rgbValue) [UIColor colorWithRed:((float)((rgbValue & 0xFF0000) >> 16))/255.0 green:((float)((rgbValue & 0xFF00) >> 8))/255.0 blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
-#define CELL_CONTENT_MARGIN 10.0f
+#define MAPVIEW_DEFAULT_BOUNDS  CGRectMake(0,0,self.view.bounds.size.width,self.view.bounds.size.height * 0.5)
+#define ARC4RANDOM_MAX          0x100000000
+#define UIColorFromRGB(rgbValue)    [UIColor colorWithRed:((float)((rgbValue & 0xFF0000) >> 16))/255.0 green:((float)((rgbValue & 0xFF00) >> 8))/255.0 blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
+#define CELL_CONTENT_MARGIN     10.0f
 
 static NSString *eventCell = @"eventCell";
 enum PinAnnotationTypeTag {
@@ -41,16 +41,17 @@ enum PinAnnotationTypeTag {
 {
     NSMutableArray *coreFriendsArray;
 }
-@property (nonatomic,retain) NSArray *appFrameProperties;
-@property (nonatomic,retain) NSMutableArray *friendsLocationArray;
 @property (nonatomic,strong) NSFetchedResultsController *frc;
+@property (nonatomic,strong) UIActivityIndicatorView    *loadingView;
+@property (nonatomic,strong) UserResponseScrollView     *scrollView;
+@property (nonatomic,retain) NSArray        *appFrameProperties;
+@property (nonatomic,retain) NSMutableArray *friendsLocationArray;
+@property (nonatomic,retain) NSMutableArray *pendingRqstsArray; // pending requests array
 @property (nonatomic,strong) CLLocation     *location;
 @property (nonatomic,strong) UITableView    *tableView;
 @property (nonatomic,strong) UIButton       *selectedBubbleBtn;
-@property (nonatomic,strong) UIActivityIndicatorView *loadingView;
 @property (nonatomic,strong) UIButton       *fullScreenBtn;
-@property (nonatomic,strong) UserResponseScrollView   *scrollView;
-@property (nonatomic,strong) UILabel *drawerLabel;
+@property (nonatomic,strong) UILabel        *drawerLabel;
 @property (nonatomic)        CGFloat scrollViewY;
 
 -(void)actionPanicEvent:(UIButton *)theButton;
@@ -177,6 +178,15 @@ enum PinAnnotationTypeTag {
 }
 
 #pragma mark - Local Actions
+-(void) pendingRqstAction:(id) sender {
+    UIButton *btn = (UIButton *) sender;
+    PFUser *friend =  [self.pendingRqstsArray objectAtIndex:btn.tag];
+    [[[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"Pending Request:%2ld",(long)btn.tag]
+                                message:[NSString stringWithFormat:@"from %@",friend.username]
+                               delegate:self
+                      cancelButtonTitle:@"Dismiss"
+                      otherButtonTitles:@"Accept",@"Reject", nil] show];
+}
 -(void) openCloseDrawer
 {
     CGFloat yOffset = self.view.frame.size.height*0.1;
@@ -184,22 +194,23 @@ enum PinAnnotationTypeTag {
     
     if (self.scrollView.frame.size.height>self.view.bounds.size.height*0.05)
     {
+        [UIView animateWithDuration:0.5 animations:^{
         CGRect closeDrawerRect = CGRectMake(0, self.scrollView.frame.origin.y, self.view.bounds.size.width,_drawerLabel.frame.size.height*0.9);
         [self.scrollView setFrame:closeDrawerRect];
         self.scrollView.contentSize = self.scrollView.frame.size;
         
         [_drawerLabel setTextColor:[UIColor whiteColor]];
         [self.tableView setCenter:CGPointMake(self.tableView.center.x, self.tableView.center.y - y_tableViewOffset)];// remove tableview yOffset
-        
+        }];
     } else { // Open Drawer
-        
-        CGRect openDrawerRect = CGRectMake(0, self.scrollView.frame.origin.y, self.view.bounds.size.width,
-                                           yOffset);
-        [self.tableView setCenter:CGPointMake(self.tableView.center.x, self.tableView.center.y + y_tableViewOffset)];
-        [self.scrollView setFrame:openDrawerRect];
-        self.scrollView.contentSize = self.scrollView.frame.size;
-        [_drawerLabel setTextColor:[UIColor darkGrayColor]];
-        
+        [UIView animateWithDuration:0.5 animations:^{
+            CGRect openDrawerRect = CGRectMake(0, self.scrollView.frame.origin.y, self.view.bounds.size.width,
+                                               yOffset);
+            [self.tableView setCenter:CGPointMake(self.tableView.center.x, self.tableView.center.y + y_tableViewOffset)];
+            [self.scrollView setFrame:openDrawerRect];
+            self.scrollView.contentSize = self.scrollView.frame.size;
+            [_drawerLabel setTextColor:[UIColor darkGrayColor]];
+        }];
     }
 }
 
@@ -229,7 +240,28 @@ enum PinAnnotationTypeTag {
                                                self.scrollViewY)];
     }
 }
+-(void) addPendingRequest:(PFUser *)parseFriend withTag:(NSInteger)tagNbr {
+    // addPendingRequest  adds a pending request to drawer+slider that user can interact w/ Pfuser
 
+    UIButton *pndngRqstBtn = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 44, 44)];
+    UIImage *img =[[FRStringImage alloc] imageTextBubbleOfSize:pndngRqstBtn.frame.size];
+    [pndngRqstBtn setBackgroundImage:img forState:UIControlStateNormal];
+    NSString *bubbleLabel = [[parseFriend.username substringToIndex:2] uppercaseString];
+    [pndngRqstBtn setTitle:bubbleLabel forState:UIControlStateNormal];
+    
+    [pndngRqstBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [pndngRqstBtn setTitleColor:UIColorFromRGB(0x8e44ad) forState:UIControlStateHighlighted];
+    [pndngRqstBtn setTag:tagNbr];
+    [pndngRqstBtn addTarget:self action:@selector(pendingRqstAction:)
+           forControlEvents:UIControlEventTouchUpInside];
+    [self.scrollView addSubview:pndngRqstBtn];
+    CGFloat btnCenterX = pndngRqstBtn.center.x*2 + pndngRqstBtn.center.x*2*tagNbr;
+    [pndngRqstBtn setCenter:CGPointMake(btnCenterX,self.scrollView.frame.size.height*1.6)];
+    
+    
+    [self.friendsLocationArray insertObject:([parseFriend valueForKey:@"currentLocation"] == NULL)  ? @"0,0" : [parseFriend valueForKey:@"currentLocation"]  atIndex:tagNbr];
+    
+}
 -(void) addUserBubbleToMap:(PFUser *)parseUser withTag:(NSInteger)tagNbr {
     
     UIButton *mLocBtn = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 44, 44)];
@@ -338,7 +370,7 @@ enum PinAnnotationTypeTag {
                                            self.scrollViewY)];
     
     [self.view addSubview:self.scrollView];
-    [self.scrollView setPendingRequests:@[@"one",@"two"]];
+    //[self.scrollView setPendingRequests:@[@"one",@"two"]];
     
     UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(openCloseDrawer)];
     // prevents the scroll view from swallowing up the touch event of child buttons
@@ -411,7 +443,7 @@ enum PinAnnotationTypeTag {
 }
 */
 -(void) setupEventsTableView { /* this user's events */
-    CGRect appFrame = [[self.appFrameProperties objectAtIndex:0] CGRectValue];
+    //CGRect appFrame = [[self.appFrameProperties objectAtIndex:0] CGRectValue];
     
     UIView *tableHelpView = [[UIView alloc] initWithFrame:CGRectMake(0, self.scrollView.frame.size.height +
                                                                      self.mapView.frame.size.height,
@@ -608,6 +640,7 @@ enum PinAnnotationTypeTag {
     
     self.navigationController.navigationBarHidden = NO;
     self.friendsLocationArray = [[NSMutableArray alloc] init]; // friends location cache
+    self.pendingRqstsArray    = [[NSMutableArray alloc] init]; // Initialize pending requests holding array
     
     // Show progress indicator to tell user to wait a bit
     self.loadingView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
@@ -1079,7 +1112,10 @@ enum PinAnnotationTypeTag {
                 PFUser *friensoUser    = [objWithAlert valueForKey:@"friensoUser"];
                 NSLog(@"%@: has an activeAlert of type-> %@", friensoUser.username, [objWithAlert objectForKey:@"alertType"]);
                 // temporarily add these to the map and sliding drawer
-                
+                [self addPendingRequest:friensoUser withTag:0];
+                [self.pendingRqstsArray insertObject:friensoUser atIndex:0/*btn tag number*/];
+                [self.scrollView setPendingRequests:self.pendingRqstsArray];
+                // Check if this user is in your core or watchCircle
                 if ([self inYourCoreUserWithPhNumber:[friensoUser valueForKey:@"phoneNumber"]]){
                     [self addUserBubbleToMap:friensoUser withTag:i];
                     i++;
@@ -1111,18 +1147,26 @@ enum PinAnnotationTypeTag {
 }
 -(void)friendLocInteraction:(UIButton *)sender
 {
+    /* friendLocInteraction:
+    ** Is the action triggered when user touches the button overlay on the mapview.
+    ** */
     NSLog(@"...friendLocInteraction");
-//    NSLog(@"%@", [self.friendsLocationArray objectAtIndex:sender.tag]);
-    NSString *coordinateStr =[self.friendsLocationArray objectAtIndex:sender.tag];
-    CGFloat geoLatitude = [[coordinateStr componentsSeparatedByString:@","][0] doubleValue];
-    CGFloat geoLongitude = [[coordinateStr componentsSeparatedByString:@","][1] doubleValue];
-
-    [self.mapView setRegion:MKCoordinateRegionMake(CLLocationCoordinate2DMake(geoLatitude, geoLongitude),
-                                                   MKCoordinateSpanMake(0.01, 0.01) )];
-    NSArray *array = @[sender.titleLabel.text,                               // Initials
-                       [coordinateStr componentsSeparatedByString:@","][0],  // latitude
-                       [coordinateStr componentsSeparatedByString:@","][1]]; // longitude
+    //NSLog(@"[0]%@", [self.friendsLocationArray objectAtIndex:sender.tag]);
+    //NSString *coordinateStr =[self.friendsLocationArray objectAtIndex:sender.tag];
+    PFGeoPoint *coordinatesPoint = [self.friendsLocationArray objectAtIndex:sender.tag];
     
+    //CGFloat geoLatitude = [[coordinateStr componentsSeparatedByString:@","][0] doubleValue];
+    //CGFloat geoLongitude = [[coordinateStr componentsSeparatedByString:@","][1] doubleValue];
+
+    [self.mapView setRegion:MKCoordinateRegionMake(CLLocationCoordinate2DMake([coordinatesPoint latitude], [coordinatesPoint longitude]),
+                                                   MKCoordinateSpanMake(0.01, 0.01) )];
+//    NSArray *array = @[sender.titleLabel.text,                               // Initials
+//                       [coordinateStr componentsSeparatedByString:@","][0],  // latitude
+//                       [coordinateStr componentsSeparatedByString:@","][1]]; // longitude
+    NSArray *array = @[sender.titleLabel.text,                               // Initials
+                        [NSString stringWithFormat:@"%f",[coordinatesPoint latitude]],  // latitude
+                        [NSString stringWithFormat:@"%f",[coordinatesPoint longitude]]]; // longitude
+
     GeoCDPointAnnotation *geoCDPointAnn = [[GeoCDPointAnnotation alloc] initWithObject:array];
     [self.mapView addAnnotation:geoCDPointAnn];
     
@@ -1132,7 +1176,7 @@ enum PinAnnotationTypeTag {
         **/
 
     //[self lastKnownLocationForFriend:[coFrDic objectForKey:keys[0]]];
-    /*NSDictionary *coFrDic = [[NSUserDefaults standardUserDefaults] objectForKey:@"CoreFriendsContactInfoDicKey"];
+    /*** NSDictionary *coFrDic = [[NSUserDefaults standardUserDefaults] objectForKey:@"CoreFriendsContactInfoDicKey"];
     NSArray *keys = [coFrDic allKeys];
     
     
@@ -1153,7 +1197,7 @@ enum PinAnnotationTypeTag {
         default:
             break;
     }
-    */
+    ** */
     
     if(self.selectedBubbleBtn != NULL) // hold sender and enable last selected bubble
     {
@@ -1302,7 +1346,57 @@ enum PinAnnotationTypeTag {
          }
      }];
 }
-/*
+
+#pragma mark
+#pragma mark - AlertView Delegate
+- (BOOL)alertViewShouldEnableFirstOtherButton:(UIAlertView *)alertView
+{
+    return YES;
+}
+-(void)alertView:(UIAlertView *)alertView willDismissWithButtonIndex:(NSInteger)buttonIndex {
+    //NSLog(@"[ will dismiss ]");
+}
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
+    //NSLog(@"[ did dismiss ]");
+}
+-(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    NSString *title = [alertView buttonTitleAtIndex:buttonIndex];//NSLog(@"%@",title);
+    NSString *tagNbr= [title substringFromIndex:(title.length -2)];
+    int btnTagNbr   = (int)[tagNbr integerValue];
+    
+    if (buttonIndex == 1) // accept
+    {
+        [self addUserBubbleToMap:[self.pendingRqstsArray objectAtIndex:[tagNbr integerValue]]
+                         withTag:[tagNbr integerValue]];    //NSLog(@" accepted request for: %@", [self.pendingRqstsArray objectAtIndex:[tagNbr integerValue]]);
+
+        for (id subview in [self.scrollView subviews]){
+            if ( [subview isKindOfClass:[UIButton class]] ) {
+                if ([tagNbr integerValue] ==  [(UIButton *)subview tag])
+                {
+                    [subview removeFromSuperview];
+//                    [self updateCloudStoreUserEvent:[self.pendingRqstsArray objectAtIndex:[tagNbr integerValue]]
+//                                          withState:@"accepted"];
+                    // Cloud track request
+                    [[[CloudUsrEvnts alloc] init] trackRequestOfType:@"xxx"
+                                                             forUser:[_pendingRqstsArray objectAtIndex:btnTagNbr]
+                                                          withStatus:@"accepted"];
+#warning SA/TODO determine the type of request to track or modify the method and leave out
+                    // Now update requests count
+                    [self.pendingRqstsArray removeObjectAtIndex:[tagNbr integerValue]];
+                    [self.scrollView updatePendingRequests:self.pendingRqstsArray];
+                    // update Cloud-Store
+                }
+            }
+            
+        }
+    } else if (buttonIndex == 2) // reject
+        NSLog(@" rejected request");
+    else // dismiss
+        NSLog(@"dismissed alertview");
+}
+
+/*  REFERENCED WORK
  *  http://borkware.com/quickies/one?topic=Graphics
  *  http://stackoverflow.com/questions/10895035/coregraphics-draw-an-image-on-a-white-canvas
  *  http://iwork3.us/2013/09/13/pantone-ny-fashion-week-2014-spring-colors/

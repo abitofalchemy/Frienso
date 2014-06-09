@@ -6,13 +6,18 @@ Frienso iOS Alpha
 Version History
 ---------------
 
-* ver 1.5 build XX  - Moved bubbles back to the mapView (but will only show one for a friend with an ongoing 
+* ver 1.5 build 25+ - Moved bubbles back to the mapView (but will only show one for a friend with an ongoing
                     alert/event)
                     - Added a fullscreen button to the mapView; button is toggling the mapview between default
                     and FS.
                     - Switched the Settings button with the WatchMe now button!
                     - Merged with Udayan's commits
                     - Added a pending requests drawer+slider 
+                    - Added code to fetch a user (pfuser) and model pendingRequests, followed through to make
+                    sure tha accepting a requests triggers the appropriate set of actions; currently we pick up
+                    anyone with an ongoing watchMe request.
+                    - Changed colum in Parse:Frienso:TrackRequest from RecepientsPh to RecipientPh
+
                     
 * ver 1.5 build 25  - Fixed minor issues with the Profile & CoreCircle views; redoing the way the user
                     logs in or registers!
@@ -73,15 +78,19 @@ Version History
 
 
 
-
+Working On
+----------
+* SA:  WatchMe switch triggers internal alarms and push notifications
+* SA:  Managing and maintaining 'Requests'
 
 ToDo
 ----
+* {SA} Complete code for pending requests of diff types: watch, helpNow, and coreFriend
+  ** WatchMe is now working with Cloud-store; 
 * Add alarm timer to AlertEvent 
 * Cache Univ Emergency Contacts from a separate Parse class
 * Don't track users: {track only when user has an event going}
 * Async update locations from cloud
-+Add fullscreen button to map
 +Add Horizontal scroll for the Active users & the rest of your friends.
 
 * Add event creation -------------
@@ -108,6 +117,8 @@ ToDo
 
 Tasks Done / Project Log:
 -------------------------
+* Add fullscreen button to map
+
 * { Done } * Test/review 'new user registration' process
 * { Done } Don't duplicate User if it is in CoreGroup or in the UWatchGroup
 * { Done } Fully logout
