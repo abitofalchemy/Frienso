@@ -82,9 +82,15 @@ Working On
 ----------
 * SA:  WatchMe switch triggers internal alarms and push notifications
 * SA:  Managing and maintaining 'Requests'
+* SA:  Fix bugs
+* NY:  Push notifications for WatchMe and CoreFriend requests 
+* NY:  Finish the PanicVC
+* UK:  Finishing the bubble actions on the mapviw (i.e. initiate phone call or SMS) 
+* UK/NY:  In app chatting with QuickBlocks
 
 ToDo
 ----
+* {NY} Finish panic view controller
 * {SA} Complete code for pending requests of diff types: watch, helpNow, and coreFriend
   ** WatchMe is now working with Cloud-store; 
 * Add alarm timer to AlertEvent 

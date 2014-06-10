@@ -1103,6 +1103,7 @@ enum PinAnnotationTypeTag {
     PFQuery *query = [PFQuery queryWithClassName:@"UserEvent"];
     [query whereKey:@"eventActive" equalTo:[NSNumber numberWithBool:YES]];
     [query includeKey:@"friensoUser"];
+    [query includeKey:@"eventType"];
     query.limit = 10;
     [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         if (!error) {
@@ -1112,8 +1113,12 @@ enum PinAnnotationTypeTag {
                 PFUser *friensoUser    = [objWithAlert valueForKey:@"friensoUser"];
                 NSLog(@"%@: has an activeAlert of type-> %@", friensoUser.username, [objWithAlert objectForKey:@"alertType"]);
                 // temporarily add these to the map and sliding drawer
-                [self addPendingRequest:friensoUser withTag:0];
+                [self addPendingRequest:friensoUser withTag:0]; // temp add to drawwer+slider
                 [self.pendingRqstsArray insertObject:friensoUser atIndex:0/*btn tag number*/];
+                NSDictionary *dic = [[NSDictionary alloc] initWithObjectsAndKeys:
+                                     friensoUser,@"pfUser",
+                                     [objWithAlert valueForKey:@"friensoUser"], @"reqType",
+                                     [NSNumber numberWithInteger:0],@"btnTag", nil];
                 [self.scrollView setPendingRequests:self.pendingRqstsArray];
                 // Check if this user is in your core or watchCircle
                 if ([self inYourCoreUserWithPhNumber:[friensoUser valueForKey:@"phoneNumber"]]){
