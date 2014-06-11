@@ -344,17 +344,25 @@ enum PinAnnotationTypeTag {
 #pragma mark - Interaction with NSUserDefaults
 -(BOOL) inYourCoreUserWithPhNumber:(NSString *)phNumberOnWatch  {
     BOOL inYourCoreBool = NO;
+    NSDictionary *dic = [[NSUserDefaults standardUserDefaults] dictionaryForKey:@"CoreFriendsContactInfoDicKey"];
+    NSInteger j = 0;
     
-#warning need to query person and onwatch sections of my CoreFriends
-// WORKING ON
-    //    for (NSString *corePhNbr in coreFriendsPhoneNbrs) {
-//        if ([corePhNbr isEqualToString:phNumberOnWatch]) {
-//            // add an overlay
-//            inYourCoreBool = YES;
-//            break;
-//        } else
-//            NSLog(@" ... user does not match my contacts!");
-//    }
+    for (NSString *coreCirclePh in [dic allValues]) {
+        NSString *clnStr = [self stripStringOfUnwantedChars:coreCirclePh];
+        NSString *str = [clnStr substringFromIndex:(clnStr.length - 10)];
+        
+        if ( ![str isEqualToString:phNumberOnWatch]){
+            //NSLog(@"%@<>%@, %@",str,[friensoUser objectForKey:@"phoneNumber"], friensoUser.username );
+            j++;
+        }
+        if (j<3) {
+            //NSLog(@"%@<>%@, %@",str,[friensoUser objectForKey:@"phoneNumber"], friensoUser.username );
+            //[self addFriensoUserToCDCoreFriends:friensoUser]; //[self addFriensoUserToCDCoreFriends:friensoUser andReloadFRCfor:table_view];
+            inYourCoreBool = YES;
+        }
+    }
+    //NSLog(@"%@ inYourCircle? %d", phNumberOnWatch, inYourCoreBool);
+    
     return inYourCoreBool;
 }
 
@@ -804,6 +812,30 @@ enum PinAnnotationTypeTag {
         }
     }
 }
+-(void) setWatchingUserInCD:(PFUser *)friensoUser
+{
+    FriensoAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+    NSManagedObjectContext *managedObjectContext = appDelegate.managedObjectContext;
+    FriensoEvent *localEvent = [NSEntityDescription insertNewObjectForEntityForName:@"FriensoEvent"
+                                                                    inManagedObjectContext:managedObjectContext];
+    
+    if (localEvent != nil){
+        localEvent.eventSubtitle  = @"watch";
+        NSString *eventStr = @"You are watching: ";
+        localEvent.eventTitle     = [eventStr stringByAppendingString:friensoUser.username];
+        localEvent.eventPriority  = [NSNumber numberWithInteger:2];
+        localEvent.eventCreated   = [NSDate date];
+        localEvent.eventModified  = [NSDate date];
+        
+        NSError *savingError = nil;
+        if([managedObjectContext save:&savingError]) {
+            NSLog(@"Successfully saved the context");
+        } else { NSLog(@"Failed to save the context. Error = %@", savingError); }
+    } else {
+        NSLog(@"Failed to create a new event.");
+    }
+}
+
 - (void) actionAddFriensoUserLocation:(PFGeoPoint *)geoPoint forUser:(NSString *)friend {
     /* Method:      actionAddFriensoUserLocation
        Objective:   Display the user's current location in the Frienso Activity list-view
@@ -1115,22 +1147,24 @@ enum PinAnnotationTypeTag {
             for (PFObject *objWithAlert in objects){
                 //PFUser *user = [objWithAlert valueForKey:@"friensoUser"];
                 PFUser *friensoUser    = [objWithAlert valueForKey:@"friensoUser"];
-                NSLog(@"%@: has an activeAlert of type-> %@", friensoUser.username, [objWithAlert objectForKey:@"alertType"]);
-                // temporarily add these to the map and sliding drawer
+                //NSLog(@"My Friend with active event:%@", friensoUser.username);
                 
                 // Check if this user is in your core or watchCircle
                 if ([self inYourCoreUserWithPhNumber:[friensoUser valueForKey:@"phoneNumber"]]){
+                    // friensoUser is in my network, am I tracking him/her?
+                    //NSLog(@"am I watching him/her?: %d", [self ])
                     [self addPendingRequest:friensoUser withTag:i]; // temp add to drawwer+slider
                     NSDictionary *dic = [[NSDictionary alloc] initWithObjectsAndKeys:
                                          friensoUser,                               @"pfUser",
                                          [objWithAlert valueForKey:@"alertType"], @"reqType",
                                          [NSNumber numberWithInteger:i],            @"btnTag", nil];
                     [self.pendingRqstsArray insertObject:dic atIndex:i]; // simulation
-                    [self.scrollView setPendingRequests:self.pendingRqstsArray];
+                    
                     //[self addUserBubbleToMap:friensoUser withTag:i];
                     i++;
                 }
             }
+            [self.scrollView setPendingRequests:self.pendingRqstsArray];
         } else {
             // Did not find any UserStats for the current user
             NSLog(@"Error: %@", error);
@@ -1138,22 +1172,6 @@ enum PinAnnotationTypeTag {
         }
     }];
     
-//    if (self.location) {
-//        [self.mapView removeAnnotations:self.mapView.annotations];
-//        [self.mapView removeOverlays:self.mapView.overlays];
-//        
-//        /**CircleOverlay *overlay = [[CircleOverlay alloc] initWithCoordinate:self.location.coordinate radius:self.radius];
-//        [self.mapView addOverlay:overlay];
-//        **/
-//        
-//        //[self addCoreFriendBubblesToMap:self.mapView];
-//        
-//        GeoQueryAnnotation *annotation = [[GeoQueryAnnotation alloc] initWithCoordinate:self.location.coordinate radius:1000];
-//        [self.mapView addAnnotation:annotation];
-//        
-//        //[self updateLocations];
-//    } else
-//        NSLog(@"! no location ");
 }
 -(void)friendLocInteraction:(UIButton *)sender
 {
@@ -1380,8 +1398,9 @@ enum PinAnnotationTypeTag {
         
         NSDictionary *frUserDic = [self.pendingRqstsArray objectAtIndex:btnTagNbr]; // 10Jun14:SA
         PFUser *friensoUser = [frUserDic objectForKey:@"pfUser"];                   // 10Jun14:SA
-        [self addUserBubbleToMap:friensoUser
-                         withTag:[tagNbr integerValue]];    //NSLog(@" accepted request for: %@", [self.pendingRqstsArray objectAtIndex:[tagNbr integerValue]]);
+        [self addUserBubbleToMap:friensoUser             /* accepted to watch this user */
+                         withTag:[tagNbr integerValue]];
+        [self setWatchingUserInCD:friensoUser]; // Watching Friend set
         for (id subview in [self.scrollView subviews]){
             if ( [subview isKindOfClass:[UIButton class]] ) {
                 NSLog(@"[0]:tag=%ld", (long)[(UIButton *)subview tag] );
@@ -1432,6 +1451,11 @@ enum PinAnnotationTypeTag {
         NSLog(@"dismissed alertview");
 }
 
+#pragma mark - Helper Methods
+- (NSString *) stripStringOfUnwantedChars:(NSString *)phoneNumber {
+    NSString *cleanedString = [[phoneNumber componentsSeparatedByCharactersInSet:[[NSCharacterSet characterSetWithCharactersInString:@"0123456789"] invertedSet]] componentsJoinedByString:@""];
+    return cleanedString;
+}
 /*  REFERENCED WORK
  *  http://borkware.com/quickies/one?topic=Graphics
  *  http://stackoverflow.com/questions/10895035/coregraphics-draw-an-image-on-a-white-canvas
