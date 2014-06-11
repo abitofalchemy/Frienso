@@ -180,9 +180,11 @@ enum PinAnnotationTypeTag {
 #pragma mark - Local Actions
 -(void) pendingRqstAction:(id) sender {
     UIButton *btn = (UIButton *) sender;
-    PFUser *friend =  [self.pendingRqstsArray objectAtIndex:btn.tag];
+    NSDictionary *frUserDic = [self.pendingRqstsArray objectAtIndex:btn.tag]; // 10Jun14:SA
+    PFUser *friensoUser = [frUserDic objectForKey:@"pfUser"];                               // 10Jun14:SA
+    //PFUser *friend =  [self.pendingRqstsArray objectAtIndex:btn.tag];
     [[[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"Pending Request:%2ld",(long)btn.tag]
-                                message:[NSString stringWithFormat:@"from %@",friend.username]
+                                message:[NSString stringWithFormat:@"from %@",friensoUser.username]
                                delegate:self
                       cancelButtonTitle:@"Dismiss"
                       otherButtonTitles:@"Accept",@"Reject", nil] show];
@@ -339,11 +341,13 @@ enum PinAnnotationTypeTag {
     [self performSegueWithIdentifier:@"showFriesoMap" sender:self];
 }
 
-#pragma mark - Intaction with NSUserDefaults
+#pragma mark - Interaction with NSUserDefaults
 -(BOOL) inYourCoreUserWithPhNumber:(NSString *)phNumberOnWatch  {
     BOOL inYourCoreBool = NO;
+    
 #warning need to query person and onwatch sections of my CoreFriends
-//    for (NSString *corePhNbr in coreFriendsPhoneNbrs) {
+// WORKING ON
+    //    for (NSString *corePhNbr in coreFriendsPhoneNbrs) {
 //        if ([corePhNbr isEqualToString:phNumberOnWatch]) {
 //            // add an overlay
 //            inYourCoreBool = YES;
@@ -416,7 +420,8 @@ enum PinAnnotationTypeTag {
                                          self.mapView.frame.size.height- _fullScreenBtn.center.y *1.2 ) ];
     [self.mapView addSubview:self.fullScreenBtn];
     
-    
+    // CONFIGUREOVERLAY:
+    // configureOverlay->check for pending requests-> if user accepts requests, add overlay to mapview
     [self configureOverlay];
     
     if([self.loadingView isAnimating])
@@ -623,7 +628,7 @@ enum PinAnnotationTypeTag {
 {
     [super viewDidLoad];
     
-    printf("[ HomeView: FriensoVC ]\n");
+    printf("[ Home View: FriensoVC ]\n");
     
     // Check if self is currentUser (Parse)
     PFUser *currentUser = [PFUser currentUser];
@@ -1059,7 +1064,7 @@ enum PinAnnotationTypeTag {
         MKPinAnnotationView *pinAnnotationView = (MKPinAnnotationView *)view;
         GeoQueryAnnotation *geoQueryAnnotation = (GeoQueryAnnotation *)pinAnnotationView.annotation;
         self.location = [[CLLocation alloc] initWithLatitude:geoQueryAnnotation.coordinate.latitude longitude:geoQueryAnnotation.coordinate.longitude];
-        [self configureOverlay];
+        [self configureOverlay];                  // the method also checks for pending requests
     }
 }
 
@@ -1068,7 +1073,6 @@ enum PinAnnotationTypeTag {
     if (_locationManager != nil) {
 		return _locationManager;
 	}
-	//NSLog(@"[1]");
 	_locationManager = [[CLLocationManager alloc] init];
     _locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters;
     _locationManager.delegate = self;
@@ -1103,7 +1107,7 @@ enum PinAnnotationTypeTag {
     PFQuery *query = [PFQuery queryWithClassName:@"UserEvent"];
     [query whereKey:@"eventActive" equalTo:[NSNumber numberWithBool:YES]];
     [query includeKey:@"friensoUser"];
-    [query includeKey:@"eventType"];
+    //[query includeKey:@"eventType"];
     query.limit = 10;
     [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         if (!error) {
@@ -1113,16 +1117,17 @@ enum PinAnnotationTypeTag {
                 PFUser *friensoUser    = [objWithAlert valueForKey:@"friensoUser"];
                 NSLog(@"%@: has an activeAlert of type-> %@", friensoUser.username, [objWithAlert objectForKey:@"alertType"]);
                 // temporarily add these to the map and sliding drawer
-                [self addPendingRequest:friensoUser withTag:0]; // temp add to drawwer+slider
-                [self.pendingRqstsArray insertObject:friensoUser atIndex:0/*btn tag number*/];
-                NSDictionary *dic = [[NSDictionary alloc] initWithObjectsAndKeys:
-                                     friensoUser,@"pfUser",
-                                     [objWithAlert valueForKey:@"friensoUser"], @"reqType",
-                                     [NSNumber numberWithInteger:0],@"btnTag", nil];
-                [self.scrollView setPendingRequests:self.pendingRqstsArray];
+                
                 // Check if this user is in your core or watchCircle
                 if ([self inYourCoreUserWithPhNumber:[friensoUser valueForKey:@"phoneNumber"]]){
-                    [self addUserBubbleToMap:friensoUser withTag:i];
+                    [self addPendingRequest:friensoUser withTag:i]; // temp add to drawwer+slider
+                    NSDictionary *dic = [[NSDictionary alloc] initWithObjectsAndKeys:
+                                         friensoUser,                               @"pfUser",
+                                         [objWithAlert valueForKey:@"alertType"], @"reqType",
+                                         [NSNumber numberWithInteger:i],            @"btnTag", nil];
+                    [self.pendingRqstsArray insertObject:dic atIndex:i]; // simulation
+                    [self.scrollView setPendingRequests:self.pendingRqstsArray];
+                    //[self addUserBubbleToMap:friensoUser withTag:i];
                     i++;
                 }
             }
@@ -1372,21 +1377,23 @@ enum PinAnnotationTypeTag {
     
     if (buttonIndex == 1) // accept
     {
-        [self addUserBubbleToMap:[self.pendingRqstsArray objectAtIndex:[tagNbr integerValue]]
+        
+        NSDictionary *frUserDic = [self.pendingRqstsArray objectAtIndex:btnTagNbr]; // 10Jun14:SA
+        PFUser *friensoUser = [frUserDic objectForKey:@"pfUser"];                   // 10Jun14:SA
+        [self addUserBubbleToMap:friensoUser
                          withTag:[tagNbr integerValue]];    //NSLog(@" accepted request for: %@", [self.pendingRqstsArray objectAtIndex:[tagNbr integerValue]]);
-
         for (id subview in [self.scrollView subviews]){
             if ( [subview isKindOfClass:[UIButton class]] ) {
-                if ([tagNbr integerValue] ==  [(UIButton *)subview tag])
+                NSLog(@"[0]:tag=%ld", (long)[(UIButton *)subview tag] );
+                if (btnTagNbr ==  [(UIButton *)subview tag])
                 {
                     [subview removeFromSuperview];
-//                    [self updateCloudStoreUserEvent:[self.pendingRqstsArray objectAtIndex:[tagNbr integerValue]]
-//                                          withState:@"accepted"];
+                    
                     // Cloud track request
-                    [[[CloudUsrEvnts alloc] init] trackRequestOfType:@"xxx"
-                                                             forUser:[_pendingRqstsArray objectAtIndex:btnTagNbr]
+                    NSLog(@":%@",[frUserDic objectForKey:@"reqType"]);
+                    [[[CloudUsrEvnts alloc] init] trackRequestOfType:[frUserDic objectForKey:@"reqType"]
+                                                             forUser:friensoUser  //[_pendingRqstsArray objectAtIndex:btnTagNbr]
                                                           withStatus:@"accepted"];
-#warning SA/TODO determine the type of request to track or modify the method and leave out
                     // Now update requests count
                     [self.pendingRqstsArray removeObjectAtIndex:[tagNbr integerValue]];
                     [self.scrollView updatePendingRequests:self.pendingRqstsArray];
@@ -1396,8 +1403,32 @@ enum PinAnnotationTypeTag {
             
         }
     } else if (buttonIndex == 2) // reject
-        NSLog(@" rejected request");
-    else // dismiss
+    {
+        NSLog(@"'request' rejected ");
+        // log the reject to the cloud
+        // remove the request and update
+        NSDictionary *frUserDic = [self.pendingRqstsArray objectAtIndex:btnTagNbr]; // 10Jun14:SA
+        PFUser *friensoUser = [frUserDic objectForKey:@"pfUser"];                   // 10Jun14:SA
+        
+        for (id subview in [self.scrollView subviews]){
+            if ( [subview isKindOfClass:[UIButton class]] ) {
+                if (btnTagNbr ==  [(UIButton *)subview tag])
+                {
+                    [subview removeFromSuperview];
+                    
+                    // Cloud track request
+                    [[[CloudUsrEvnts alloc] init] trackRequestOfType:[frUserDic objectForKey:@"reqType"]
+                                                             forUser:friensoUser  //[_pendingRqstsArray objectAtIndex:btnTagNbr]
+                                                          withStatus:@"rejected"];
+                    // Now update requests count
+                    [self.pendingRqstsArray removeObjectAtIndex:[tagNbr integerValue]];
+                    [self.scrollView updatePendingRequests:self.pendingRqstsArray];
+                    // update Cloud-Store
+                }
+            }
+            
+        }
+    }else // dismiss
         NSLog(@"dismissed alertview");
 }
 

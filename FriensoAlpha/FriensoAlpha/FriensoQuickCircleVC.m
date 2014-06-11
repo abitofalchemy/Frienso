@@ -51,12 +51,12 @@ static NSString *coreFriendsCell = @"coreFriendsCell";
     
     [self.navigationController setToolbarHidden:YES];
     
-    [[[FRSyncFriendConnections alloc] init] syncUWatchToCoreFriends]; // Sync those uWatch
 
     // Update this user's current location
     FRCoreDataParse *frCDPObject = [[FRCoreDataParse alloc] init];
     [frCDPObject updateThisUserLocation];
     [frCDPObject updateCoreFriendsLocation];
+
     
 	//  Add new table view
     self.tableView = [[UITableView alloc] init];
@@ -66,6 +66,9 @@ static NSString *coreFriendsCell = @"coreFriendsCell";
     self.tableView.dataSource = self;
     self.tableView.delegate   = self;
     [self.view addSubview:self.tableView];
+    
+    [[[FRSyncFriendConnections alloc] init] listWatchCoreFriends]; // List those uWatch
+    //    [[[FRSyncFriendConnections alloc] init] syncUWatchToCoreFriends]; // Sync those uWatch
     
     // Create the fetch request first 
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc]
@@ -138,12 +141,12 @@ static NSString *coreFriendsCell = @"coreFriendsCell";
     }
     
     CoreFriends *friend = [self.frc objectAtIndexPath:indexPath];
-    NSLog(@"%@", friend.coreFirstName);
-    NSLog(@"%@", friend.coreNickName);
+//    NSLog(@"%@", friend.coreFirstName);
+//    NSLog(@"%@", friend.coreNickName);
     if ([friend.coreType isEqualToString:@"Person"])
-        cell.textLabel.text = friend.coreNickName; // : // stringByAppendingFormat:@" %@", person.lastName];
-    else if ( [friend.coreType isEqualToString:@"OnWatch"])
-        cell.textLabel.text = friend.coreNickName;
+        cell.textLabel.text = (friend.coreNickName == NULL) ? friend.coreFirstName : friend.coreNickName; // : // stringByAppendingFormat:@" %@", person.lastName];
+    else if ( [friend.coreType isEqualToString:@"WatchCircle"])
+        cell.textLabel.text = friend.coreNickName == NULL ? friend.coreFirstName : friend.coreNickName;
     else
         cell.textLabel.text = friend.coreTitle;
     

@@ -443,7 +443,7 @@
 
             //A user was found
             //TODO: remove this log
-            NSLog(pfuser.email );
+            //NSLog(pfuser.email );
             PFObject * pfobject = [PFObject
                                    objectWithClassName:@"CoreFriendRequest"];
             [pfobject setObject:curUser forKey:@"sender"];

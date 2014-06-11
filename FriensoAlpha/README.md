@@ -17,8 +17,10 @@ Version History
                     sure tha accepting a requests triggers the appropriate set of actions; currently we pick up
                     anyone with an ongoing watchMe request.
                     - Changed colum in Parse:Frienso:TrackRequest from RecepientsPh to RecipientPh
+                    - Finished tracking requests of type 'WatchMe'
+                    - {bug} Fixed a problem in the quick-coreFriends-view, there was an issue with nicknames being nil.
+                    FriensoQuickCircle VC is now pulling unique names of friends that current user is Watching
 
-                    
 * ver 1.5 build 25  - Fixed minor issues with the Profile & CoreCircle views; redoing the way the user
                     logs in or registers!
                     - Fixed bugs related to the hidding of the bootom tool-bar
@@ -80,27 +82,32 @@ Version History
 
 Working On
 ----------
-* SA:  WatchMe switch triggers internal alarms and push notifications
-* SA:  Managing and maintaining 'Requests'
-* SA:  Fix bugs
-* NY:  Push notifications for WatchMe and CoreFriend requests 
-* NY:  Finish the PanicVC
-* UK:  Finishing the bubble actions on the mapviw (i.e. initiate phone call or SMS) 
+* SA: WatchMe switch triggers internal alarms and push notifications
+* SA: Managing and maintaining 'Requests'
+* SA: Fix bugs
+        (1) fix detecting if WatchMe events come from a user in you friends list
+        Future versions of this should be push-notifications driven
+* NY: Push notifications for WatchMe and CoreFriend requests
+* NY/SA:  Finish the PanicVC
+* UK: Finishing the bubble actions on the mapviw (i.e. initiate phone call or SMS)
 * UK/NY:  In app chatting with QuickBlocks
 
 ToDo
 ----
 * {NY} Finish panic view controller
 * {SA} Complete code for pending requests of diff types: watch, helpNow, and coreFriend
+  ** Maintain the type of alert as we track it
   ** WatchMe is now working with Cloud-store; 
-* Add alarm timer to AlertEvent 
+  ** Accept request works
+  ** Reject request ...
+* {SA} Add alarm timer to AlertEvent
 * Cache Univ Emergency Contacts from a separate Parse class
-* Don't track users: {track only when user has an event going}
 * Async update locations from cloud
 +Add Horizontal scroll for the Active users & the rest of your friends.
 
 * Add event creation -------------
-  Create a full event
+  WatchMe:  {bug} check that Parse class UserEvent updates the eventType   
+    Create a full event
     Go for a run, etc.
     {working} - added a button to top left of right bar button, need to connect it to an event generation
     VC
@@ -119,12 +126,12 @@ ToDo
 * Handle Parse time-outs
     Trap parse calls to the network - network outage
 * Input validation for user profile editing
-
+* Document the project's app development
 
 Tasks Done / Project Log:
 -------------------------
+* {done : 10Jun14/SA} Don't track users: {track only when user has an event going}
 * Add fullscreen button to map
-
 * { Done } * Test/review 'new user registration' process
 * { Done } Don't duplicate User if it is in CoreGroup or in the UWatchGroup
 * { Done } Fully logout

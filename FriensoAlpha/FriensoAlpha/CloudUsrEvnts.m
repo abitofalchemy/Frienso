@@ -43,32 +43,61 @@
                     forUser:(PFUser *)cloudUser
                  withStatus:(NSString *)status
 {
-    // update the cloud-store for pfuser with new state
-    PFQuery *query = [PFQuery queryWithClassName:@"TrackRequest"];
-    [query whereKey:@"SenderPh" equalTo:[cloudUser objectForKey:@"phoneNumber"]];
-    [query getFirstObjectInBackgroundWithBlock:^(PFObject *requestTrack, NSError *error) {
+//    NSLog(@"%@", [[NSUserDefaults standardUserDefaults] objectForKey:@"userPhone"]);
+    // update the cloud-store for pfuser with new state; subqueries should be on the same Class
+//    PFQuery *query = [PFQuery queryWithClassName:@"TrackRequest"];
+//    [query whereKey:@"SenderPh" equalTo:[cloudUser objectForKey:@"phoneNumber"]];
+//    [query whereKey:@"RecipientPh" equalTo:[[NSUserDefaults standardUserDefaults] objectForKey:@"userPhone"]];
+//    PFQuery *sentByQuery = [PFQuery queryWithClassName:@"TrackRequest"];
+//    [sentByQuery whereKey:@"SenderPh" equalTo:[cloudUser objectForKey:@"phoneNumber"]];
+    
+    PFQuery *sentToQuery = [PFQuery queryWithClassName:@"TrackRequest"];
+    [sentToQuery whereKey:@"RecipientPh" equalTo:[[NSUserDefaults standardUserDefaults] objectForKey:@"userPhone"]];
+    
+//    PFQuery *query = [PFQuery orQueryWithSubqueries:@[sentByQuery,sentToQuery]]; // query with multiple constraints
+    [sentToQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         if (!error) {
             // Found requestTrack
-            NSLog(@"%@", requestType);
-            [requestTrack setObject:status forKey:@"status"];
-            [requestTrack setObject:requestType forKey:@"requestType"];
-            [requestTrack saveInBackground];
+            NSLog(@"requestType: %@, %@", objects, requestType);
+            if (objects.count == 0) {
+                PFObject *requestTrack = [PFObject objectWithClassName:@"TrackRequest" ];
+                [requestTrack setObject:[cloudUser objectForKey:@"phoneNumber"] forKey:@"SenderPh"];
+                [requestTrack setObject:[[NSUserDefaults standardUserDefaults] objectForKey:@"userPhone"]
+                                 forKey:@"RecipientPh"];
+                [requestTrack setObject:status forKey:@"status"];
+                [requestTrack setObject:requestType forKey:@"requestType"];
+                [requestTrack saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+                    if (succeeded) {
+                        NSLog(@"Tracking event record added");
+                    } else {
+                        NSLog(@"%@", error);
+                    }
+                }];
+            } else {
+                // find those that match the Sender
+                for (PFObject *trackRequest in objects) {
+                    if ([[trackRequest objectForKey:@"SenderPh"] isEqualToString:[cloudUser objectForKey:@"phoneNumber"]])
+                    {    // update this trackRequest->'requestType'
+                        NSLog(@"%@", [trackRequest objectForKey:@"requestType"]);
+                        [trackRequest setObject:status forKey:@"status"];
+                        [trackRequest setObject:requestType forKey:@"requestType"];
+                        [trackRequest saveInBackground];
+                    }
+                }
+            }
+//            [requestTrack setObject:status      forKey:@"status"];
+//            [requestTrack setObject:requestType forKey:@"requestType"];
+//            [requestTrack saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+//                if (succeeded) {
+//                    NSLog(@"Tracking event record added");
+//                } else {
+//                    NSLog(@"Update failed! ... %@", error);
+//                }
+//            }];
         } else {
             // Did not find any TrackRequest for the user, so we need to create it.
-            NSLog(@"Error: %@", error);
-            PFObject *requestTrack = [PFObject objectWithClassName:@"TrackRequest" ];
-            [requestTrack setObject:[cloudUser objectForKey:@"phoneNumber"] forKey:@"SenderPh"];
-            [requestTrack setObject:[[NSUserDefaults standardUserDefaults] objectForKey:@"userPhone"]
-                             forKey:@"RecipientPh"];
-            [requestTrack setObject:status forKey:@"status"];
-            [requestTrack setObject:requestType forKey:@"requestType"];
-            [requestTrack saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-                if (succeeded) {
-                    NSLog(@"Tracking event record added");
-                } else {
-                    NSLog(@"%@", error);
-                }
-            }];
+            NSLog(@"trackReques Error: %@", error);
+            
         }
     }];
 }

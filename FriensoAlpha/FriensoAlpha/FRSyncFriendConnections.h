@@ -15,4 +15,7 @@
 
 - (id) init;
 - (void) syncUWatchToCoreFriends;
+- (void) listWatchCoreFriends;
+//- (void) listWatchCoreFriendsForTableView:(UITableView *)table_view;
+
 @end

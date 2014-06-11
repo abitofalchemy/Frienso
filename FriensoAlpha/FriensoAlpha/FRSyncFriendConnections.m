@@ -36,10 +36,54 @@
     /* finally return the object */
     return self;
 }
+//- (void) listWatchCoreFriendsForTableView:(UITableView *)table_view
+- (void) listWatchCoreFriends
+{
+    PFQuery *query = [PFQuery queryWithClassName:@"UserCoreFriends"];
+    [query includeKey:@"user"];
+    [query orderByDescending:@"createdAt"];
+    [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+        if (!error) {   // The find succeeded.
+            for (PFObject *object in objects) {
+                NSMutableDictionary *parseCoreFriendsDic = [object valueForKey:@"userCoreFriends"];
+                PFUser   *friensoUser    = [object valueForKey:@"user"];
+                //NSLog(@"users safety network: %@", friensoUser);
+                NSString *rootPhNbrStr = [[NSUserDefaults standardUserDefaults] objectForKey:@"userPhone"];
+                if ( parseCoreFriendsDic != NULL && friensoUser != NULL) {
+                    for (NSString *phone_nbr in [parseCoreFriendsDic allValues]){
+                        if([[self stripStringOfUnwantedChars:phone_nbr] isEqualToString:rootPhNbrStr])
+                        {
+                            //NSLog(@"with connection to me: %@ with ph: %@",friensoUser.username, [friensoUser objectForKey:@"phoneNumber"]);
+                            //[_uWatchArray addObject:friensoUser];
+                            //[self addWatchingCoreFriend:friensoUser ifNotInMyCoreCircle:[[NSUserDefaults standardUserDefaults] dictionaryForKey:@"CoreFriendsContactInfoDicKey"]];
+                            NSDictionary *dic = [[NSUserDefaults standardUserDefaults] dictionaryForKey:@"CoreFriendsContactInfoDicKey"];
+                            NSInteger j = 0;
+                            for (NSString *coreCirclePh in [dic allValues]) {
+                                NSString *clnStr = [self stripStringOfUnwantedChars:coreCirclePh];
+                                NSString *str = [clnStr substringFromIndex:(clnStr.length - 10)];
+                                
+                                if ( ![str isEqualToString:[friensoUser objectForKey:@"phoneNumber"] ] ){
+                                    //NSLog(@"%@<>%@, %@",str,[friensoUser objectForKey:@"phoneNumber"], friensoUser.username );
+                                    j++;
+                                }
+                                if (j==3) {
+                                    //NSLog(@"%@<>%@, %@",str,[friensoUser objectForKey:@"phoneNumber"], friensoUser.username );
+                                    [self addFriensoUserToCDCoreFriends:friensoUser]; //[self addFriensoUserToCDCoreFriends:friensoUser andReloadFRCfor:table_view];
+                                }
+                            }
+                        }
+                    }//ends for loop
+                }
+            }
+        } else {
+            NSLog(@"Error: %@ %@", error, [error userInfo]);  // Log details of the failure
+        }
+    }];
+    
+}
 - (void) syncUWatchToCoreFriends
 {
-    NSLog(@"... syncUWatchToCoreFriends");
-    
+    NSLog(@"**** syncUWatchToCoreFriends ****");
     
     PFQuery *query = [PFQuery queryWithClassName:@"UserCoreFriends"];
     [query includeKey:@"user"];
@@ -61,9 +105,9 @@
                     }//ends for loop
                 }
             }//ends for
-            printf("[ filtered those I am watching ]\n");
+            //printf("[ filtered those I am watching ]\n");
             _uWatchCount    = [_uWatchArray count];
-            //NSLog(@"_uWatchCount: %d", _uWatchArray.count);
+            NSLog(@"[0]");// _uWatchCount: %d", _uWatchArray.count);
             for (PFUser *extFriend in _uWatchArray)  {
                 [self fetchPhoneNbrForThoseIWatch:extFriend  withCount:_uWatchCount];
                 _uWatchCount--;
@@ -84,6 +128,63 @@
 }
 
 #pragma mark - Async actions
+//- (void) addFriensoUserToCDCoreFriends:(PFUser *)friend2Watch andReloadFRCfor:(UITableView *)table_view{
+- (void) addFriensoUserToCDCoreFriends:(PFUser *)friend2Watch
+{
+//    NSMutableDictionary *locDicCoreFriends = [[NSUserDefaults standardUserDefaults] objectForKey:@"CoreFriendsContactInfoDicKey"];
+//    NSArray *coreFriendsPhoneNbrs = [NSMutableArray arrayWithArray:[locDicCoreFriends allValues]];
+    
+    
+    
+    FriensoAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+    NSManagedObjectContext *managedObjectContext = appDelegate.managedObjectContext;
+    // First check to see if the objectId already exists
+    NSEntityDescription *entityDescription = [NSEntityDescription entityForName:@"CoreFriends"
+                                                         inManagedObjectContext:managedObjectContext];
+    
+    NSFetchRequest *request = [[NSFetchRequest alloc] init];
+    [request setPredicate:[NSPredicate predicateWithFormat:@"coreObjId like %@",friend2Watch.objectId]];//[pfObj objectForKey:@"resObjId"]]];
+    [request setEntity:entityDescription];
+    
+    BOOL unique = YES;
+    NSError  *error;
+    NSArray *items = [managedObjectContext executeFetchRequest:request error:&error];
+    if(items.count > 0){
+        unique = NO;
+    } //else { NSLog(@" the object is unique"); }
+    
+    if (unique) {
+        /*********/
+        CoreFriends  *coreFriendsHndlr = [NSEntityDescription insertNewObjectForEntityForName:@"CoreFriends"
+                                                                       inManagedObjectContext:managedObjectContext];
+        if (coreFriendsHndlr != nil)
+        {
+            
+            coreFriendsHndlr.coreNickName  = [[friend2Watch.username substringToIndex:2] uppercaseString];
+            coreFriendsHndlr.coreFirstName = [[friend2Watch.username substringToIndex:2] uppercaseString];
+            coreFriendsHndlr.coreEmail     = friend2Watch.username;
+            coreFriendsHndlr.corePhone     = [friend2Watch objectForKey:@"phoneNumber"];
+            coreFriendsHndlr.coreObjId     = friend2Watch.objectId;
+            coreFriendsHndlr.coreModified  = [NSDate date];
+            coreFriendsHndlr.coreCreated   = [NSDate date];
+            coreFriendsHndlr.coreType      = @"WatchCircle";
+            
+            NSError *savingError = nil;
+            if([managedObjectContext save:&savingError]) {
+                NSLog(@"Successfully cached the resource");
+            } else
+                NSLog(@"Failed to save the context. Error = %@", savingError);
+            
+            
+        } else {
+            NSLog(@"Failed to create a new event.");
+        }
+        /*********/
+    } else NSLog(@"");//! Parse event is not unique");
+    
+}
+
+
 - (void) fetchPhoneNbrForThoseIWatch:(PFUser *)friend2Watch withCount:(NSInteger)currentCount {
     
     //NSLog(@"%@:",friend2Watch.username);
@@ -117,21 +218,21 @@
         [newQuery findObjectsInBackgroundWithBlock:^(NSArray *connObjects, NSError *error)
         {
             if (!error) {
+                //  NSLog (@"%d, %@", (int)[connObjects count], connObjects);
                 for (PFObject *newObject in connObjects) {
                     NSString *str1 = [newObject objectForKey:@"userNumber"];
                     NSString *str1a = [str1 substringWithRange:NSMakeRange(str1.length-10, 10)];
-                    //NSLog(@"%@: %@",friend2Watch.username,str1a);
+                    
                     NSDictionary *dic = [[NSDictionary alloc] initWithObjects:@[friend2Watch] forKeys:@[str1a]];
                     [_uWatchGrpNbrsArr addObject:dic]; // watchFriend pfuser: phone number
                     //NSLog(@"comparing: %@ to:",str1a);
                     for (NSString *coreNbr in coreFriendsPhoneNbrs ) {
                         NSString *coreNbrStr = [coreNbr substringWithRange:NSMakeRange(coreNbr.length-10, 10)];
                         if ([str1a longLongValue] == [coreNbrStr longLongValue]){
-                            NSLog(@"Match!: %@",coreNbrStr);
                             [_phNbrCachedArr addObject:coreNbr]; // these numbers have to be ommitted from CoreFriends
                         }
 //                        else
-//                            NSLog(@"No match");
+//                            NSLog(@"Unique friend to add under Watching coreFriend category: %@", str1a  );
                     } // ends coreNbr loop
                     //NSLog(@"[0]");
                 } // ends other loop
@@ -205,7 +306,7 @@
                     coreFriendsHndlr.coreObjId     = watchUserObj.objectId;
                     coreFriendsHndlr.coreModified  = [NSDate date];
                     coreFriendsHndlr.coreCreated   = [NSDate date];
-                    coreFriendsHndlr.coreType      = @"OnWatch";
+                    coreFriendsHndlr.coreType      = @"WatchCircle";
 
                     NSError *savingError = nil;
                     if([managedObjectContext save:&savingError]) {
@@ -223,12 +324,14 @@
             [_phNbrCachedArr removeObject:removeObject];
     }
 }
-                //NSLog(@"add to CoreFriends: %@, %@", watchUserObj.username, watchStr);
-
-//            }
-//        }
-//        j++;
-//    }
+-(void) addWatchingCoreFriend:(PFUser *)friensoUser ifNotInMyCoreCircle:(NSDictionary *)coreCircleDic
+{
+    for (NSString *coreCirclePh in [coreCircleDic allValues]) {
+        if (![coreCirclePh isEqualToString:[friensoUser objectForKey:@"phoneNumber"]]) // if not in corecircle
+            NSLog(@"User %@ with Ph: %@ not in coreCircle", friensoUser.username, [friensoUser objectForKey:@"phoneNumber"]);
+    }
+    
+}
 
     
 
@@ -285,7 +388,7 @@
 //                             //                                 coreFResource.coreObjId     = friend2Watch.objectId;
 //                             //                                 coreFResource.coreModified  = [NSDate date];
 //                             //                                 coreFResource.coreCreated   = [NSDate date];
-//                             //                                 coreFResource.coreType      = @"OnWatch";
+//                             //                                 coreFResource.coreType      = @"WatchCircle";
 //                             //
 //                             //
 //                             //                                 NSError *savingError = nil;
