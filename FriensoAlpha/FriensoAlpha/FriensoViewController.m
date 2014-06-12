@@ -349,8 +349,16 @@ enum PinAnnotationTypeTag {
     
     for (NSString *coreCirclePh in [dic allValues]) {
         NSString *clnStr = [self stripStringOfUnwantedChars:coreCirclePh];
-        NSString *str = [clnStr substringFromIndex:(clnStr.length - 10)];
-        
+        NSLog(@"%@",clnStr);
+        NSString *str;
+        if(clnStr.length > 10) { //if the number has more than 10 digits.
+            //TODO: what about international numbers?
+            str = [clnStr substringFromIndex:(clnStr.length - 10)];
+        } else {
+            str = clnStr;
+        }
+        NSLog(@"%@",str);
+
         if ( ![str isEqualToString:phNumberOnWatch]){
             //NSLog(@"%@<>%@, %@",str,[friensoUser objectForKey:@"phoneNumber"], friensoUser.username );
             j++;
