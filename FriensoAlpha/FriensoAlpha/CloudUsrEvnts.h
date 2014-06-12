@@ -20,7 +20,8 @@
 - (void) sendToCloud;
 - (void) disableEvent;
 - (BOOL) activeAlertCheck;
-- (void) trackRequestOfType:(NSString *)requestType forUser:(PFUser *)cloudUser withStatus:(NSString *)status;
+- (void) trackRequestOfType:  (NSString *)requestType forUser:(PFUser *)cloudUser withStatus:(NSString *)status;
+- (void) isUserInMy2WatchList:(PFUser *)friensoUser;
 
 //- (NSArray *) ongoingAlertsCheck;
 

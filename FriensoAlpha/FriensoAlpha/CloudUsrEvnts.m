@@ -38,7 +38,23 @@
 //
 //    
 //}
-
+- (void) isUserInMy2WatchList:(PFUser *)friensoUser
+{
+    PFQuery *sentToQuery = [PFQuery queryWithClassName:@"TrackRequest"];
+    [sentToQuery whereKey:@"SenderPh" equalTo:[friensoUser valueForKey:@"phoneNumber"]];
+    [sentToQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+        if (!error) {
+            for (PFObject *trackRequest in objects) {
+                if ([[trackRequest valueForKey:@"status"] isEqualToString:@"accepted"]) {
+                    NSLog(@"Accepted request from: %@", [trackRequest valueForKey:@"SenderPh"] );
+                }
+            }
+        } else {
+            // Did not find any TrackRequest for the user, so we need to create it.
+            NSLog(@"trackReques Error: %@", error);
+        }
+    }];
+}
 - (void) trackRequestOfType:(NSString *)requestType
                     forUser:(PFUser *)cloudUser
                  withStatus:(NSString *)status
@@ -143,7 +159,7 @@
             // Did not find any UserStats for the current user
             NSLog(@"Error: %@", error);
             PFObject *userEvent = [PFObject objectWithClassName:@"UserEvent" ];
-            [userEvent setObject:@"watch" forKey:@"alertType"];
+            [userEvent setObject:@"watch" forKey:@"eventType"];
             [userEvent setObject:[NSNumber numberWithBool:YES] forKey:@"eventActive"];
             [userEvent setObject:[self nextHourDate:_startDateTime]  forKey:@"endDateTime"];
             [userEvent setObject:[PFUser currentUser] forKey:@"friensoUser"];

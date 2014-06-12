@@ -265,7 +265,7 @@ enum PinAnnotationTypeTag {
     
 }
 -(void) addUserBubbleToMap:(PFUser *)parseUser withTag:(NSInteger)tagNbr {
-    
+    NSLog(@"%d",tagNbr);
     UIButton *mLocBtn = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 44, 44)];
     UIImage *img =[[FRStringImage alloc] imageTextBubbleOfSize:mLocBtn.frame.size];
     [mLocBtn setBackgroundImage:img forState:UIControlStateNormal];
@@ -405,10 +405,9 @@ enum PinAnnotationTypeTag {
                               
 }
 -(void) setupMapView {
-    if ([[NSUserDefaults standardUserDefaults] objectForKey:@"userLocation"] != NULL) {
-        [self.locationManager startUpdatingLocation];
-        [self setInitialLocation:self.locationManager.location];
-    }
+    [self.locationManager startUpdatingLocation];
+    [self setInitialLocation:self.locationManager.location];
+    
     self.mapView = [[MKMapView alloc] initWithFrame:CGRectZero];
     [self.mapView setFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.bounds.size.height * 0.5)];
 
@@ -422,6 +421,7 @@ enum PinAnnotationTypeTag {
     [self.fullScreenBtn addTarget:self action:@selector(mapViewFSToggle:)
                  forControlEvents:UIControlEventTouchUpInside];
     [self.fullScreenBtn setTitle:@"┛"/*@""*/ forState:UIControlStateNormal];
+    [self.fullScreenBtn setTitleColor:[UIColor blueColor] forState:UIControlStateNormal];
     [self.fullScreenBtn.titleLabel setFont:[UIFont fontWithName:@"AppleSDGothicNeo-Bold" size:24.0]];
     self.fullScreenBtn.titleLabel.textAlignment = NSTextAlignmentCenter;
     self.fullScreenBtn.layer.shadowOffset  = CGSizeMake(1.5f, 1.5f);
@@ -703,15 +703,16 @@ enum PinAnnotationTypeTag {
         }
     }
     
-    if ([[NSUserDefaults standardUserDefaults] objectForKey:@"userLocation"] != NULL) {
-        [self setupMapView];
+//    NSLog(@"userlocation: %@", [[NSUserDefaults standardUserDefaults] valueForKey:@"userLocation"]);
+//    if ([[NSUserDefaults standardUserDefaults] objectForKey:@"userLocation"] != NULL) {
 //        [self.locationManager startUpdatingLocation];
 //        [self setInitialLocation:self.locationManager.location];
-        
+        NSLog(@"Seting up View widgets");
+        [self setupMapView];
         [self setupRequestScrollView];
         [self setupEventsTableView];
         
-    }
+//    }
     
     //  cache resources from parse // The className to query on
     PFQuery *query = [PFQuery queryWithClassName:@"Resources"];
@@ -781,7 +782,7 @@ enum PinAnnotationTypeTag {
                 } else {
                     NSLog(@"Failed to create a new event.");
                 }
-            } else NSLog(@"! Parse event is not unique");
+            } //else NSLog(@"! Parse event is not unique");
         }
     }];
 }
@@ -819,6 +820,36 @@ enum PinAnnotationTypeTag {
             
         }
     }
+}
+-(BOOL) queryCDFriensoEvents4ActiveWatchEvent:(PFUser *)friensoUser
+{
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init]; // Create the fetch request
+    NSEntityDescription *entity  = [NSEntityDescription entityForName:@"FriensoEvent"
+                                              inManagedObjectContext:[self managedObjectContext]];
+    
+    [fetchRequest setEntity:entity];
+    [fetchRequest setPredicate:[NSPredicate predicateWithFormat:@"eventSubtitle like 'watch'"]];
+    //NSSortDescriptor *phoneSort =  [[NSSortDescriptor alloc] initWithKey:@"corePhone" ascending:YES];
+    //fetchRequest.sortDescriptors = @[phoneSort];
+    
+    NSError *error;
+    BOOL retBool;
+    NSArray *fetchedObjects = [[self managedObjectContext] executeFetchRequest:fetchRequest error:&error];
+    if (fetchedObjects == nil) {
+        // Handle the error.
+        retBool = NO;
+    }  else {
+       for (NSManagedObject *mObject in fetchedObjects) {
+           //NSLog(@"%@, %@", friensoUser.username, [mObject valueForKey:@"eventTitle"]);
+           if ([[mObject valueForKey:@"eventTitle"] rangeOfString:friensoUser.username].location == NSNotFound)
+               retBool = NO;
+           else {
+               retBool = YES;
+               
+           }
+       }
+    }
+    return retBool;
 }
 -(void) setWatchingUserInCD:(PFUser *)friensoUser
 {
@@ -1143,33 +1174,48 @@ enum PinAnnotationTypeTag {
 }
 
 - (void)configureOverlay {
+    NSLog(@"---------- configureOverlay");
     // Check for friends with active alerts
     PFQuery *query = [PFQuery queryWithClassName:@"UserEvent"];
     [query whereKey:@"eventActive" equalTo:[NSNumber numberWithBool:YES]];
     [query includeKey:@"friensoUser"];
-    //[query includeKey:@"eventType"];
     query.limit = 10;
     [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         if (!error) {
-            NSInteger i = 0;
-            for (PFObject *objWithAlert in objects){
-                //PFUser *user = [objWithAlert valueForKey:@"friensoUser"];
-                PFUser *friensoUser    = [objWithAlert valueForKey:@"friensoUser"];
-                //NSLog(@"My Friend with active event:%@", friensoUser.username);
+            NSInteger i = 0;  // counter for bubbles on the pending req drawer
+            NSInteger k = 0;  // counter for bubbles on the mapview
+            for (PFObject *eventUser in objects){
+                PFUser *friensoUser    = [eventUser valueForKey:@"friensoUser"];
                 
                 // Check if this user is in your core or watchCircle
                 if ([self inYourCoreUserWithPhNumber:[friensoUser valueForKey:@"phoneNumber"]]){
-                    // friensoUser is in my network, am I tracking him/her?
-                    //NSLog(@"am I watching him/her?: %d", [self ])
-                    [self addPendingRequest:friensoUser withTag:i]; // temp add to drawwer+slider
-                    NSDictionary *dic = [[NSDictionary alloc] initWithObjectsAndKeys:
-                                         friensoUser,                               @"pfUser",
-                                         [objWithAlert valueForKey:@"alertType"], @"reqType",
-                                         [NSNumber numberWithInteger:i],            @"btnTag", nil];
-                    [self.pendingRqstsArray insertObject:dic atIndex:i]; // simulation
+                    /* friensoUser is in my network, am I tracking him/her?
+                    //NSLog(@"%@ w/active event of type: %@",friensoUser.username,[eventUser valueForKey:@"eventType"]);
+                    NSLog(@"am I watching him/her?: %d", [self ])
+                    [[[CloudUsrEvnts alloc] init] isUserInMy2WatchList:friensoUser];
                     
-                    //[self addUserBubbleToMap:friensoUser withTag:i];
-                    i++;
+                    if ([self queryCDFriensoEvents4ActiveWatchEvent:friensoUser])
+                        NSLog(@"!!! YES");
+                    else
+                        NSLog(@"!!! NO");
+                    */
+                    if ([self queryCDFriensoEvents4ActiveWatchEvent:friensoUser]) {
+                        NSLog(@"Watching: %@",friensoUser.username);    // Users I watch w/active event!!
+                        [self addUserBubbleToMap:friensoUser            // Accepted to watch this user,
+                                         withTag:k];                    // so load it on the mapview
+                        k++;
+                    } else {
+                    
+                        [self addPendingRequest:friensoUser withTag:i]; // Add user to drawer+slider
+                        NSDictionary *dic = [[NSDictionary alloc] initWithObjectsAndKeys:
+                                             friensoUser,                               @"pfUser",
+                                             [eventUser valueForKey:@"eventType"], @"reqType",
+                                             [NSNumber numberWithInteger:i],            @"btnTag", nil];
+                        [self.pendingRqstsArray insertObject:dic atIndex:i]; // simulation
+                        
+                        //[self addUserBubbleToMap:friensoUser withTag:i];
+                        i++;
+                    }
                 }
             }
             [self.scrollView setPendingRequests:self.pendingRqstsArray];
@@ -1408,7 +1454,7 @@ enum PinAnnotationTypeTag {
         PFUser *friensoUser = [frUserDic objectForKey:@"pfUser"];                   // 10Jun14:SA
         [self addUserBubbleToMap:friensoUser             /* accepted to watch this user */
                          withTag:[tagNbr integerValue]];
-        [self setWatchingUserInCD:friensoUser]; // Watching Friend set
+        //[self setWatchingUserInCD:friensoUser]; // Watching Friend set
         for (id subview in [self.scrollView subviews]){
             if ( [subview isKindOfClass:[UIButton class]] ) {
                 NSLog(@"[0]:tag=%ld", (long)[(UIButton *)subview tag] );
@@ -1457,6 +1503,9 @@ enum PinAnnotationTypeTag {
         }
     }else // dismiss
         NSLog(@"dismissed alertview");
+}
+-(void) isUserInMy2WatchList:(PFUser*)friensoUser{
+    
 }
 
 #pragma mark - Helper Methods
