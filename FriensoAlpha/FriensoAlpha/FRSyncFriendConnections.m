@@ -107,7 +107,7 @@
             }//ends for
             //printf("[ filtered those I am watching ]\n");
             _uWatchCount    = [_uWatchArray count];
-            NSLog(@"[0]");// _uWatchCount: %d", _uWatchArray.count);
+            //NSLog(@"[0]");// _uWatchCount: %d", _uWatchArray.count);
             for (PFUser *extFriend in _uWatchArray)  {
                 [self fetchPhoneNbrForThoseIWatch:extFriend  withCount:_uWatchCount];
                 _uWatchCount--;
@@ -332,88 +332,5 @@
     }
     
 }
-
-    
-
-//#pragma mark - Async actions
-//- (void) fetchPhoneNbrForThoseIWatch:(PFUser *)friend2Watch {
-//    
-//    NSMutableDictionary *locDicCoreFriends = [[NSUserDefaults standardUserDefaults] objectForKey:@"CoreFriendsContactInfoDicKey"];
-//    NSArray *allNos = [[NSArray alloc] initWithArray:[locDicCoreFriends allValues]];
-//    
-//    FriensoAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
-//    NSManagedObjectContext *managedObjectContext = appDelegate.managedObjectContext;
-//    // First check to see if the objectId already exists
-//    NSEntityDescription *entityDescription = [NSEntityDescription entityForName:@"CoreFriends"
-//                                                         inManagedObjectContext:managedObjectContext];
-//    
-//    NSFetchRequest *request = [[NSFetchRequest alloc] init];
-//    [request setPredicate:[NSPredicate predicateWithFormat:@"coreObjId like %@",friend2Watch.objectId]];//[pfObj objectForKey:@"resObjId"]]];
-//    [request setEntity:entityDescription];
-//    
-//    BOOL unique = YES;
-//    NSError  *error;
-//    NSArray *items = [managedObjectContext executeFetchRequest:request error:&error];
-//    if(items.count > 0){
-//        unique = NO;
-//    } else { NSLog(@" the object is unique"); }
-//    
-//    if (unique) {
-//        //        CoreFriends  *coreFResource = [NSEntityDescription insertNewObjectForEntityForName:@"CoreFriends"
-//        //                                                                    inManagedObjectContext:managedObjectContext];
-//        
-//        /*********/
-//        PFQuery *newQuery = [PFQuery queryWithClassName:@"UserConnection"];
-//        [newQuery whereKey:@"user" equalTo:friend2Watch];
-//        [newQuery findObjectsInBackgroundWithBlock:^(NSArray *connObjects, NSError *error)
-//         {
-//             if (!error) {
-//                 for (PFObject *newObject in connObjects) {
-//                     for (NSString *locCoreNbr in allNos) {
-//                         NSString *str1 = [newObject objectForKey:@"userNumber"];
-//                         NSString *str1a = [str1 substringWithRange:NSMakeRange(str1.length-10, 10)];
-//                         NSString *str2 = [locCoreNbr substringWithRange:NSMakeRange(locCoreNbr.length-10, 10)];
-//                         NSLog(@"%@, %@",str1a,str2);
-//                         if ([str1 isEqualToString:str2]){
-//                             NSLog(@"%@, %@",str1a,str2);
-//                             NSLog(@"!! number already exists: %@", locCoreNbr);
-//                             break;
-//                         } else { // add it to the CoreFriends
-//                             //                             if (coreFResource != nil)
-//                             //                             {
-//                             //
-//                             //                                 coreFResource.coreTitle = friend2Watch.username;
-//                             //                                 coreFResource.coreNickName = [[friend2Watch.email substringToIndex:2] uppercaseString];
-//                             //                                 coreFResource.corePhone = [newObject objectForKey:@"userNumber"];
-//                             //                                 coreFResource.coreObjId     = friend2Watch.objectId;
-//                             //                                 coreFResource.coreModified  = [NSDate date];
-//                             //                                 coreFResource.coreCreated   = [NSDate date];
-//                             //                                 coreFResource.coreType      = @"WatchCircle";
-//                             //
-//                             //
-//                             //                                 NSError *savingError = nil;
-//                             //                                 if([managedObjectContext save:&savingError]) {
-//                             //                                     NSLog(@"Successfully cached the resource");
-//                             //                                 } else
-//                             //                                     NSLog(@"Failed to save the context. Error = %@", savingError);
-//                             //
-//                             //
-//                             //                             } else {
-//                             //                                 NSLog(@"Failed to create a new event.");
-//                             //                             }
-//                             
-//                         } // ends if
-//                     } // ends for loop
-//                 } // ends other loop
-//                 
-//             } else {
-//                 // Log details of the failure
-//                 NSLog(@"Error: %@ %@", error, [error userInfo]);
-//             }
-//         }];// ends 2nd query
-//        /*********/
-//    } else NSLog(@"! Parse event is not unique");
-//    
-//}
 
 @end

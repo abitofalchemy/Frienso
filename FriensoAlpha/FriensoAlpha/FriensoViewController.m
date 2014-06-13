@@ -405,8 +405,7 @@ enum PinAnnotationTypeTag {
                               
 }
 -(void) setupMapView {
-    [self.locationManager startUpdatingLocation];
-    [self setInitialLocation:self.locationManager.location];
+    
     
     self.mapView = [[MKMapView alloc] initWithFrame:CGRectZero];
     [self.mapView setFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.bounds.size.height * 0.5)];
@@ -415,6 +414,8 @@ enum PinAnnotationTypeTag {
     self.mapView.layer.borderWidth = 2.0f;
     self.mapView.layer.borderColor = [UIColor whiteColor].CGColor;//UIColorFromRGB(0x9B90C8).CGColor;
     [self.view addSubview:self.mapView];
+    
+
     
     // Adding fullscreen mode button to the mapview
     self.fullScreenBtn = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -436,8 +437,11 @@ enum PinAnnotationTypeTag {
                                          self.mapView.frame.size.height- _fullScreenBtn.center.y *1.2 ) ];
     [self.mapView addSubview:self.fullScreenBtn];
     
-    // CONFIGUREOVERLAY:
-    // configureOverlay->check for pending requests-> if user accepts requests, add overlay to mapview
+    // CONFIGUREOVERLAY->check for pending requests-> if user accepts requests, add overlay to mapview
+    [self.locationManager startUpdatingLocation];
+    [self setInitialLocation:self.locationManager.location];
+    
+    self.mapView.region = MKCoordinateRegionMake(self.location.coordinate, MKCoordinateSpanMake(0.05f, 0.05f));
     [self configureOverlay];
     
     if([self.loadingView isAnimating])
@@ -933,7 +937,6 @@ enum PinAnnotationTypeTag {
     } else {
         NSLog(@"Failed to create a new event.");
     }
-    [self configureOverlay]; NSLog(@"calling configureOverlay");
     
 }
 -(void) syncCoreFriendsLocation {

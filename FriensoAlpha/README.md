@@ -156,6 +156,8 @@ Tasks Done / Project Log:
 
 Referenced Work
 ----------------
+* Github
+  ** https://help.github.com/articles/syncing-a-fork
 * Fonts
 * Images
   # http://wpwide.com/paris-france-birds-eye-view-sunshine-wide-hd-wallpaper/

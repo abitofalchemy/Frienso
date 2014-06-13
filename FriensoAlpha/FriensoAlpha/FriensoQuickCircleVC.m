@@ -49,6 +49,9 @@ static NSString *coreFriendsCell = @"coreFriendsCell";
 {
     [super viewDidLoad];
     
+    [[UINavigationBar appearance] setTitleTextAttributes: [NSDictionary dictionaryWithObjectsAndKeys:[UIColor blackColor], NSForegroundColorAttributeName, [UIFont fontWithName:@"AppleSDGothicNeo-Light" size:16.0], NSFontAttributeName,nil]];
+    self.navigationItem.title = @"Friends";
+    
     [self.navigationController setToolbarHidden:YES];
     
 
