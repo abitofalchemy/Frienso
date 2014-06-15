@@ -30,6 +30,9 @@
 #define CELL_CONTENT_MARGIN     10.0f
 
 static NSString *eventCell = @"eventCell";
+static NSString *trackRequest = @"trackRequest";
+static NSString *coreFriendRequest = @"coreFriendRequest";
+
 enum PinAnnotationTypeTag {
     PinAnnotationTypeTagGeoPoint = 0,
     PinAnnotationTypeTagGeoQuery = 1
@@ -181,13 +184,26 @@ enum PinAnnotationTypeTag {
 -(void) pendingRqstAction:(id) sender {
     UIButton *btn = (UIButton *) sender;
     NSDictionary *frUserDic = [self.pendingRqstsArray objectAtIndex:btn.tag]; // 10Jun14:SA
-    PFUser *friensoUser = [frUserDic objectForKey:@"pfUser"];                               // 10Jun14:SA
+    PFUser *friensoUser = [frUserDic objectForKey:@"pfUser"];  // 10Jun14:SA
+    NSString * type = [frUserDic objectForKey:@"reqType"];
     //PFUser *friend =  [self.pendingRqstsArray objectAtIndex:btn.tag];
-    [[[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"Pending Request:%2ld",(long)btn.tag]
-                                message:[NSString stringWithFormat:@"from %@",friensoUser.username]
-                               delegate:self
-                      cancelButtonTitle:@"Dismiss"
-                      otherButtonTitles:@"Accept",@"Reject", nil] show];
+
+    if([type isEqualToString:coreFriendRequest]) { //if core friend request
+        //TODO: we do not need to add the btn.tag here.
+        //may be we can extend UIAlertView and add a variable for the index.
+        NSLog(@"btn tag = %d",btn.tag);
+        [[[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"Core Friend Request:%2ld",(long)btn.tag]
+                                    message:[NSString stringWithFormat:@"from %@",friensoUser.username]
+                                   delegate:self
+                          cancelButtonTitle:@"Dismiss"
+                          otherButtonTitles:@"Accept",@"Reject", nil] show];
+    } else { // for watch or anything else.
+        [[[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"Pending Request:%2ld",(long)btn.tag]
+                                    message:[NSString stringWithFormat:@"from %@",friensoUser.username]
+                                   delegate:self
+                          cancelButtonTitle:@"Dismiss"
+                          otherButtonTitles:@"Accept",@"Reject", nil] show];
+    }
 }
 -(void) openCloseDrawer
 {
@@ -242,16 +258,26 @@ enum PinAnnotationTypeTag {
                                                self.scrollViewY)];
     }
 }
--(void) addPendingRequest:(PFUser *)parseFriend withTag:(NSInteger)tagNbr {
-    // addPendingRequest  adds a pending request to drawer+slider that user can interact w/ Pfuser
 
+-(void) addPendingRequest:(PFUser *)parseFriend withTag:(NSInteger)tagNbr reqtype:(NSString *) type{
+
+    if ([type isEqualToString:coreFriendRequest]) {
+        [self addPndngRqstButton:[UIColor redColor] withFriensoUser:parseFriend withTag:tagNbr];
+        NSLog(@"Tag number %d ",tagNbr);
+    } else {
+        [self addPndngRqstButton:[UIColor whiteColor] withFriensoUser:parseFriend withTag:tagNbr];
+        [self.friendsLocationArray insertObject:([parseFriend valueForKey:@"currentLocation"] == NULL)  ? @"0,0" : [parseFriend valueForKey:@"currentLocation"]  atIndex:tagNbr];
+    }
+}
+
+- (void) addPndngRqstButton: (UIColor *) fontColor  withFriensoUser:(PFUser *)parseFriend withTag:(NSInteger)tagNbr{
+    // addPendingRequest  adds a pending request to drawer+slider that user can interact w/ Pfuser
     UIButton *pndngRqstBtn = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 44, 44)];
     UIImage *img =[[FRStringImage alloc] imageTextBubbleOfSize:pndngRqstBtn.frame.size];
     [pndngRqstBtn setBackgroundImage:img forState:UIControlStateNormal];
     NSString *bubbleLabel = [[parseFriend.username substringToIndex:2] uppercaseString];
     [pndngRqstBtn setTitle:bubbleLabel forState:UIControlStateNormal];
-    
-    [pndngRqstBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [pndngRqstBtn setTitleColor:fontColor forState:UIControlStateNormal];
     [pndngRqstBtn setTitleColor:UIColorFromRGB(0x8e44ad) forState:UIControlStateHighlighted];
     [pndngRqstBtn setTag:tagNbr];
     [pndngRqstBtn addTarget:self action:@selector(pendingRqstAction:)
@@ -259,11 +285,9 @@ enum PinAnnotationTypeTag {
     [self.scrollView addSubview:pndngRqstBtn];
     CGFloat btnCenterX = pndngRqstBtn.center.x*2 + pndngRqstBtn.center.x*2*tagNbr;
     [pndngRqstBtn setCenter:CGPointMake(btnCenterX,self.scrollView.frame.size.height*1.6)];
-    
-    
-    [self.friendsLocationArray insertObject:([parseFriend valueForKey:@"currentLocation"] == NULL)  ? @"0,0" : [parseFriend valueForKey:@"currentLocation"]  atIndex:tagNbr];
-    
 }
+
+
 -(void) addUserBubbleToMap:(PFUser *)parseUser withTag:(NSInteger)tagNbr {
     NSLog(@"%d",tagNbr);
     UIButton *mLocBtn = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 44, 44)];
@@ -349,7 +373,7 @@ enum PinAnnotationTypeTag {
     
     for (NSString *coreCirclePh in [dic allValues]) {
         NSString *clnStr = [self stripStringOfUnwantedChars:coreCirclePh];
-        NSLog(@"%@",clnStr);
+      //  NSLog(@"%@",clnStr);
         NSString *str;
         if(clnStr.length > 10) { //if the number has more than 10 digits.
             //TODO: what about international numbers?
@@ -357,7 +381,7 @@ enum PinAnnotationTypeTag {
         } else {
             str = clnStr;
         }
-        NSLog(@"%@",str);
+     //   NSLog(@"%@",str);
 
         if ( ![str isEqualToString:phNumberOnWatch]){
             //NSLog(@"%@<>%@, %@",str,[friensoUser objectForKey:@"phoneNumber"], friensoUser.username );
@@ -677,9 +701,6 @@ enum PinAnnotationTypeTag {
     [self setupToolBarIcons];
     [self setupNavigationBarImage];
     //[self syncCoreFriendsLocation]; // from parse to coredata
-    
-    
-    
 }
 - (void)viewDidUnload {
     [super viewDidUnload];
@@ -1209,7 +1230,7 @@ enum PinAnnotationTypeTag {
                         k++;
                     } else {
                     
-                        [self addPendingRequest:friensoUser withTag:i]; // Add user to drawer+slider
+                        [self addPendingRequest:friensoUser withTag:i reqtype:trackRequest]; // Add user to drawer+slider
                         NSDictionary *dic = [[NSDictionary alloc] initWithObjectsAndKeys:
                                              friensoUser,                               @"pfUser",
                                              [eventUser valueForKey:@"eventType"], @"reqType",
@@ -1221,13 +1242,46 @@ enum PinAnnotationTypeTag {
                     }
                 }
             }
-            [self.scrollView setPendingRequests:self.pendingRqstsArray];
+
+            //check for awaiting core friend requests
+            //Added here so that access to pendingRqstsArray is sequential and we dont need synchronization
+            // drawback: Slow. We can do this in parallel with synchronization
+
+            PFQuery * pfquery = [PFQuery queryWithClassName:@"CoreFriendRequest"];
+            [pfquery whereKey:@"recipient" equalTo:[PFUser currentUser]];
+            [pfquery whereKey:@"awaitingResponseFrom" equalTo:@"recipient"];
+            [pfquery whereKey:@"status" equalTo:@"send"];
+            [pfquery includeKey:@"sender"];
+            [pfquery findObjectsInBackgroundWithBlock:^(NSArray *objects,
+                                                        NSError *error) {
+                if(!error) {
+                    NSInteger i = [self.pendingRqstsArray count]; // get the next insert position
+                    for (PFObject *  object in objects) {
+                        PFUser * sender = [object objectForKey:@"sender"];
+                        NSLog(@"Corefriend request sender's email %@",sender.email);
+                        [self addPendingRequest:sender withTag:i reqtype:coreFriendRequest]; // temp add to drawwer+slider
+                        NSDictionary *dic = [[NSDictionary alloc] initWithObjectsAndKeys:
+                                                 sender,   @"pfUser",
+                                                 coreFriendRequest, @"reqType",
+                                                 [NSNumber numberWithInteger:i],@"btnTag", nil];
+                            [self.pendingRqstsArray insertObject:dic atIndex:i]; // simulation
+                            i = i + 1;
+                    }
+
+                    [self.scrollView setPendingRequests:self.pendingRqstsArray];
+
+                } else {
+                    // Did not find any UserStats for the current user
+                    NSLog(@"Error: %@", error);
+                }
+            }];
         } else {
             // Did not find any UserStats for the current user
             NSLog(@"Error: %@", error);
-            
         }
     }];
+    
+   
     
 }
 -(void)friendLocInteraction:(UIButton *)sender
@@ -1446,15 +1500,66 @@ enum PinAnnotationTypeTag {
 }
 -(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
-    NSString *title = [alertView buttonTitleAtIndex:buttonIndex];//NSLog(@"%@",title);
+    //Read the title of the alert dialog box.
+    NSString *title = alertView.title;
+    //read the index in the title to get the position in the array
     NSString *tagNbr= [title substringFromIndex:(title.length -2)];
     int btnTagNbr   = (int)[tagNbr integerValue];
-    
+    NSDictionary *frUserDic = [self.pendingRqstsArray objectAtIndex:btnTagNbr]; // 10Jun14:SA
+    NSString * type = [frUserDic objectForKey:@"reqType"];
+    PFUser *friensoUser = [frUserDic objectForKey:@"pfUser"];                   // 10Jun14:SA
+
+    if([type isEqualToString:coreFriendRequest]) {
+
+        NSString * response;
+
+        if (buttonIndex == 1) // accept
+        {
+            response = @"accept";
+            NSLog(@" corefriend request accepted");
+        } else if (buttonIndex == 2) { //reject
+            response = @"reject";
+            NSLog(@" corefriend request rejected");
+        } else { //dismiss
+            NSLog(@"dismissed alertview");
+            return;
+        }
+
+            //update the db with the choices made by the user
+            PFQuery *pfquery = [PFQuery queryWithClassName:@"CoreFriendRequest"];
+            [pfquery whereKey:@"sender" equalTo:friensoUser];
+            [pfquery whereKey:@"recipient" equalTo:[PFUser currentUser]];
+            [pfquery whereKey:@"awaitingResponseFrom" equalTo:@"recipient"];
+            [pfquery whereKey:@"status" equalTo:@"send"];
+            [pfquery findObjectsInBackgroundWithBlock:^(NSArray *objects,
+                                                        NSError *error) {
+                if(!error && ![objects isEqual:[NSNull null]]) {
+                    //TODO: check if first element is not null
+                    PFObject * pfobject =[objects firstObject];
+                    if(pfobject != nil) {
+                        pfobject[@"awaitingResponseFrom"] = @"sender";
+                        pfobject[@"status"] = response;
+                        [pfobject saveInBackground];
+
+                        //remove the button from the view
+                        for (id subview in [self.scrollView subviews]){
+                            if ( [subview isKindOfClass:[UIButton class]] ) {
+                                if (btnTagNbr ==  [(UIButton *)subview tag])
+                                {
+                                    [subview removeFromSuperview];
+                                    // Now update requests count
+                                    [self.pendingRqstsArray removeObjectAtIndex:btnTagNbr];
+                                    [self.scrollView updatePendingRequests:self.pendingRqstsArray];
+                                }
+                            }
+                        }
+                    }
+                }
+            }];
+    } else {
+
     if (buttonIndex == 1) // accept
     {
-        
-        NSDictionary *frUserDic = [self.pendingRqstsArray objectAtIndex:btnTagNbr]; // 10Jun14:SA
-        PFUser *friensoUser = [frUserDic objectForKey:@"pfUser"];                   // 10Jun14:SA
         [self addUserBubbleToMap:friensoUser             /* accepted to watch this user */
                          withTag:[tagNbr integerValue]];
         //[self setWatchingUserInCD:friensoUser]; // Watching Friend set
@@ -1483,9 +1588,7 @@ enum PinAnnotationTypeTag {
         NSLog(@"'request' rejected ");
         // log the reject to the cloud
         // remove the request and update
-        NSDictionary *frUserDic = [self.pendingRqstsArray objectAtIndex:btnTagNbr]; // 10Jun14:SA
-        PFUser *friensoUser = [frUserDic objectForKey:@"pfUser"];                   // 10Jun14:SA
-        
+       
         for (id subview in [self.scrollView subviews]){
             if ( [subview isKindOfClass:[UIButton class]] ) {
                 if (btnTagNbr ==  [(UIButton *)subview tag])
@@ -1506,6 +1609,7 @@ enum PinAnnotationTypeTag {
         }
     }else // dismiss
         NSLog(@"dismissed alertview");
+    }
 }
 -(void) isUserInMy2WatchList:(PFUser*)friensoUser{
     

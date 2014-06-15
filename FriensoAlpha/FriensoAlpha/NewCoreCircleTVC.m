@@ -200,11 +200,21 @@
     static NSString *CellIdentifier = @"Cell";
     UITableViewCell *cell = [self.tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle
                                       reuseIdentifier:CellIdentifier];
     }
     
     cell.textLabel.text = [self.coreCircleOfFriends objectAtIndex:indexPath.row];
+    cell.detailTextLabel.text = @"Awaiting response";
+    cell.detailTextLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:8.0];
+
+    //Initialize Label
+    /*UILabel *lbl1 = [[UILabel alloc] initWithFrame:CGRectMake(100,50,100,50)];
+    [lbl1 setFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:7.0]];
+    [lbl1 setTextColor:[UIColor grayColor]];
+    lbl1.text = @"awaiting request";
+    [cell addSubview:lbl1];
+    */
     // ok NSLog(@"what?f%@",[coreCircleOfFriends objectAtIndex:0]);
     NSString *path = [[NSBundle mainBundle] pathForResource:@"profile" ofType:@"png"];
     UIImage *theImage = [UIImage imageWithContentsOfFile:path];
@@ -441,6 +451,12 @@
                 return;
             }
 
+            PFACL * pfacl = [PFACL ACL];
+            [pfacl setWriteAccess:YES forUser:pfuser];
+            [pfacl setReadAccess:YES forUser:pfuser];
+            [pfacl setReadAccess:YES forUser:curUser];
+            [pfacl setWriteAccess:YES forUser:curUser];
+
             //A user was found
             //TODO: remove this log
             //NSLog(pfuser.email );
@@ -450,6 +466,7 @@
             [pfobject setObject:pfuser forKey:@"recipient"];
             [pfobject setObject:@"send" forKey:@"status"];
             [pfobject setObject:@"recipient" forKey:@"awaitingResponseFrom" ];
+            [pfobject setACL:pfacl];
             [pfobject saveInBackground];
         } else {
             NSLog(@"%@", error);
