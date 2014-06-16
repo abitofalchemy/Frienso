@@ -87,6 +87,8 @@ Working On
 * SA: Fix bugs
         (1) fix detecting if WatchMe events come from a user in you friends list
         Future versions of this should be push-notifications driven
+        (2) fix toolbar in Options View mode, the options view button should be removed
+        from these view.
 * NY: Push notifications for WatchMe and CoreFriend requests
 * NY/SA:  Finish the PanicVC
 * UK: Finishing the bubble actions on the mapviw (i.e. initiate phone call or SMS)

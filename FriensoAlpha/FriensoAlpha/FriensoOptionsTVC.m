@@ -15,6 +15,7 @@
 #import "AboutFriensoViewController.h"
 #import "SearchViewController.h"
 #import "FRStringImage.h"
+#import "FriensoOptionsButton.h"
 
 
 @interface FriensoOptionsTVC ()
@@ -36,14 +37,31 @@
 {
     [super viewDidLoad];
     self.title = @"View Options";
-    self.optionsArray = [[NSMutableArray alloc] initWithArray:@[@"Profile",/*@"Watching",*/ @"Resources",@"Settings",@"About",@"Map",@"Event"]];
+    
+    for (id subview in [self.navigationController.toolbar subviews]){
+        if ( [subview isKindOfClass:[FriensoOptionsButton class]] )
+        {
+            [subview setHidden:YES];
+        }
+    }
+    
+    self.optionsArray = [[NSMutableArray alloc] initWithArray:@[@"Profile",/*@"Watching",*/ @"Resources",@"Settings",@"About"/*,@"Map",@"Event"*/]];
     // Uncomment the following line to preserve selection between presentations.
     // self.clearsSelectionOnViewWillAppear = NO;
  
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
 }
-
+//- (void) viewWillDisappear:(BOOL)animated {
+//    [super viewWillDisappear:YES];
+//    
+//    for (id subview in [self.navigationController.toolbar subviews]){
+//        if ( [subview isKindOfClass:[FriensoOptionsButton class]] )
+//        {
+//            [subview setHidden:NO];
+//        }
+//    }
+//}
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
@@ -92,12 +110,12 @@
             case 3:
                 cell.imageView.image = [UIImage imageNamed:@"about-24.png"];
                 break;
-            case 4:
+            /*case 4:
                 cell.imageView.image = [self imageWithString:@"🌐" font:[UIFont systemFontOfSize:[UIFont systemFontSize]] size:CGSizeMake(24, 24)];
                 break;
             case 5:
                 cell.imageView.image = [[FRStringImage alloc] calendarDrawRectImage:CGSizeMake(24,24)];
-                break;
+                break;*/
             default:
                 break;
         }
@@ -152,10 +170,10 @@
                                                  animated:YES];
             break;
         }
-        case 4: {
+        /*case 4: {
             [self performSegueWithIdentifier:@"friensoMap" sender:self];
             break;
-        }
+        }*/
         default:
             break;
     }

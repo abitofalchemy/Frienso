@@ -201,8 +201,8 @@
 		3E4120FB18E306630058012B /* frienso-info-2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "frienso-info-2.png"; sourceTree = "<group>"; };
 		3E57016C190A519A0056EFD7 /* FriensoPersonalEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FriensoPersonalEvent.h; path = FriensoAlpha/FriensoPersonalEvent.h; sourceTree = SOURCE_ROOT; };
 		3E57016D190A519A0056EFD7 /* FriensoPersonalEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FriensoPersonalEvent.m; path = FriensoAlpha/FriensoPersonalEvent.m; sourceTree = SOURCE_ROOT; };
-		3E57016F190A665C0056EFD7 /* AlarmTimerTriggersTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlarmTimerTriggersTVC.h; sourceTree = "<group>"; };
-		3E570170190A665C0056EFD7 /* AlarmTimerTriggersTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AlarmTimerTriggersTVC.m; sourceTree = "<group>"; };
+		3E57016F190A665C0056EFD7 /* AlarmTimerTriggersTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AlarmTimerTriggersTVC.h; path = ../AlarmTimerTriggersTVC.h; sourceTree = "<group>"; };
+		3E570170190A665C0056EFD7 /* AlarmTimerTriggersTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AlarmTimerTriggersTVC.m; path = ../AlarmTimerTriggersTVC.m; sourceTree = "<group>"; };
 		3E5EA0B4190D0A4A004A710C /* cal-ic-40.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "cal-ic-40.png"; sourceTree = "<group>"; };
 		3E5EA0B6190D0CDA004A710C /* cal-ic-24.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "cal-ic-24.png"; sourceTree = "<group>"; };
 		3E68DF5B190666FF00DF3992 /* map-btn-1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "map-btn-1.png"; sourceTree = "<group>"; };
@@ -282,6 +282,8 @@
 		1808553618C4EEC30047A8BE /* OptionsClasses */ = {
 			isa = PBXGroup;
 			children = (
+				3E57016F190A665C0056EFD7 /* AlarmTimerTriggersTVC.h */,
+				3E570170190A665C0056EFD7 /* AlarmTimerTriggersTVC.m */,
 				1879B59918C786DB00AEA55F /* FriensoResourcesTVC.h */,
 				1879B59A18C786DB00AEA55F /* FriensoResourcesTVC.m */,
 				3E4120F618E3005E0058012B /* aBoAViewController.h */,
@@ -370,8 +372,6 @@
 				1853403E18C2236E0094AC5A /* FriensoOptionsTVC.m */,
 				3E2F8C3518D4C74600FD2A99 /* FriensoQuickCircleVC.h */,
 				3E2F8C3618D4C74600FD2A99 /* FriensoQuickCircleVC.m */,
-				3E57016F190A665C0056EFD7 /* AlarmTimerTriggersTVC.h */,
-				3E570170190A665C0056EFD7 /* AlarmTimerTriggersTVC.m */,
 				3E9F893318FE99F800DA190C /* MappingFriends */,
 				1808553618C4EEC30047A8BE /* OptionsClasses */,
 				3E84F6F0190FAE210073D2FF /* FriensoHelperClasses */,

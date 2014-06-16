@@ -74,7 +74,7 @@
     [sentToQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         if (!error) {
             // Found requestTrack
-            NSLog(@"requestType: %@, %@", objects, requestType);
+            //NSLog(@"requestType: %@, %@", objects, requestType);
             if (objects.count == 0) {
                 PFObject *requestTrack = [PFObject objectWithClassName:@"TrackRequest" ];
                 [requestTrack setObject:[cloudUser objectForKey:@"phoneNumber"] forKey:@"SenderPh"];
@@ -94,7 +94,7 @@
                 for (PFObject *trackRequest in objects) {
                     if ([[trackRequest objectForKey:@"SenderPh"] isEqualToString:[cloudUser objectForKey:@"phoneNumber"]])
                     {    // update this trackRequest->'requestType'
-                        NSLog(@"%@", [trackRequest objectForKey:@"requestType"]);
+                        //NSLog(@"%@", [trackRequest objectForKey:@"requestType"]);
                         [trackRequest setObject:status forKey:@"status"];
                         [trackRequest setObject:requestType forKey:@"requestType"];
                         [trackRequest saveInBackground];

@@ -137,13 +137,14 @@
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
     if (section == 0 ){
-        CAGradientLayer *gradient = [CAGradientLayer layer];
+        /*CAGradientLayer *gradient = [CAGradientLayer layer];
         gradient.frame       = tableView.bounds;
         UIColor *startColour = [UIColor colorWithHue:.580555 saturation:0.31 brightness:0.90 alpha:1.0];
         UIColor *endColour   = [UIColor colorWithHue:.58333 saturation:0.50 brightness:0.62 alpha:1.0];
         gradient.colors = [NSArray arrayWithObjects:(id)[startColour CGColor],(id)[endColour CGColor], nil];
         //[cell.layer insertSublayer:gradient atIndex:0];
         [tableView.layer insertSublayer:gradient atIndex:0];
+        */
         
         return 85;
     }else
