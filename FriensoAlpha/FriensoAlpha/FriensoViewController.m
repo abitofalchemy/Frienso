@@ -210,8 +210,7 @@ enum PinAnnotationTypeTag {
 }
 -(void) openCloseDrawer
 {
-    NSLog(@"Open Drawer");
-    
+    // 16Jun14:SA   - fixed drawer not working on iPhone4, still need to check it works in iPad mini
     CGFloat yOffset = self.view.frame.size.height*0.15;
     CGFloat y_tableViewOffset = yOffset - _drawerLabel.frame.size.height*0.9;
     
@@ -226,10 +225,7 @@ enum PinAnnotationTypeTag {
         [self.tableView setCenter:CGPointMake(self.tableView.center.x, self.tableView.center.y - y_tableViewOffset)];// remove tableview yOffset
         }];
     } else { // Open Drawer
-        NSLog(@"Open Drawer");
         [UIView animateWithDuration:0.5 animations:^{
-//            CGRect openDrawerRect = CGRectMake(0, self.scrollView.frame.origin.y, self.view.bounds.size.width,
-//                                               yOffset);
             CGRect openDrawerRect = CGRectMake(0, self.scrollView.frame.origin.y, self.view.frame.size.width,
                                                yOffset);
             [self.tableView setCenter:CGPointMake(self.tableView.center.x, self.tableView.center.y + y_tableViewOffset)];
@@ -242,7 +238,7 @@ enum PinAnnotationTypeTag {
 
 -(void) mapViewFSToggle:(UIButton *) sender {
     [self animateThisButton:sender];
-    NSLog(@"Toggle FS Mode");
+    //NSLog(@"Toggle FS Mode");
     if (self.mapView.frame.size.height < self.view.bounds.size.height){
         [self.mapView setFrame:self.view.bounds];
         [self.fullScreenBtn setTitle:@"┓"/*@""*/ forState:UIControlStateNormal];
@@ -389,6 +385,11 @@ enum PinAnnotationTypeTag {
 
 #pragma mark - Interaction with NSUserDefaults
 -(BOOL) inYourCoreUserWithPhNumber:(NSString *)phNumberOnWatch  {
+    /** inYourCoreUserWithPhNumber
+     **
+     ** - for each phone number passed by argument, check it against the three coreFriends' phone numbers
+     ** - if j counter ends up with a value of 3, there is no match if below 3, then there is a match
+     ** */
     BOOL inYourCoreBool = NO;
     NSDictionary *dic = [[NSUserDefaults standardUserDefaults] dictionaryForKey:@"CoreFriendsContactInfoDicKey"];
     NSInteger j = 0;
@@ -402,18 +403,15 @@ enum PinAnnotationTypeTag {
         } else {
             str = clnStr;
         }
-
         if ( ![str isEqualToString:phNumberOnWatch]){
-            //NSLog(@"%@<>%@, %@",str,[friensoUser objectForKey:@"phoneNumber"], friensoUser.username );
+            //;
             j++;
         }
-        if (j<3) {
-            //NSLog(@"%@<>%@, %@",str,[friensoUser objectForKey:@"phoneNumber"], friensoUser.username );
-            //[self addFriensoUserToCDCoreFriends:friensoUser]; //[self addFriensoUserToCDCoreFriends:friensoUser andReloadFRCfor:table_view];
-            inYourCoreBool = YES;
-        }
+        
     }
-    //NSLog(@"%@ inYourCircle? %d", phNumberOnWatch, inYourCoreBool);
+    if (j<3) {
+        inYourCoreBool = YES;
+    }
     
     return inYourCoreBool;
 }
@@ -740,12 +738,12 @@ enum PinAnnotationTypeTag {
 
 -(void) viewWillAppear:(BOOL)animated {
     [super viewWillAppear:YES];
-    NSLog(@"viewWillAppear");
+    //NSLog(@"viewWillAppear");
 }
 
 -(void) viewDidAppear:(BOOL)animated{
     [super viewDidAppear:animated];
-    NSLog(@"HV: viewDidAppear");
+    
     NSNumber *installationCount = [[NSUserDefaults standardUserDefaults] valueForKey:@"afterFirstInstall"];
     
     if ([installationCount isEqualToNumber:[NSNumber numberWithInteger:0]] || installationCount == NULL){
@@ -1044,7 +1042,7 @@ enum PinAnnotationTypeTag {
     NSLog(@"--- syncCoreFriendsLocation  [ Sync friends' location to CoreData ]");
     FRCoreDataParse *frCDPObject = [[FRCoreDataParse alloc] init];
     [frCDPObject updateThisUserLocation];
-    [frCDPObject updateCoreFriendsLocation];
+    //[frCDPObject updateCoreFriendsLocation];
     [frCDPObject showCoreFriendsEntityData];
 }
 
@@ -1277,7 +1275,12 @@ enum PinAnnotationTypeTag {
 }
 
 - (void)configureOverlay {
-    NSLog(@"---------- configureOverlay");
+    NSLog(@"configureOverlay method");
+    /** configureOverlay
+     ** - check if I have an active Event
+     ** - check if others have active events
+     ** */
+    
     // Check for friends with active alerts
     PFQuery *query = [PFQuery queryWithClassName:@"UserEvent"];
     [query whereKey:@"eventActive" equalTo:[NSNumber numberWithBool:YES]];
@@ -1290,8 +1293,10 @@ enum PinAnnotationTypeTag {
             for (PFObject *eventUser in objects){
                 PFUser *friensoUser    = [eventUser valueForKey:@"friensoUser"];
                 
-                // Check if this user is in your core or watchCircle
-                if ([self inYourCoreUserWithPhNumber:[friensoUser valueForKey:@"phoneNumber"]]){
+                if ([friensoUser.username isEqualToString:[PFUser currentUser].username])
+                    [trackMeOnOff setOn:YES animated:YES]; // check if self has an active Event going
+                else if ([self inYourCoreUserWithPhNumber:[friensoUser valueForKey:@"phoneNumber"]] )
+                {   // Check if this user is in your core or watchCircle
                     // friensoUser is in my network, am I tracking him/her?
                     NSLog(@"Friend: %@ w/active event of type: %@",friensoUser.username,
                           [eventUser valueForKey:@"eventType"]);

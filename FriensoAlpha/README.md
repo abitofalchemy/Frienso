@@ -20,6 +20,11 @@ Version History
                     - Finished tracking requests of type 'WatchMe'
                     - {bug} Fixed a problem in the quick-coreFriends-view, there was an issue with nicknames being nil.
                     FriensoQuickCircle VC is now pulling unique names of friends that current user is Watching
+                    - {bug} fixed problem with drawer not working on iPhone4
+                    - {bug} fixed problem with frienso user with current event, if not in one's coreCircle, then do 
+                    nothing with it.
+                    - Fixed issue with one's ongoing event (WatchMe) not sticking, now it sticks if the user navigates
+                    out of the app and returns, or kills it and reopens it, the bit will set the WatchMe switch ON
 
 * ver 1.5 build 25  - Fixed minor issues with the Profile & CoreCircle views; redoing the way the user
                     logs in or registers!

@@ -58,7 +58,7 @@ static NSString *coreFriendsCell = @"coreFriendsCell";
     // Update this user's current location
     FRCoreDataParse *frCDPObject = [[FRCoreDataParse alloc] init];
     [frCDPObject updateThisUserLocation];
-    [frCDPObject updateCoreFriendsLocation];
+    //[frCDPObject updateCoreFriendsLocation];
 
     
 	//  Add new table view
@@ -93,7 +93,7 @@ static NSString *coreFriendsCell = @"coreFriendsCell";
     self.frc.delegate      = self;
     NSError *fetchingError = nil;
     if ([self.frc performFetch:&fetchingError]){
-        NSLog(@"Successfully fetched coreCircle.");
+        NSLog(@"CoreCircle fetched with nbr of categories:%d",[[self.frc sections] count]);
     } else {
         NSLog(@"Failed to fetch.");
     }
@@ -144,8 +144,8 @@ static NSString *coreFriendsCell = @"coreFriendsCell";
     }
     
     CoreFriends *friend = [self.frc objectAtIndexPath:indexPath];
-//    NSLog(@"%@", friend.coreFirstName);
-//    NSLog(@"%@", friend.coreNickName);
+    // NSLog(@"%@, %@", friend.coreFirstName, friend.corePhone);
+    // NSLog(@"%@", friend.coreNickName);
     if ([friend.coreType isEqualToString:@"Person"])
         cell.textLabel.text = (friend.coreNickName == NULL) ? friend.coreFirstName : friend.coreNickName; // : // stringByAppendingFormat:@" %@", person.lastName];
     else if ( [friend.coreType isEqualToString:@"WatchCircle"])

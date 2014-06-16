@@ -112,14 +112,14 @@
 -(void) fetchCurrentLocationForUser:(NSString *)coreFriendObjectId
                        includePhone:(NSString *)fPhoneStr
 {
+    /** 16Jun14:SA
+     **
+     ** */
     PFQuery *query = [PFUser query];
     [query getObjectInBackgroundWithId:coreFriendObjectId
                                  block:^(PFObject *object, NSError *error)
      {
          if (!error) {
-             //NSLog(@"Friend: %@", (NSString *)[object valueForKey:@"email"]);
-             /*NSLog(@"%@, loc: (%.3f,%.3f)", (NSString *)[object valueForKey:@"email"], [[object valueForKey:@"currentLocation"] latitude], [[object valueForKey:@"currentLocation"] longitude]);
-             */
              PFGeoPoint *friendLocation   = (PFGeoPoint *)[object valueForKey:@"currentLocation"];
              NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
              
