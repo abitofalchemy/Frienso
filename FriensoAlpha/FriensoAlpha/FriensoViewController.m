@@ -210,10 +210,12 @@ enum PinAnnotationTypeTag {
 }
 -(void) openCloseDrawer
 {
-    CGFloat yOffset = self.view.frame.size.height*0.1;
+    NSLog(@"Open Drawer");
+    
+    CGFloat yOffset = self.view.frame.size.height*0.15;
     CGFloat y_tableViewOffset = yOffset - _drawerLabel.frame.size.height*0.9;
     
-    if (self.scrollView.frame.size.height>self.view.bounds.size.height*0.05)
+    if (self.scrollView.frame.size.height> self.drawerLabel.frame.size.height*1.5)
     {
         [UIView animateWithDuration:0.5 animations:^{
         CGRect closeDrawerRect = CGRectMake(0, self.scrollView.frame.origin.y, self.view.bounds.size.width,_drawerLabel.frame.size.height*0.9);
@@ -224,8 +226,11 @@ enum PinAnnotationTypeTag {
         [self.tableView setCenter:CGPointMake(self.tableView.center.x, self.tableView.center.y - y_tableViewOffset)];// remove tableview yOffset
         }];
     } else { // Open Drawer
+        NSLog(@"Open Drawer");
         [UIView animateWithDuration:0.5 animations:^{
-            CGRect openDrawerRect = CGRectMake(0, self.scrollView.frame.origin.y, self.view.bounds.size.width,
+//            CGRect openDrawerRect = CGRectMake(0, self.scrollView.frame.origin.y, self.view.bounds.size.width,
+//                                               yOffset);
+            CGRect openDrawerRect = CGRectMake(0, self.scrollView.frame.origin.y, self.view.frame.size.width,
                                                yOffset);
             [self.tableView setCenter:CGPointMake(self.tableView.center.x, self.tableView.center.y + y_tableViewOffset)];
             [self.scrollView setFrame:openDrawerRect];
@@ -871,8 +876,17 @@ enum PinAnnotationTypeTag {
             }
         }];
 
-    } // else we do nothing in this method
-        
+    } else { // else we do nothing in this method; 16Jun14:SA
+        // 16Jun14:SA  Show Settings Menu when navigating to Options, otherwise show
+        for (id subview in [self.navigationController.toolbar subviews]){
+            if ( [subview isKindOfClass:[FriensoOptionsButton class]] )
+            {
+                if ([subview isHidden])
+                    [subview setHidden:NO];
+            }
+        }
+
+    }
 }
 
 - (void)didReceiveMemoryWarning
@@ -1028,7 +1042,6 @@ enum PinAnnotationTypeTag {
 }
 -(void) syncCoreFriendsLocation {
     NSLog(@"--- syncCoreFriendsLocation  [ Sync friends' location to CoreData ]");
-    
     FRCoreDataParse *frCDPObject = [[FRCoreDataParse alloc] init];
     [frCDPObject updateThisUserLocation];
     [frCDPObject updateCoreFriendsLocation];

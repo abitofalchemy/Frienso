@@ -320,11 +320,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "FriensoAlpha/FriensoViewController.m"
-            timestampString = "424608849.86437"
+            timestampString = "424629898.591894"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1232"
-            endingLineNumber = "1232"
+            startingLineNumber = "1245"
+            endingLineNumber = "1245"
             landmarkName = "-locationManager"
             landmarkType = "5">
          </BreakpointContent>
