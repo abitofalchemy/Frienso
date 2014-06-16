@@ -325,7 +325,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1232"
             endingLineNumber = "1232"
-            landmarkName = "-setInitialLocation:"
+            landmarkName = "-locationManager"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

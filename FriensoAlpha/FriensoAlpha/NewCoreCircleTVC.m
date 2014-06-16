@@ -27,6 +27,7 @@
 @property (nonatomic, strong) NSFetchedResultsController *frc;
 @property (nonatomic, strong) NSMutableArray *coreCircleOfFriends;
 @property (nonatomic, strong) NSMutableArray *coreCircleContacts;
+@property (nonatomic, strong) NSMutableArray *coreCircleRequestStatus;
 @property (nonatomic, assign) NSInteger cellNumberSelected;
 @end
 
@@ -158,8 +159,14 @@
                                                                              target:self
                                                                              action:@selector(save)];
     
-    [self updateLocalArray:self.coreCircleOfFriends];
     self.coreCircleContacts = [[NSMutableArray alloc] initWithObjects:@"0",@"0",@"0",nil]; //stores phone #s
+    self.coreCircleRequestStatus = [[NSMutableArray alloc] initWithObjects:@"Click to select a core friend from contacts",
+                                    @"Click to select a core friend from contacts",
+                                    @"Click to select a core friend from contacts",nil]; //stores status of the requests
+
+
+    [self updateLocalArray:self.coreCircleOfFriends];
+    //self.coreCircleContacts = [[NSMutableArray alloc] initWithObjects:@"0",@"0",@"0",nil];
     
     // add tableview
     self.tableView = [[UITableView alloc] init];
@@ -200,11 +207,16 @@
     static NSString *CellIdentifier = @"Cell";
     UITableViewCell *cell = [self.tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle
                                       reuseIdentifier:CellIdentifier];
     }
     
     cell.textLabel.text = [self.coreCircleOfFriends objectAtIndex:indexPath.row];
+    // Status of friendrequest
+    cell.detailTextLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:8.0];
+    // if the coreCircleOfFriends is not set then
+    cell.detailTextLabel.text = [self.coreCircleRequestStatus objectAtIndex:indexPath.row];
+
     // ok NSLog(@"what?f%@",[coreCircleOfFriends objectAtIndex:0]);
     NSString *path = [[NSBundle mainBundle] pathForResource:@"profile" ofType:@"png"];
     UIImage *theImage = [UIImage imageWithContentsOfFile:path];
@@ -339,12 +351,72 @@
                 
         }
         
+        ///update status from Parse:
+        PFQuery * pfquery = [PFQuery queryWithClassName:@"CoreFriendRequest"];
+        [pfquery includeKey:@"recipient"];
+        [pfquery whereKey:@"sender" equalTo:[PFUser currentUser]];
+        //[pfquery whereKey:@"awaitingResponseFrom" equalTo:@"sender"];
+        [pfquery findObjectsInBackgroundWithBlock:^(NSArray *objects,
+                                                    NSError *error) {
+            if(!error) {
+                if([objects count] >0) {//if atleast one record is found, then only we want to
+                                        //reload the table view
+                for (id object in objects) {
+                    PFObject * pfobject = object;
+                    PFUser * sender = [pfobject objectForKey:@"recipient"];
+                    NSString *senderPhoneNumber = sender[@"phoneNumber"];
+                    NSString *response = [pfobject objectForKey:@"status"];
+                    NSInteger i = 0;
+                    for (NSString * number in self.coreCircleContacts) {
+                            if ([senderPhoneNumber isEqualToString:number]) {
+                                if([response isEqualToString:@"send"]) {
+                                    [self.coreCircleRequestStatus replaceObjectAtIndex:i withObject:@"Request send. Awaiting response"];
+                                } else if ([response isEqualToString:@"reject"]) {
+                                    [self.coreCircleRequestStatus replaceObjectAtIndex:i withObject:@"Request rejected. Click to select someone else"];
+                                } else  if([response isEqualToString:@"accept"]) {
+                                    //TODO: Caching should be done here in the coredata
+                                    [self.coreCircleRequestStatus replaceObjectAtIndex:i withObject:@"Request accepted. User added to core group"];
+                                } else {
+                                    [self.coreCircleRequestStatus replaceObjectAtIndex:i withObject:response];
+                                }
+                            }
+                            i++;
+                        }
+                    }
+                   [self.tableView reloadData];
+                }
+            }
+        }];
+
+        // check if the contact is pending list, then show that information
+        pfquery = [PFQuery queryWithClassName:@"CoreFriendNotOnFriensoYet"];
+        [pfquery whereKey:@"sender" equalTo:[PFUser currentUser]];
+        [pfquery whereKey:@"recipientPhoneNumber" containedIn:self.coreCircleContacts];
+        [pfquery findObjectsInBackgroundWithBlock:^(NSArray *objects,
+                                                    NSError *error) {
+            if(!error) {
+                if([objects count] >0) {//if atleast one record is found, then only we want to
+                    //reload the table view
+                    for (id object in objects) {
+                        NSString *senderPhoneNumber = (NSString *)object[@"recipientPhoneNumber"];
+                        NSInteger i = 0;
+                        for (NSString * number in self.coreCircleContacts) {
+                            if ([senderPhoneNumber isEqualToString:number]) {
+                               [self.coreCircleRequestStatus replaceObjectAtIndex:i withObject:@"User not on frienso"];
+
+                            }
+                            i++;
+                        }
+                    }
+                    [self.tableView reloadData];
+                }
+            }
+        }];
     } else {
 //        if (self.checkCloud)
 //            [self checkCloudForCircle];
 //        else
         self.coreCircleOfFriends = [[NSMutableArray alloc] initWithObjects:@"Core Friend 1",@"Core Friend 2",@"Core Friend 3", nil];
-        
     }
 }
 -(void) checkCloudForCircle {
@@ -441,16 +513,35 @@
                 return;
             }
 
-            //A user was found
-            //TODO: remove this log
-            //NSLog(pfuser.email );
-            PFObject * pfobject = [PFObject
-                                   objectWithClassName:@"CoreFriendRequest"];
-            [pfobject setObject:curUser forKey:@"sender"];
-            [pfobject setObject:pfuser forKey:@"recipient"];
-            [pfobject setObject:@"send" forKey:@"status"];
-            [pfobject setObject:@"recipient" forKey:@"awaitingResponseFrom" ];
-            [pfobject saveInBackground];
+            //need to check if the request already exists.
+
+            PFQuery *duplicateCheck = [PFQuery queryWithClassName:@"CoreFriendRequest"];
+            [duplicateCheck whereKey:@"sender" equalTo:curUser];
+            [duplicateCheck whereKey:@"recipient" equalTo:pfuser];
+            [duplicateCheck findObjectsInBackgroundWithBlock:^(NSArray *objects,
+                                                        NSError *error) {
+                if (!error) {
+                    if([objects count] == 0) {  //if no request exists, add now
+                        PFACL * pfacl = [PFACL ACL];
+                        [pfacl setWriteAccess:YES forUser:pfuser];
+                        [pfacl setReadAccess:YES forUser:pfuser];
+                        [pfacl setReadAccess:YES forUser:curUser];
+                        [pfacl setWriteAccess:YES forUser:curUser];
+
+                        PFObject * pfobject = [PFObject
+                                               objectWithClassName:@"CoreFriendRequest"];
+                        [pfobject setObject:curUser forKey:@"sender"];
+                        [pfobject setObject:pfuser forKey:@"recipient"];
+                        [pfobject setObject:@"send" forKey:@"status"];
+                        [pfobject setObject:@"recipient" forKey:@"awaitingResponseFrom" ];
+                        [pfobject setACL:pfacl];
+                        [pfobject saveInBackground];
+
+                    } else {
+                        NSLog(@"Core friend request already send to this contact %@", phoneNumber);
+                    }
+                }
+            }];
         } else {
             NSLog(@"%@", error);
         }
