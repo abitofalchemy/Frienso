@@ -98,6 +98,7 @@
 		3EFEC30A19152633002A709D /* FriensoEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 3EFEC30919152633002A709D /* FriensoEvent.m */; };
 		3EFEC30C1917877E002A709D /* und_logo29.png in Resources */ = {isa = PBXBuildFile; fileRef = 3EFEC30B1917877E002A709D /* und_logo29.png */; };
 		3EFEC30F19180276002A709D /* CoreFriends.m in Sources */ = {isa = PBXBuildFile; fileRef = 3EFEC30E19180276002A709D /* CoreFriends.m */; };
+		D2B4C533194F90D000094B98 /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2B4C532194F90D000094B98 /* Crashlytics.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -238,6 +239,7 @@
 		3EFEC30B1917877E002A709D /* und_logo29.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = und_logo29.png; sourceTree = "<group>"; };
 		3EFEC30D19180275002A709D /* CoreFriends.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CoreFriends.h; path = FriensoAlpha/CoreFriends.h; sourceTree = SOURCE_ROOT; };
 		3EFEC30E19180276002A709D /* CoreFriends.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CoreFriends.m; path = FriensoAlpha/CoreFriends.m; sourceTree = SOURCE_ROOT; };
+		D2B4C532194F90D000094B98 /* Crashlytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Crashlytics.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -245,6 +247,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D2B4C533194F90D000094B98 /* Crashlytics.framework in Frameworks */,
 				3EEA2280191F7DFC00DC8C54 /* MessageUI.framework in Frameworks */,
 				3E9F893518FEB62A00DA190C /* MapKit.framework in Frameworks */,
 				3E2F8C2F18D2FA3200FD2A99 /* Parse.framework in Frameworks */,
@@ -325,6 +328,7 @@
 		1827930318BE06740056C849 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				D2B4C532194F90D000094B98 /* Crashlytics.framework */,
 				3EEA227F191F7DFC00DC8C54 /* MessageUI.framework */,
 				3E9F893418FEB62A00DA190C /* MapKit.framework */,
 				3E2F8C2E18D2FA3200FD2A99 /* Parse.framework */,
@@ -826,6 +830,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					/Users/sal/Downloads,
+					"$(PROJECT_DIR)",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "FriensoAlpha/FriensoAlpha-Prefix.pch";
@@ -849,6 +854,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					/Users/sal/Downloads,
+					"$(PROJECT_DIR)",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "FriensoAlpha/FriensoAlpha-Prefix.pch";

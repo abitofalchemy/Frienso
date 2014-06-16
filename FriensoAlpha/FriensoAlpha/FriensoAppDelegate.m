@@ -11,6 +11,7 @@
 #import "FriensoAppDelegate.h"
 #import <Parse/Parse.h>
 #import "FriensoEvent.h"
+#import <Crashlytics/Crashlytics.h>
 
 @implementation FriensoAppDelegate
 @synthesize managedObjectContext = _managedObjectContext;
@@ -23,6 +24,7 @@
     // Frienso Parse account
     [Parse setApplicationId:@"ocxutehzKxd4EvmeODaNDl8AwJPYajzTK06QYkzZ"
                   clientKey:@"G70qPOHHCFiUFUwBqbUJvqb2Fel8BrxcjBjntQEc"];
+    [Crashlytics startWithAPIKey:@"a6e275099418fb75d38d9f45e6bb9819bc259bf5"];
     
     [PFAnalytics trackAppOpenedWithLaunchOptions:launchOptions];
     
