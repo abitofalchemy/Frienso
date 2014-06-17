@@ -26,6 +26,9 @@
                   clientKey:@"G70qPOHHCFiUFUwBqbUJvqb2Fel8BrxcjBjntQEc"];
     [Crashlytics startWithAPIKey:@"a6e275099418fb75d38d9f45e6bb9819bc259bf5"];
     
+    [[UIApplication sharedApplication] registerForRemoteNotificationTypes:
+     (UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound | UIRemoteNotificationTypeAlert)];
+    
     [PFAnalytics trackAppOpenedWithLaunchOptions:launchOptions];
     
     // Login to Parse
@@ -51,7 +54,73 @@
     // Override point for customization after application launch.
     return YES;
 }
-							
+
+- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken
+{
+    
+    NSLog(@"My token is: %@", deviceToken);
+    NSString *dToken = [[deviceToken description] stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"<>"]];
+    dToken = [dToken stringByReplacingOccurrencesOfString:@" " withString:@""];
+    
+    
+    NSLog(@"STR%@",dToken);
+    
+    
+    //Create subscription channels for the user: this includes channels for Frienso updates
+    
+    // TBD: Only add the last 10 digits in the number - add this check
+    // TBD: only add the channel if it exists, duplicate channel creation needs to be investigated
+    
+    // Only subscribe to channels if the currentuser is not null
+    //The globals channel will be used for all Frienso related alerts and messages
+    PFUser *currentUser = [PFUser currentUser];
+    if (currentUser){
+        NSString* userPhoneNumber = [[PFUser currentUser] objectForKey:@"phoneNumber"];
+        
+        //Channels have to start with a string, we will use "Ph" here
+        NSString *myString = @"Ph";
+        NSString *personalizedChannelNumber = [myString stringByAppendingString:userPhoneNumber];
+        NSLog(@"channel Name for this user is %@", personalizedChannelNumber);
+        PFInstallation *currentInstallation = [PFInstallation currentInstallation];
+        [currentInstallation setDeviceTokenFromData:deviceToken];
+        currentInstallation.channels = @[@"global", @"ndDOTedu", personalizedChannelNumber];
+        [currentInstallation saveInBackground];
+        
+    }
+    else
+        NSLog(@"No current User set for Push Notifications");
+    
+}
+
+- (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error {
+    if (error.code == 3010) {
+        NSLog(@"Push notifications are not supported in the iOS Simulator.");
+    } else {
+        // show some alert or otherwise handle the failure to register.
+        NSLog(@"application:didFailToRegisterForRemoteNotificationsWithError: %@", error);
+    }
+}
+
+- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
+    [PFPush handlePush:userInfo];
+    NSLog(@"Received a JSON object from Parse");
+    if([userInfo objectForKey:@"group"]!=NULL) {
+        NSString *myMessage = [NSString stringWithFormat:@"From %@", [userInfo objectForKey:@"group"]];
+        NSLog(@"Group Sending Message %@",[userInfo objectForKey:@"group"]);
+        
+        
+        
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Friend Request"
+                                                        message:myMessage
+                                                       delegate:self
+                                              cancelButtonTitle:@"Accept"
+                                              otherButtonTitles:@"Reject", nil];
+        alert.tag = 101;
+        [alert show];
+    }
+}
+
+
 - (void)applicationWillResignActive:(UIApplication *)application
 {
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.

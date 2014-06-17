@@ -536,6 +536,29 @@
                         [pfobject setObject:@"recipient" forKey:@"awaitingResponseFrom" ];
                         [pfobject setACL:pfacl];
                         [pfobject saveInBackground];
+                        
+                        /**************CORE FRIEND REQUEST: PUSH NOTIFICATION STUFF*****************/
+                        
+                        //Send Push Notification, informing person that they have been sent a friend request
+                        NSString *myString = @"Ph";
+                        NSString *coreFrndChannel = [myString stringByAppendingString:phoneNumber];
+                        
+                        
+                        //Create Core Friend Request Message
+                        
+                        
+                        
+                        PFPush *push = [[PFPush alloc] init];
+                        
+                        // Be sure to use the plural 'setChannels' if you are sending to more than one channel.
+                        [push setChannel:coreFrndChannel];
+                        NSString *coreRqstHeader = @"Core Friend Request From: ";
+                        NSString *coreFrndMsg = [coreRqstHeader stringByAppendingString:[[PFUser currentUser] objectForKey:@"username"]];
+                        
+                        [push setMessage:coreFrndMsg];
+                        [push sendPushInBackground];
+                        
+                        /**************END OF PUSH NOTIFICATION STUFF****************/
 
                     } else {
                         NSLog(@"Core friend request already send to this contact %@", phoneNumber);
