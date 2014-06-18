@@ -617,7 +617,7 @@
         cFriends.coreModified  = [NSDate date];
         NSString *lastInitial  = [cFriends.coreLastName isEqualToString:@""] ? @"" : [cFriends.coreLastName substringToIndex:1];
         cFriends.coreNickName  = [NSString stringWithFormat:@"%@%@",[[contactInfo objectAtIndex:0] substringToIndex:1], lastInitial];
-        cFriends.coreType      = @"Person";
+        cFriends.coreType      = @"iCore Friends";
         
         NSError *savingError = nil;
         

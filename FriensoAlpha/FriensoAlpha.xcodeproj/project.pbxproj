@@ -72,6 +72,7 @@
 		3E4120FC18E306630058012B /* frienso-info-0.png in Resources */ = {isa = PBXBuildFile; fileRef = 3E4120F918E306630058012B /* frienso-info-0.png */; };
 		3E4120FD18E306630058012B /* frienso-info-1.png in Resources */ = {isa = PBXBuildFile; fileRef = 3E4120FA18E306630058012B /* frienso-info-1.png */; };
 		3E4120FE18E306630058012B /* frienso-info-2.png in Resources */ = {isa = PBXBuildFile; fileRef = 3E4120FB18E306630058012B /* frienso-info-2.png */; };
+		3E56D3D5194F96D90092CF63 /* CloudEntityContacts.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E56D3D4194F96D90092CF63 /* CloudEntityContacts.m */; };
 		3E57016E190A519A0056EFD7 /* FriensoPersonalEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E57016D190A519A0056EFD7 /* FriensoPersonalEvent.m */; };
 		3E570171190A665C0056EFD7 /* AlarmTimerTriggersTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E570170190A665C0056EFD7 /* AlarmTimerTriggersTVC.m */; };
 		3E5EA0B5190D0A4A004A710C /* cal-ic-40.png in Resources */ = {isa = PBXBuildFile; fileRef = 3E5EA0B4190D0A4A004A710C /* cal-ic-40.png */; };
@@ -199,6 +200,8 @@
 		3E4120F918E306630058012B /* frienso-info-0.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "frienso-info-0.png"; sourceTree = "<group>"; };
 		3E4120FA18E306630058012B /* frienso-info-1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "frienso-info-1.png"; sourceTree = "<group>"; };
 		3E4120FB18E306630058012B /* frienso-info-2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "frienso-info-2.png"; sourceTree = "<group>"; };
+		3E56D3D3194F96D90092CF63 /* CloudEntityContacts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CloudEntityContacts.h; sourceTree = "<group>"; };
+		3E56D3D4194F96D90092CF63 /* CloudEntityContacts.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CloudEntityContacts.m; sourceTree = "<group>"; };
 		3E57016C190A519A0056EFD7 /* FriensoPersonalEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FriensoPersonalEvent.h; path = FriensoAlpha/FriensoPersonalEvent.h; sourceTree = SOURCE_ROOT; };
 		3E57016D190A519A0056EFD7 /* FriensoPersonalEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FriensoPersonalEvent.m; path = FriensoAlpha/FriensoPersonalEvent.m; sourceTree = SOURCE_ROOT; };
 		3E57016F190A665C0056EFD7 /* AlarmTimerTriggersTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AlarmTimerTriggersTVC.h; path = ../AlarmTimerTriggersTVC.h; sourceTree = "<group>"; };
@@ -468,6 +471,8 @@
 			children = (
 				3ED77E6D193C86DD00E0BB87 /* CloudUsrEvnts.h */,
 				3ED77E6E193C86DD00E0BB87 /* CloudUsrEvnts.m */,
+				3E56D3D3194F96D90092CF63 /* CloudEntityContacts.h */,
+				3E56D3D4194F96D90092CF63 /* CloudEntityContacts.m */,
 			);
 			name = FriensoCloudEvents;
 			sourceTree = "<group>";
@@ -697,6 +702,7 @@
 				3EB5C447191A5EE5006557DE /* FRUserGenContentButton.m in Sources */,
 				182E86F018C120CF009AD302 /* ABALoginTVC.m in Sources */,
 				3E21A0541920EE050083F1AC /* FRStringImage.m in Sources */,
+				3E56D3D5194F96D90092CF63 /* CloudEntityContacts.m in Sources */,
 				1827931518BE06750056C849 /* FriensoAppDelegate.m in Sources */,
 				3ECD3998192416F000A61B83 /* FRSyncFriendConnections.m in Sources */,
 				1853403F18C2236E0094AC5A /* FriensoOptionsTVC.m in Sources */,

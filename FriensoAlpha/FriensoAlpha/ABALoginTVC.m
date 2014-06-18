@@ -1485,7 +1485,7 @@ gradient.colors = [NSArray arrayWithObjects:(id)[startColour CGColor],(id)[endCo
             cFriends.corePhone     = [valueArray objectAtIndex:i];
             cFriends.coreCreated   =  [NSDate date];
             cFriends.coreModified  = [NSDate date];
-            cFriends.coreType      = @"Person";
+            cFriends.coreType      = @"iCore Friends";
             //NSLog(@"%@",[coreCircle objectAtIndex:i] );
             NSError *savingError = nil;
             

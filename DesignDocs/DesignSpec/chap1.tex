@@ -11,13 +11,24 @@
 \begin{introduction}
 \end{introduction}
 
-\section{Minimum Value Proposition}
-\begin{introduction}
-  
-\end{introduction}
+\section{Minimum Viable Product (MVP)}
+  \begin{introduction}
+  Frienso's MVP describes the minimum feature set and functionality to frame the vision
+  of what the mobile app can do to leverage help from trusted friends, encourage bystander
+  interaction, and promote student safety on college campuses.
+  \end{introduction}
 
 \subsection{Overview of the Frienso UI}
 \begin{figure}[ht!]
+ \centering
+  \includegraphics[width=\textwidth]{images/flowchart.png}
+	\caption{
+	An overview of the Frienso (alpha) showing the main blocks and views. 
+	}
+	% \label{fig:UEGraph}
+	\end{figure}
+	
+\begin{figure}[!ht]
  \centering
   \includegraphics[width=\textwidth]{images/mvp_actual0.jpg}
 	\caption{
@@ -32,10 +43,9 @@
 	}
 	% \label{fig:UEGraph}
 	\end{figure}
-
-\begin{figure}[ht!]
+\begin{figure}[ht]
  \centering
-   \includegraphics[width=\textwidth]{images/mvp_actual1.png}
+   \includegraphics[width=0.8\textwidth]{images/mvp_actual1.png}
     \caption{
 	Home view and toolbar features: Home view, Fullscren mapview, Pending requests drawer, 
 	Friends view, HelpNow view, View options (top left to bottom right). (1) Pending
@@ -46,8 +56,6 @@
 	}
 	% \label{fig:UEGraph}
 	\end{figure}
-
-
 \begin{figure}[ht!]
  \centering
    \includegraphics[width=\textwidth]{images/mvp_actual2.png}
@@ -56,36 +64,14 @@
 	}
 	% \label{fig:UEGraph}
 	\end{figure}
+\clearpage
 	
-\subsection{CoreFriends Network Creation}
-
-
-\section{Team Collaboration}
-\subsection{README iOS Code File}
-The iOS project folder contains the file \texttt{README.md} to be used to maintain brief
-descriptions of the app's version and build number.  The build number is a number 
-generated from the git commits. The build version number is updated each time a new 
-executable is generated for ad-hoc distribution.
-
-In addition to the app's version, the README file maintains a list of TODO items and 
-descriptions of how they were completed.
-
-
-\subsection{Team Collaboration on Github}
-\href{https://help.github.com/articles/resolving-merge-conflicts}{\color{blue}{Resolving merge conflicts}}
-\section{Documenation Structure}
-%\lettrine[nindent=-3pt]{P}{raesent fermentum tristique} nunc, a rutrum ligula
-
-%\section{Flow Chart}
-
-\section{Features}
+\section{Feature Set}
 
 \subsection{Pending Requests}
   Pending requests fall into four types: watch, helpNow, and coreFriend.
   Users have the following options: to accept, reject, or dismiss the request.
-  
-  
-  
+    
 \subsubsection{Type: watch}
   Requests of type \emph{watch} are accessed when a user that added you to their 
   coreFriends circle has initiated a 'watchMe' alert.
@@ -184,6 +170,26 @@ link}.
 	\end{tabularx}\end{table}%
 
 \noindent \textbf{$\dagger$} these classes are under construction.
+
+
+\section{Team Collaboration}
+\subsection{README iOS Code File}
+The iOS project folder contains the file \texttt{README.md} to be used to maintain brief
+descriptions of the app's version and build number.  The build number is a number 
+generated from the git commits. The build version number is updated each time a new 
+executable is generated for ad-hoc distribution.
+
+In addition to the app's version, the README file maintains a list of TODO items and 
+descriptions of how they were completed.
+
+
+\subsection{Team Collaboration on Github}
+\href{https://help.github.com/articles/resolving-merge-conflicts}{\color{blue}{Resolving merge conflicts}}
+\section{Documenation Structure}
+%\lettrine[nindent=-3pt]{P}{raesent fermentum tristique} nunc, a rutrum ligula
+
+%\section{Flow Chart}
+
 
 
 

@@ -226,11 +226,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "FriensoAlpha/FRSyncFriendConnections.m"
-            timestampString = "424176368.885634"
+            timestampString = "424757043.161704"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "222"
-            endingLineNumber = "222"
+            startingLineNumber = "228"
+            endingLineNumber = "228"
             landmarkName = "-fetchPhoneNbrForThoseIWatch:withCount:"
             landmarkType = "5">
          </BreakpointContent>
@@ -242,11 +242,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "FriensoAlpha/FRSyncFriendConnections.m"
-            timestampString = "424176368.885634"
+            timestampString = "424757043.161704"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "238"
-            endingLineNumber = "238"
+            startingLineNumber = "244"
+            endingLineNumber = "244"
             landmarkName = "-fetchPhoneNbrForThoseIWatch:withCount:"
             landmarkType = "5">
             <Locations>
@@ -288,11 +288,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "FriensoAlpha/FRSyncFriendConnections.m"
-            timestampString = "424176368.885634"
+            timestampString = "424757043.161704"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "222"
-            endingLineNumber = "222"
+            startingLineNumber = "228"
+            endingLineNumber = "228"
             landmarkName = "-fetchPhoneNbrForThoseIWatch:withCount:"
             landmarkType = "5">
          </BreakpointContent>
@@ -300,17 +300,47 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "FriensoAlpha/FRSyncFriendConnections.m"
-            timestampString = "424176368.885634"
+            timestampString = "424757043.161704"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "237"
-            endingLineNumber = "237"
+            startingLineNumber = "243"
+            endingLineNumber = "243"
             landmarkName = "-fetchPhoneNbrForThoseIWatch:withCount:"
             landmarkType = "5">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "__65-[FRSyncFriendConnections fetchPhoneNbrForThoseIWatch:withCount:]_block_invoke"
+                  moduleName = "FriensoAlpha"
+                  urlString = "file:///Users/sal/aBitofAlchemy/Frienso/FriensoAlpha/FriensoAlpha/FRSyncFriendConnections.m"
+                  timestampString = "424754802.614895"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "242"
+                  endingLineNumber = "242"
+                  offsetFromSymbolStart = "1748">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "__65-[FRSyncFriendConnections fetchPhoneNbrForThoseIWatch:withCount:]_block_invoke"
+                  moduleName = "FriensoAlpha"
+                  urlString = "file:///Users/sal/aBitofAlchemy/Frienso/FriensoAlpha/FriensoAlpha/FRSyncFriendConnections.m"
+                  timestampString = "424754802.615242"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "242"
+                  endingLineNumber = "242"
+                  offsetFromSymbolStart = "1979">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -320,12 +350,60 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "FriensoAlpha/FriensoViewController.m"
-            timestampString = "424635527.77709"
+            timestampString = "424760653.53079"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1243"
-            endingLineNumber = "1243"
-            landmarkName = "-locationManager"
+            startingLineNumber = "1247"
+            endingLineNumber = "1247"
+            landmarkName = "-mapView:annotationView:didChangeDragState:fromOldState:"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "FriensoAlpha/FRSyncFriendConnections.m"
+            timestampString = "424757043.161704"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "349"
+            endingLineNumber = "349"
+            landmarkName = "-isFriendUnique:"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "FriensoAlpha/FRSyncFriendConnections.m"
+            timestampString = "424757043.161704"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "106"
+            endingLineNumber = "106"
+            landmarkName = "-syncUWatchToCoreFriends"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "FriensoAlpha/FRSyncFriendConnections.m"
+            timestampString = "424757043.161704"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "347"
+            endingLineNumber = "347"
+            landmarkName = "-isFriendUnique:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

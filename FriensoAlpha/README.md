@@ -25,6 +25,10 @@ Version History
                     nothing with it.
                     - Fixed issue with one's ongoing event (WatchMe) not sticking, now it sticks if the user navigates
                     out of the app and returns, or kills it and reopens it, the bit will set the WatchMe switch ON
+                    
+                    - Feature: cached the university/campus emergency contacts on first install
+                    - Fix: cache friends outside of your coreCircle 
+
 
 * ver 1.5 build 25  - Fixed minor issues with the Profile & CoreCircle views; redoing the way the user
                     logs in or registers!
