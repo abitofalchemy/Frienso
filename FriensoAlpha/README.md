@@ -27,8 +27,10 @@ Version History
                     out of the app and returns, or kills it and reopens it, the bit will set the WatchMe switch ON
                     
                     - Feature: cached the university/campus emergency contacts on first install
-                    - Fix: cache friends outside of your coreCircle 
-
+                    - Fix: cache friends outside of your coreCircle; we query to see what users have a coreCircle
+                    with our contact info in their coreCircle
+                    - Feature: scroll up makes the table view go to fullscreen mode and a button at the top brings it
+                    back to normal size and poistion.
 
 * ver 1.5 build 25  - Fixed minor issues with the Profile & CoreCircle views; redoing the way the user
                     logs in or registers!
@@ -97,7 +99,7 @@ Working On
         (1) fix detecting if WatchMe events come from a user in you friends list
         Future versions of this should be push-notifications driven
         (2) fix toolbar in Options View mode, the options view button should be removed
-        from these view.
+        from these views.
 * NY: Push notifications for WatchMe and CoreFriend requests
 * NY/SA:  Finish the PanicVC
 * UK: Finishing the bubble actions on the mapviw (i.e. initiate phone call or SMS)
@@ -105,13 +107,9 @@ Working On
 
 ToDo
 ----
+* {SA}{bug} Looking into WatchMe events causing  a crash
 * {NY} Finish panic view controller
-* {SA} Complete code for pending requests of diff types: watch, helpNow, and coreFriend
-  ** Maintain the type of alert as we track it
-  ** WatchMe is now working with Cloud-store; 
-  ** Accept request works
-  ** Reject request ...
-* {SA} Add alarm timer to AlertEvent
+* {SA} Add alarm timer to AlertEvent {no longer needed, events will stay
 * Cache Univ Emergency Contacts from a separate Parse class
 * Async update locations from cloud
 +Add Horizontal scroll for the Active users & the rest of your friends.
@@ -141,6 +139,12 @@ ToDo
 
 Tasks Done / Project Log:
 -------------------------
+* {SA} Complete code for pending requests of diff types: watch, helpNow, and coreFriend
+  ** Maintain the type of alert as we track it
+  ** WatchMe is now working with Cloud-store; 18Jun14 - watchme crashes at the dialog box
+  ** Accept request works
+  ** Reject request ...
+
 * {done : 10Jun14/SA} Don't track users: {track only when user has an event going}
 * Add fullscreen button to map
 * { Done } * Test/review 'new user registration' process

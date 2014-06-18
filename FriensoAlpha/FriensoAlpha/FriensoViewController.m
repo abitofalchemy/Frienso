@@ -58,6 +58,7 @@ enum PinAnnotationTypeTag {
 @property (nonatomic,strong) UISwitch       *trackMeOnOff;
 @property (nonatomic,strong) UILabel        *drawerLabel;
 @property (nonatomic)        CGFloat scrollViewY;
+@property (nonatomic)        CGRect normTableViewRect;
 
 -(void)actionPanicEvent:(UIButton *)theButton;
 -(void)viewMenuOptions: (UIButton *)theButton;
@@ -176,14 +177,82 @@ enum PinAnnotationTypeTag {
     }
 }
 
+-(void) scrollViewWillBeginDragging:(UIScrollView *)scrollView
+{
+    CGRect fullScreenRect=[[UIScreen mainScreen] applicationFrame];
+    
+    
+    if (scrollView.contentOffset.y == 0 && (self.tableView.frame.size.height != fullScreenRect.size.height))
+    {
+        /** NSArray *tvLayout = [[NSArray alloc] initWithObjects:[NSNumber numberWithFloat:self.tableView.frame.origin.y], [NSNumber numberWithFloat:self.tableView.frame.size.height], nil];
+        NSLog(@"%@", tvLayout);
+        **/
+        [UIView animateWithDuration:0.5 animations:^{
+            CGFloat tvFrameWidth = self.tableView.frame.size.width;
+            CGRect tvNewFrame1 = CGRectMake(self.tableView.frame.origin.x+tvFrameWidth*0.1,
+                                            self.tableView.frame.origin.y,
+                                            self.tableView.frame.size.width * 0.8,
+                                            self.tableView.frame.size.height);
+            [self.tableView setFrame:tvNewFrame1];
+            self.tableView.layer.borderWidth = 1.0;
+            self.tableView.layer.borderColor = [UIColor darkGrayColor].CGColor;
+            
+            [self.tableView setFrame:fullScreenRect];
+            
+            UIButton *tvHeaderView = [UIButton buttonWithType:UIButtonTypeCustom];
+            [tvHeaderView setFrame:CGRectMake(0, 0, self.view.bounds.size.width,self.tableView.frame.origin.y)];
+            [tvHeaderView setBackgroundColor:[UIColor blackColor]];
+            [tvHeaderView.titleLabel setTextAlignment:NSTextAlignmentRight];
+            [tvHeaderView setTitle:@"▽" forState:UIControlStateNormal];
+            [tvHeaderView addTarget:self action:@selector(closeFullscreenTableViewAction:)
+                   forControlEvents:UIControlEventTouchUpInside];//tvFSCloseAction) withSender:self];
+            [self.view addSubview:tvHeaderView];
+            }];
+        
+        
+        
+    }
+//    {
+//        
+//        CGFloat yOffset = self.view.frame.size.height*0.15;
+//        CGFloat y_tableViewOffset = yOffset - _drawerLabel.frame.size.height*0.9;
+//        
+//        if (self.scrollView.frame.size.height> self.drawerLabel.frame.size.height*1.5)
+//        {
+//            [UIView animateWithDuration:0.5 animations:^{
+//                CGRect closeDrawerRect = CGRectMake(0, self.scrollView.frame.origin.y, self.view.bounds.size.width,_drawerLabel.frame.size.height*0.9);
+//                [self.scrollView setFrame:closeDrawerRect];
+//                self.scrollView.contentSize = self.scrollView.frame.size;
+//                
+//                [_drawerLabel setTextColor:[UIColor whiteColor]];
+//                [self.tableView setCenter:CGPointMake(self.tableView.center.x, self.tableView.center.y - y_tableViewOffset)];// remove tableview yOffset
+//            }];
+//        } else { // Open Drawer
+//            [UIView animateWithDuration:0.5 animations:^{
+//                CGRect openDrawerRect = CGRectMake(0, self.scrollView.frame.origin.y, self.view.frame.size.width,
+//                                                   yOffset);
+//                [self.tableView setCenter:CGPointMake(self.tableView.center.x, self.tableView.center.y + y_tableViewOffset)];
+//                [self.scrollView setFrame:openDrawerRect];
+//                self.scrollView.contentSize = self.scrollView.frame.size;
+//                [_drawerLabel setTextColor:[UIColor darkGrayColor]];
+//            }];
+//        }
+//    }
+}
 
 #pragma mark - NSFetchResultsController delegate methods
 - (void)controllerDidChangeContent:(NSFetchedResultsController *)controller {
-    //printf("refreshing frc\n");
     [self.tableView reloadData];
 }
 
 #pragma mark - Local Actions
+-(void) closeFullscreenTableViewAction:(UIButton*)sender {
+    [UIView animateWithDuration:0.3 animations:^{
+        [self.tableView setFrame:self.normTableViewRect];
+        [sender removeFromSuperview];
+    }];
+    
+}
 -(void) pendingRqstAction:(id) sender {
     UIButton *btn = (UIButton *) sender;
     NSDictionary *frUserDic = [self.pendingRqstsArray objectAtIndex:btn.tag]; // 10Jun14:SA
@@ -551,7 +620,7 @@ enum PinAnnotationTypeTag {
     [tableHelpView setAlpha:0.8f];
     tableHelpView.layer.borderWidth = 2.0f;
     tableHelpView.layer.borderColor = [UIColor whiteColor].CGColor;
-
+    
     UILabel *label = [[UILabel alloc] init];
     [label setTextColor:[UIColor whiteColor]];
     [label setText:@"Your Activity"];
@@ -567,6 +636,10 @@ enum PinAnnotationTypeTag {
     self.tableView.layer.borderWidth = 2.0f;
     self.tableView.layer.borderColor = [UIColor whiteColor].CGColor;// UIColorFromRGB(0x9B90C8).CGColor;
     [self.view addSubview:self.tableView];
+    [self.tableView setScrollEnabled:YES];
+    [self.tableView setScrollsToTop:YES];
+    
+    self.normTableViewRect = self.tableView.frame;
     
     
     /* Create the fetch request first; set a predicate to filter priority level 3 items (sponsored events) */

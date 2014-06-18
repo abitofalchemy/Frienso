@@ -350,13 +350,13 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "FriensoAlpha/FriensoViewController.m"
-            timestampString = "424760653.53079"
+            timestampString = "424801253.17162"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1247"
-            endingLineNumber = "1247"
-            landmarkName = "-mapView:annotationView:didChangeDragState:fromOldState:"
-            landmarkType = "5">
+            startingLineNumber = "1323"
+            endingLineNumber = "1323"
+            landmarkName = "@implementation FriensoViewController"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
