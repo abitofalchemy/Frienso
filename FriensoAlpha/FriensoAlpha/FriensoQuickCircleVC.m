@@ -14,7 +14,7 @@
 #import "FRCoreDataParse.h"
 #import <Parse/Parse.h>
 #import "FRStringImage.h"
-#import "FRSyncFriendConnections.h"
+//#import "FRSyncFriendConnections.h"
 
 static NSString *coreFriendsCell = @"coreFriendsCell";
 
@@ -56,8 +56,8 @@ static NSString *coreFriendsCell = @"coreFriendsCell";
     
 
     // Update this user's current location
-    FRCoreDataParse *frCDPObject = [[FRCoreDataParse alloc] init];
-    [frCDPObject updateThisUserLocation];
+    //FRCoreDataParse *frCDPObject = [[FRCoreDataParse alloc] init];
+    //[frCDPObject updateThisUserLocation];
     //[frCDPObject updateCoreFriendsLocation];
 
     
@@ -70,8 +70,8 @@ static NSString *coreFriendsCell = @"coreFriendsCell";
     self.tableView.delegate   = self;
     [self.view addSubview:self.tableView];
     
-    [[[FRSyncFriendConnections alloc] init] listWatchCoreFriends]; // List those uWatch
-    //    [[[FRSyncFriendConnections alloc] init] syncUWatchToCoreFriends]; // Sync those uWatch
+    //  [[[FRSyncFriendConnections alloc] init] listWatchCoreFriends]; // List those uWatch
+    //  [[[FRSyncFriendConnections alloc] init] syncUWatchToCoreFriends]; // Sync those uWatch
     
     // Create the fetch request first 
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc]
@@ -124,6 +124,14 @@ static NSString *coreFriendsCell = @"coreFriendsCell";
 // handling the sections for these data
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
     id <NSFetchedResultsSectionInfo> sectionInfo = [[self.frc sections] objectAtIndex:section];
+    // Temporary fix
+    /*if ([[sectionInfo name] isEqualToString:@"iCore Friends"])
+        return @"Core Friends";
+    else if ([[sectionInfo name] isEqualToString:@"WatchCircle"])
+        return @"Friends";
+    else
+        return @"Emergency";
+    */
     return [sectionInfo name];
 }
 - (NSArray *)sectionIndexTitlesForTableView:(UITableView *)tableView {
@@ -144,17 +152,17 @@ static NSString *coreFriendsCell = @"coreFriendsCell";
     }
     
     CoreFriends *friend = [self.frc objectAtIndexPath:indexPath];
-    // NSLog(@"%@, %@", friend.coreFirstName, friend.corePhone);
-    // NSLog(@"%@", friend.coreNickName);
-    if ([friend.coreType isEqualToString:@"Person"])
-        cell.textLabel.text = (friend.coreNickName == NULL) ? friend.coreFirstName : friend.coreNickName; // : // stringByAppendingFormat:@" %@", person.lastName];
-    else if ( [friend.coreType isEqualToString:@"WatchCircle"])
+    if ([friend.coreType isEqualToString:@"iCore Friends"])
+        cell.textLabel.text = (friend.coreNickName == NULL) ? friend.coreFirstName : friend.coreNickName;
+    else if ( [friend.coreType isEqualToString:@"oCore Friends"])
         cell.textLabel.text = friend.coreNickName == NULL ? friend.coreFirstName : friend.coreNickName;
+    else if ([friend.coreType isEqualToString:@"Emergency"])
+        cell.textLabel.text = friend.coreFirstName;
     else
         cell.textLabel.text = friend.coreTitle;
     
     cell.textLabel.font = [UIFont fontWithName:@"AppleSDGothicNeo-Medium" size:14.0];
-    if ([friend.coreType isEqualToString:@"Person"])
+    if ([friend.coreType isEqualToString:@"iCore Friends"])
         cell.detailTextLabel.text = [NSString stringWithFormat:@"%@",(friend.coreLocation == NULL) ? @"..." : friend.coreLocation];
     else
         cell.detailTextLabel.text = [NSString stringWithFormat:@"%@",(friend.corePhone == NULL) ? @"..." : friend.corePhone];
@@ -166,7 +174,7 @@ static NSString *coreFriendsCell = @"coreFriendsCell";
     UIButton *smsBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     [smsBtn setTintColor:[UIColor blueColor]];
 
-    if ([friend.coreType isEqualToString:@"Resource"]) {
+    if ([friend.coreType isEqualToString:@"Emergency"]) {
         FRStringImage *image = [[FRStringImage alloc] init];
         [smsBtn setBackgroundImage:[image imageWithString:@"☏"
                                                      font:[UIFont fontWithName:@"AppleSDGothicNeo-Thin" size:32.0]
@@ -230,7 +238,7 @@ static NSString *coreFriendsCell = @"coreFriendsCell";
 {
     // if Resource, we should just dial it!
     CoreFriends *friend = [self.frc objectAtIndexPath:indexPath];
-    if (friend!=NULL && [friend.coreType isEqualToString:@"Resource"]) {
+    if (friend!=NULL && [friend.coreType isEqualToString:@"Emergency"]) {
         [[[UIAlertView alloc] initWithTitle:nil
                                     message:nil
                                    delegate:self

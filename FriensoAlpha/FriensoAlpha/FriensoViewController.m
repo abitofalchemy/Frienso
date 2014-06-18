@@ -724,8 +724,8 @@ enum PinAnnotationTypeTag {
         [self.loadingView startAnimating];
         
         // Seting up the UI
-        [self setupToolBarIcons];
-        [self setupNavigationBarImage];
+        //[self setupToolBarIcons];
+        //[self setupNavigationBarImage];
         [self setupMapView];
         [self setupRequestScrollView];
         [self setupEventsTableView];
@@ -733,12 +733,15 @@ enum PinAnnotationTypeTag {
     
     [self setupToolBarIcons];
     [self setupNavigationBarImage];
+    
+    
 }
 // viewDidUnload is deprecated
 
 -(void) viewWillAppear:(BOOL)animated {
     [super viewWillAppear:YES];
     //NSLog(@"viewWillAppear");
+    
 }
 
 -(void) viewDidAppear:(BOOL)animated{
@@ -748,6 +751,10 @@ enum PinAnnotationTypeTag {
     
     if ([installationCount isEqualToNumber:[NSNumber numberWithInteger:0]] || installationCount == NULL){
         NSLog(@"First install");
+        
+        // At first install, cache univesity/college emergency contacts
+        [[[CloudEntityContacts alloc] initWithCampusDomain:@"nd.edu"] fetchEmergencyContacts:@"inst,contact"];
+        
         [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithInteger:1] forKey:@"afterFirstInstall"];
         [[NSUserDefaults standardUserDefaults] synchronize];
     } else if ([installationCount isEqualToNumber:[NSNumber numberWithInteger:1]])
@@ -768,6 +775,9 @@ enum PinAnnotationTypeTag {
             NSLog(@"Successful login to Parse:%@",currentUser.email);
         } else
             NSLog(@"no current user");
+        
+        // Cache your extended circle of Friends
+        [[[FRSyncFriendConnections alloc] init] syncUWatchToCoreFriends]; // Sync those uWatch
         
         
         // Determine App Frame
