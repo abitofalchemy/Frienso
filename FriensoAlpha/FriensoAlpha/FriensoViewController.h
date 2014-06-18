@@ -17,7 +17,7 @@
 
 
 @interface FriensoViewController : UIViewController <NSFetchedResultsControllerDelegate,
-UITableViewDelegate,UITableViewDataSource,MKMapViewDelegate,CLLocationManagerDelegate,UIAlertViewDelegate>
+UITableViewDelegate,UITableViewDataSource,MKMapViewDelegate,CLLocationManagerDelegate,UIAlertViewDelegate,UIScrollViewDelegate>
 
 @property (nonatomic, retain) CLLocationManager *locationManager;
 @property (nonatomic, strong) MKMapView *mapView;
