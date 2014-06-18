@@ -22,8 +22,11 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     // Frienso Parse account
+   
+    
     [Parse setApplicationId:@"ocxutehzKxd4EvmeODaNDl8AwJPYajzTK06QYkzZ"
                   clientKey:@"G70qPOHHCFiUFUwBqbUJvqb2Fel8BrxcjBjntQEc"];
+    
     [Crashlytics startWithAPIKey:@"a6e275099418fb75d38d9f45e6bb9819bc259bf5"];
     
     [[UIApplication sharedApplication] registerForRemoteNotificationTypes:

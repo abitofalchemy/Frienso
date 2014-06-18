@@ -562,7 +562,7 @@
 				ORGANIZATIONNAME = ABitOfAlchemy;
 				TargetAttributes = {
 					1827930018BE06740056C849 = {
-						DevelopmentTeam = WDLW7K2HT3;
+						DevelopmentTeam = 47J734W9F8;
 						SystemCapabilities = {
 							com.apple.iOS = {
 								enabled = 0;

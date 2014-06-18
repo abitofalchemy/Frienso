@@ -339,10 +339,11 @@ enum PinAnnotationTypeTag {
                          animations:^{trackMeLabel.alpha = 0.0;}
                          completion:^(BOOL finished){ [trackMeLabel removeFromSuperview]; }];
         
+        
         /**************PUSH NOTIFICATIONS: WATCH ME NOW!!!! *****************/
         
         //Query Parse to know who your "accepted" core friends are and send them each a notification
-        
+       
         PFQuery *query = [PFQuery queryWithClassName:@"CoreFriendRequest"];
         [query whereKey:@"status" equalTo:@"accept"];
         [query whereKey:@"sender" equalTo:[PFUser currentUser]];

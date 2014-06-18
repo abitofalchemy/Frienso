@@ -540,6 +540,7 @@
                         /**************CORE FRIEND REQUEST: PUSH NOTIFICATION STUFF*****************/
                         
                         //Send Push Notification, informing person that they have been sent a friend request
+                       
                         NSString *myString = @"Ph";
                         NSString *coreFrndChannel = [myString stringByAppendingString:phoneNumber];
                         
@@ -557,6 +558,7 @@
                         
                         [push setMessage:coreFrndMsg];
                         [push sendPushInBackground];
+                        
                         
                         /**************END OF PUSH NOTIFICATION STUFF****************/
 
