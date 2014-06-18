@@ -65,7 +65,6 @@
 		3E185480192544B80059817D /* cell-phone-ic32.png in Resources */ = {isa = PBXBuildFile; fileRef = 3E18547F192544B70059817D /* cell-phone-ic32.png */; };
 		3E21A0541920EE050083F1AC /* FRStringImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E21A0531920EE050083F1AC /* FRStringImage.m */; };
 		3E277FCE19343A4A00283A33 /* GeoCDPointAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E277FCD19343A4A00283A33 /* GeoCDPointAnnotation.m */; };
-		3E2F8C2F18D2FA3200FD2A99 /* Parse.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E2F8C2E18D2FA3200FD2A99 /* Parse.framework */; };
 		3E2F8C3718D4C74600FD2A99 /* FriensoQuickCircleVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E2F8C3618D4C74600FD2A99 /* FriensoQuickCircleVC.m */; };
 		3E2F8C3F18D83D8300FD2A99 /* AboutFriensoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E2F8C3E18D83D8300FD2A99 /* AboutFriensoViewController.m */; };
 		3E3BCA5F191E3402008D8ED0 /* ugc-ic-29x2.png in Resources */ = {isa = PBXBuildFile; fileRef = 3E3BCA5E191E3402008D8ED0 /* ugc-ic-29x2.png */; };
@@ -99,6 +98,8 @@
 		3EFEC30A19152633002A709D /* FriensoEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 3EFEC30919152633002A709D /* FriensoEvent.m */; };
 		3EFEC30C1917877E002A709D /* und_logo29.png in Resources */ = {isa = PBXBuildFile; fileRef = 3EFEC30B1917877E002A709D /* und_logo29.png */; };
 		3EFEC30F19180276002A709D /* CoreFriends.m in Sources */ = {isa = PBXBuildFile; fileRef = 3EFEC30E19180276002A709D /* CoreFriends.m */; };
+		503837041950CE960066E450 /* Parse.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 503837031950CE960066E450 /* Parse.framework */; };
+		D2B4C533194F90D000094B98 /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2B4C532194F90D000094B98 /* Crashlytics.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -189,7 +190,6 @@
 		3E21A0531920EE050083F1AC /* FRStringImage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FRStringImage.m; sourceTree = "<group>"; };
 		3E277FCC19343A4A00283A33 /* GeoCDPointAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeoCDPointAnnotation.h; sourceTree = "<group>"; };
 		3E277FCD19343A4A00283A33 /* GeoCDPointAnnotation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeoCDPointAnnotation.m; sourceTree = "<group>"; };
-		3E2F8C2E18D2FA3200FD2A99 /* Parse.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Parse.framework; path = ../../../Downloads/Parse.framework; sourceTree = "<group>"; };
 		3E2F8C3518D4C74600FD2A99 /* FriensoQuickCircleVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FriensoQuickCircleVC.h; sourceTree = "<group>"; };
 		3E2F8C3618D4C74600FD2A99 /* FriensoQuickCircleVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FriensoQuickCircleVC.m; sourceTree = "<group>"; };
 		3E2F8C3D18D83D8300FD2A99 /* AboutFriensoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AboutFriensoViewController.h; sourceTree = "<group>"; };
@@ -241,6 +241,8 @@
 		3EFEC30B1917877E002A709D /* und_logo29.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = und_logo29.png; sourceTree = "<group>"; };
 		3EFEC30D19180275002A709D /* CoreFriends.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CoreFriends.h; path = FriensoAlpha/CoreFriends.h; sourceTree = SOURCE_ROOT; };
 		3EFEC30E19180276002A709D /* CoreFriends.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CoreFriends.m; path = FriensoAlpha/CoreFriends.m; sourceTree = SOURCE_ROOT; };
+		503837031950CE960066E450 /* Parse.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Parse.framework; path = ../../../Documents/Parse.framework; sourceTree = "<group>"; };
+		D2B4C532194F90D000094B98 /* Crashlytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Crashlytics.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -248,9 +250,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				503837041950CE960066E450 /* Parse.framework in Frameworks */,
+				D2B4C533194F90D000094B98 /* Crashlytics.framework in Frameworks */,
 				3EEA2280191F7DFC00DC8C54 /* MessageUI.framework in Frameworks */,
 				3E9F893518FEB62A00DA190C /* MapKit.framework in Frameworks */,
-				3E2F8C2F18D2FA3200FD2A99 /* Parse.framework in Frameworks */,
 				180E880F18BE0C97009A570F /* CoreLocation.framework in Frameworks */,
 				180E880D18BE0C8A009A570F /* MobileCoreServices.framework in Frameworks */,
 				180E880318BE0B34009A570F /* AudioToolbox.framework in Frameworks */,
@@ -328,9 +331,10 @@
 		1827930318BE06740056C849 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				503837031950CE960066E450 /* Parse.framework */,
+				D2B4C532194F90D000094B98 /* Crashlytics.framework */,
 				3EEA227F191F7DFC00DC8C54 /* MessageUI.framework */,
 				3E9F893418FEB62A00DA190C /* MapKit.framework */,
-				3E2F8C2E18D2FA3200FD2A99 /* Parse.framework */,
 				180E880E18BE0C97009A570F /* CoreLocation.framework */,
 				180E880C18BE0C8A009A570F /* MobileCoreServices.framework */,
 				180E87FB18BE0B34009A570F /* AudioToolbox.framework */,
@@ -832,6 +836,8 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					/Users/sal/Downloads,
+					"$(PROJECT_DIR)",
+					/Users/mlab_laptop02/Documents,
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "FriensoAlpha/FriensoAlpha-Prefix.pch";
@@ -855,6 +861,8 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					/Users/sal/Downloads,
+					"$(PROJECT_DIR)",
+					/Users/mlab_laptop02/Documents,
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "FriensoAlpha/FriensoAlpha-Prefix.pch";

@@ -8,6 +8,7 @@
 
 #import "PanicViewCtrlr.h"
 #import "FriensoEvent.h"
+#import <Parse/Parse.h>
 #import "FriensoAppDelegate.h"
 #import <AudioToolbox/AudioToolbox.h>
 
@@ -242,6 +243,45 @@
         [self.timer invalidate];
         self.timer = nil;
     }
+    
+    //Code to send Panic Alerts to all friends with your location information
+    
+    /**************PUSH NOTIFICATIONS: HELP ME NOW!!!! *****************/
+    
+    //Query Parse to know who your "accepted" core friends are and send them each a notification
+    
+    PFQuery *query = [PFQuery queryWithClassName:@"CoreFriendRequest"];
+    [query whereKey:@"status" equalTo:@"accept"];
+    [query whereKey:@"sender" equalTo:[PFUser currentUser]];
+    [query includeKey:@"recipient"];
+    
+    [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+        if (!error) {
+            // The find succeeded.
+            NSLog(@"Successfully retrieved %d scores.", objects.count);
+            // Do something with the found objects
+            for (PFObject *object in objects) {
+                NSString *myString = @"Ph";
+                NSString *personalizedChannelNumber = [myString stringByAppendingString:object[@"recipient"][@"phoneNumber"]];
+                NSLog(@"Phone Number for this friend is: %@", personalizedChannelNumber);
+                
+                PFPush *push = [[PFPush alloc] init];
+                
+                // Be sure to use the plural 'setChannels' if you are sending to more than one channel.
+                [push setChannel:personalizedChannelNumber];
+                NSString *coreRqstHeader = @"HELP REQUEST FROM: ";
+                NSString *coreFrndMsg = [coreRqstHeader stringByAppendingString:[[PFUser currentUser] objectForKey:@"username"]];
+                
+                [push setMessage:coreFrndMsg];
+                [push sendPushInBackground];
+            }
+        } else {
+            // Log details of the failure
+            NSLog(@"Error: %@ %@", error, [error userInfo]);
+        }
+    }];
+    /**************END OF PUSH NOTIFICATIONS: HELP ME NOW!!!! *****************/
+    
     AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
     [self createNewEvent:@"Sent Panic Alert Notification"];
     [[[UIAlertView alloc] initWithTitle: @"Notifications Sent"

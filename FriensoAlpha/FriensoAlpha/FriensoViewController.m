@@ -339,6 +339,42 @@ enum PinAnnotationTypeTag {
                          animations:^{trackMeLabel.alpha = 0.0;}
                          completion:^(BOOL finished){ [trackMeLabel removeFromSuperview]; }];
         
+        /**************PUSH NOTIFICATIONS: WATCH ME NOW!!!! *****************/
+        
+        //Query Parse to know who your "accepted" core friends are and send them each a notification
+        
+        PFQuery *query = [PFQuery queryWithClassName:@"CoreFriendRequest"];
+        [query whereKey:@"status" equalTo:@"accept"];
+        [query whereKey:@"sender" equalTo:[PFUser currentUser]];
+        [query includeKey:@"recipient"];
+        
+        [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+            if (!error) {
+                // The find succeeded.
+                NSLog(@"Successfully retrieved %d scores.", objects.count);
+                // Do something with the found objects
+                for (PFObject *object in objects) {
+                    NSString *myString = @"Ph";
+                    NSString *personalizedChannelNumber = [myString stringByAppendingString:object[@"recipient"][@"phoneNumber"]];
+                    NSLog(@"Phone Number for this friend is: %@", personalizedChannelNumber);
+                    
+                    PFPush *push = [[PFPush alloc] init];
+                    
+                    // Be sure to use the plural 'setChannels' if you are sending to more than one channel.
+                    [push setChannel:personalizedChannelNumber];
+                    NSString *coreRqstHeader = @"WATCH REQUEST FROM: ";
+                    NSString *coreFrndMsg = [coreRqstHeader stringByAppendingString:[[PFUser currentUser] objectForKey:@"username"]];
+                    
+                    [push setMessage:coreFrndMsg];
+                    [push sendPushInBackground];
+                }
+            } else {
+                // Log details of the failure
+                NSLog(@"Error: %@ %@", error, [error userInfo]);
+            }
+        }];
+        /**************END OF PUSH NOTIFICATIONS: WATCH ME!!!! *****************/
+        
         // Watch Me event tracking
         CloudUsrEvnts *watchMeEvent = [[CloudUsrEvnts alloc] initWithAlertType:@"watchMe"
                                                                           eventStartDateTime:[NSDate date] ];
