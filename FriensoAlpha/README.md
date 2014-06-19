@@ -31,6 +31,9 @@ Version History
                     with our contact info in their coreCircle
                     - Feature: scroll up makes the table view go to fullscreen mode and a button at the top brings it
                     back to normal size and poistion.
+                    
+                    - 18Jun14/SA:  Fixed a problem with the WatchMe events crashing.
+
 
 * ver 1.5 build 25  - Fixed minor issues with the Profile & CoreCircle views; redoing the way the user
                     logs in or registers!
@@ -93,13 +96,16 @@ Version History
 
 Working On
 ----------
-* SA: WatchMe switch triggers internal alarms and push notifications
+* SA: WatchMe switch triggers (internal alarms) and push notifications
+
 * SA: Managing and maintaining 'Requests'
 * SA: Fix bugs
         (1) fix detecting if WatchMe events come from a user in you friends list
         Future versions of this should be push-notifications driven
         (2) fix toolbar in Options View mode, the options view button should be removed
         from these views.
+        (3) 18Jun14/SA  MapView doesn't show a map 
+
 * NY: Push notifications for WatchMe and CoreFriend requests
 * NY/SA:  Finish the PanicVC
 * UK: Finishing the bubble actions on the mapviw (i.e. initiate phone call or SMS)

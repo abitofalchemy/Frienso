@@ -263,7 +263,7 @@ enum PinAnnotationTypeTag {
     if([type isEqualToString:coreFriendRequest]) { //if core friend request
         //TODO: we do not need to add the btn.tag here.
         //may be we can extend UIAlertView and add a variable for the index.
-        NSLog(@"btn tag = %d",btn.tag);
+        //NSLog(@"btn tag = %d",btn.tag);
         [[[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"Core Friend Request:%2ld",(long)btn.tag]
                                     message:[NSString stringWithFormat:@"from %@",friensoUser.username]
                                    delegate:self
@@ -336,7 +336,7 @@ enum PinAnnotationTypeTag {
 
     if ([type isEqualToString:coreFriendRequest]) {
         [self addPndngRqstButton:[UIColor redColor] withFriensoUser:parseFriend withTag:tagNbr];
-        NSLog(@"Tag number %d ",tagNbr);
+        //NSLog(@"Tag number %d ",tagNbr);
     } else {
         [self addPndngRqstButton:[UIColor whiteColor] withFriensoUser:parseFriend withTag:tagNbr];
         [self.friendsLocationArray insertObject:([parseFriend valueForKey:@"currentLocation"] == NULL)  ? @"0,0" : [parseFriend valueForKey:@"currentLocation"]  atIndex:tagNbr];
@@ -385,6 +385,7 @@ enum PinAnnotationTypeTag {
     
 }
 -(void) trackMeSwitchEnabled:(UISwitch *)sender {
+    NSLog(@"********* trackMeswitchEnabled ****");
     
     if ([sender isOn]){
         // Alert the user
@@ -487,6 +488,52 @@ enum PinAnnotationTypeTag {
 -(void) friensoMapViewCtrlr:(UIButton *)button {
     [self animateThisButton:button];
     [self performSegueWithIdentifier:@"showFriesoMap" sender:self];
+}
+
+-(void) logAndNotifyCoreFriendsToWatchMe {
+    NSLog(@"logAndNotifyCoreFriendsToWatchMe");
+    
+    /**************PUSH NOTIFICATIONS: WATCH ME NOW!!!! *****************/
+    
+    //Query Parse to know who your "accepted" core friends are and send them each a notification
+    
+    PFQuery *query = [PFQuery queryWithClassName:@"CoreFriendRequest"];
+    [query whereKey:@"status" equalTo:@"accept"];
+    [query whereKey:@"sender" equalTo:[PFUser currentUser]];
+    [query includeKey:@"recipient"];
+    
+    [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+        if (!error) {
+            // The find succeeded.
+            NSLog(@"Successfully retrieved %d scores.", objects.count);
+            // Do something with the found objects
+            for (PFObject *object in objects) {
+                NSString *myString = @"Ph";
+                NSString *personalizedChannelNumber = [myString stringByAppendingString:object[@"recipient"][@"phoneNumber"]];
+                NSLog(@"Phone Number for this friend is: %@", personalizedChannelNumber);
+                
+                PFPush *push = [[PFPush alloc] init];
+                
+                // Be sure to use the plural 'setChannels' if you are sending to more than one channel.
+                [push setChannel:personalizedChannelNumber];
+                NSString *coreRqstHeader = @"WATCH REQUEST FROM: ";
+                NSString *coreFrndMsg = [coreRqstHeader stringByAppendingString:[[PFUser currentUser] objectForKey:@"username"]];
+                
+                [push setMessage:coreFrndMsg];
+                [push sendPushInBackground];
+            }
+        } else {
+            // Log details of the failure
+            NSLog(@"Error: %@ %@", error, [error userInfo]);
+        }
+    }];
+    /**************END OF PUSH NOTIFICATIONS: WATCH ME!!!! *****************/
+    
+    // Watch Me event tracking
+    CloudUsrEvnts *watchMeEvent = [[CloudUsrEvnts alloc] initWithAlertType:@"watchMe"
+                                                        eventStartDateTime:[NSDate date] ];
+    [watchMeEvent setPersonalEvent];
+    [watchMeEvent sendToCloud];
 }
 
 #pragma mark - Interaction with NSUserDefaults
@@ -887,7 +934,7 @@ enum PinAnnotationTypeTag {
             NSLog(@"no current user");
         
         // Cache your extended circle of Friends
-        [[[FRSyncFriendConnections alloc] init] syncUWatchToCoreFriends]; // Sync those uWatch
+        //[[[FRSyncFriendConnections alloc] init] syncUWatchToCoreFriends]; // Sync those uWatch
         
         
         // Determine App Frame
@@ -1449,7 +1496,7 @@ enum PinAnnotationTypeTag {
                 }
             }
 
-            NSLog(@"%d", [self.pendingRqstsArray count]);
+            //NSLog(@"%d", [self.pendingRqstsArray count]);
             [self.scrollView setPendingRequests:self.pendingRqstsArray];
 
             //check for awaiting core friend requests
@@ -1709,163 +1756,136 @@ enum PinAnnotationTypeTag {
 }
 -(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
-//<<<<<<< HEAD
-//
-//    NSString *title = [alertView buttonTitleAtIndex:buttonIndex];//NSLog(@"%@",title);
-//    NSString *tagNbr= [title substringFromIndex:(title.length -2)];
-//    int btnTagNbr   = (int)[tagNbr integerValue];
-//    
-//    
-//    if (buttonIndex == 1) // accept
-//    {
-//        if ([[alertView title] isEqualToString:@"WatchMe"])
-//        {
-//            NSLog(@"..... turn on switch ");
-//        } else {
-//        
-//            NSDictionary *frUserDic = [self.pendingRqstsArray objectAtIndex:btnTagNbr]; // 10Jun14:SA
-//            PFUser *friensoUser = [frUserDic objectForKey:@"pfUser"];                   // 10Jun14:SA
-//            [self addUserBubbleToMap:friensoUser             /* accepted to watch this user */
-//                             withTag:[tagNbr integerValue]];
-//            //[self setWatchingUserInCD:friensoUser]; // Watching Friend set
-//            for (id subview in [self.scrollView subviews]){
-//                if ( [subview isKindOfClass:[UIButton class]] ) {
-//                    //NSLog(@"[0]:tag=%ld", (long)[(UIButton *)subview tag] );
-//                    if (btnTagNbr ==  [(UIButton *)subview tag])
-//                    {
-//                        [subview removeFromSuperview];
-//                        
-//                        // Cloud track request
-//                        //NSLog(@":%@",[frUserDic objectForKey:@"reqType"]);
-//                        [[[CloudUsrEvnts alloc] init] trackRequestOfType:[frUserDic objectForKey:@"reqType"]
-//                                                                 forUser:friensoUser  //[_pendingRqstsArray objectAtIndex:btnTagNbr]
-//                                                              withStatus:@"accepted"];
-//                        // Now update requests count
-//                        [self.pendingRqstsArray removeObjectAtIndex:[tagNbr integerValue]];
-//                        [self.scrollView updatePendingRequests:self.pendingRqstsArray];
-//                        // update Cloud-Store
-//                    }
-//=======
-    // Bad and should be redesigned
-    // Read the title of the alert dialog box.
+    // Read the title of the alert dialog box to learn the type of alert view
     NSString *title = alertView.title;
-    //read the index in the title to get the position in the array
-    NSString *tagNbr= [title substringFromIndex:(title.length -2)];
-    int btnTagNbr   = (int)[tagNbr integerValue];
-    NSDictionary *frUserDic = [self.pendingRqstsArray objectAtIndex:btnTagNbr]; // 10Jun14:SA
-    NSString *requestType = [frUserDic objectForKey:@"reqType"];
-    PFUser *friensoUser = [frUserDic objectForKey:@"pfUser"];                   // 10Jun14:SA
-
-    if([requestType isEqualToString:coreFriendRequest])
-    {
-
-        NSString * response;
-
-        if (buttonIndex == 1) // accept
-        {
-            response = @"accept";
-            NSLog(@" corefriend request accepted");
-        } else if (buttonIndex == 2) { //reject
-            response = @"reject";
-            NSLog(@" corefriend request rejected");
-        } else { //dismiss
-            NSLog(@"dismissed alertview");
-            return;
+    if ( [title isEqualToString:@"WatchMe"]) {
+        switch (buttonIndex) {
+            case 0: // dismiss, cancel, or okay
+                //NSLog(@"0:%ld", buttonIndex);
+                [trackMeOnOff setOn:NO animated:YES]; // Nothing happens -- no action
+                break;
+            case 1: // accept
+                //NSLog(@"Accept: 1:%ld", buttonIndex);
+                [self logAndNotifyCoreFriendsToWatchMe];
+                break;
+            default:
+                break;
         }
-
-        //update the db with the choices made by the user
-        PFQuery *pfquery = [PFQuery queryWithClassName:@"CoreFriendRequest"];
-        [pfquery whereKey:@"sender" equalTo:friensoUser];
-        [pfquery whereKey:@"recipient" equalTo:[PFUser currentUser]];
-        [pfquery whereKey:@"awaitingResponseFrom" equalTo:@"recipient"];
-        [pfquery whereKey:@"status" equalTo:@"send"];
-        [pfquery findObjectsInBackgroundWithBlock:^(NSArray *objects,
-                                                    NSError *error) {
-            if(!error && ![objects isEqual:[NSNull null]]) {
-                //TODO: check if first element is not null
-                PFObject * pfobject =[objects firstObject];
-                if(pfobject != nil) {
-                    pfobject[@"awaitingResponseFrom"] = @"sender";
-                    pfobject[@"status"] = response;
-                    [pfobject saveInBackground];
-
-                    //remove the button from the view
-                    for (id subview in [self.scrollView subviews]){
-                        if ( [subview isKindOfClass:[UIButton class]] ) {
-                            if (btnTagNbr ==  [(UIButton *)subview tag])
-                            {
-                                [subview removeFromSuperview];
-                                // Now update requests count
-                                [self.pendingRqstsArray removeObjectAtIndex:btnTagNbr];
-                                [self.scrollView updatePendingRequests:self.pendingRqstsArray];
+    } else {
+        //read the index in the title to get the position in the array **** not a good design!!! ****
+        NSString *tagNbr= [title substringFromIndex:(title.length -2)];
+        int btnTagNbr   = (int)[tagNbr integerValue];
+        NSDictionary *frUserDic = [self.pendingRqstsArray objectAtIndex:btnTagNbr]; // 10Jun14:SA
+        NSString *requestType = [frUserDic objectForKey:@"reqType"];
+        PFUser *friensoUser = [frUserDic objectForKey:@"pfUser"];                   // 10Jun14:SA
+        
+        
+        if([requestType isEqualToString:coreFriendRequest])
+        {
+            
+            NSString * response;
+            
+            if (buttonIndex == 1) // accept
+            {
+                response = @"accept";
+                NSLog(@" corefriend request accepted");
+            } else if (buttonIndex == 2) { //reject
+                response = @"reject";
+                NSLog(@" corefriend request rejected");
+            } else { //dismiss
+                NSLog(@"dismissed alertview");
+                return;
+            }
+            
+            //update the db with the choices made by the user
+            PFQuery *pfquery = [PFQuery queryWithClassName:@"CoreFriendRequest"];
+            [pfquery whereKey:@"sender" equalTo:friensoUser];
+            [pfquery whereKey:@"recipient" equalTo:[PFUser currentUser]];
+            [pfquery whereKey:@"awaitingResponseFrom" equalTo:@"recipient"];
+            [pfquery whereKey:@"status" equalTo:@"send"];
+            [pfquery findObjectsInBackgroundWithBlock:^(NSArray *objects,
+                                                        NSError *error) {
+                if(!error && ![objects isEqual:[NSNull null]]) {
+                    //TODO: check if first element is not null
+                    PFObject * pfobject =[objects firstObject];
+                    if(pfobject != nil) {
+                        pfobject[@"awaitingResponseFrom"] = @"sender";
+                        pfobject[@"status"] = response;
+                        [pfobject saveInBackground];
+                        
+                        //remove the button from the view
+                        for (id subview in [self.scrollView subviews]){
+                            if ( [subview isKindOfClass:[UIButton class]] ) {
+                                if (btnTagNbr ==  [(UIButton *)subview tag])
+                                {
+                                    [subview removeFromSuperview];
+                                    // Now update requests count
+                                    [self.pendingRqstsArray removeObjectAtIndex:btnTagNbr];
+                                    [self.scrollView updatePendingRequests:self.pendingRqstsArray];
+                                }
                             }
                         }
                     }
                 }
-            }
-        }];
-    } else { // request is of type either
-
-        if (buttonIndex == 1) // accept
-        {
-            [self addUserBubbleToMap:friensoUser             /* accepted to watch this user */
-                             withTag:[tagNbr integerValue]];
-            //[self setWatchingUserInCD:friensoUser]; // Watching Friend set
-            for (id subview in [self.scrollView subviews]){
-                if ( [subview isKindOfClass:[UIButton class]] ) {
-                    NSLog(@"[0]:tag=%ld", (long)[(UIButton *)subview tag] );
-                    if (btnTagNbr ==  [(UIButton *)subview tag])
-                    {
-                        [subview removeFromSuperview];
+            }];
+        } else { // request is of type either
+            
+            if (buttonIndex == 1) // accept
+            {
+                [self addUserBubbleToMap:friensoUser             /* accepted to watch this user */
+                                 withTag:[tagNbr integerValue]];
+                //[self setWatchingUserInCD:friensoUser]; // Watching Friend set
+                for (id subview in [self.scrollView subviews]){
+                    if ( [subview isKindOfClass:[UIButton class]] ) {
+                        NSLog(@"[0]:tag=%ld", (long)[(UIButton *)subview tag] );
+                        if (btnTagNbr ==  [(UIButton *)subview tag])
+                        {
+                            [subview removeFromSuperview];
+                            
+                            // Cloud track request
+                            NSLog(@":%@",[frUserDic objectForKey:@"reqType"]);
+                            [[[CloudUsrEvnts alloc] init] trackRequestOfType:[frUserDic objectForKey:@"reqType"]
+                                                                     forUser:friensoUser  //[_pendingRqstsArray objectAtIndex:btnTagNbr]
+                                                                  withStatus:@"accepted"];
+                            // Now update requests count
+                            [self.pendingRqstsArray removeObjectAtIndex:[tagNbr integerValue]];
+                            [self.scrollView updatePendingRequests:self.pendingRqstsArray];
+                            // update Cloud-Store
+                            //>>>>>>> upstream/master
+                        }
                         
-                        // Cloud track request
-                        NSLog(@":%@",[frUserDic objectForKey:@"reqType"]);
-                        [[[CloudUsrEvnts alloc] init] trackRequestOfType:[frUserDic objectForKey:@"reqType"]
-                                                                 forUser:friensoUser  //[_pendingRqstsArray objectAtIndex:btnTagNbr]
-                                                              withStatus:@"accepted"];
-                        // Now update requests count
-                        [self.pendingRqstsArray removeObjectAtIndex:[tagNbr integerValue]];
-                        [self.scrollView updatePendingRequests:self.pendingRqstsArray];
-                        // update Cloud-Store
-                        //>>>>>>> upstream/master
+                    }   // ends for
+                }       // ends if
+            } else if (buttonIndex == 2) // reject
+            {
+                NSLog(@"'request' rejected ");
+                // log the reject to the cloud
+                // remove the request and update
+                
+                for (id subview in [self.scrollView subviews]){
+                    if ( [subview isKindOfClass:[UIButton class]] ) {
+                        if (btnTagNbr ==  [(UIButton *)subview tag])
+                        {
+                            [subview removeFromSuperview];
+                            
+                            // Cloud track request
+                            [[[CloudUsrEvnts alloc] init] trackRequestOfType:[frUserDic objectForKey:@"reqType"]
+                                                                     forUser:friensoUser  //[_pendingRqstsArray objectAtIndex:btnTagNbr]
+                                                                  withStatus:@"rejected"];
+                            // Now update requests count
+                            [self.pendingRqstsArray removeObjectAtIndex:[tagNbr integerValue]];
+                            [self.scrollView updatePendingRequests:self.pendingRqstsArray];
+                            // update Cloud-Store
+                        }
                     }
                     
-                }   // ends for
-            }       // ends if
-        } else if (buttonIndex == 2) // reject
-        {
-            NSLog(@"'request' rejected ");
-            // log the reject to the cloud
-            // remove the request and update
-           
-            for (id subview in [self.scrollView subviews]){
-                if ( [subview isKindOfClass:[UIButton class]] ) {
-                    if (btnTagNbr ==  [(UIButton *)subview tag])
-                    {
-                        [subview removeFromSuperview];
-                        
-                        // Cloud track request
-                        [[[CloudUsrEvnts alloc] init] trackRequestOfType:[frUserDic objectForKey:@"reqType"]
-                                                                 forUser:friensoUser  //[_pendingRqstsArray objectAtIndex:btnTagNbr]
-                                                              withStatus:@"rejected"];
-                        // Now update requests count
-                        [self.pendingRqstsArray removeObjectAtIndex:[tagNbr integerValue]];
-                        [self.scrollView updatePendingRequests:self.pendingRqstsArray];
-                        // update Cloud-Store
-                    }
                 }
-                
-            }
-        }else // dismiss
-        {
-            if ([[alertView title] isEqualToString:@"WatchMe"])
+            }else // dismiss
             {
-                NSLog(@"..... cancelled, turn switch Off ");
-                [trackMeOnOff setOn:NO animated:YES];
+                NSLog(@"dismissed alertview");
             }
-            NSLog(@"dismissed alertview");
-        }
-    } // ends the if/else for the requestType
+        } // ends the if/else for the requestType
+    }
 }
 -(void) isUserInMy2WatchList:(PFUser*)friensoUser{
     
