@@ -33,6 +33,13 @@ Version History
                     back to normal size and poistion.
                     
                     - 18Jun14/SA:  Fixed a problem with the WatchMe events crashing.
+                    
+                    - 19Jun14/SA:  Fixed problem: After accepting to 'Wactch' a coreFriend, reopening/
+                    relaunching app was putting the user back in Watch request mode; now accepted requests
+                    stick to the mapView
+                    - Bypassing the coreFriendRequest (not working for me:Sal) to look at local corefriends
+                    dictionary to determine list of friends to send watchMe requests.
+                    
 
 
 * ver 1.5 build 25  - Fixed minor issues with the Profile & CoreCircle views; redoing the way the user
@@ -97,14 +104,14 @@ Version History
 Working On
 ----------
 * SA: WatchMe switch triggers (internal alarms) and push notifications
-
+* SA: 19Jun14/SA: Need to fix adding new bubbles to mapview should detect other bubbles already on it
 * SA: Managing and maintaining 'Requests'
 * SA: Fix bugs
         (1) fix detecting if WatchMe events come from a user in you friends list
         Future versions of this should be push-notifications driven
         (2) fix toolbar in Options View mode, the options view button should be removed
         from these views.
-        (3) 18Jun14/SA  MapView doesn't show a map 
+        (3) 18Jun14/SA  MapView doesn't show a map (issue on GitHub)
 
 * NY: Push notifications for WatchMe and CoreFriend requests
 * NY/SA:  Finish the PanicVC
@@ -114,21 +121,15 @@ Working On
 ToDo
 ----
 * {SA}{bug} Looking into WatchMe events causing  a crash
+* {SA}{bug} 19Jun14/SA: Friends requests accept caused a crash
 * {NY} Finish panic view controller
 * {SA} Add alarm timer to AlertEvent {no longer needed, events will stay
 * Cache Univ Emergency Contacts from a separate Parse class
 * Async update locations from cloud
 +Add Horizontal scroll for the Active users & the rest of your friends.
 
-* Add event creation -------------
-  WatchMe:  {bug} check that Parse class UserEvent updates the eventType   
-    Create a full event
-    Go for a run, etc.
-    {working} - added a button to top left of right bar button, need to connect it to an event generation
-    VC
-    {working} - basic notifications alert-views
 
-* {bug} When user changes its core circle, we need only one record to be updated (not inserted or created new)
+* {*** bug; created an issue to track this on GitHub} When user changes its core circle, we need only one record to be updated (not inserted or created new)
 
 * {bug} When user sings in, if there are networking issues, the auto-sync which fetches the users stored coreFriends group is delayed (maybe even fails).  To fix this we could force a sync, else we could 
     retry until it succeeds, but then the user will have to wait.
@@ -145,6 +146,15 @@ ToDo
 
 Tasks Done / Project Log:
 -------------------------
+
+* {19Jun14/SA}{done}* Add event creation -------------
+  WatchMe:  {bug} check that Parse class UserEvent updates the eventType   
+    Create a full event
+    Go for a run, etc.
+    {working} - added a button to top left of right bar button, need to connect it to an event generation
+    VC
+    {working} - basic notifications alert-views
+
 * {SA} Complete code for pending requests of diff types: watch, helpNow, and coreFriend
   ** Maintain the type of alert as we track it
   ** WatchMe is now working with Cloud-store; 18Jun14 - watchme crashes at the dialog box

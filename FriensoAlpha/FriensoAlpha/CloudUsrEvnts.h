@@ -14,14 +14,16 @@
 @property (nonatomic, copy, readonly) NSString *alertType, *friensoUser;//, *genre, *coverUrl, *year;
 @property (nonatomic, copy, readonly) NSDate   *startDateTime;//, *genre, *coverUrl, *year;
 
-
+- (id)initWithAlertType:(NSString*)alertType;
 - (id)initWithAlertType:(NSString*)alertType eventStartDateTime:(NSDate *)startDateTime;
 - (void) setPersonalEvent;
 - (void) sendToCloud;
+- (void) sendNotificationsToCoreCircle;
 - (void) disableEvent;
 - (BOOL) activeAlertCheck;
-- (void) trackRequestOfType:  (NSString *)requestType forUser:(PFUser *)cloudUser withStatus:(NSString *)status;
+- (void) trackRequestOfType: (NSString *)requestType forUser:(PFUser *)cloudUser withStatus:(NSString *)status;
 - (void) isUserInMy2WatchList:(PFUser *)friensoUser;
+
 
 //- (NSArray *) ongoingAlertsCheck;
 

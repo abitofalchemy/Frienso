@@ -363,7 +363,13 @@ enum PinAnnotationTypeTag {
 
 -(void) addUserBubbleToMap:(PFUser *)parseUser withTag:(NSInteger)tagNbr {
     
-    //NSLog(@"addUserBubbleToMap: %d",tagNbr);
+    NSLog(@"addUserBubbleToMap: %ld",tagNbr);
+    for (id subview in [self.mapView subviews]){
+        if ( [subview isKindOfClass:[UIButton class]] )
+        {
+            tagNbr +=1;
+        }
+    }
     UIButton *mLocBtn = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 44, 44)];
     UIImage *img =[[FRStringImage alloc] imageTextBubbleOfSize:mLocBtn.frame.size];
     [mLocBtn setBackgroundImage:img forState:UIControlStateNormal];
@@ -377,12 +383,13 @@ enum PinAnnotationTypeTag {
     [mLocBtn addTarget:self action:@selector(friendLocInteraction:)
       forControlEvents:UIControlEventTouchUpInside];
     [self.mapView addSubview:mLocBtn];
+    
     CGFloat btnCenterX = mLocBtn.center.x*2 + mLocBtn.center.x*2*tagNbr;
     [mLocBtn setCenter:CGPointMake(btnCenterX, self.mapView.frame.size.height - mLocBtn.center.y)];
     
-    
+    /***
     [self.friendsLocationArray insertObject:([parseUser valueForKey:@"currentLocation"] == NULL)  ? @"0,0" : [parseUser valueForKey:@"currentLocation"]  atIndex:tagNbr];
-    
+    ***/
 }
 -(void) trackMeSwitchEnabled:(UISwitch *)sender {
     NSLog(@"********* trackMeswitchEnabled ****");
@@ -449,11 +456,16 @@ enum PinAnnotationTypeTag {
     [self performSegueWithIdentifier:@"showFriesoMap" sender:self];
 }
 
+#define BYPASSFRIENDREQUESTS 1
 -(void) logAndNotifyCoreFriendsToWatchMe {
     NSLog(@"logAndNotifyCoreFriendsToWatchMe");
     
     /**************PUSH NOTIFICATIONS: WATCH ME NOW!!!! *****************/
-    
+    if (BYPASSFRIENDREQUESTS) {
+        CloudUsrEvnts *watchMePushNots = [[CloudUsrEvnts alloc] initWithAlertType:@"watchMe"];
+        [watchMePushNots sendNotificationsToCoreCircle];
+        
+    } else {
     //Query Parse to know who your "accepted" core friends are and send them each a notification
     
     PFQuery *query = [PFQuery queryWithClassName:@"CoreFriendRequest"];
@@ -464,7 +476,7 @@ enum PinAnnotationTypeTag {
     [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         if (!error) {
             // The find succeeded.
-            NSLog(@"Successfully retrieved %d scores.", objects.count);
+            NSLog(@"Successfully retrieved %ld scores.", objects.count);
             // Do something with the found objects
             for (PFObject *object in objects) {
                 NSString *myString = @"Ph";
@@ -487,6 +499,7 @@ enum PinAnnotationTypeTag {
         }
     }];
     /**************END OF PUSH NOTIFICATIONS: WATCH ME!!!! *****************/
+    }
     
     // Watch Me event tracking
     CloudUsrEvnts *watchMeEvent = [[CloudUsrEvnts alloc] initWithAlertType:@"watchMe"
@@ -1022,6 +1035,30 @@ enum PinAnnotationTypeTag {
     [self performSegueWithIdentifier:@"loginView" sender:self];
 }
 #pragma mark - CoreData helper methods
+-(void) trackUserEventLocally:(PFUser *)friensoUser
+{
+    FriensoEvent *frEvent = [NSEntityDescription insertNewObjectForEntityForName:@"FriensoEvent"
+                                                                    inManagedObjectContext:[self managedObjectContext]];
+    
+    if (frEvent != nil){
+        frEvent.eventTitle     = [NSString stringWithFormat:@"You are watching: %@", friensoUser.username];
+        frEvent.eventSubtitle  = @"watchMe";
+        frEvent.eventLocation  = @"Location:";
+        frEvent.eventContact   = friensoUser.username;
+        frEvent.eventCreated   = [NSDate date];
+        frEvent.eventModified  = [NSDate date];
+        frEvent.eventPriority  = [NSNumber numberWithInteger:3];
+        frEvent.eventObjId     = friensoUser.objectId;
+        
+        NSError *savingError = nil;
+        if(![[self managedObjectContext] save:&savingError])
+            NSLog(@"Failed to save the context. Error = %@", savingError);
+        
+    } else {
+        NSLog(@"Failed to create a new event.");
+    }
+
+}
 -(void) updateCoreFriendEntity:(NSString *)friendEmail
                   withLocation:(PFGeoPoint *)friendCurrentLoc
 {
@@ -1052,14 +1089,17 @@ enum PinAnnotationTypeTag {
 }
 -(BOOL) queryCDFriensoEvents4ActiveWatchEvent:(PFUser *)friensoUser
 {
+#warning is not working 100%
+    
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init]; // Create the fetch request
     NSEntityDescription *entity  = [NSEntityDescription entityForName:@"FriensoEvent"
                                               inManagedObjectContext:[self managedObjectContext]];
     
     [fetchRequest setEntity:entity];
-    [fetchRequest setPredicate:[NSPredicate predicateWithFormat:@"eventSubtitle like 'watch'"]];
-    //NSSortDescriptor *phoneSort =  [[NSSortDescriptor alloc] initWithKey:@"corePhone" ascending:YES];
-    //fetchRequest.sortDescriptors = @[phoneSort];
+    [fetchRequest setPredicate:[NSPredicate predicateWithFormat:@"eventSubtitle like 'watchMe'"]];
+    //[fetchRequest setPredicate:[NSPredicate predicateWithFormat:@"eventContact like %@",friensoUser.username]];
+    NSSortDescriptor *dateSort =  [[NSSortDescriptor alloc] initWithKey:@"eventModified" ascending:NO];
+    fetchRequest.sortDescriptors = @[dateSort];
     
     NSError *error;
     BOOL retBool;
@@ -1069,13 +1109,11 @@ enum PinAnnotationTypeTag {
         retBool = NO;
     }  else {
        for (NSManagedObject *mObject in fetchedObjects) {
-           //NSLog(@"%@, %@", friensoUser.username, [mObject valueForKey:@"eventTitle"]);
-           if ([[mObject valueForKey:@"eventTitle"] rangeOfString:friensoUser.username].location == NSNotFound)
+           NSLog(@"     %@,%@",[mObject valueForKey:@"eventTitle"],[mObject valueForKey:@"eventSubtitle"]);
+           if ([[mObject valueForKey:@"eventContact"] rangeOfString:friensoUser.username].location == NSNotFound)
                retBool = NO;
-           else {
+           else
                retBool = YES;
-               
-           }
        }
     }
     return retBool;
@@ -1796,21 +1834,24 @@ enum PinAnnotationTypeTag {
                 //[self setWatchingUserInCD:friensoUser]; // Watching Friend set
                 for (id subview in [self.scrollView subviews]){
                     if ( [subview isKindOfClass:[UIButton class]] ) {
-                        NSLog(@"[0]:tag=%ld", (long)[(UIButton *)subview tag] );
+                        //NSLog(@"[0]:tag=%ld", (long)[(UIButton *)subview tag] );
                         if (btnTagNbr ==  [(UIButton *)subview tag])
                         {
                             [subview removeFromSuperview];
                             
-                            // Cloud track request
-                            NSLog(@":%@",[frUserDic objectForKey:@"reqType"]);
-                            [[[CloudUsrEvnts alloc] init] trackRequestOfType:[frUserDic objectForKey:@"reqType"]
-                                                                     forUser:friensoUser  //[_pendingRqstsArray objectAtIndex:btnTagNbr]
-                                                                  withStatus:@"accepted"];
+                            // UserEvent maintain request status
+                            //NSLog(@":%@",[frUserDic objectForKey:@"reqType"]);
+                            CloudUsrEvnts *userEvent = [[CloudUsrEvnts alloc] init];
+                            [userEvent trackRequestOfType:[frUserDic objectForKey:@"reqType"]
+                                                  forUser:friensoUser
+                                               withStatus:@"accepted"];
                             // Now update requests count
                             [self.pendingRqstsArray removeObjectAtIndex:[tagNbr integerValue]];
                             [self.scrollView updatePendingRequests:self.pendingRqstsArray];
-                            // update Cloud-Store
-                            //>>>>>>> upstream/master
+                            // set FriensoEvent, make the watching your friend X sticky
+                            //[[[WatchingCoreFriend alloc] init] trackUserEventLocally:friensoUser];
+                            /****** migrate this code to its own class ******/
+                            [self trackUserEventLocally:friensoUser];
                         }
                         
                     }   // ends for
