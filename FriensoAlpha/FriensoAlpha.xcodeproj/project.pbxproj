@@ -52,8 +52,8 @@
 		1879B59418C7277100AEA55F /* profile.png in Resources */ = {isa = PBXBuildFile; fileRef = 1879B59218C7277100AEA55F /* profile.png */; };
 		1879B59B18C786DB00AEA55F /* FriensoResourcesTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 1879B59A18C786DB00AEA55F /* FriensoResourcesTVC.m */; };
 		1879B59F18C888BB00AEA55F /* tstWatchingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1879B59E18C888BB00AEA55F /* tstWatchingViewController.m */; };
-		18804BBA1952B4CB00BE2EB5 /* Parse.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 18804BB91952B4CB00BE2EB5 /* Parse.framework */; };
 		18804BBD1952C9D200BE2EB5 /* WatchingUserEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 18804BBC1952C9D200BE2EB5 /* WatchingUserEvent.m */; };
+		18CB40CC1953260B00D7084F /* Parse.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 18804BB91952B4CB00BE2EB5 /* Parse.framework */; };
 		18CD00E518CBB98D007BAC85 /* profile-landscape.png in Resources */ = {isa = PBXBuildFile; fileRef = 18CD00E418CBB98D007BAC85 /* profile-landscape.png */; };
 		18CD00E818CCA020007BAC85 /* UserProfileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 18CD00E718CCA020007BAC85 /* UserProfileViewController.m */; };
 		18CD00EA18CDBCA7007BAC85 /* profile-landscape-1.png in Resources */ = {isa = PBXBuildFile; fileRef = 18CD00E918CDBCA7007BAC85 /* profile-landscape-1.png */; };
@@ -254,7 +254,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				18804BBA1952B4CB00BE2EB5 /* Parse.framework in Frameworks */,
+				18CB40CC1953260B00D7084F /* Parse.framework in Frameworks */,
 				D2B4C533194F90D000094B98 /* Crashlytics.framework in Frameworks */,
 				3EEA2280191F7DFC00DC8C54 /* MessageUI.framework in Frameworks */,
 				3E9F893518FEB62A00DA190C /* MapKit.framework in Frameworks */,
@@ -848,6 +848,8 @@
 					/Users/mlab_laptop02/Documents,
 					/Volumes/Macintosh,
 					HD/Users/sal/Downloads,
+					/Volumes/Macintosh,
+					HD/Users/sal/Downloads,
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "FriensoAlpha/FriensoAlpha-Prefix.pch";
@@ -873,6 +875,8 @@
 					/Users/sal/Downloads,
 					"$(PROJECT_DIR)",
 					/Users/mlab_laptop02/Documents,
+					/Volumes/Macintosh,
+					HD/Users/sal/Downloads,
 					/Volumes/Macintosh,
 					HD/Users/sal/Downloads,
 				);
