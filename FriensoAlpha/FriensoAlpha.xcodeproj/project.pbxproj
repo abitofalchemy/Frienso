@@ -52,7 +52,6 @@
 		1879B59418C7277100AEA55F /* profile.png in Resources */ = {isa = PBXBuildFile; fileRef = 1879B59218C7277100AEA55F /* profile.png */; };
 		1879B59B18C786DB00AEA55F /* FriensoResourcesTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 1879B59A18C786DB00AEA55F /* FriensoResourcesTVC.m */; };
 		1879B59F18C888BB00AEA55F /* tstWatchingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1879B59E18C888BB00AEA55F /* tstWatchingViewController.m */; };
-		18804BBD1952C9D200BE2EB5 /* WatchingUserEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 18804BBC1952C9D200BE2EB5 /* WatchingUserEvent.m */; };
 		18CB40CC1953260B00D7084F /* Parse.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 18804BB91952B4CB00BE2EB5 /* Parse.framework */; };
 		18CD00E518CBB98D007BAC85 /* profile-landscape.png in Resources */ = {isa = PBXBuildFile; fileRef = 18CD00E418CBB98D007BAC85 /* profile-landscape.png */; };
 		18CD00E818CCA020007BAC85 /* UserProfileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 18CD00E718CCA020007BAC85 /* UserProfileViewController.m */; };
@@ -690,7 +689,6 @@
 				18CD00E818CCA020007BAC85 /* UserProfileViewController.m in Sources */,
 				18CD00F018CDE557007BAC85 /* NewCoreCircleTVC.m in Sources */,
 				1827934018BE08090056C849 /* PanicViewCtrlr.m in Sources */,
-				18804BBD1952C9D200BE2EB5 /* WatchingUserEvent.m in Sources */,
 				1879B59F18C888BB00AEA55F /* tstWatchingViewController.m in Sources */,
 				3E9F892F18FE99E700DA190C /* SearchViewController.m in Sources */,
 				3E2F8C3F18D83D8300FD2A99 /* AboutFriensoViewController.m in Sources */,
