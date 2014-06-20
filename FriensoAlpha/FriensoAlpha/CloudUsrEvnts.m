@@ -12,6 +12,15 @@
 
 
 @implementation CloudUsrEvnts
+- (id)initWithAlertType:(NSString*)alertType
+{
+    self = [super init];
+    if (self)
+    {
+        _alertType = alertType;
+    }
+    return self;
+}
 - (id)initWithAlertType:(NSString*)alertType eventStartDateTime:(NSDate *)startDateTime
 {
     self = [super init];
@@ -133,6 +142,29 @@
     else
         return NO;
 }
+-(void) sendNotificationsToCoreCircle{
+    NSDictionary *dic =[[NSUserDefaults standardUserDefaults]
+                        dictionaryForKey:@"CoreFriendsContactInfoDicKey"];
+    
+    for (NSString *coreFriendPh in [dic allValues]) {
+        NSString *minPhString = [self stripStringOfUnwantedChars:coreFriendPh];
+        NSString *personalizedChannelNumber =[NSString stringWithFormat:@"Ph%@",
+                                              [minPhString substringFromIndex:minPhString.length-10]];
+        if(!([minPhString rangeOfString:@"3394087"].location == NSNotFound))
+        {
+            NSLog(@"Phone Number for this friend is: %@", personalizedChannelNumber);
+            PFPush *push = [[PFPush alloc] init];
+            
+            // Be sure to use the plural 'setChannels' if you are sending to more than one channel.
+            [push setChannel:personalizedChannelNumber];
+            NSString *coreRqstHeader = @"WATCH REQUEST FROM: ";
+            NSString *coreFrndMsg = [coreRqstHeader stringByAppendingString:[[PFUser currentUser] objectForKey:@"username"]];
+            
+            [push setMessage:coreFrndMsg];
+            [push sendPushInBackground];
+        }
+    }
+}
 -(void) sendToCloud
 {
     //    PFObject *userEvent = [PFObject objectWithClassName:@"UserEvent" ];
@@ -199,5 +231,10 @@
     [comps setHour: [comps hour]+1]; // Here you may also need to check if it's the last hour of the day
     return [calendar dateFromComponents:comps];
 }
-
+#pragma mark
+#pragma mark - Helper methods
+- (NSString *) stripStringOfUnwantedChars:(NSString *)phoneNumber {
+   NSString *cleanedString = [[phoneNumber componentsSeparatedByCharactersInSet:[[NSCharacterSet characterSetWithCharactersInString:@"0123456789"] invertedSet]] componentsJoinedByString:@""];
+   return cleanedString;
+}
 @end

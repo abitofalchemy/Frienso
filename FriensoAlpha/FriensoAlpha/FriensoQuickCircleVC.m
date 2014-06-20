@@ -27,8 +27,6 @@ static NSString *coreFriendsCell = @"coreFriendsCell";
 @end
 
 @implementation FriensoQuickCircleVC
-#warning Need to detect if coreFriend is also uWatch friend
-
 - (NSManagedObjectContext *) managedObjectContext{
     
     FriensoAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
@@ -93,7 +91,7 @@ static NSString *coreFriendsCell = @"coreFriendsCell";
     self.frc.delegate      = self;
     NSError *fetchingError = nil;
     if ([self.frc performFetch:&fetchingError]){
-        NSLog(@"CoreCircle fetched with nbr of categories:%d",[[self.frc sections] count]);
+        NSLog(@"CoreCircle fetched with nbr of categories:%lu",(unsigned long)[[self.frc sections] count]);
     } else {
         NSLog(@"Failed to fetch.");
     }
