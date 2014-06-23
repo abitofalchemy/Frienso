@@ -355,8 +355,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1330"
             endingLineNumber = "1330"
-            landmarkName = "@implementation FriensoViewController"
-            landmarkType = "3">
+            landmarkName = "-actionAddFriensoEvent:"
+            landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -419,7 +419,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1768"
             endingLineNumber = "1768"
-            landmarkName = "-alertView:clickedButtonAtIndex:"
+            landmarkName = "-addCoreFriendBubblesToMap:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

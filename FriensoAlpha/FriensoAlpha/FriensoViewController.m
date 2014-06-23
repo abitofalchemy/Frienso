@@ -1208,7 +1208,7 @@ enum PinAnnotationTypeTag {
 }
 -(BOOL) amiWatchingUserEvent:(NSString *)userEventObjId
 {
-    NSLog(@"%@", userEventObjId);
+    //NSLog(@"%@", userEventObjId);
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init]; // Create the fetch request
     NSEntityDescription *entity  = [NSEntityDescription entityForName:@"FriensoEvent"
                                                inManagedObjectContext:[self managedObjectContext]];
@@ -1619,11 +1619,11 @@ enum PinAnnotationTypeTag {
                      
                      if ([self amiWatchingUserEvent:userEvent.objectId])
                      {
-                         NSLog(@"!!! YES");
+                         //NSLog(@"!!! YES");
                          [self.watchingCoFrArray addObject:friensoUser];
                      }else
                      {
-                         NSLog(@"!!! NO");
+                         //NSLog(@"!!! NO");
                          /*NSDictionary *dic =[[NSDictionary alloc] initWithObjects:@[friensoUser, forKeys:<#(NSArray *)#>]*/
                          [self.pendingRqstsArray addObject:userEvent];
                      }
@@ -1634,7 +1634,7 @@ enum PinAnnotationTypeTag {
 
             [self addPendingRequest:            self.pendingRqstsArray];
             [self.scrollView setPendingRequests:self.pendingRqstsArray];
-            NSLog(@"pendingRqstsArray: %@", self.pendingRqstsArray);
+            //NSLog(@"pendingRqstsArray: %@", self.pendingRqstsArray);
             [self updateMapViewWithUserBubbles: self.watchingCoFrArray];
         } else
             NSLog(@"parse error: %@", error.localizedDescription);

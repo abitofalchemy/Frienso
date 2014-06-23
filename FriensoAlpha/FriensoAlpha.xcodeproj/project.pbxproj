@@ -52,7 +52,6 @@
 		1879B59418C7277100AEA55F /* profile.png in Resources */ = {isa = PBXBuildFile; fileRef = 1879B59218C7277100AEA55F /* profile.png */; };
 		1879B59B18C786DB00AEA55F /* FriensoResourcesTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 1879B59A18C786DB00AEA55F /* FriensoResourcesTVC.m */; };
 		1879B59F18C888BB00AEA55F /* tstWatchingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1879B59E18C888BB00AEA55F /* tstWatchingViewController.m */; };
-		187B616819539F6000DEF677 /* Parse.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 187B616719539F6000DEF677 /* Parse.framework */; };
 		187B616C195421D500DEF677 /* TrackingFriendButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 187B616B195421D500DEF677 /* TrackingFriendButton.m */; };
 		18CD00E518CBB98D007BAC85 /* profile-landscape.png in Resources */ = {isa = PBXBuildFile; fileRef = 18CD00E418CBB98D007BAC85 /* profile-landscape.png */; };
 		18CD00E818CCA020007BAC85 /* UserProfileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 18CD00E718CCA020007BAC85 /* UserProfileViewController.m */; };
@@ -65,6 +64,7 @@
 		18DF84A118C27D58003F431F /* umbrella-24.png in Resources */ = {isa = PBXBuildFile; fileRef = 18DF849F18C27D58003F431F /* umbrella-24.png */; };
 		18DF84A218C27D58003F431F /* watching-24.png in Resources */ = {isa = PBXBuildFile; fileRef = 18DF84A018C27D58003F431F /* watching-24.png */; };
 		3E185480192544B80059817D /* cell-phone-ic32.png in Resources */ = {isa = PBXBuildFile; fileRef = 3E18547F192544B70059817D /* cell-phone-ic32.png */; };
+		3E1FBD281958424A00AC7197 /* Parse.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E1FBD271958424A00AC7197 /* Parse.framework */; };
 		3E21A0541920EE050083F1AC /* FRStringImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E21A0531920EE050083F1AC /* FRStringImage.m */; };
 		3E277FCE19343A4A00283A33 /* GeoCDPointAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E277FCD19343A4A00283A33 /* GeoCDPointAnnotation.m */; };
 		3E2F8C3718D4C74600FD2A99 /* FriensoQuickCircleVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E2F8C3618D4C74600FD2A99 /* FriensoQuickCircleVC.m */; };
@@ -193,6 +193,7 @@
 		18DF849F18C27D58003F431F /* umbrella-24.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "umbrella-24.png"; sourceTree = "<group>"; };
 		18DF84A018C27D58003F431F /* watching-24.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "watching-24.png"; sourceTree = "<group>"; };
 		3E18547F192544B70059817D /* cell-phone-ic32.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "cell-phone-ic32.png"; sourceTree = "<group>"; };
+		3E1FBD271958424A00AC7197 /* Parse.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Parse.framework; sourceTree = "<group>"; };
 		3E21A0521920EE050083F1AC /* FRStringImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FRStringImage.h; sourceTree = "<group>"; };
 		3E21A0531920EE050083F1AC /* FRStringImage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FRStringImage.m; sourceTree = "<group>"; };
 		3E277FCC19343A4A00283A33 /* GeoCDPointAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeoCDPointAnnotation.h; sourceTree = "<group>"; };
@@ -257,7 +258,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				187B616819539F6000DEF677 /* Parse.framework in Frameworks */,
+				3E1FBD281958424A00AC7197 /* Parse.framework in Frameworks */,
 				D2B4C533194F90D000094B98 /* Crashlytics.framework in Frameworks */,
 				3EEA2280191F7DFC00DC8C54 /* MessageUI.framework in Frameworks */,
 				3E9F893518FEB62A00DA190C /* MapKit.framework in Frameworks */,
@@ -338,6 +339,7 @@
 		1827930318BE06740056C849 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				3E1FBD271958424A00AC7197 /* Parse.framework */,
 				187B616719539F6000DEF677 /* Parse.framework */,
 				18804BB91952B4CB00BE2EB5 /* Parse.framework */,
 				503837031950CE960066E450 /* Parse.framework */,
