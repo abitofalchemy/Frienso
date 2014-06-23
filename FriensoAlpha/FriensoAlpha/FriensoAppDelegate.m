@@ -11,6 +11,7 @@
 #import "FriensoAppDelegate.h"
 #import <Parse/Parse.h>
 #import "FriensoEvent.h"
+#import "FriensoViewController.h"
 #import <Crashlytics/Crashlytics.h>
 
 @implementation FriensoAppDelegate
@@ -31,23 +32,7 @@
     
     [PFAnalytics trackAppOpenedWithLaunchOptions:launchOptions];
     
-    // Login to Parse
-    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-    if ( [userDefaults objectForKey:@"adminID"] != NULL ) {
-        [PFUser logInWithUsernameInBackground:[userDefaults objectForKey:@"adminID"]
-                                     password:[userDefaults objectForKey:@"adminPass"]
-                                        block:^(PFUser *user, NSError *error) {
-                                            if (!user) {
-                                                NSLog(@"Login to Parse failed with this error: %@",error);
-                                            }
-                                        }];
-        
-        // If the following ACL settins are required: Set the proper ACLs
-        PFACL *ACL = [PFACL ACLWithUser:[PFUser currentUser]];
-        [ACL setPublicReadAccess:YES];
-        [PFACL setDefaultACL:ACL withAccessForCurrentUser:YES];
-        
-    } // otherwise do nothing
+    
     
     
     
@@ -103,12 +88,18 @@
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
     [PFPush handlePush:userInfo];
-    NSLog(@"Received a JSON object from Parse");
+    NSLog(@"Received a JSON object from Parse"); /*********** TAKE ACTION ****/
     if([userInfo objectForKey:@"group"]!=NULL) {
         NSString *myMessage = [NSString stringWithFormat:@"From %@", [userInfo objectForKey:@"group"]];
         NSLog(@"Group Sending Message %@",[userInfo objectForKey:@"group"]);
         
-        
+        /*
+         UINavigationController *navigationController = (UINavigationController*)_window.rootViewController;
+        FriensoViewController *rootVC = (FriensoViewController*)[navigationController.viewControllers  objectAtIndex:0];
+        [rootVC configureOverlay];
+        */
+        [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:YES] forKey:@"eventReqPN"];
+        [[NSUserDefaults standardUserDefaults] synchronize];
         
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Friend Request"
                                                         message:myMessage

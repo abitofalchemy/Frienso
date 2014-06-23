@@ -52,8 +52,9 @@
 		1879B59418C7277100AEA55F /* profile.png in Resources */ = {isa = PBXBuildFile; fileRef = 1879B59218C7277100AEA55F /* profile.png */; };
 		1879B59B18C786DB00AEA55F /* FriensoResourcesTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 1879B59A18C786DB00AEA55F /* FriensoResourcesTVC.m */; };
 		1879B59F18C888BB00AEA55F /* tstWatchingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1879B59E18C888BB00AEA55F /* tstWatchingViewController.m */; };
+		187B616819539F6000DEF677 /* Parse.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 187B616719539F6000DEF677 /* Parse.framework */; };
+		187B616C195421D500DEF677 /* TrackingFriendButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 187B616B195421D500DEF677 /* TrackingFriendButton.m */; };
 		18804BBD1952C9D200BE2EB5 /* WatchingUserEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 18804BBC1952C9D200BE2EB5 /* WatchingUserEvent.m */; };
-		18CB40CC1953260B00D7084F /* Parse.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 18804BB91952B4CB00BE2EB5 /* Parse.framework */; };
 		18CD00E518CBB98D007BAC85 /* profile-landscape.png in Resources */ = {isa = PBXBuildFile; fileRef = 18CD00E418CBB98D007BAC85 /* profile-landscape.png */; };
 		18CD00E818CCA020007BAC85 /* UserProfileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 18CD00E718CCA020007BAC85 /* UserProfileViewController.m */; };
 		18CD00EA18CDBCA7007BAC85 /* profile-landscape-1.png in Resources */ = {isa = PBXBuildFile; fileRef = 18CD00E918CDBCA7007BAC85 /* profile-landscape-1.png */; };
@@ -174,6 +175,9 @@
 		1879B59A18C786DB00AEA55F /* FriensoResourcesTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FriensoResourcesTVC.m; sourceTree = "<group>"; };
 		1879B59D18C888BB00AEA55F /* tstWatchingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tstWatchingViewController.h; sourceTree = "<group>"; };
 		1879B59E18C888BB00AEA55F /* tstWatchingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = tstWatchingViewController.m; sourceTree = "<group>"; };
+		187B616719539F6000DEF677 /* Parse.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Parse.framework; path = ../../../../../../../Users/aboa/Downloads/Parse.framework; sourceTree = "<group>"; };
+		187B616A195421D500DEF677 /* TrackingFriendButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TrackingFriendButton.h; sourceTree = "<group>"; };
+		187B616B195421D500DEF677 /* TrackingFriendButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TrackingFriendButton.m; sourceTree = "<group>"; };
 		18804BB91952B4CB00BE2EB5 /* Parse.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Parse.framework; path = ../../../Downloads/Parse.framework; sourceTree = "<group>"; };
 		18804BBB1952C9D200BE2EB5 /* WatchingUserEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WatchingUserEvent.h; sourceTree = SOURCE_ROOT; };
 		18804BBC1952C9D200BE2EB5 /* WatchingUserEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WatchingUserEvent.m; sourceTree = SOURCE_ROOT; };
@@ -254,7 +258,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				18CB40CC1953260B00D7084F /* Parse.framework in Frameworks */,
+				187B616819539F6000DEF677 /* Parse.framework in Frameworks */,
 				D2B4C533194F90D000094B98 /* Crashlytics.framework in Frameworks */,
 				3EEA2280191F7DFC00DC8C54 /* MessageUI.framework in Frameworks */,
 				3E9F893518FEB62A00DA190C /* MapKit.framework in Frameworks */,
@@ -335,6 +339,7 @@
 		1827930318BE06740056C849 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				187B616719539F6000DEF677 /* Parse.framework */,
 				18804BB91952B4CB00BE2EB5 /* Parse.framework */,
 				503837031950CE960066E450 /* Parse.framework */,
 				D2B4C532194F90D000094B98 /* Crashlytics.framework */,
@@ -384,6 +389,7 @@
 				1853403E18C2236E0094AC5A /* FriensoOptionsTVC.m */,
 				3E2F8C3518D4C74600FD2A99 /* FriensoQuickCircleVC.h */,
 				3E2F8C3618D4C74600FD2A99 /* FriensoQuickCircleVC.m */,
+				187B61691954214C00DEF677 /* CustomButtons */,
 				3E9F893318FE99F800DA190C /* MappingFriends */,
 				1808553618C4EEC30047A8BE /* OptionsClasses */,
 				3E84F6F0190FAE210073D2FF /* FriensoHelperClasses */,
@@ -473,6 +479,21 @@
 			path = "CoreData Files";
 			sourceTree = "<group>";
 		};
+		187B61691954214C00DEF677 /* CustomButtons */ = {
+			isa = PBXGroup;
+			children = (
+				180E881018BE1779009A570F /* FriensoCircleButton.h */,
+				180E881118BE1779009A570F /* FriensoCircleButton.m */,
+				180E881218BE1779009A570F /* FriensoOptionsButton.h */,
+				180E881318BE1779009A570F /* FriensoOptionsButton.m */,
+				3EB5C445191A5EE5006557DE /* FRUserGenContentButton.h */,
+				3EB5C446191A5EE5006557DE /* FRUserGenContentButton.m */,
+				187B616A195421D500DEF677 /* TrackingFriendButton.h */,
+				187B616B195421D500DEF677 /* TrackingFriendButton.m */,
+			);
+			name = CustomButtons;
+			sourceTree = "<group>";
+		};
 		3E277FC71930ABEC00283A33 /* FriensoCloudEvents */ = {
 			isa = PBXGroup;
 			children = (
@@ -489,14 +510,8 @@
 			children = (
 				3ECD3996192416F000A61B83 /* FRSyncFriendConnections.h */,
 				3ECD3997192416F000A61B83 /* FRSyncFriendConnections.m */,
-				180E881018BE1779009A570F /* FriensoCircleButton.h */,
-				180E881118BE1779009A570F /* FriensoCircleButton.m */,
-				180E881218BE1779009A570F /* FriensoOptionsButton.h */,
-				180E881318BE1779009A570F /* FriensoOptionsButton.m */,
 				3E57016C190A519A0056EFD7 /* FriensoPersonalEvent.h */,
 				3E57016D190A519A0056EFD7 /* FriensoPersonalEvent.m */,
-				3EB5C445191A5EE5006557DE /* FRUserGenContentButton.h */,
-				3EB5C446191A5EE5006557DE /* FRUserGenContentButton.m */,
 				3E21A0521920EE050083F1AC /* FRStringImage.h */,
 				3E21A0531920EE050083F1AC /* FRStringImage.m */,
 				3E9B0F45193E05900019ED6A /* UserResponseScrollView.h */,
@@ -704,6 +719,7 @@
 				3E9F893218FE99E700DA190C /* CircleOverlay.m in Sources */,
 				180E881418BE1779009A570F /* FriensoCircleButton.m in Sources */,
 				1827931B18BE06750056C849 /* FriensoViewController.m in Sources */,
+				187B616C195421D500DEF677 /* TrackingFriendButton.m in Sources */,
 				3E4120F818E3005E0058012B /* aBoAViewController.m in Sources */,
 				180E881E18BF15F3009A570F /* FriensoFirstScreenViewController.m in Sources */,
 				3E9B0F47193E05900019ED6A /* UserResponseScrollView.m in Sources */,
@@ -843,13 +859,8 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					/Users/sal/Downloads,
 					"$(PROJECT_DIR)",
-					/Users/mlab_laptop02/Documents,
-					/Volumes/Macintosh,
-					HD/Users/sal/Downloads,
-					/Volumes/Macintosh,
-					HD/Users/sal/Downloads,
+					/Users/aboa/Downloads,
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "FriensoAlpha/FriensoAlpha-Prefix.pch";
@@ -872,13 +883,8 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					/Users/sal/Downloads,
 					"$(PROJECT_DIR)",
-					/Users/mlab_laptop02/Documents,
-					/Volumes/Macintosh,
-					HD/Users/sal/Downloads,
-					/Volumes/Macintosh,
-					HD/Users/sal/Downloads,
+					/Users/aboa/Downloads,
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "FriensoAlpha/FriensoAlpha-Prefix.pch";

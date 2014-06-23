@@ -27,8 +27,8 @@
 @property(nonatomic, weak) NSArray *loginSections;
 @property(nonatomic, weak) NSArray *loginFields;
 @property(nonatomic, weak) NSMutableArray *loginBtnLabel;
-@property(nonatomic, weak) IBOutlet UITextField *username;
-@property(nonatomic, weak) IBOutlet UITextField *password;
+@property(nonatomic, weak) UITextField *username;
+@property(nonatomic, weak) UITextField *password;
 @property(nonatomic, weak) UITextField *phoneNumber;
 @property(nonatomic, weak) IBOutlet UILabel *loginLabel;
 @property(nonatomic, assign) BOOL retVal;

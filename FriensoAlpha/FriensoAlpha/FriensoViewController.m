@@ -51,6 +51,7 @@ enum PinAnnotationTypeTag {
 @property (nonatomic,retain) NSArray        *appFrameProperties;
 @property (nonatomic,retain) NSMutableArray *friendsLocationArray;
 @property (nonatomic,retain) NSMutableArray *pendingRqstsArray; // pending requests array
+@property (nonatomic,retain) NSMutableArray *watchingCoFrArray; // watching coreFriends array
 @property (nonatomic,strong) CLLocation     *location;
 @property (nonatomic,strong) UITableView    *tableView;
 @property (nonatomic,strong) UIButton       *selectedBubbleBtn;
@@ -59,6 +60,7 @@ enum PinAnnotationTypeTag {
 @property (nonatomic,strong) UILabel        *drawerLabel;
 @property (nonatomic)        CGFloat scrollViewY;
 @property (nonatomic)        CGRect normTableViewRect;
+@property (nonatomic) const CGFloat mapViewHeight;
 
 -(void)actionPanicEvent:(UIButton *)theButton;
 -(void)viewMenuOptions: (UIButton *)theButton;
@@ -181,9 +183,11 @@ enum PinAnnotationTypeTag {
 {
     CGRect  fullScreenRect=[[UIScreen mainScreen] applicationFrame];
     CGFloat tvFrameOriginOffset_y = fullScreenRect.size.height *0.05;
+    NSLog(@"table view origin %f", self.tableView.frame.origin.y);
     
-    if (scrollView.contentOffset.y == 0 && (self.tableView.frame.size.height != fullScreenRect.size.height))
+    if (scrollView.contentOffset.y == 0 && (self.tableView.frame.origin.y > fullScreenRect.size.height/2.0))
     {
+        
         [UIView animateWithDuration:0.5 animations:^{
             CGFloat tvFrameWidth = self.tableView.frame.size.width;
             CGRect tvNewFrame1 = CGRectMake(self.tableView.frame.origin.x+tvFrameWidth*0.1,
@@ -198,7 +202,7 @@ enum PinAnnotationTypeTag {
                                                 fullScreenRect.size.width, fullScreenRect.size.height*.9)];
             
             UIButton *tvHeaderView = [UIButton buttonWithType:UIButtonTypeCustom];
-            [tvHeaderView setFrame:CGRectMake(0, 0, self.view.bounds.size.width,self.tableView.frame.origin.y)];
+            [tvHeaderView setFrame:CGRectMake(0,0,self.view.bounds.size.width,self.tableView.frame.origin.y)];
             [tvHeaderView setBackgroundColor:[UIColor blackColor]];
             [tvHeaderView.titleLabel setTextAlignment:NSTextAlignmentRight];
             [tvHeaderView setTitle:@"▽ Dismiss" forState:UIControlStateNormal];
@@ -206,36 +210,8 @@ enum PinAnnotationTypeTag {
                    forControlEvents:UIControlEventTouchUpInside];//tvFSCloseAction) withSender:self];
             [self.view addSubview:tvHeaderView];
             }];
-        
-        
-        
     }
-//    {
-//        
-//        CGFloat yOffset = self.view.frame.size.height*0.15;
-//        CGFloat y_tableViewOffset = yOffset - _drawerLabel.frame.size.height*0.9;
-//        
-//        if (self.scrollView.frame.size.height> self.drawerLabel.frame.size.height*1.5)
-//        {
-//            [UIView animateWithDuration:0.5 animations:^{
-//                CGRect closeDrawerRect = CGRectMake(0, self.scrollView.frame.origin.y, self.view.bounds.size.width,_drawerLabel.frame.size.height*0.9);
-//                [self.scrollView setFrame:closeDrawerRect];
-//                self.scrollView.contentSize = self.scrollView.frame.size;
-//                
-//                [_drawerLabel setTextColor:[UIColor whiteColor]];
-//                [self.tableView setCenter:CGPointMake(self.tableView.center.x, self.tableView.center.y - y_tableViewOffset)];// remove tableview yOffset
-//            }];
-//        } else { // Open Drawer
-//            [UIView animateWithDuration:0.5 animations:^{
-//                CGRect openDrawerRect = CGRectMake(0, self.scrollView.frame.origin.y, self.view.frame.size.width,
-//                                                   yOffset);
-//                [self.tableView setCenter:CGPointMake(self.tableView.center.x, self.tableView.center.y + y_tableViewOffset)];
-//                [self.scrollView setFrame:openDrawerRect];
-//                self.scrollView.contentSize = self.scrollView.frame.size;
-//                [_drawerLabel setTextColor:[UIColor darkGrayColor]];
-//            }];
-//        }
-//    }
+
 }
 
 #pragma mark - NSFetchResultsController delegate methods
@@ -244,129 +220,53 @@ enum PinAnnotationTypeTag {
 }
 
 #pragma mark - Local Actions
--(void) closeFullscreenTableViewAction:(UIButton*)sender {
-    [UIView animateWithDuration:0.3 animations:^{
-        [self.tableView setFrame:self.normTableViewRect];
-        [sender removeFromSuperview];
-    }];
-    
-}
--(void) pendingRqstAction:(id) sender {
-    UIButton *btn = (UIButton *) sender;
-    NSDictionary *frUserDic = [self.pendingRqstsArray objectAtIndex:btn.tag]; // 10Jun14:SA
-    PFUser *friensoUser = [frUserDic objectForKey:@"pfUser"];  // 10Jun14:SA
-    NSString * type = [frUserDic objectForKey:@"reqType"];
-    //PFUser *friend =  [self.pendingRqstsArray objectAtIndex:btn.tag];
 
-    if([type isEqualToString:coreFriendRequest]) { //if core friend request
-        //TODO: we do not need to add the btn.tag here.
-        //may be we can extend UIAlertView and add a variable for the index.
-        //NSLog(@"btn tag = %d",btn.tag);
-        [[[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"Core Friend Request:%2ld",(long)btn.tag]
-                                    message:[NSString stringWithFormat:@"from %@",friensoUser.username]
-                                   delegate:self
-                          cancelButtonTitle:@"Dismiss"
-                          otherButtonTitles:@"Accept",@"Reject", nil] show];
-    } else { // for watch or anything else.
-        [[[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"Pending Request:%2ld",(long)btn.tag]
-                                    message:[NSString stringWithFormat:@"from %@",friensoUser.username]
-                                   delegate:self
-                          cancelButtonTitle:@"Dismiss"
-                          otherButtonTitles:@"Accept",@"Reject", nil] show];
-    }
-}
--(void) openCloseDrawer
+-(void) updateMapViewWithUserBubbles:(NSMutableArray *)trackingFriendsArray
 {
-    // 16Jun14:SA   - fixed drawer not working on iPhone4, still need to check it works in iPad mini
-    CGFloat yOffset = self.view.frame.size.height*0.15;
-    CGFloat y_tableViewOffset = yOffset - _drawerLabel.frame.size.height*0.9;
+    for (id subview in [self.mapView subviews]){
+        if ( [subview isKindOfClass:[TrackingFriendButton class]] )
+        {
+            [subview removeFromSuperview];
+        }
+    }
+    NSLog(@"Friends I track:");
     
-    if (self.scrollView.frame.size.height> self.drawerLabel.frame.size.height*1.5)
+    
+    NSInteger btnNbr = 0;
+    for (PFUser *parseUser  in trackingFriendsArray)
     {
-        [UIView animateWithDuration:0.5 animations:^{
-        CGRect closeDrawerRect = CGRectMake(0, self.scrollView.frame.origin.y, self.view.bounds.size.width,_drawerLabel.frame.size.height*0.9);
-        [self.scrollView setFrame:closeDrawerRect];
-        self.scrollView.contentSize = self.scrollView.frame.size;
+        NSLog(@"\t %@", parseUser.username);
+        TrackingFriendButton *mLocBtn = [[TrackingFriendButton alloc] initWithFrame:CGRectMake(0, 0, 44, 44)];
+        UIImage *img =[[FRStringImage alloc] imageTextBubbleOfSize:mLocBtn.frame.size];
+        [mLocBtn setBackgroundImage:img forState:UIControlStateNormal];
+        [mLocBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        [mLocBtn setTitleColor:UIColorFromRGB(0x8e44ad) forState:UIControlStateHighlighted];
+        [mLocBtn setAlpha:0.8];
+        [mLocBtn addTarget:self action:@selector(friendLocInteraction:)
+          forControlEvents:UIControlEventTouchUpInside];
+        [self.mapView addSubview:mLocBtn];
+        NSString *bubbleLabel = [[parseUser.username substringToIndex:2] uppercaseString];
+        [mLocBtn setTitle:bubbleLabel forState:UIControlStateNormal];
+        [mLocBtn setTag:btnNbr];
+        CGFloat marginOffset = 5.0;
+        CGFloat btnCenterX   = mLocBtn.center.x + mLocBtn.center.x*2*btnNbr + marginOffset;
+        //[mLocBtn setCenter:CGPointMake(btnCenterX, self.mapView.frame.size.height - mLocBtn.center.y)];
+        [mLocBtn setCenter:CGPointMake(btnCenterX, self.mapView.frame.size.height - mLocBtn.center.y*2)];
         
-        [_drawerLabel setTextColor:[UIColor whiteColor]];
-        [self.tableView setCenter:CGPointMake(self.tableView.center.x, self.tableView.center.y - y_tableViewOffset)];// remove tableview yOffset
-        }];
-    } else { // Open Drawer
-        [UIView animateWithDuration:0.5 animations:^{
-            CGRect openDrawerRect = CGRectMake(0, self.scrollView.frame.origin.y, self.view.frame.size.width,
-                                               yOffset);
-            [self.tableView setCenter:CGPointMake(self.tableView.center.x, self.tableView.center.y + y_tableViewOffset)];
-            [self.scrollView setFrame:openDrawerRect];
-            self.scrollView.contentSize = self.scrollView.frame.size;
-            [_drawerLabel setTextColor:[UIColor darkGrayColor]];
-        }];
-    }
-}
-
--(void) mapViewFSToggle:(UIButton *) sender {
-    [self animateThisButton:sender];
-    //NSLog(@"Toggle FS Mode");
-    if (self.mapView.frame.size.height < self.view.bounds.size.height){
-        [self.mapView setFrame:self.view.bounds];
-        [self.fullScreenBtn setTitle:@"┓"/*@""*/ forState:UIControlStateNormal];
-        [self.fullScreenBtn sizeToFit];
-        [self.fullScreenBtn.titleLabel setTextColor:[UIColor blackColor]];
-        [self.fullScreenBtn setCenter:CGPointMake(self.fullScreenBtn.center.x,40.0)];
-        [self.tableView setHidden:YES];
-        [self openCloseDrawer];
-        [self.scrollView setCenter:CGPointMake(self.view.center.x, self.navigationController.toolbar.frame.origin.y - self.scrollView.frame.size.height*1.5)];
-    } else {
-        [self.mapView setFrame:MAPVIEW_DEFAULT_BOUNDS];
-        [self.fullScreenBtn setTitle:@"┛"/*@""*/ forState:UIControlStateNormal];
-        [self.fullScreenBtn sizeToFit];
-        [self.fullScreenBtn setCenter:CGPointMake(_fullScreenBtn.center.x,
-                                                  self.mapView.frame.size.height -_fullScreenBtn.frame.size.height/2 * 1.2) ];
-        [self.fullScreenBtn.titleLabel setTextColor:[UIColor blackColor]];
-        [self.tableView setHidden:NO];
-        [self openCloseDrawer];
-        CGRect fullScreenRect=[[UIScreen mainScreen] applicationFrame];
-        [self.scrollView setCenter:CGPointMake(fullScreenRect.size.width/2.0,
-                                               self.scrollViewY)];
-    }
-}
-
--(void) addPendingRequest:(PFUser *)parseFriend withTag:(NSInteger)tagNbr reqtype:(NSString *) type{
-
-    if ([type isEqualToString:coreFriendRequest]) {
-        [self addPndngRqstButton:[UIColor redColor] withFriensoUser:parseFriend withTag:tagNbr];
-        //NSLog(@"Tag number %d ",tagNbr);
-    } else {
-        [self addPndngRqstButton:[UIColor whiteColor] withFriensoUser:parseFriend withTag:tagNbr];
         
+        // Allows access to location info to userBubble
         PFGeoPoint *geoNDIN = [PFGeoPoint geoPointWithLatitude:41.700278
-                                                      longitude:-86.238611];// notre dame, in
-        [self.friendsLocationArray insertObject:([parseFriend valueForKey:@"currentLocation"] == NULL)  ? geoNDIN  : [parseFriend valueForKey:@"currentLocation"]  atIndex:tagNbr];
+                                                     longitude:-86.238611];// notre dame, in
+        [self.friendsLocationArray insertObject:([parseUser valueForKey:@"currentLocation"] == NULL)  ? geoNDIN : [parseUser valueForKey:@"currentLocation"]  atIndex:btnNbr];
+        btnNbr++;
     }
+    
 }
-
-- (void) addPndngRqstButton: (UIColor *) fontColor  withFriensoUser:(PFUser *)parseFriend withTag:(NSInteger)tagNbr{
-    // addPendingRequest  adds a pending request to drawer+slider that user can interact w/ Pfuser
-    UIButton *pndngRqstBtn = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 44, 44)];
-    UIImage *img =[[FRStringImage alloc] imageTextBubbleOfSize:pndngRqstBtn.frame.size];
-    [pndngRqstBtn setBackgroundImage:img forState:UIControlStateNormal];
-    NSString *bubbleLabel = [[parseFriend.username substringToIndex:2] uppercaseString];
-    [pndngRqstBtn setTitle:bubbleLabel forState:UIControlStateNormal];
-    [pndngRqstBtn setTitleColor:fontColor forState:UIControlStateNormal];
-    [pndngRqstBtn setTitleColor:UIColorFromRGB(0x8e44ad) forState:UIControlStateHighlighted];
-    [pndngRqstBtn setTag:tagNbr];
-    [pndngRqstBtn addTarget:self action:@selector(pendingRqstAction:)
-           forControlEvents:UIControlEventTouchUpInside];
-    [self.scrollView addSubview:pndngRqstBtn];
-    CGFloat btnCenterX = pndngRqstBtn.center.x*2 + pndngRqstBtn.center.x*2*tagNbr;
-    [pndngRqstBtn setCenter:CGPointMake(btnCenterX,self.scrollView.frame.size.height*1.6)];
-}
-
-
 -(void) addUserBubbleToMap:(PFUser *)parseUser withTag:(NSInteger)tagNbr {
     
-//    NSLog(@"addUserBubbleToMap: %ld",tagNbr);
-//    NSLog(@"subviews: %ld", [self.mapView subviews].count);
-//    
+    //    NSLog(@"addUserBubbleToMap: %ld",tagNbr);
+    //    NSLog(@"subviews: %ld", [self.mapView subviews].count);
+    //
     for (id subview in [self.mapView subviews]){
         if ( [subview isKindOfClass:[UIButton class]] )
         {
@@ -394,10 +294,183 @@ enum PinAnnotationTypeTag {
     
     // Allows access to location info to userBubble
     PFGeoPoint *geoNDIN = [PFGeoPoint geoPointWithLatitude:41.700278
-                                                  longitude:-86.238611];// notre dame, in
+                                                 longitude:-86.238611];// notre dame, in
     [self.friendsLocationArray insertObject:([parseUser valueForKey:@"currentLocation"] == NULL)  ? geoNDIN : [parseUser valueForKey:@"currentLocation"]  atIndex:tagNbr];
     
 }
+-(void) closeFullscreenTableViewAction:(UIButton*)sender {
+    [UIView animateWithDuration:0.3 animations:^{
+        [self.tableView setFrame:self.normTableViewRect];
+        [sender removeFromSuperview];
+    }];
+    
+}
+-(void) pendingRqstAction:(id) sender {
+    UIButton *btn = (UIButton *) sender;
+    
+    NSDictionary *frUserDic = [self.pendingRqstsArray objectAtIndex:btn.tag]; // 10Jun14:SA
+    PFUser *friensoUser = [frUserDic objectForKey:@"pfUser"];  // 10Jun14:SA
+    NSString * type = [frUserDic objectForKey:@"reqType"];
+    
+    if([type isEqualToString:coreFriendRequest]) { //if core friend request
+        //TODO: we do not need to add the btn.tag here.
+        //may be we can extend UIAlertView and add a variable for the index.
+        //NSLog(@"btn tag = %d",btn.tag);
+        UIAlertView *coreFriendRequestAlertView =
+        [[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"Core Friend Request:%2ld",(long)btn.tag]
+                                    message:[NSString stringWithFormat:@"from %@",friensoUser.username]
+                                   delegate:self
+                          cancelButtonTitle:@"Dismiss"
+                         otherButtonTitles:@"Accept",@"Reject", nil];
+        [coreFriendRequestAlertView setTag:btn.tag];
+        [coreFriendRequestAlertView show];
+        
+    } else { // for watch or anything else.
+        UIAlertView *watchMeRequestAlertView =
+        [[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"Pending Request:%2ld",(long)btn.tag]
+                                    message:[NSString stringWithFormat:@"from %@",friensoUser.username]
+                                   delegate:self
+                          cancelButtonTitle:@"Dismiss"
+                         otherButtonTitles:@"Accept",@"Reject", nil];
+        [watchMeRequestAlertView setTag:btn.tag];
+        [watchMeRequestAlertView show];
+    }
+}
+-(void) refreshMapViewAction:(UIButton*) sender
+{
+    [self animateThisButton:sender];
+    
+    [self.pendingRqstsArray removeAllObjects];
+    
+    // clean the drawer
+    for (id subview in [self.scrollView subviews]){
+        if ( [subview isKindOfClass:[UIButton class]] )
+        {
+            [subview removeFromSuperview];
+        }
+    }
+    
+    
+    // clean the mapview
+    [self.watchingCoFrArray removeAllObjects];
+    for (id subview in [self.mapView subviews]){
+        if ( [subview isKindOfClass:[TrackingFriendButton class]] )
+        {
+            [subview removeFromSuperview];
+        }
+    }
+    
+    [self configureOverlay];
+}
+
+-(void) openCloseDrawer
+{
+
+    // 16Jun14:SA   - fixed drawer not working on iPhone4, still need to check it works in iPad mini
+    CGFloat yOffset = self.view.frame.size.height*0.15;
+    CGFloat y_tableViewOffset = yOffset - _drawerLabel.frame.size.height*0.9;
+    
+    if (self.scrollView.frame.size.height> self.drawerLabel.frame.size.height*1.5)
+    {
+        [UIView animateWithDuration:0.5 animations:^{
+        CGRect closeDrawerRect = CGRectMake(0, self.scrollView.frame.origin.y, self.view.bounds.size.width,_drawerLabel.frame.size.height*0.9);
+        [self.scrollView setFrame:closeDrawerRect];
+        self.scrollView.contentSize = self.scrollView.frame.size;
+        
+        [_drawerLabel setTextColor:[UIColor whiteColor]];
+        [self.tableView setCenter:CGPointMake(self.tableView.center.x, self.tableView.center.y - y_tableViewOffset)];// remove tableview yOffset
+        }];
+    } else { // Open Drawer
+        
+        [UIView animateWithDuration:0.5 animations:^{
+            CGRect openDrawerRect = CGRectMake(0, self.scrollView.frame.origin.y, self.view.frame.size.width,
+                                               yOffset);
+            [self.tableView setCenter:CGPointMake(self.tableView.center.x, self.tableView.center.y + y_tableViewOffset)];
+            [self.scrollView setFrame:openDrawerRect];
+            self.scrollView.contentSize = self.scrollView.frame.size;
+            [_drawerLabel setTextColor:[UIColor darkGrayColor]];
+            
+        }];
+        
+    }
+}
+
+-(void) mapViewFSToggle:(UIButton *) sender {
+    [self animateThisButton:sender];
+    if (self.mapView.frame.size.height < self.view.bounds.size.height){
+        [self.mapView setFrame:self.view.bounds];
+        [self.fullScreenBtn setTitle:@"⇱"/*@""*/ forState:UIControlStateNormal];
+        [self.fullScreenBtn sizeToFit];
+        [self.fullScreenBtn.titleLabel setTextColor:[UIColor blackColor]];
+        [self.fullScreenBtn setCenter:CGPointMake(self.fullScreenBtn.center.x,40.0)];
+        [self.tableView setHidden:YES];
+        [self openCloseDrawer];
+        [self.scrollView setCenter:CGPointMake(self.view.center.x, self.navigationController.toolbar.frame.origin.y - self.scrollView.frame.size.height*1.5)];
+    } else { // fullscreen
+        //[self.mapView setFrame:MAPVIEW_DEFAULT_BOUNDS];
+        [self.mapView setFrame:CGRectMake(0,0,self.view.frame.size.width, self.mapViewHeight)];
+        
+        [self.fullScreenBtn setTitle:@"⇲"/*@""*/ forState:UIControlStateNormal];
+        [self.fullScreenBtn sizeToFit];
+        [self.fullScreenBtn setCenter:CGPointMake(_fullScreenBtn.center.x,
+                                                  self.mapView.frame.size.height -_fullScreenBtn.frame.size.height/2 * 1.2) ];
+        [self.fullScreenBtn.titleLabel setTextColor:[UIColor blackColor]];
+        [self.tableView setHidden:NO];
+        [self openCloseDrawer];
+        CGRect fullScreenRect=[[UIScreen mainScreen] applicationFrame];
+        [self.scrollView setCenter:CGPointMake(fullScreenRect.size.width/2.0, self.scrollViewY)];
+        
+    }
+}
+-(void) addPendingRequest:(NSArray*)userRequestArray {
+
+    NSInteger arrayIndex = 0;
+    for (PFObject *eventObject in userRequestArray)
+    {
+        NSString *reqType =     [eventObject valueForKey:@"eventType"];
+        PFUser   *friensoUser = [eventObject objectForKey:@"friensoUser"];
+        [self addPendingRequest:friensoUser
+                        withTag:arrayIndex
+                        reqtype:reqType];
+        arrayIndex++;
+        
+    }
+}
+-(void) addPendingRequest:(PFUser *)parseFriend withTag:(NSInteger)tagNbr reqtype:(NSString *) type{
+
+    if ([type isEqualToString:coreFriendRequest]) {
+        [self addPndngRqstButton:[UIColor redColor] withFriensoUser:parseFriend withTag:tagNbr];
+    } else {
+        [self addPndngRqstButton:[UIColor whiteColor] withFriensoUser:parseFriend withTag:tagNbr];
+        
+        PFGeoPoint *geoNDIN = [PFGeoPoint geoPointWithLatitude:41.700278
+                                                      longitude:-86.238611];// notre dame, in
+        [self.friendsLocationArray insertObject:([parseFriend valueForKey:@"currentLocation"] == NULL)  ? geoNDIN  : [parseFriend valueForKey:@"currentLocation"]  atIndex:tagNbr];
+    }
+}
+
+- (void) addPndngRqstButton: (UIColor *) fontColor  withFriensoUser:(PFUser *)parseFriend withTag:(NSInteger)tagNbr{
+
+    // addPendingRequest  adds a pending request to drawer+slider that user can interact w/ Pfuser
+    UIButton *pndngRqstBtn = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 44, 44)];
+    UIImage *img =[[FRStringImage alloc] imageTextBubbleOfSize:pndngRqstBtn.frame.size];
+    [pndngRqstBtn setBackgroundImage:img forState:UIControlStateNormal];
+    NSString *bubbleLabel = [[parseFriend.username substringToIndex:2] uppercaseString];
+    [pndngRqstBtn setTitle:bubbleLabel forState:UIControlStateNormal];
+    [pndngRqstBtn setTitleColor:fontColor forState:UIControlStateNormal];
+    [pndngRqstBtn setTitleColor:UIColorFromRGB(0x8e44ad) forState:UIControlStateHighlighted];
+    [pndngRqstBtn setTag:tagNbr];
+    [pndngRqstBtn addTarget:self action:@selector(pendingRqstAction:)
+           forControlEvents:UIControlEventTouchUpInside];
+    [self.scrollView addSubview:pndngRqstBtn];
+    
+    CGFloat btnCenterX = pndngRqstBtn.center.x*2 + pndngRqstBtn.center.x*2*tagNbr;
+    //NSLog(@"%f",self.scrollView.frame.size.height*1.6);
+    [pndngRqstBtn setCenter:CGPointMake(btnCenterX, pndngRqstBtn.center.y*1.3)];
+}
+
+
+
 -(void) trackMeSwitchEnabled:(UISwitch *)sender {
     NSLog(@"********* trackMeswitchEnabled ****");
     
@@ -483,7 +556,7 @@ enum PinAnnotationTypeTag {
     [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         if (!error) {
             // The find succeeded.
-            NSLog(@"Successfully retrieved %ld scores.", objects.count);
+            NSLog(@"Successfully retrieved %ld scores.", (unsigned long)objects.count);
             // Do something with the found objects
             for (PFObject *object in objects) {
                 NSString *myString = @"Ph";
@@ -582,19 +655,37 @@ enum PinAnnotationTypeTag {
     
     self.mapView = [[MKMapView alloc] initWithFrame:CGRectZero];
     [self.mapView setFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.bounds.size.height * 0.5)];
-
+    self.mapViewHeight = self.view.bounds.size.height * 0.5;
     self.mapView.region = MKCoordinateRegionMake(self.location.coordinate,MKCoordinateSpanMake(0.05f,0.05f));
     self.mapView.layer.borderWidth = 2.0f;
     self.mapView.layer.borderColor = [UIColor whiteColor].CGColor;//UIColorFromRGB(0x9B90C8).CGColor;
     [self.view addSubview:self.mapView];
     
-
+    // Adding a refresh mapview btn
+    UIButton *refreshMavpViewBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [refreshMavpViewBtn addTarget:self action:@selector(refreshMapViewAction:)
+                 forControlEvents:UIControlEventTouchUpInside];
+    [refreshMavpViewBtn setTitle:@"↺"/*@""*/ forState:UIControlStateNormal];
+    [refreshMavpViewBtn setTitleColor:[UIColor blueColor] forState:UIControlStateNormal];
+    [refreshMavpViewBtn.titleLabel setFont:[UIFont fontWithName:@"AppleSDGothicNeo-Bold" size:32.0]];
+    refreshMavpViewBtn.titleLabel.textAlignment = NSTextAlignmentCenter;
+    refreshMavpViewBtn.layer.shadowOffset  = CGSizeMake(1.5f, 1.5f);
+    refreshMavpViewBtn.layer.shadowOpacity = 1.0;
+    refreshMavpViewBtn.layer.shadowRadius  = 4.0;
+    [refreshMavpViewBtn sizeToFit];
+    //    [self.fullScreenBtn setBackgroundColor:[UIColor colorWithWhite:1.0 alpha:.5]];
+    //    self.fullScreenBtn.layer.borderWidth = 0.5f;
+    //    self.fullScreenBtn.layer.cornerRadius = self.fullScreenBtn.frame.size.height*.20;
+    //    self.fullScreenBtn.layer.borderColor = [UIColor blackColor].CGColor;
+    [refreshMavpViewBtn setCenter:CGPointMake(refreshMavpViewBtn.center.x * 2.0,
+                                              refreshMavpViewBtn.center.y *1.2 ) ];
+    [self.mapView addSubview:refreshMavpViewBtn];
     
     // Adding fullscreen mode button to the mapview
     self.fullScreenBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     [self.fullScreenBtn addTarget:self action:@selector(mapViewFSToggle:)
                  forControlEvents:UIControlEventTouchUpInside];
-    [self.fullScreenBtn setTitle:@"┛"/*@""*/ forState:UIControlStateNormal];
+    [self.fullScreenBtn setTitle:@"⇲"/*@""*/ forState:UIControlStateNormal];
     [self.fullScreenBtn setTitleColor:[UIColor blueColor] forState:UIControlStateNormal];
     [self.fullScreenBtn.titleLabel setFont:[UIFont fontWithName:@"AppleSDGothicNeo-Bold" size:24.0]];
     self.fullScreenBtn.titleLabel.textAlignment = NSTextAlignmentCenter;
@@ -856,7 +947,8 @@ enum PinAnnotationTypeTag {
                                        [NSValue valueWithCGRect:self.navigationController.toolbar.frame], nil];
             
             self.friendsLocationArray = [[NSMutableArray alloc] init]; // friends location cache
-            self.pendingRqstsArray    = [[NSMutableArray alloc] init]; // Initialize pending requests holding array
+            self.pendingRqstsArray    = [[NSMutableArray alloc] init]; // Init pending requests holding array
+            self.watchingCoFrArray    = [[NSMutableArray alloc] init];
             
             // Show progress indicator to tell user to wait a bit
             self.loadingView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
@@ -912,6 +1004,23 @@ enum PinAnnotationTypeTag {
         }
         
         //**********
+        // Login to Parse
+        NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+        if ( [userDefaults objectForKey:@"adminID"] != NULL ) {
+            [PFUser logInWithUsernameInBackground:[userDefaults objectForKey:@"adminID"]
+                                         password:[userDefaults objectForKey:@"adminPass"]
+                                            block:^(PFUser *user, NSError *error) {
+                                                if (!user) {
+                                                    NSLog(@"Login to Parse failed with this error: %@",error);
+                                                }
+                                            }];
+            
+            // If the following ACL settins are required: Set the proper ACLs
+            /*        PFACL *ACL = [PFACL ACLWithUser:[PFUser currentUser]];
+             [ACL setPublicReadAccess:YES];
+             [PFACL setDefaultACL:ACL withAccessForCurrentUser:YES];
+             */
+        } // otherwise do nothing
         // Check if self is currentUser (Parse)
         PFUser *currentUser = [PFUser currentUser];
         if (currentUser) {
@@ -1049,20 +1158,16 @@ enum PinAnnotationTypeTag {
     [self performSegueWithIdentifier:@"loginView" sender:self];
 }
 #pragma mark - CoreData helper methods
--(void) trackUserEventLocally:(PFUser *)friensoUser
+-(void) trackUserEventLocally:(PFObject *)userEventObject
 {
     FriensoEvent *frEvent = [NSEntityDescription insertNewObjectForEntityForName:@"FriensoEvent"
                                                                     inManagedObjectContext:[self managedObjectContext]];
     
     if (frEvent != nil){
-        frEvent.eventTitle     = [NSString stringWithFormat:@"You are watching: %@", friensoUser.username];
-        frEvent.eventSubtitle  = @"watchMe";
-        frEvent.eventLocation  = @"Location:";
-        frEvent.eventContact   = friensoUser.username;
-        frEvent.eventCreated   = [NSDate date];
-        frEvent.eventModified  = [NSDate date];
+        frEvent.eventTitle     = [NSString stringWithFormat:@"You are watching: %@", [userEventObject objectForKey:@"friensoUser"]];
+        frEvent.eventSubtitle  = [userEventObject objectForKey:@"eventType"];
         frEvent.eventPriority  = [NSNumber numberWithInteger:3];
-        frEvent.eventObjId     = friensoUser.objectId;
+        frEvent.eventObjId     = userEventObject.objectId;
         
         NSError *savingError = nil;
         if(![[self managedObjectContext] save:&savingError])
@@ -1100,6 +1205,36 @@ enum PinAnnotationTypeTag {
             
         }
     }
+}
+-(BOOL) amiWatchingUserEvent:(NSString *)userEventObjId
+{
+    NSLog(@"%@", userEventObjId);
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init]; // Create the fetch request
+    NSEntityDescription *entity  = [NSEntityDescription entityForName:@"FriensoEvent"
+                                               inManagedObjectContext:[self managedObjectContext]];
+    
+    [fetchRequest setEntity:entity];
+    //NSPredicate *predicateID = [NSPredicate predicateWithFormat:@"nameID == %d",-1];
+    [fetchRequest setPredicate:[NSPredicate predicateWithFormat:@"eventObjId like %@",userEventObjId]];
+    
+    NSSortDescriptor *dateSort =  [[NSSortDescriptor alloc] initWithKey:@"eventModified" ascending:NO];
+    fetchRequest.sortDescriptors = @[dateSort];
+    [fetchRequest setFetchLimit:1];
+    
+    NSError *error;
+    BOOL retBool = NO;
+    NSArray *fetchedObjects = [[self managedObjectContext] executeFetchRequest:fetchRequest error:&error];
+    if (fetchedObjects == nil) {
+        // Handle the error.
+        retBool = NO;
+    }  else {
+        if( [fetchedObjects count] > 0)
+            retBool = YES;
+        else
+            retBool = NO;
+        
+    }
+    return retBool;
 }
 -(BOOL) queryCDFriensoEvents4ActiveWatchEvent:(PFUser *)friensoUser
 {
@@ -1453,103 +1588,92 @@ enum PinAnnotationTypeTag {
 }
 
 - (void)configureOverlay {
+/** configureOverlay
+ ** - check if I have an active Event
+ ** - check if others have active events
+ ** */
+    
     NSLog(@"configureOverlay method");
-    /** configureOverlay
-     ** - check if I have an active Event
-     ** - check if others have active events
-     ** */
+
     
     // Check for friends with active alerts
     PFQuery *query = [PFQuery queryWithClassName:@"UserEvent"];
     [query whereKey:@"eventActive" equalTo:[NSNumber numberWithBool:YES]];
     [query includeKey:@"friensoUser"];
-    query.limit = 10;
     [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         if (!error) {
-            NSInteger i = 0;  // counter for bubbles on the pending req drawer
-            NSInteger k = 0;  // counter for bubbles on the mapview
-            for (PFObject *eventUser in objects){
-                PFUser *friensoUser    = [eventUser valueForKey:@"friensoUser"];
-                
+            
+            for (PFObject *userEvent in objects){
+                PFUser *friensoUser    = [userEvent valueForKey:@"friensoUser"];
                 if ([friensoUser.username isEqualToString:[PFUser currentUser].username])
                     [trackMeOnOff setOn:YES animated:YES]; // check if self has an active Event going
                 else if ([self inYourCoreUserWithPhNumber:[friensoUser valueForKey:@"phoneNumber"]] )
-                {   // Check if this user is in your core or watchCircle
+                {
+                    // Check if this user is in your core or watchCircle
                     // friensoUser is in my network, am I tracking him/her?
-                    NSLog(@"Friend: %@ w/active event of type: %@",friensoUser.username,
-                          [eventUser valueForKey:@"eventType"]);
-                     /*
-                    NSLog(@"am I watching him/her?: %d", [self ])
-                    [[[CloudUsrEvnts alloc] init] isUserInMy2WatchList:friensoUser];
+                    NSLog(@"Friend: %@ w/active event of type: %@, %@, %@",friensoUser.username,
+                          [userEvent valueForKey:@"eventType"],userEvent.objectId, [userEvent objectForKey:@"eventActive"]);
                     
-                    if ([self queryCDFriensoEvents4ActiveWatchEvent:friensoUser])
-                        NSLog(@"!!! YES");
-                    else
-                        NSLog(@"!!! NO");
-                    */
-                    if ([self queryCDFriensoEvents4ActiveWatchEvent:friensoUser]) {
-                        NSLog(@"Watching: %@",friensoUser.username);    // Users I watch w/active event!!
-                        [self addUserBubbleToMap:friensoUser            // Accepted to watch this user,
-                                         withTag:k];                    // so load it on the mapview
-                        k++;
-                    } else {
-                    
-                        [self addPendingRequest:friensoUser withTag:i reqtype:trackRequest]; // Add user to drawer+slider
-                        NSDictionary *dic = [[NSDictionary alloc] initWithObjectsAndKeys:
-                                             friensoUser,                               @"pfUser",
-                                             [eventUser valueForKey:@"eventType"], @"reqType",
-                                             [NSNumber numberWithInteger:i],            @"btnTag", nil];
-                        [self.pendingRqstsArray insertObject:dic atIndex:i]; // simulation
-                        
-                        //[self addUserBubbleToMap:friensoUser withTag:i];
-                        i++;
-                    }
+                    //NSLog(@"am I watching him/her?: %d", [self ])
+                    //[[[CloudUsrEvnts alloc] init] isUserInMy2WatchList:friensoUser];
+                     
+                     if ([self amiWatchingUserEvent:userEvent.objectId])
+                     {
+                         NSLog(@"!!! YES");
+                         [self.watchingCoFrArray addObject:friensoUser];
+                     }else
+                     {
+                         NSLog(@"!!! NO");
+                         /*NSDictionary *dic =[[NSDictionary alloc] initWithObjects:@[friensoUser, forKeys:<#(NSArray *)#>]*/
+                         [self.pendingRqstsArray addObject:userEvent];
+                     }
                 }
+
+                
             }
 
-            //NSLog(@"%d", [self.pendingRqstsArray count]);
+            [self addPendingRequest:            self.pendingRqstsArray];
             [self.scrollView setPendingRequests:self.pendingRqstsArray];
-
-            //check for awaiting core friend requests
-            //Added here so that access to pendingRqstsArray is sequential and we dont need synchronization
-            // drawback: Slow. We can do this in parallel with synchronization
-
-            PFQuery * pfquery = [PFQuery queryWithClassName:@"CoreFriendRequest"];
-            [pfquery whereKey:@"recipient" equalTo:[PFUser currentUser]];
-            [pfquery whereKey:@"awaitingResponseFrom" equalTo:@"recipient"];
-            [pfquery whereKey:@"status" equalTo:@"send"];
-            [pfquery includeKey:@"sender"];
-            [pfquery findObjectsInBackgroundWithBlock:^(NSArray *objects,
-                                                        NSError *error) {
-                if(!error) {
-                    NSInteger i = [self.pendingRqstsArray count]; // get the next insert position
-                    for (PFObject *  object in objects) {
-                        PFUser * sender = [object objectForKey:@"sender"];
-                        NSLog(@"Corefriend request sender's email %@",sender.email);
-                        [self addPendingRequest:sender withTag:i reqtype:coreFriendRequest]; // temp add to drawwer+slider
-                        NSDictionary *dic = [[NSDictionary alloc] initWithObjectsAndKeys:
-                                                 sender,   @"pfUser",
-                                                 coreFriendRequest, @"reqType",
-                                                 [NSNumber numberWithInteger:i],@"btnTag", nil];
-                            [self.pendingRqstsArray insertObject:dic atIndex:i]; // simulation
-                            i = i + 1;
-                    }
-
-                    [self.scrollView setPendingRequests:self.pendingRqstsArray];
-
-                } else {
-                    // Did not find any UserStats for the current user
-                    NSLog(@"Error: %@", error);
-                }
-            }];
-        } else {
-            // Did not find any UserStats for the current user
-            NSLog(@"Error: %@", error);
-        }
+            NSLog(@"pendingRqstsArray: %@", self.pendingRqstsArray);
+            [self updateMapViewWithUserBubbles: self.watchingCoFrArray];
+        } else
+            NSLog(@"parse error: %@", error.localizedDescription);
     }];
     
-   
-    
+//
+//    //check for awaiting core friend requests
+//    //Added here so that access to pendingRqstsArray is sequential and we dont need synchronization
+//    // drawback: Slow. We can do this in parallel with synchronization
+//
+//    PFQuery * pfquery = [PFQuery queryWithClassName:@"CoreFriendRequest"];
+//    [pfquery whereKey:@"recipient" equalTo:[PFUser currentUser]];
+//    [pfquery whereKey:@"awaitingResponseFrom" equalTo:@"recipient"];
+//    [pfquery whereKey:@"status" equalTo:@"send"];
+//    [pfquery includeKey:@"sender"];
+//    [pfquery findObjectsInBackgroundWithBlock:^(NSArray *objects,
+//                                                NSError *error) {
+//        if(!error) {
+//            NSInteger i = [self.pendingRqstsArray count]; // get the next insert position
+//            for (PFObject *  object in objects) {
+//                PFUser * sender = [object objectForKey:@"sender"];
+//                NSLog(@"Corefriend request sender's email %@",sender.email);
+//                [self addPendingRequest:sender withTag:i reqtype:coreFriendRequest]; // temp add to drawwer+slider
+//                NSDictionary *dic = [[NSDictionary alloc] initWithObjectsAndKeys:
+//                                         sender,   @"pfUser",
+//                                         coreFriendRequest, @"reqType",
+//                                         [NSNumber numberWithInteger:i],@"btnTag", nil];
+//                    [self.pendingRqstsArray insertObject:dic atIndex:i]; // simulation
+//                    i = i + 1;
+//            }
+//
+//            [self.scrollView setPendingRequests:self.pendingRqstsArray];
+//
+//        } else {
+//            // Did not find any UserStats for the current user
+//            NSLog(@"Error: %@", error);
+//        }
+//    }];
+
 }
 -(void)friendLocInteraction:(UIButton *)sender
 {
@@ -1769,6 +1893,9 @@ enum PinAnnotationTypeTag {
 {
     // Read the title of the alert dialog box to learn the type of alert view
     NSString *title = alertView.title;
+    NSInteger tag_no = alertView.tag;
+    NSLog(@"%@, %ld", title, tag_no);
+    
     if ( [title isEqualToString:@"WatchMe"]) {
         switch (buttonIndex) {
             case 0: // dismiss, cancel, or okay
@@ -1784,12 +1911,14 @@ enum PinAnnotationTypeTag {
         }
     } else {
         //read the index in the title to get the position in the array **** not a good design!!! ****
-        NSString *tagNbr= [title substringFromIndex:(title.length -2)];
-        int btnTagNbr   = (int)[tagNbr integerValue];
-        NSDictionary *frUserDic = [self.pendingRqstsArray objectAtIndex:btnTagNbr]; // 10Jun14:SA
-        NSString *requestType = [frUserDic objectForKey:@"reqType"];
-        PFUser *friensoUser = [frUserDic objectForKey:@"pfUser"];                   // 10Jun14:SA
+        //NSString *tagNbr= [title substringFromIndex:(title.length -2)];
+        //int btnTagNbr   = (int)[tagNbr integerValue];
+        PFObject *userEventObject =[self.pendingRqstsArray objectAtIndex:tag_no];
         
+        NSString *requestType = [userEventObject objectForKey:@"eventType"];
+        PFUser *friensoUser = [userEventObject objectForKey:@"friensoUser"];                   // 10Jun14:SA
+        
+        NSLog(@"%@, %@, %@",friensoUser.username, requestType, userEventObject.objectId);
         
         if([requestType isEqualToString:coreFriendRequest])
         {
@@ -1827,11 +1956,11 @@ enum PinAnnotationTypeTag {
                         //remove the button from the view
                         for (id subview in [self.scrollView subviews]){
                             if ( [subview isKindOfClass:[UIButton class]] ) {
-                                if (btnTagNbr ==  [(UIButton *)subview tag])
+                                if (tag_no ==  [(UIButton *)subview tag])
                                 {
                                     [subview removeFromSuperview];
                                     // Now update requests count
-                                    [self.pendingRqstsArray removeObjectAtIndex:btnTagNbr];
+                                    [self.pendingRqstsArray removeObjectAtIndex:tag_no];
                                     [self.scrollView updatePendingRequests:self.pendingRqstsArray];
                                 }
                             }
@@ -1839,37 +1968,40 @@ enum PinAnnotationTypeTag {
                     }
                 }
             }];
-        } else { // request is of type either
-            
+        } else { // request is external of either watchMe or helpNow
+
             if (buttonIndex == 1) // accept
             {
-                [self addUserBubbleToMap:friensoUser             /* accepted to watch this user */
-                                 withTag:[tagNbr integerValue]];
-                //[self setWatchingUserInCD:friensoUser]; // Watching Friend set
+                //[self addUserBubbleToMap:friensoUser  withTag:tag_no]; // accepted to watch this user
+                
+                // Remove pending request bubble from pendingDrawer
                 for (id subview in [self.scrollView subviews]){
                     if ( [subview isKindOfClass:[UIButton class]] ) {
                         //NSLog(@"[0]:tag=%ld", (long)[(UIButton *)subview tag] );
-                        if (btnTagNbr ==  [(UIButton *)subview tag])
+                        if (tag_no ==  [(UIButton *)subview tag])
                         {
                             [subview removeFromSuperview];
                             
-                            // UserEvent maintain request status
-                            //NSLog(@":%@",[frUserDic objectForKey:@"reqType"]);
+                            // UserEvent maintain request status (tracking)
                             CloudUsrEvnts *userEvent = [[CloudUsrEvnts alloc] init];
-                            [userEvent trackRequestOfType:[frUserDic objectForKey:@"reqType"]
-                                                  forUser:friensoUser
-                                               withStatus:@"accepted"];
+                            [userEvent trackingUserEvent:userEventObject withStatus:@"accepted"
+                                               trackedBy:[PFUser currentUser] ];
+                            
                             // Now update requests count
-                            [self.pendingRqstsArray removeObjectAtIndex:[tagNbr integerValue]];
+                            [self.pendingRqstsArray removeObjectAtIndex:tag_no];
                             [self.scrollView updatePendingRequests:self.pendingRqstsArray];
+                            
+                            [self.watchingCoFrArray addObject:friensoUser];
+                            
                             // set FriensoEvent, make the watching your friend X sticky
                             //[[[WatchingCoreFriend alloc] init] trackUserEventLocally:friensoUser];
                             /****** migrate this code to its own class ******/
-                            [self trackUserEventLocally:friensoUser];
+                            [self trackUserEventLocally:userEventObject];
                         }
                         
-                    }   // ends for
-                }       // ends if
+                    }   // ends if
+                }       // ends for
+                [self updateMapViewWithUserBubbles: self.watchingCoFrArray];
             } else if (buttonIndex == 2) // reject
             {
                 NSLog(@"'request' rejected ");
@@ -1878,16 +2010,16 @@ enum PinAnnotationTypeTag {
                 
                 for (id subview in [self.scrollView subviews]){
                     if ( [subview isKindOfClass:[UIButton class]] ) {
-                        if (btnTagNbr ==  [(UIButton *)subview tag])
+                        if (tag_no ==  [(UIButton *)subview tag])
                         {
                             [subview removeFromSuperview];
-                            
                             // Cloud track request
-                            [[[CloudUsrEvnts alloc] init] trackRequestOfType:[frUserDic objectForKey:@"reqType"]
-                                                                     forUser:friensoUser  //[_pendingRqstsArray objectAtIndex:btnTagNbr]
-                                                                  withStatus:@"rejected"];
+                            [[[CloudUsrEvnts alloc] init] trackingUserEvent:userEventObject
+                                                                  withStatus:@"rejected"
+                                                                  trackedBy:[PFUser currentUser]
+                             ];
                             // Now update requests count
-                            [self.pendingRqstsArray removeObjectAtIndex:[tagNbr integerValue]];
+                            [self.pendingRqstsArray removeObjectAtIndex:tag_no];
                             [self.scrollView updatePendingRequests:self.pendingRqstsArray];
                             // update Cloud-Store
                         }
