@@ -47,7 +47,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "899"
             endingLineNumber = "899"
-            landmarkName = "-loginThisUserToParse:withPassword:"
+            landmarkName = "-reloadSection:withRowAnimation:"
             landmarkType = "5">
             <Locations>
                <Location
@@ -88,12 +88,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "FriensoAlpha/NewCoreCircleTVC.m"
-            timestampString = "423116064.951381"
+            timestampString = "425243989.039945"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "101"
-            endingLineNumber = "101"
-            landmarkName = "-save"
+            startingLineNumber = "107"
+            endingLineNumber = "107"
+            landmarkName = "-tableView:cellForRowAtIndexPath:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -350,11 +350,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "FriensoAlpha/FriensoViewController.m"
-            timestampString = "424811086.196734"
+            timestampString = "425316876.521964"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1330"
-            endingLineNumber = "1330"
+            startingLineNumber = "1332"
+            endingLineNumber = "1332"
             landmarkName = "-actionAddFriensoEvent:"
             landmarkType = "5">
          </BreakpointContent>
@@ -414,11 +414,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "FriensoAlpha/FriensoViewController.m"
-            timestampString = "424811086.196734"
+            timestampString = "425318013.888"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1768"
-            endingLineNumber = "1768"
+            startingLineNumber = "1786"
+            endingLineNumber = "1786"
             landmarkName = "-addCoreFriendBubblesToMap:"
             landmarkType = "5">
          </BreakpointContent>

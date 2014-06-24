@@ -21,7 +21,7 @@
     if (self) {
         _object = geoArray;
 //        NSLog(@"array: %@", geoArray);
-        if ([geoArray count] == 3) {
+        if ([geoArray count] > 3) {
             PFGeoPoint *geoPoint = [PFGeoPoint geoPointWithLatitude:[[geoArray objectAtIndex:1] doubleValue]
                                                           longitude:[[geoArray objectAtIndex:2] doubleValue]];
             [self setGeoPoint:geoPoint];
@@ -66,7 +66,8 @@
     }
     
     _title = [NSString stringWithFormat:@"%@",[self.object objectAtIndex:0]];
-    _subtitle = [NSString stringWithFormat:@"%@, %@", [numberFormatter stringFromNumber:[NSNumber numberWithDouble:geoPoint.latitude]],
-                 [numberFormatter stringFromNumber:[NSNumber numberWithDouble:geoPoint.longitude]]];
+//    _subtitle = [NSString stringWithFormat:@"%@, %@", [numberFormatter stringFromNumber:[NSNumber numberWithDouble:geoPoint.latitude]],
+//                 [numberFormatter stringFromNumber:[NSNumber numberWithDouble:geoPoint.longitude]]];
+    _subtitle =[_object objectAtIndex:3];
 }
 @end

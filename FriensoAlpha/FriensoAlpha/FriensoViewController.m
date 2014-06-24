@@ -23,6 +23,7 @@
 #import "CloudUsrEvnts.h"
 #import "FRSyncFriendConnections.h"
 #import "UserResponseScrollView.h"
+#import "PendingRequestButton.h"
 
 #define MAPVIEW_DEFAULT_BOUNDS  CGRectMake(0,0,self.view.bounds.size.width,self.view.bounds.size.height * 0.5)
 #define ARC4RANDOM_MAX          0x100000000
@@ -229,7 +230,7 @@ enum PinAnnotationTypeTag {
             [subview removeFromSuperview];
         }
     }
-    NSLog(@"Friends I track:");
+    NSLog(@"Friends I currently track:");
     
     
     NSInteger btnNbr = 0;
@@ -344,7 +345,7 @@ enum PinAnnotationTypeTag {
     
     // clean the drawer
     for (id subview in [self.scrollView subviews]){
-        if ( [subview isKindOfClass:[UIButton class]] )
+        if ( [subview isKindOfClass:[PendingRequestButton class]] )
         {
             [subview removeFromSuperview];
         }
@@ -424,11 +425,14 @@ enum PinAnnotationTypeTag {
 }
 -(void) addPendingRequest:(NSArray*)userRequestArray {
 
+    //NSLog(@"addPendingRequest -------------------------->");
+    [self.scrollView setPendingRequests:self.pendingRqstsArray];
     NSInteger arrayIndex = 0;
     for (PFObject *eventObject in userRequestArray)
     {
-        NSString *reqType =     [eventObject valueForKey:@"eventType"];
-        PFUser   *friensoUser = [eventObject objectForKey:@"friensoUser"];
+        NSString *reqType     = ([eventObject valueForKey:@"eventType"]==NULL) ? coreFriendRequest : [eventObject valueForKey:@"eventType"];
+        PFUser   *friensoUser = ([eventObject objectForKey:@"friensoUser"] == NULL) ? [eventObject objectForKey:@"sender"] : [eventObject objectForKey:@"friensoUser"];
+        NSLog(@"{%@} is requesting a <%@> request.", friensoUser.username, reqType);
         [self addPendingRequest:friensoUser
                         withTag:arrayIndex
                         reqtype:reqType];
@@ -437,7 +441,6 @@ enum PinAnnotationTypeTag {
     }
 }
 -(void) addPendingRequest:(PFUser *)parseFriend withTag:(NSInteger)tagNbr reqtype:(NSString *) type{
-
     if ([type isEqualToString:coreFriendRequest]) {
         [self addPndngRqstButton:[UIColor redColor] withFriensoUser:parseFriend withTag:tagNbr];
     } else {
@@ -450,9 +453,8 @@ enum PinAnnotationTypeTag {
 }
 
 - (void) addPndngRqstButton: (UIColor *) fontColor  withFriensoUser:(PFUser *)parseFriend withTag:(NSInteger)tagNbr{
-
     // addPendingRequest  adds a pending request to drawer+slider that user can interact w/ Pfuser
-    UIButton *pndngRqstBtn = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 44, 44)];
+    PendingRequestButton *pndngRqstBtn = [[PendingRequestButton alloc] initWithFrame:CGRectMake(0, 0, 44, 44)];
     UIImage *img =[[FRStringImage alloc] imageTextBubbleOfSize:pndngRqstBtn.frame.size];
     [pndngRqstBtn setBackgroundImage:img forState:UIControlStateNormal];
     NSString *bubbleLabel = [[parseFriend.username substringToIndex:2] uppercaseString];
@@ -1594,13 +1596,13 @@ enum PinAnnotationTypeTag {
  ** */
     
     NSLog(@"configureOverlay method");
-
     
     // Check for friends with active alerts
     PFQuery *query = [PFQuery queryWithClassName:@"UserEvent"];
     [query whereKey:@"eventActive" equalTo:[NSNumber numberWithBool:YES]];
     [query includeKey:@"friensoUser"];
     [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+        NSLog(@"------ Checking Events ...");
         if (!error) {
             
             for (PFObject *userEvent in objects){
@@ -1632,47 +1634,52 @@ enum PinAnnotationTypeTag {
                 
             }
 
-            [self addPendingRequest:            self.pendingRqstsArray];
-            [self.scrollView setPendingRequests:self.pendingRqstsArray];
+            [self addPendingRequest:self.pendingRqstsArray];
+//            [self.scrollView setPendingRequests:self.pendingRqstsArray];
             //NSLog(@"pendingRqstsArray: %@", self.pendingRqstsArray);
             [self updateMapViewWithUserBubbles: self.watchingCoFrArray];
         } else
             NSLog(@"parse error: %@", error.localizedDescription);
     }];
     
-//
-//    //check for awaiting core friend requests
-//    //Added here so that access to pendingRqstsArray is sequential and we dont need synchronization
-//    // drawback: Slow. We can do this in parallel with synchronization
-//
-//    PFQuery * pfquery = [PFQuery queryWithClassName:@"CoreFriendRequest"];
-//    [pfquery whereKey:@"recipient" equalTo:[PFUser currentUser]];
-//    [pfquery whereKey:@"awaitingResponseFrom" equalTo:@"recipient"];
-//    [pfquery whereKey:@"status" equalTo:@"send"];
-//    [pfquery includeKey:@"sender"];
-//    [pfquery findObjectsInBackgroundWithBlock:^(NSArray *objects,
-//                                                NSError *error) {
-//        if(!error) {
-//            NSInteger i = [self.pendingRqstsArray count]; // get the next insert position
-//            for (PFObject *  object in objects) {
-//                PFUser * sender = [object objectForKey:@"sender"];
-//                NSLog(@"Corefriend request sender's email %@",sender.email);
-//                [self addPendingRequest:sender withTag:i reqtype:coreFriendRequest]; // temp add to drawwer+slider
-//                NSDictionary *dic = [[NSDictionary alloc] initWithObjectsAndKeys:
-//                                         sender,   @"pfUser",
-//                                         coreFriendRequest, @"reqType",
-//                                         [NSNumber numberWithInteger:i],@"btnTag", nil];
-//                    [self.pendingRqstsArray insertObject:dic atIndex:i]; // simulation
-//                    i = i + 1;
-//            }
-//
+
+    
+    
+    //check for awaiting core friend requests
+    //Added here so that access to pendingRqstsArray is sequential and we dont need synchronization
+    // drawback: Slow. We can do this in parallel with synchronization
+    PFQuery * pfquery = [PFQuery queryWithClassName:@"CoreFriendRequest"];
+    [pfquery whereKey:@"recipient" equalTo:[PFUser currentUser]];
+    [pfquery includeKey:@"sender"];
+    [pfquery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+        NSLog(@"------ Checking CoreFriendRequest ...");
+        if(!error) {
+            NSInteger i = [self.pendingRqstsArray count]; // get the next insert position
+            //NSLog(@"CoreFriend Request: recipient, req ObjId, status, awaitingResponseFrom");
+            for (PFObject *object in objects) {
+                //PFUser * sender = [object objectForKey:@"sender"];
+                //NSLog(@"%@ : %@ : %@ : %@",sender.objectId, object.objectId, [object objectForKey:@"status"], sender.email);
+                
+                if ( [[object objectForKey:@"status"] isEqualToString:@"send"] ){
+                /*[self addPendingRequest:sender withTag:i reqtype:coreFriendRequest]; // temp add to drawwer+slider
+                  NSDictionary *dic = [[NSDictionary alloc] initWithObjectsAndKeys:
+                                         sender,   @"pfUser",
+                                         coreFriendRequest, @"reqType",
+                                         [NSNumber numberWithInteger:i],@"btnTag", nil];
+                */
+                    //[self.pendingRqstsArray insertObject:object atIndex:i]; // simulation
+                    [self.pendingRqstsArray addObject:object];
+                }
+                i = i + 1;
+            }
+
 //            [self.scrollView setPendingRequests:self.pendingRqstsArray];
-//
-//        } else {
-//            // Did not find any UserStats for the current user
-//            NSLog(@"Error: %@", error);
-//        }
-//    }];
+            [self addPendingRequest:self.pendingRqstsArray];
+        } else {
+            // Did not find any UserStats for the current user
+            NSLog(@"Error: %@", error);
+        }
+    }];
 
 }
 -(void)friendLocInteraction:(UIButton *)sender
@@ -1680,8 +1687,11 @@ enum PinAnnotationTypeTag {
     /* friendLocInteraction:
     ** Is the action triggered when user touches the button overlay on the mapview.
     ** */
-    NSLog(@"...friendLocInteraction");
-    NSLog(@"[tag:%ld], %@", [sender tag],self.friendsLocationArray);// objectAtIndex:sender.tag]);
+    //NSLog(@"...friendLocInteraction");
+//    NSLog(@"[tag:%ld], %@", [sender tag],self.friendsLocationArray);// objectAtIndex:sender.tag]);
+//    NSLog(@"watchingCoFrArray:%ld", [self.watchingCoFrArray count]);
+//    NSLog(@"%@", self.watchingCoFrArray);
+    
     //NSString *coordinateStr =[self.friendsLocationArray objectAtIndex:sender.tag];
     PFGeoPoint *coordinatesPoint = [self.friendsLocationArray objectAtIndex:sender.tag];
     
@@ -1693,10 +1703,18 @@ enum PinAnnotationTypeTag {
 //    NSArray *array = @[sender.titleLabel.text,                               // Initials
 //                       [coordinateStr componentsSeparatedByString:@","][0],  // latitude
 //                       [coordinateStr componentsSeparatedByString:@","][1]]; // longitude
-    NSArray *array = @[sender.titleLabel.text,                               // Initials
+    
+    // The attributes for the pin annotation
+    /*NSArray *array = @[sender.titleLabel.text,                               // Initials
                         [NSString stringWithFormat:@"%f",[coordinatesPoint latitude]],  // latitude
                         [NSString stringWithFormat:@"%f",[coordinatesPoint longitude]]]; // longitude
-
+     */
+    PFUser *coreFriend = [self.watchingCoFrArray objectAtIndex:[sender tag]];
+    NSArray *array = @[sender.titleLabel.text,
+                       [NSString stringWithFormat:@"%f",[coordinatesPoint latitude]],  // latitude
+                       [NSString stringWithFormat:@"%f",[coordinatesPoint longitude]], // longitude
+                       [coreFriend objectForKey:@"email"]];
+                       
     GeoCDPointAnnotation *geoCDPointAnn = [[GeoCDPointAnnotation alloc] initWithObject:array];
     [self.mapView addAnnotation:geoCDPointAnn];
     
@@ -1914,9 +1932,12 @@ enum PinAnnotationTypeTag {
         //NSString *tagNbr= [title substringFromIndex:(title.length -2)];
         //int btnTagNbr   = (int)[tagNbr integerValue];
         PFObject *userEventObject =[self.pendingRqstsArray objectAtIndex:tag_no];
-        
-        NSString *requestType = [userEventObject objectForKey:@"eventType"];
-        PFUser *friensoUser = [userEventObject objectForKey:@"friensoUser"];                   // 10Jun14:SA
+
+// 23Jun14/SA
+//        NSString *requestType = [userEventObject objectForKey:@"eventType"];
+//        PFUser *friensoUser = [userEventObject objectForKey:@"friensoUser"];                   // 10Jun14:SA
+        NSString *requestType     = ([userEventObject valueForKey:@"eventType"]==NULL) ? coreFriendRequest : [userEventObject valueForKey:@"eventType"];
+        PFUser   *friensoUser = ([userEventObject objectForKey:@"friensoUser"] == NULL) ? [userEventObject objectForKey:@"sender"] : [userEventObject objectForKey:@"friensoUser"];
         
         NSLog(@"%@, %@, %@",friensoUser.username, requestType, userEventObject.objectId);
         
@@ -1939,15 +1960,16 @@ enum PinAnnotationTypeTag {
             
             //update the db with the choices made by the user
             PFQuery *pfquery = [PFQuery queryWithClassName:@"CoreFriendRequest"];
-            [pfquery whereKey:@"sender" equalTo:friensoUser];
-            [pfquery whereKey:@"recipient" equalTo:[PFUser currentUser]];
-            [pfquery whereKey:@"awaitingResponseFrom" equalTo:@"recipient"];
-            [pfquery whereKey:@"status" equalTo:@"send"];
-            [pfquery findObjectsInBackgroundWithBlock:^(NSArray *objects,
-                                                        NSError *error) {
-                if(!error && ![objects isEqual:[NSNull null]]) {
-                    //TODO: check if first element is not null
-                    PFObject * pfobject =[objects firstObject];
+            //[pfquery whereKey:@"sender" equalTo:friensoUser];
+            [pfquery whereKey:@"objectId" equalTo:userEventObject.objectId];
+//            [pfquery whereKey:@"recipient" equalTo:[PFUser currentUser]];
+//            [pfquery whereKey:@"awaitingResponseFrom" equalTo:@"recipient"];
+//            [pfquery whereKey:@"status" equalTo:@"send"];
+//            [pfquery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+            [pfquery getFirstObjectInBackgroundWithBlock:^(PFObject *pfobject, NSError *error) {
+//                if(!error && ![objects isEqual:[NSNull null]]) {
+//                    //TODO: check if first element is not null
+//                    PFObject * pfobject =[objects firstObject];
                     if(pfobject != nil) {
                         pfobject[@"awaitingResponseFrom"] = @"sender";
                         pfobject[@"status"] = response;
@@ -1955,8 +1977,8 @@ enum PinAnnotationTypeTag {
                         
                         //remove the button from the view
                         for (id subview in [self.scrollView subviews]){
-                            if ( [subview isKindOfClass:[UIButton class]] ) {
-                                if (tag_no ==  [(UIButton *)subview tag])
+                            if ( [subview isKindOfClass:[PendingRequestButton class]] ) {
+                                if (tag_no ==  [(PendingRequestButton *)subview tag])
                                 {
                                     [subview removeFromSuperview];
                                     // Now update requests count
@@ -1964,22 +1986,24 @@ enum PinAnnotationTypeTag {
                                     [self.scrollView updatePendingRequests:self.pendingRqstsArray];
                                 }
                             }
-                        }
-                    }
-                }
+                        }//
+                    } //ends if
+                
             }];
         } else { // request is external of either watchMe or helpNow
 
             if (buttonIndex == 1) // accept
             {
                 //[self addUserBubbleToMap:friensoUser  withTag:tag_no]; // accepted to watch this user
-                
+                NSLog(@"%ld", (long)[self.scrollView subviews].count);
                 // Remove pending request bubble from pendingDrawer
                 for (id subview in [self.scrollView subviews]){
-                    if ( [subview isKindOfClass:[UIButton class]] ) {
-                        //NSLog(@"[0]:tag=%ld", (long)[(UIButton *)subview tag] );
-                        if (tag_no ==  [(UIButton *)subview tag])
+                    
+                    if ( [subview isKindOfClass:[PendingRequestButton class]] ) {
+                        
+                        if (tag_no ==  [(PendingRequestButton *)subview tag])
                         {
+                            NSLog(@"[0]:tag=%ld, tag_no: %d", (long)[(UIButton *)subview tag], (int) tag_no );
                             [subview removeFromSuperview];
                             
                             // UserEvent maintain request status (tracking)
@@ -1990,7 +2014,6 @@ enum PinAnnotationTypeTag {
                             // Now update requests count
                             [self.pendingRqstsArray removeObjectAtIndex:tag_no];
                             [self.scrollView updatePendingRequests:self.pendingRqstsArray];
-                            
                             [self.watchingCoFrArray addObject:friensoUser];
                             
                             // set FriensoEvent, make the watching your friend X sticky
@@ -2009,8 +2032,8 @@ enum PinAnnotationTypeTag {
                 // remove the request and update
                 
                 for (id subview in [self.scrollView subviews]){
-                    if ( [subview isKindOfClass:[UIButton class]] ) {
-                        if (tag_no ==  [(UIButton *)subview tag])
+                    if ( [subview isKindOfClass:[PendingRequestButton class]] ) {
+                        if (tag_no ==  [(PendingRequestButton *)subview tag])
                         {
                             [subview removeFromSuperview];
                             // Cloud track request
@@ -2020,7 +2043,7 @@ enum PinAnnotationTypeTag {
                              ];
                             // Now update requests count
                             [self.pendingRqstsArray removeObjectAtIndex:tag_no];
-                            [self.scrollView updatePendingRequests:self.pendingRqstsArray];
+                            [self.scrollView        updatePendingRequests:self.pendingRqstsArray];
                             // update Cloud-Store
                         }
                     }
@@ -2046,5 +2069,7 @@ enum PinAnnotationTypeTag {
  *  http://borkware.com/quickies/one?topic=Graphics
  *  http://stackoverflow.com/questions/10895035/coregraphics-draw-an-image-on-a-white-canvas
  *  http://iwork3.us/2013/09/13/pantone-ny-fashion-week-2014-spring-colors/
+ *  http://stackoverflow.com/questions/14924151/create-a-round-gradient-progress-bar-in-ios-with-coregraphics
+ *
  **/
 @end

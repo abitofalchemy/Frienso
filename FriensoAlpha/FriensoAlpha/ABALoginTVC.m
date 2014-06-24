@@ -1050,7 +1050,7 @@
         if (!error) {
             // Hooray! Let them use the app now.
             // Add Phone
-            [self addPhoneNumberToCloudForEmail: newUserEmail withPhoneNumber:userPhoneNumber];
+            //23Jun14/SA: [self addPhoneNumberToCloudForEmail: newUserEmail withPhoneNumber:userPhoneNumber];
             
             NSUserDefaults *userInLocal = [NSUserDefaults standardUserDefaults];
             [userInLocal setObject:@"1" forKey:@"adminInParse"];

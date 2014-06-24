@@ -70,7 +70,13 @@ int activeCoreFriends = 0;
     [self.view addSubview:self.tableView];
     [self.tableView setCenter:self.view.center];
 }
-
+-(void) viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"newUserFlag"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    
+}
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
@@ -545,8 +551,8 @@ int activeCoreFriends = 0;
                     if([objects count] == 0) {  //if no request exists, add now
                         PFACL * pfacl = [PFACL ACL];
                         [pfacl setWriteAccess:YES forUser:pfuser];
-//                        [pfacl setReadAccess:YES forUser:pfuser];
-//                        [pfacl setReadAccess:YES forUser:curUser];
+                        [pfacl setReadAccess:YES forUser:pfuser];
+                        [pfacl setReadAccess:YES forUser:curUser];
                         [pfacl setWriteAccess:YES forUser:curUser];
 
                         PFObject * pfobject = [PFObject
