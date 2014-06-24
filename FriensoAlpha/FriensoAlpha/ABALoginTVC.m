@@ -15,7 +15,9 @@
  | + when an email is being entered, check it against parse
  | +-- if no network is available, then what?
  | + 11Dec13SA: Defaulting the 'keep me logged in switch to ON'
- | 15Jan14SA: Need to handle the main user's phone #
+ | 15Jan14/SA: Need to handle the main user's phone #
+ | 19Jun14/SA: Remove the need to enter ph when doing Login
+ 
  
  *  http://stackoverflow.com/questions/3276504/how-to-set-a-gradient-uitableviewcell-background
  *  https://parse.com/tutorials/geolocations
@@ -446,9 +448,8 @@
     
     nameTextField = username.text;
     
-    if ( [self isUsernameNew:username.text]){
-        NSLog(@"[ Login User ]");
-    }else{
+    if ( [self isUsernameNew:username.text])
+    {
         //[loginBtnLabel replaceObjectAtIndex:0 withObject:@"Register"];
         //[self.tableView reloadData];
         //self.tableView set[username setText:nameTextField];
@@ -493,7 +494,7 @@
     NSString *adminKey = [userInLocal objectForKey:@"adminID"];
     if ([adminKey isEqualToString:userStr] )
     {
-        return YES;
+        return NO;
     } else {
         // user must be new
         
@@ -507,16 +508,23 @@
             if (!error && [objects count]>0) {
                 
                 [loginBtnLabel replaceObjectAtIndex:0 withObject:@"Sign In"];
+                PFUser *friensoUser = [objects objectAtIndex:0];
+                [phoneNumber setText:[friensoUser objectForKey:@"phoneNumber"]];
                 [self reloadSection:1 withRowAnimation:UITableViewRowAnimationNone];
-
-                NSLog(@"existingUser set");
-                // Sign In and skip coreCircle View Controller
+                /**
+                [self.locationSwitch setOn:YES animated:YES];  // Existing user->force location tracking
+                [self.locationSwitch setEnabled:YES];
+                **/
+                
+                
+                //  NSLog(@"existingUser set");
+                //  Sign In and skip coreCircle View Controller
                 [userInLocal setObject:@"1" forKey:@"existingUser"];
                 [userInLocal synchronize];
                 
-                retVal = YES;
-            } else{
                 retVal = NO;
+            } else{
+                retVal = YES;
                 [loginBtnLabel replaceObjectAtIndex:0 withObject:@"Register"];
                 [self reloadSection:1 withRowAnimation:UITableViewRowAnimationNone];
                 // "New User" 
@@ -840,7 +848,7 @@
         } else {
             if ([self userInParse]){
                 // login this user to parse
-                [self loginThisUserToParse:username.text withPassword:password.text];
+                [self loginThisUserToParse:username.text withPassword:password.text];         // already set?
                 [self saveNewUserLocallyWithEmail:username.text plusPassword:password.text];
                 NSString *message = @"You are logged in as: ";
                 [self actionAddFriensoEvent:[message stringByAppendingString:username.text]
@@ -1042,7 +1050,7 @@
         if (!error) {
             // Hooray! Let them use the app now.
             // Add Phone
-            [self addPhoneNumberToCloudForEmail: newUserEmail withPhoneNumber:userPhoneNumber];
+            //23Jun14/SA: [self addPhoneNumberToCloudForEmail: newUserEmail withPhoneNumber:userPhoneNumber];
             
             NSUserDefaults *userInLocal = [NSUserDefaults standardUserDefaults];
             [userInLocal setObject:@"1" forKey:@"adminInParse"];

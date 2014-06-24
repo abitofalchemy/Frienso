@@ -21,7 +21,9 @@
 - (void) sendNotificationsToCoreCircle;
 - (void) disableEvent;
 - (BOOL) activeAlertCheck;
-- (void) trackRequestOfType: (NSString *)requestType forUser:(PFUser *)cloudUser withStatus:(NSString *)status;
+- (void) trackingUserEvent:(PFObject*) userEventObjId
+                withStatus:(NSString*) status
+                 trackedBy:(PFUser  *) parseUser;
 - (void) isUserInMy2WatchList:(PFUser *)friensoUser;
 
 

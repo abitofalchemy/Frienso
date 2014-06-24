@@ -42,8 +42,17 @@
     
 }
 -(void) setPendingRequests:(NSArray *) pendingRequestsArray {
+    NSLog(@"setPendingRequests: %d", (int)pendingRequestsArray.count);
+
+    for (id subview in [self subviews]){
+        if ( [subview isKindOfClass:[UILabel class]] ) {
+            [subview removeFromSuperview];
+        }
+        
+    }
+    
     UILabel *pendingReq = [[UILabel alloc] initWithFrame:CGRectZero];
-    [pendingReq setText:[NSString stringWithFormat:@"Pending:%ld", (long)[pendingRequestsArray count]]];
+    [pendingReq setText:[NSString stringWithFormat:@"≡ Pending:%ld", (long)[pendingRequestsArray count]]];
     [pendingReq setFont:[UIFont fontWithName:@"AppleSDGothicNeo-Light" size:16.0]];
     [pendingReq sizeToFit];
     [pendingReq setCenter:CGPointMake(self.frame.size.width - pendingReq.frame.size.width* 0.6,
@@ -52,9 +61,10 @@
     
 }
 -(void) updatePendingRequests:(NSArray *) pendingRequestsArray {
+    // warning this is updating two labels.....
     for (id subview in [self subviews]){
         if ( [subview isKindOfClass:[UILabel class]] ) {
-            [subview setText:[NSString stringWithFormat:@"Pending:%ld", (long)[pendingRequestsArray count]]];
+            [subview setText:[NSString stringWithFormat:@"≡ Pending:%ld", (long)[pendingRequestsArray count]]];
         }
         
     }

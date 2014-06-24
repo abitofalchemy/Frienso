@@ -70,7 +70,13 @@ int activeCoreFriends = 0;
     [self.view addSubview:self.tableView];
     [self.tableView setCenter:self.view.center];
 }
-
+-(void) viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"newUserFlag"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    
+}
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];

@@ -12,7 +12,7 @@
 #import <MapKit/MapKit.h>
 #import <CoreLocation/CoreLocation.h>
 #import "ABALoginTVC.h"
-//
+#import "TrackingFriendButton.h"
 #import "CloudEntityContacts.h"
 
 
@@ -24,5 +24,6 @@ UITableViewDelegate,UITableViewDataSource,MKMapViewDelegate,CLLocationManagerDel
 
 - (void) setInitialLocation:(CLLocation *)aLocation;
 - (void) actionAddFriensoUserLocation:(PFGeoPoint *)geoPoint forUser:(NSString *)friend;
+- (void) configureOverlay;
 
 @end

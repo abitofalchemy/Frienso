@@ -64,9 +64,9 @@
         }
     }];
 }
-- (void) trackRequestOfType:(NSString *)requestType
-                    forUser:(PFUser *)cloudUser
-                 withStatus:(NSString *)status
+- (void) trackingUserEvent:(PFObject*) userEventObjId
+                withStatus:(NSString*) status
+                 trackedBy:(PFUser  *) friensoUser
 {
 //    NSLog(@"%@", [[NSUserDefaults standardUserDefaults] objectForKey:@"userPhone"]);
     // update the cloud-store for pfuser with new state; subqueries should be on the same Class
@@ -75,65 +75,30 @@
 //    [query whereKey:@"RecipientPh" equalTo:[[NSUserDefaults standardUserDefaults] objectForKey:@"userPhone"]];
 //    PFQuery *sentByQuery = [PFQuery queryWithClassName:@"TrackRequest"];
 //    [sentByQuery whereKey:@"SenderPh" equalTo:[cloudUser objectForKey:@"phoneNumber"]];
+    /** Parse/Frienso/UserEventTracking Class
+     ** This class tracks who has reviewed and taken action on a userEventRequest
+     **         status: is the action will be either: accepted or rejected
+     **    userEventId: is a pointer to the UserEvent record
+     ** reviewedByUser: is the friend that reviewed the request and took action on it
+     ** */
     
-    PFQuery *sentToQuery = [PFQuery queryWithClassName:@"TrackRequest"];
-    [sentToQuery whereKey:@"RecipientPh" equalTo:[[NSUserDefaults standardUserDefaults] objectForKey:@"userPhone"]];
-    
-//    PFQuery *query = [PFQuery orQueryWithSubqueries:@[sentByQuery,sentToQuery]]; // query with multiple constraints
-    [sentToQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
-        if (!error) {
-            // Found requestTrack
-            //NSLog(@"requestType: %@, %@", objects, requestType);
-            if (objects.count == 0) {
-                PFObject *requestTrack = [PFObject objectWithClassName:@"TrackRequest" ];
-                [requestTrack setObject:[cloudUser objectForKey:@"phoneNumber"] forKey:@"SenderPh"];
-                [requestTrack setObject:[[NSUserDefaults standardUserDefaults] objectForKey:@"userPhone"]
-                                 forKey:@"RecipientPh"];
-                [requestTrack setObject:status forKey:@"status"];
-                [requestTrack setObject:requestType forKey:@"requestType"];
-                [requestTrack saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-                    if (succeeded) {
-                        NSLog(@"Tracking event record added");
-                    } else {
-                        NSLog(@"%@", error);
-                    }
-                }];
-            } else {
-                // find those that match the Sender
-                for (PFObject *trackRequest in objects) {
-                    if ([[trackRequest objectForKey:@"SenderPh"] isEqualToString:[cloudUser objectForKey:@"phoneNumber"]])
-                    {    // update this trackRequest->'requestType'
-                        //NSLog(@"%@", [trackRequest objectForKey:@"requestType"]);
-                        [trackRequest setObject:status forKey:@"status"];
-                        [trackRequest setObject:requestType forKey:@"requestType"];
-                        [trackRequest saveInBackground];
-                    }
-                }
-            }
-//            [requestTrack setObject:status      forKey:@"status"];
-//            [requestTrack setObject:requestType forKey:@"requestType"];
-//            [requestTrack saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-//                if (succeeded) {
-//                    NSLog(@"Tracking event record added");
-//                } else {
-//                    NSLog(@"Update failed! ... %@", error);
-//                }
-//            }];
-        } else {
-            // Did not find any TrackRequest for the user, so we need to create it.
-            NSLog(@"trackReques Error: %@", error);
-            
-        }
+    PFObject *requestTrack = [PFObject objectWithClassName:@"UserEventTracking" ];
+    [requestTrack setObject:userEventObjId forKey:@"userEventId"];
+    [requestTrack setObject:status forKey:@"status"];
+    [requestTrack setObject:friensoUser forKey:@"reviewedByUser"];
+    [requestTrack saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+        if (!succeeded)
+            NSLog(@"Error saving event tracking info: %@", error);
     }];
+    
 }
 
 -(void) setPersonalEvent
 {
-    NSDictionary *dic = [[NSDictionary alloc] initWithObjects:@[_alertType,_startDateTime,[self nextHourDate:_startDateTime]]
-                                                      forKeys:@[@"alertType",@"startDateTime", @"endDateTime"]];
-    [[NSUserDefaults standardUserDefaults] setObject:dic forKey:@"alertDic"];
-    [[NSUserDefaults standardUserDefaults] synchronize];
     
+//    [[NSUserDefaults standardUserDefaults] setObject:dic forKey:@"watchObjId"];
+//    [[NSUserDefaults standardUserDefaults] synchronize];
+//    
 }
 -(BOOL) activeAlertCheck {
     NSDictionary *dic = [[NSUserDefaults standardUserDefaults] objectForKey:@"alertDic"];
@@ -167,18 +132,22 @@
 }
 -(void) sendToCloud
 {
-    //    PFObject *userEvent = [PFObject objectWithClassName:@"UserEvent" ];
-    //    [userEvent setObject:@"watch" forKey:@"alertType"];
-    //    [userEvent setObject:[NSNumber numberWithBool:YES] forKey:@"eventActive"];
-    //    [userEvent setObject:[self nextHourDate:_startDateTime]  forKey:@"endDateTime"];
-    //    [userEvent setObject:[PFUser currentUser] forKey:@"friensoUser"];
-    //    [userEvent saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-    //        if (succeeded) {
-    //            NSLog(@"Saved event for user:%@", [PFUser currentUser].email);
-    //        } else {
-    //            NSLog(@"%@", error);
-    //        }
-    //    }];
+    PFObject *userEvent = [PFObject objectWithClassName:@"UserEvent" ];
+    [userEvent setObject:@"watch" forKey:@"eventType"];
+    [userEvent setObject:[NSNumber numberWithBool:YES] forKey:@"eventActive"];
+    [userEvent setObject:[PFUser currentUser] forKey:@"friensoUser"];
+    [userEvent saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+        if (!succeeded) {
+            
+            
+            NSLog(@"! error adding userEvent to cloud-store: %@", error);
+        } else {
+            NSLog(@"Success");
+            [[NSUserDefaults standardUserDefaults] setObject:userEvent.objectId forKey:@"watchObjId"];
+            [[NSUserDefaults standardUserDefaults] synchronize];
+        }
+    }];
+    /**
     PFQuery *query = [PFQuery queryWithClassName:@"UserEvent"];
     [query whereKey:@"friensoUser" equalTo:[PFUser currentUser]];
     [query getFirstObjectInBackgroundWithBlock:^(PFObject * userEvent, NSError *error) {
@@ -204,21 +173,17 @@
             }];
         }
     }];
+     ***/
 }
 - (void) disableEvent
 {
-    NSDictionary *dic = NULL;
-    [[NSUserDefaults standardUserDefaults] setObject:dic forKey:@"alertDic"];
-    [[NSUserDefaults standardUserDefaults] synchronize];
-    
     PFQuery *query = [PFQuery queryWithClassName:@"UserEvent"];
-    [query whereKey:@"friensoUser" equalTo:[PFUser currentUser]];
+    [query whereKey:@"objectId" equalTo:[[NSUserDefaults standardUserDefaults] objectForKey:@"watchObjId"]];
     [query getFirstObjectInBackgroundWithBlock:^(PFObject * userEvent, NSError *error) {
         if (!error) {
             // Found UserStats
-            //[userEvent setObject:@"watch" forKey:@"alertType"];
             [userEvent setObject:[NSNumber numberWithBool:NO] forKey:@"eventActive"];
-            //[userEvent setObject:[self nextHourDate:_startDateTime]  forKey:@"endDateTime"];
+            //NSLog(@"%@", userEvent.objectId);
             // Save
             [userEvent saveInBackground];
             NSLog(@"... disabled WatchMe");

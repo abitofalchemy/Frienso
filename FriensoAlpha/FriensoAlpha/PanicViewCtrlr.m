@@ -143,7 +143,7 @@
 -(void) setupTopLabel{
     self.label = [[UILabel alloc] init];
     self.label.backgroundColor = [UIColor clearColor];
-    self.label.text = @"Panic Alert!";
+    self.label.text = @"HelpNow!!";
     self.label.font = [UIFont boldSystemFontOfSize:48.0f];
     self.label.textColor = [UIColor blackColor];
     self.label.shadowColor = [UIColor lightGrayColor];
@@ -171,16 +171,16 @@
         [self.timer invalidate];
         self.timer = nil;
     }
-    NSLog(@"[ Panic Alerting Cancelled ]");
+    NSLog(@"[ HelpNow!ing Cancelled ]");
     [self dismissViewControllerAnimated:YES completion:nil];
     
 }
 // Update our timer label
 - (void) timerUpdate {
-    time += 1;
+    time -= 1;
     self.timerLabel.text = [NSString stringWithFormat:@":%2ds", time];
-    if (time >= 15)
-        [self performSelector:@selector(sendPanicAlertNotification)
+    if (time <= 0)
+        [self performSelector:@selector(sendHelpNowNotification)
                    withObject:nil afterDelay:0.];
 }
 -(void) initializeTimer{
@@ -202,7 +202,7 @@
         //otherView.layer.affineTransform = CGAffineTransformIdentity;
     }];
     // Initialize our timer and label
-    time = 0;
+    time = 7;
     overrideTimer = NO;
     self.timer = [NSTimer scheduledTimerWithTimeInterval:1.0
                                                   target:self
@@ -213,7 +213,7 @@
     self.timerLabel = [[UILabel alloc] initWithFrame:CGRectMake(self.view.center.x, 10, 120, 40)];
     self.timerLabel.backgroundColor = [UIColor clearColor];
     self.timerLabel.font = [UIFont fontWithName:@"AppleSDGothicNeo-SemiBold" size:60.];
-    self.timerLabel.text = @":00s";
+    self.timerLabel.text = @":07s";
     [self.timerLabel sizeToFit];
     [self.view addSubview:self.timerLabel];
 
@@ -237,14 +237,14 @@
     
     [self.view addSubview:_button];
 }
--(void) sendPanicAlertNotification {
+-(void) sendHelpNowNotification {
     NSLog(@"[ sending notifications to core friends ]");
     if ( self.timer) {
         [self.timer invalidate];
         self.timer = nil;
     }
     
-    //Code to send Panic Alerts to all friends with your location information
+    //Code to send HelpNow!s to all friends with your location information
     
     /**************PUSH NOTIFICATIONS: HELP ME NOW!!!! *****************/
     
@@ -283,7 +283,7 @@
     /**************END OF PUSH NOTIFICATIONS: HELP ME NOW!!!! *****************/
     
     AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
-    [self createNewEvent:@"Sent Panic Alert Notification"];
+    [self createNewEvent:@"Sent HelpNow! Notification"];
     [[[UIAlertView alloc] initWithTitle: @"Notifications Sent"
                                 message: @"Your core circle has been notified!"
                                delegate: nil

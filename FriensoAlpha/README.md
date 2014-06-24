@@ -40,7 +40,9 @@ Version History
                     - Bypassing the coreFriendRequest (not working for me:Sal) to look at local corefriends
                     dictionary to determine list of friends to send watchMe requests.
                     
-
+                    - 23Jun14/SA: Added a refresh button to the mapview & updates the pendingRequestsDrawer
+                    (UI) and how it handles requests under diff. case scenarios (i.e. when a friend turns
+                    Off or On their watchMe switch).
 
 * ver 1.5 build 25  - Fixed minor issues with the Profile & CoreCircle views; redoing the way the user
                     logs in or registers!
@@ -104,14 +106,10 @@ Version History
 Working On
 ----------
 * SA: WatchMe switch triggers (internal alarms) and push notifications
-* SA: 19Jun14/SA: Need to fix adding new bubbles to mapview should detect other bubbles already on it
-* SA: Managing and maintaining 'Requests'
+* SA: Managing and maintaining 'Requests'; at install accepting more than 1 causes problems & crash
 * SA: Fix bugs
         (1) fix detecting if WatchMe events come from a user in you friends list
         Future versions of this should be push-notifications driven
-        (2) fix toolbar in Options View mode, the options view button should be removed
-        from these views.
-        (3) 18Jun14/SA  MapView doesn't show a map (issue on GitHub)
 
 * NY: Push notifications for WatchMe and CoreFriend requests
 * NY/SA:  Finish the PanicVC
@@ -120,7 +118,6 @@ Working On
 
 ToDo
 ----
-* {SA}{bug} Looking into WatchMe events causing  a crash
 * {SA}{bug} 19Jun14/SA: Friends requests accept caused a crash
 * {NY} Finish panic view controller
 * {SA} Add alarm timer to AlertEvent {no longer needed, events will stay
@@ -147,7 +144,11 @@ ToDo
 Tasks Done / Project Log:
 -------------------------
 
-* {19Jun14/SA}{done}* Add event creation -------------
+* {19Jun14/SA}
+  ** {fixed} bugs Sal was working on: (2) {done} fix toolbar in Options View mode, the options view button should be removed from these views. (3) {done} 18Jun14/SA  MapView doesn't show a map (issue on GitHub)
+  ** {done} {SA}{bug} Looking into WatchMe events causing  a crash
+  ** {done} SA: 19Jun14/SA: Need to fix adding new bubbles to mapview should detect other bubbles already on it
+  ** {done} * Add event creation -------------
   WatchMe:  {bug} check that Parse class UserEvent updates the eventType   
     Create a full event
     Go for a run, etc.
