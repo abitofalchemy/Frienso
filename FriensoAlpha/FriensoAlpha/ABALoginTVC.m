@@ -859,7 +859,7 @@
                 [self popDashboardVC];
                 
             } else {
-                NSLog(@"[ register new user ]");
+                NSLog(@"[ Register new user ]");
                 [self saveNewUserLocallyWithEmail:username.text plusPassword:password.text];
                 
                 [self registerNewUserToParseWithEmail:username.text
@@ -945,14 +945,13 @@
 - (void) popDashboardVC
 {
     if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"CoreFriendsContactInfoDicKey"] count] == 0)
-        [self syncFromParse];
+        [self syncFromParse]; /// how well is this working ???
     else
         NSLog(@"all loaded already");
     
-//  [self performSegueWithIdentifier:@"dashboardView" sender:self];
-//    [self.delegate afterLoginConfigureUI];
-//    FriensoViewController *parentVC = [[FriensoViewController alloc] init];
-//    [parentVC afterLoginConfigureUI];
+    [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithInteger:2] forKey:@"afterFirstInstall"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
@@ -1037,10 +1036,10 @@
     // add current location to User object
     [PFGeoPoint geoPointForCurrentLocationInBackground:^(PFGeoPoint *geoPoint, NSError *error) {
         if (!error) {
-            NSLog(@"User is currently at %f, %f", geoPoint.latitude, geoPoint.longitude);
-            
             [[PFUser currentUser] setObject:geoPoint forKey:@"currentLocation"];
             [[PFUser currentUser] saveInBackground];
+            //NSLog(@"User is currently at %f, %f", geoPoint.latitude, geoPoint.longitude);
+            NSLog(@"Saved your location to cloud-store");
         }
     }];
     // other fields can be set just like with PFObject
@@ -1075,17 +1074,17 @@
         [self.locationManager startUpdatingLocation];
         [self setInitialLocation:self.locationManager.location];
 
-    }else {
-    BOOL keepLoggedIn = NO;
-    if ( switchControl.on )
-        keepLoggedIn = YES;
-    else
-        keepLoggedIn = NO;
-        
-    NSUserDefaults *userInLocal = [NSUserDefaults standardUserDefaults];
-    [userInLocal setBool:keepLoggedIn forKey:@"keepUserLoggedIn"];
-    [userInLocal synchronize];
-    NSLog( @"The switch is %@", switchControl.on ? @"ON" : @"OFF" );
+    } else {
+        BOOL keepLoggedIn = NO;
+        if ( switchControl.on )
+            keepLoggedIn = YES;
+        else
+            keepLoggedIn = NO;
+            
+        NSUserDefaults *userInLocal = [NSUserDefaults standardUserDefaults];
+        [userInLocal setBool:keepLoggedIn forKey:@"keepUserLoggedIn"];
+        [userInLocal synchronize];
+        NSLog( @"The switch is %@", switchControl.on ? @"ON" : @"OFF" );
     }
 }
 - (BOOL) userInParse{
@@ -1101,7 +1100,7 @@
 #pragma mark * Actions
 - (void)setInitialLocation:(CLLocation *)aLocation {
     self.location = aLocation;
-    //    self.radius = 1000;
+    //self.radius = 1000;
     //NSLog(@"%.2f,%.2f",self.location.coordinate.latitude, self.location.coordinate.longitude);
     [PFGeoPoint geoPointForCurrentLocationInBackground:^(PFGeoPoint *geoPoint, NSError *error) {
         if (!error) {

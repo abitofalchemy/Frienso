@@ -70,12 +70,16 @@ int activeCoreFriends = 0;
     [self.view addSubview:self.tableView];
     [self.tableView setCenter:self.view.center];
 }
+
 -(void) viewWillDisappear:(BOOL)animated
 {
     [super viewWillDisappear:animated];
     [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"newUserFlag"];
     [[NSUserDefaults standardUserDefaults] synchronize];
     
+    if ([self.navigationController.viewControllers indexOfObject:self]==NSNotFound) {
+      [self copyCoreCircleToCoreFriendsEntity]; // enables user to interact with contacts immediately
+    }
 }
 - (void)didReceiveMemoryWarning
 {
@@ -317,13 +321,55 @@ int activeCoreFriends = 0;
         //check to avoid writing contacts with no phoneNumbers
         if(![[self.coreCircleContacts objectAtIndex:i] isEqualToString:@""]) {
             [coreCircleDic setValue:[self.coreCircleContacts objectAtIndex:i] forKey:circleContactName];
+        
         }
         i += 1;
     }
-    NSLog(@"%@", coreCircleDic);
+    //NSLog(@"%@", coreCircleDic);
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
     [userDefaults setObject:coreCircleDic forKey:@"CoreFriendsContactInfoDicKey"];
-    //[userDefaults synchronize];
+#warning //[userDefaults synchronize];
+    /*
+     -(void) saveCFDictionaryToNSUserDefaults:(NSDictionary *)friendsDic {
+     // From Parse
+     NSLog(@"[ saveCFDictionaryToNSUserDefaults ]");
+     
+     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+     [userDefaults setObject:friendsDic forKey:@"CoreFriendsContactInfoDicKey"];
+     [userDefaults setBool:YES forKey:@"coreFriendsSet"];
+     [userDefaults synchronize];
+     
+     // Save dictionary to CoreFriends Entity (CoreData)
+     NSEnumerator    *enumerator = [friendsDic keyEnumerator];
+     NSMutableArray  *coreCircle = [[NSMutableArray alloc] initWithArray:[enumerator allObjects]];
+     NSArray *valueArray         = [friendsDic allValues]; // holds phone numbers
+     
+     // Access to CoreData
+     for (int i=0; i<[coreCircle count]; i++) {
+     CoreFriends *cFriends = [NSEntityDescription insertNewObjectForEntityForName:@"CoreFriends"
+     inManagedObjectContext:[self managedObjectContext]];
+     if (cFriends != nil){
+     cFriends.coreFirstName = [coreCircle objectAtIndex:i];
+     cFriends.coreLastName  = @"";
+     cFriends.corePhone     = [valueArray objectAtIndex:i];
+     cFriends.coreCreated   =  [NSDate date];
+     cFriends.coreModified  = [NSDate date];
+     cFriends.coreType      = @"iCore Friends";
+     //NSLog(@"%@",[coreCircle objectAtIndex:i] );
+     NSError *savingError = nil;
+     
+     if ([[self managedObjectContext] save:&savingError]){
+     NSLog(@"Successfully saved contacts to CoreCircle.");
+     } else {
+     NSLog(@"Failed to save the managed object context.");
+     }
+     } else {
+     NSLog(@"Failed to create the new person object.");
+     }
+     }
+     
+     }
+     */
 }
 
 -(void) updateFromUserDefaults {
@@ -341,6 +387,48 @@ int activeCoreFriends = 0;
     }
 }
 
+-(void) copyCoreCircleToCoreFriendsEntity
+{
+#warning ensure that this doesn't append to the iCoreFriends section, but instead replaces the record
+#warning to be done in the next round 
+    
+    NSInteger i = 0;
+    
+    for (NSString *circleContactName in self.coreCircleOfFriends){
+        //check to avoid writing contacts with no phoneNumbers
+        if(![[self.coreCircleContacts objectAtIndex:i] isEqualToString:@""]) {
+            // 25Jun14/SA
+            // saving to entity CoreFriends and start interacting with them //
+            FriensoAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+            
+            NSManagedObjectContext *managedObjectContext =
+            appDelegate.managedObjectContext;
+            CoreFriends *cFriends = [NSEntityDescription insertNewObjectForEntityForName:@"CoreFriends"
+                                                                  inManagedObjectContext:managedObjectContext];
+            if (cFriends != nil){
+                cFriends.coreFirstName = circleContactName;
+                cFriends.corePhone     = [self.coreCircleContacts objectAtIndex:i];
+                cFriends.coreCreated   = [NSDate date];
+                cFriends.coreModified  = [NSDate date];
+                cFriends.coreType      = @"iCore Friends";
+                //NSLog(@"%@",[coreCircle objectAtIndex:i] );
+                
+                NSError *savingError = nil;
+                
+                if ([managedObjectContext save:&savingError]){
+                    NSLog(@"Successfully saved contacts to CoreCircle.");
+                } else {
+                    NSLog(@"Failed to save the managed object context.");
+                }
+            } else {
+                NSLog(@"Failed to create the new person object.");
+            }
+            
+        }
+        i += 1;
+    }
+
+}
 -(void) checkCloudForCircle {
     
 }

@@ -12,7 +12,9 @@
 
 // Frame of the drawer
 @property (nonatomic) CGRect drawerRect;
+@property (nonatomic,retain) UIView *circleView;
 
+-(void) enablePendingRequestsDot:(BOOL)onOffFlag;
 -(void) setPendingRequests:(NSArray *) pendingRequestsArray;
 -(void) updatePendingRequests:(NSArray *) pendingRequestsArray;
 

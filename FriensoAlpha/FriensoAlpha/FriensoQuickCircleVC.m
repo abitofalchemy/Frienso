@@ -47,29 +47,19 @@ static NSString *coreFriendsCell = @"coreFriendsCell";
 {
     [super viewDidLoad];
     
-    [[UINavigationBar appearance] setTitleTextAttributes: [NSDictionary dictionaryWithObjectsAndKeys:[UIColor blackColor], NSForegroundColorAttributeName, [UIFont fontWithName:@"AppleSDGothicNeo-Light" size:16.0], NSFontAttributeName,nil]];
-    self.navigationItem.title = @"Friends";
+    [[UINavigationBar appearance] setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:[UIColor blackColor], NSForegroundColorAttributeName, [UIFont fontWithName:@"AppleSDGothicNeo-Light" size:16.0], NSFontAttributeName,nil]];
+    self.navigationItem.title = @"Friends & Contacts";
     
     [self.navigationController setToolbarHidden:YES];
     
-
-    // Update this user's current location
-    //FRCoreDataParse *frCDPObject = [[FRCoreDataParse alloc] init];
-    //[frCDPObject updateThisUserLocation];
-    //[frCDPObject updateCoreFriendsLocation];
-
     
-	//  Add new table view
+    //  Add new table view
     self.tableView = [[UITableView alloc] init];
-    [self.tableView setFrame:CGRectMake(0, 0, self.view.bounds.size.width,
-                                        self.view.bounds.size.height)];
+    [self.tableView setFrame:CGRectMake(0, 0, self.view.bounds.size.width, self.view.bounds.size.height)];
     
     self.tableView.dataSource = self;
     self.tableView.delegate   = self;
     [self.view addSubview:self.tableView];
-    
-    //  [[[FRSyncFriendConnections alloc] init] listWatchCoreFriends]; // List those uWatch
-    //  [[[FRSyncFriendConnections alloc] init] syncUWatchToCoreFriends]; // Sync those uWatch
     
     // Create the fetch request first 
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc]
@@ -96,6 +86,53 @@ static NSString *coreFriendsCell = @"coreFriendsCell";
         NSLog(@"Failed to fetch.");
     }
     
+    // Update this user's current location
+    //FRCoreDataParse *frCDPObject = [[FRCoreDataParse alloc] init];
+    //[frCDPObject updateThisUserLocation];
+    //[frCDPObject updateCoreFriendsLocation];
+    
+    
+	
+    // [[[FRSyncFriendConnections alloc] init] listWatchCoreFriends]; // List those uWatch
+    // [[[FRSyncFriendConnections alloc] init] syncUWatchToCoreFriends]; // Sync those uWatch
+    
+    
+    // sync coreCircle of friends
+    // NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+    
+    //NSLog(@"%@", [self.frc sections] ob);
+    
+    
+//    if ([userDefaults objectForKey:@"coreCircleStatus"] == NULL )
+//    {
+//        NSDictionary *coreFriendsDic = [userDefaults dictionaryForKey:@"CoreFriendsContactInfoDicKey"];
+//        if ( coreFriendsDic != NULL) {
+//            for (NSString *name in [coreFriendsDic allKeys]){
+//                CoreFriends *cFriends = [NSEntityDescription insertNewObjectForEntityForName:@"CoreFriends"
+//                                                                      inManagedObjectContext:[self managedObjectContext]];                NSLog(@"%@ : %@", name, [coreFriendsDic objectForKey:name]);
+//                
+//                if (cFriends != nil){
+//                    cFriends.coreFirstName = name;
+//                    cFriends.corePhone     = [coreFriendsDic objectForKey:name];
+//                    cFriends.coreCreated   = [NSDate date];
+//                    cFriends.coreModified  = [NSDate date];
+//                    cFriends.coreType      = @"iCore Friends";
+//                    //NSLog(@"%@",[coreCircle objectAtIndex:i] );
+//                    NSError *savingError = nil;
+//                    
+//                    if ([[self managedObjectContext] save:&savingError]){
+//                        NSLog(@"Successfully saved contacts to CoreCircle.");
+//                    } else {
+//                        NSLog(@"Failed to save the managed object context.");
+//                    }
+//                } else {
+//                    NSLog(@"Failed to create the new person object.");
+//                }
+//            }
+//        }
+//        [userDefaults setObject:@"set" forKey:@"coreCircleStatus"];
+//        [userDefaults synchronize];
+//    }
 }
 - (void) viewWillDisappear:(BOOL)animated
 {
@@ -106,6 +143,11 @@ static NSString *coreFriendsCell = @"coreFriendsCell";
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+#pragma mark - NSFetchedResultsController delege methods
+- (void)controllerDidChangeContent:(NSFetchedResultsController *)controller {
+    printf("refreshing frc\n");
+    [self.tableView reloadData];
 }
 
 #pragma mark - TableView methods
@@ -150,43 +192,49 @@ static NSString *coreFriendsCell = @"coreFriendsCell";
     }
     
     CoreFriends *friend = [self.frc objectAtIndexPath:indexPath];
-    if ([friend.coreType isEqualToString:@"iCore Friends"])
+    if ([friend.coreType isEqualToString:@"iCore Friends"]){
         cell.textLabel.text = (friend.coreNickName == NULL) ? friend.coreFirstName : friend.coreNickName;
-    else if ( [friend.coreType isEqualToString:@"oCore Friends"])
+        cell.imageView.image = [UIImage imageNamed:@"Profile-256.png"];
+        cell.detailTextLabel.text = [NSString stringWithFormat:@"%@",(friend.coreLocation == NULL) ? @"..." : friend.coreLocation];
+    }
+    else if ( [friend.coreType isEqualToString:@"oCore Friends"]){
         cell.textLabel.text = friend.coreNickName == NULL ? friend.coreFirstName : friend.coreNickName;
-    else if ([friend.coreType isEqualToString:@"Emergency"])
+        cell.imageView.image = [UIImage imageNamed:@"Profile-256.png"];
+    }
+    else if ([friend.coreType isEqualToString:@"Emergency"]) {
         cell.textLabel.text = friend.coreFirstName;
-    else
+        FRStringImage *image = [[FRStringImage alloc] init];
+        cell.imageView.image = [image imageWithString:@"☏"
+                                                 font:[UIFont fontWithName:@"AppleSDGothicNeo-Thin" size:22.0]
+                                                 size:CGSizeMake(34, 34)];
+    } else
         cell.textLabel.text = friend.coreTitle;
     
     cell.textLabel.font = [UIFont fontWithName:@"AppleSDGothicNeo-Medium" size:14.0];
-    if ([friend.coreType isEqualToString:@"iCore Friends"])
-        cell.detailTextLabel.text = [NSString stringWithFormat:@"%@",(friend.coreLocation == NULL) ? @"..." : friend.coreLocation];
-    else
-        cell.detailTextLabel.text = [NSString stringWithFormat:@"%@",(friend.corePhone == NULL) ? @"..." : friend.corePhone];
+    //    cell.detailTextLabel.text = [NSString stringWithFormat:@"%@",(friend.corePhone == NULL) ? @"..." : friend.corePhone];
     cell.backgroundColor = [UIColor clearColor];
     cell.textLabel.textColor = [UIColor blackColor];
     cell.detailTextLabel.textColor  = [UIColor blueColor];
-    cell.imageView.image = [UIImage imageNamed:@"Profile-256.png"];
+    
     
     UIButton *smsBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     [smsBtn setTintColor:[UIColor blueColor]];
 
-    if ([friend.coreType isEqualToString:@"Emergency"]) {
-        FRStringImage *image = [[FRStringImage alloc] init];
-        [smsBtn setBackgroundImage:[image imageWithString:@"☏"
-                                                     font:[UIFont fontWithName:@"AppleSDGothicNeo-Thin" size:32.0]
-                                                     size:CGSizeMake(44, 44)] forState:UIControlStateNormal];
-    } else
-        [smsBtn setBackgroundImage:[UIImage imageNamed:@"cell-phone-ic32.png"] forState:UIControlStateNormal];
-    [smsBtn setBackgroundImage:nil forState:UIControlStateHighlighted];
-    [smsBtn addTarget:self
-               action:@selector(performSMS:withEvent:)
-     forControlEvents:UIControlEventTouchUpInside];
-    [smsBtn setFrame:CGRectMake(0,0,44,44)];
-    [smsBtn setTag:indexPath.row];
-    
-    cell.accessoryView = smsBtn;
+//    if ([friend.coreType isEqualToString:@"Emergency"]) {
+//        FRStringImage *image = [[FRStringImage alloc] init];
+//        [smsBtn setBackgroundImage:[image imageWithString:@"☏"
+//                                                     font:[UIFont fontWithName:@"AppleSDGothicNeo-Thin" size:32.0]
+//                                                     size:CGSizeMake(44, 44)] forState:UIControlStateNormal];
+//    } else
+//        [smsBtn setBackgroundImage:[UIImage imageNamed:@"cell-phone-ic32.png"] forState:UIControlStateNormal];
+//    [smsBtn setBackgroundImage:nil forState:UIControlStateHighlighted];
+//    [smsBtn addTarget:self
+//               action:@selector(performSMS:withEvent:)
+//     forControlEvents:UIControlEventTouchUpInside];
+//    [smsBtn setFrame:CGRectMake(0,0,44,44)];
+//    [smsBtn setTag:indexPath.row];
+//    cell.accessoryView = smsBtn;
+    cell.accessoryType = UITableViewCellAccessoryDetailButton;
     /*
     UIImageView *lView = [[UIImageView alloc] initWithFrame:CGRectMake(0,0,44.,44)];
     if ([friend.coreType isEqualToString:@"Resource"]) {
@@ -219,21 +267,7 @@ static NSString *coreFriendsCell = @"coreFriendsCell";
     return cell;
 }
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
-    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
-    CoreFriends *friend = [self.frc objectAtIndexPath:indexPath];
     
-    NSString *cellText = cell.textLabel.text;
-    UIAlertView *alertView = [[UIAlertView alloc]
-                              initWithTitle:cellText
-                              message:[NSString stringWithFormat:@"%@, %@, %@",cell.detailTextLabel.text, friend.corePhone, friend.coreFirstName]
-                              delegate:nil
-                              cancelButtonTitle:@"OK"
-                              otherButtonTitles:nil];
-    [alertView show];
-}
-
--(void)tableView:(UITableView *)tableView accessoryButtonTappedForRowWithIndexPath:(NSIndexPath *)indexPath
-{
     // if Resource, we should just dial it!
     CoreFriends *friend = [self.frc objectAtIndexPath:indexPath];
     if (friend!=NULL && [friend.coreType isEqualToString:@"Emergency"]) {
@@ -248,6 +282,35 @@ static NSString *coreFriendsCell = @"coreFriendsCell";
                                    delegate:self
                           cancelButtonTitle:@"Cancel"
                           otherButtonTitles:@"📞 Call",@"💬 SMS", nil] show];
+    }
+    
+    
+}
+
+-(void)tableView:(UITableView *)tableView accessoryButtonTappedForRowWithIndexPath:(NSIndexPath *)indexPath
+{
+    
+    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+    CoreFriends *friend = [self.frc objectAtIndexPath:indexPath];
+    
+    NSString *cellText = cell.textLabel.text;
+    if (friend!=NULL && [friend.coreType isEqualToString:@"Emergency"]) {
+
+    UIAlertView *alertView = [[UIAlertView alloc]
+                              initWithTitle:cellText
+                              message:[NSString stringWithFormat:@"%@",friend.corePhone]
+                              delegate:nil
+                              cancelButtonTitle:@"OK"
+                              otherButtonTitles:nil];
+        [alertView show];
+    } else {
+        UIAlertView *alertView = [[UIAlertView alloc]
+                                  initWithTitle:cellText
+                                  message:[NSString stringWithFormat:@"%@, %@, %@",cell.detailTextLabel.text, friend.corePhone, friend.coreFirstName]
+                                  delegate:nil
+                                  cancelButtonTitle:@"OK"
+                                  otherButtonTitles:nil];
+        [alertView show];
     }
     
     

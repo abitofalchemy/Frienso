@@ -2,7 +2,7 @@
 //  HomeViewController.h
 //  FriensoAlpha
 //
-//  Created by Salvador Aguinaga on 5/29/14.
+//  Created by Sal Aguinaga on 2/26/14.
 //  Copyright (c) 2014 ABitOfAlchemy. All rights reserved.
 //
 
@@ -12,13 +12,18 @@
 #import <MapKit/MapKit.h>
 #import <CoreLocation/CoreLocation.h>
 #import "ABALoginTVC.h"
+#import "TrackingFriendButton.h"
+#import "CloudEntityContacts.h"
 
-@interface HomeViewController : UIViewController <NSFetchedResultsControllerDelegate, UITableViewDelegate,UITableViewDataSource, MKMapViewDelegate,CLLocationManagerDelegate,UIScrollViewDelegate>
+
+@interface HomeViewController : UIViewController <NSFetchedResultsControllerDelegate,
+UITableViewDelegate,UITableViewDataSource,MKMapViewDelegate,CLLocationManagerDelegate,UIAlertViewDelegate,UIScrollViewDelegate>
 
 @property (nonatomic, retain) CLLocationManager *locationManager;
 @property (nonatomic, strong) MKMapView *mapView;
 
 - (void) setInitialLocation:(CLLocation *)aLocation;
 - (void) actionAddFriensoUserLocation:(PFGeoPoint *)geoPoint forUser:(NSString *)friend;
+- (void) configureOverlay;
 
 @end

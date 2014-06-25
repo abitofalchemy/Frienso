@@ -5,8 +5,27 @@ Frienso iOS Alpha
 
 Version History
 ---------------
+* ver 1.5 build 6X  25Jun14/SA: Minor tweaks to the Friens & Contacts list view, disclosure detail button
+                    shows emergency contact ph#, tapping on the cell ask if you want to dial or SMS
+                    
+                    25Jun14/SA: Removed the text from the Drawer to show if there are pending requests, now
+                    it's just a dot that changes blue if pending requests and grayed out if 0 (Chad's
+                    suggestion, which I like and wanted to do for a while now any way).
 
-* ver 1.5 build 25+ - Moved bubbles back to the mapView (but will only show one for a friend with an ongoing
+
+                    25Jun14/SA: When a new user registers the coreCircle isn't available on the Friends
+                    list, so I made sure that when the user hits to 'back' button to end the coreCircle
+                    creation -- the friends are added to the CoreFriends entity in coredata.
+
+
+                    ToDo: When a user initiates a HelpMeNow event the user should see the location of his/her 
+                    friends.  While it goes agains't the request/accept/reject theme these requests require
+                    access one's network location to make the best decision/choices possible with all 
+                    possible information available.
+                    
+
+
+* ver 1.5 build 61 - Moved bubbles back to the mapView (but will only show one for a friend with an ongoing
                     alert/event)
                     - Added a fullscreen button to the mapView; button is toggling the mapview between default
                     and FS.
