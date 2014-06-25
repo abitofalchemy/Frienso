@@ -122,7 +122,7 @@ enum PinAnnotationTypeTag {
 }
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
     FriensoEvent *event = [self.frc objectAtIndexPath:indexPath];
-    if([event.eventCategory isEqualToString:@"general"])
+    if([event.eventCategory isEqualToString:@"general"] || [event.eventCategory isEqualToString:@"und"])
         return [tableView rowHeight]*2.0f + CELL_CONTENT_MARGIN;
     else
         return [tableView rowHeight];
@@ -150,7 +150,8 @@ enum PinAnnotationTypeTag {
     if ([event.eventCategory isEqualToString:@"calendar"]) {
         cell.imageView.image = [self imageWithBorderFromImage:[UIImage imageNamed:@"cal-ic-24.png"]];
         cell.backgroundColor = [UIColor clearColor];
-    } else if ([event.eventCategory isEqualToString:@"general"]) {
+    } else if ([event.eventCategory isEqualToString:@"general"] ||
+               [event.eventCategory isEqualToString:@"und"]) {
         [cell.textLabel setNumberOfLines:3];
         [cell.detailTextLabel setNumberOfLines:3];
         NSURL *imageURL = [NSURL URLWithString:event.eventImage];
