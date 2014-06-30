@@ -83,11 +83,7 @@
     [super viewDidLoad];
     
     NSLog(@"[ ABALoginTVC ]");
-    
-    _welcomeView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, self.view.bounds.size.height)];
-    [_welcomeView setBackgroundColor: [UIColor colorWithPatternImage: [UIImage imageNamed:@"first-view-cover.png"]]];
-    [self configureView:_welcomeView];
-    
+
     // Initialization
     loginSections = [[NSArray alloc] initWithObjects:@"FRIENSO", @"Log In",@"Options",@"Footer", nil];
     loginFields   = [[NSArray alloc] initWithObjects:@"Email", @"Password", @"(312) 555 0123",@"Location", nil];
@@ -139,17 +135,8 @@
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
     if (section == 0 ){
-        /*CAGradientLayer *gradient = [CAGradientLayer layer];
-        gradient.frame       = tableView.bounds;
-        UIColor *startColour = [UIColor colorWithHue:.580555 saturation:0.31 brightness:0.90 alpha:1.0];
-        UIColor *endColour   = [UIColor colorWithHue:.58333 saturation:0.50 brightness:0.62 alpha:1.0];
-        gradient.colors = [NSArray arrayWithObjects:(id)[startColour CGColor],(id)[endColour CGColor], nil];
-        //[cell.layer insertSublayer:gradient atIndex:0];
-        [tableView.layer insertSublayer:gradient atIndex:0];
-        */
-        
         return 85;
-    }else
+    } else
         return 0;
 }
 
@@ -292,28 +279,6 @@
         cellTV.backgroundColor = [UIColor clearColor];
         cellTV.editable = NO;
         [cell addSubview:cellTV];
-        
-        // you could also just return the label (instead of making a new view and adding the label as subview. With the view you have more flexibility to make a background color or different paddings
-//        UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, tableView.bounds.size.width, tableView.sectionFooterHeight)];
-//        [cell addSubview:label];
-        
-        
-        
-//        [cell  addConstraints:
-//         @[[NSLayoutConstraint constraintWithItem:label
-//                                        attribute:NSLayoutAttributeCenterX
-//                                        relatedBy:NSLayoutRelationEqual
-//                                           toItem:view
-//                                        attribute:NSLayoutAttributeCenterX
-//                                       multiplier:1 constant:0],
-//           [NSLayoutConstraint constraintWithItem:label
-//                                        attribute:NSLayoutAttributeCenterY
-//                                        relatedBy:NSLayoutRelationEqual
-//                                           toItem:view
-//                                        attribute:NSLayoutAttributeCenterY
-//                                       multiplier:1 constant:0]]];
-//        
-//        //return view;
     }
     CAGradientLayer *gradient = [CAGradientLayer layer];
     gradient.frame       = self.view.bounds;
@@ -855,7 +820,7 @@
                                withSubtitle:@"Welcome to Frienso."]; // FriensoEvent
                 
                 // sync core circle from Parse | skip to the Frienso Dashboard
-                NSLog(@"[ skip to dashboard ]");
+                NSLog(@"--- Returning to Home View");
                 [self popDashboardVC];
                 
             } else {
@@ -949,7 +914,11 @@
     else
         NSLog(@"all loaded already");
     
-    [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithInteger:2] forKey:@"afterFirstInstall"];
+    [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithInteger:2]
+                                              forKey:@"afterFirstInstall"];
+    [[NSUserDefaults standardUserDefaults] setBool:YES
+                                            forKey:@"getStartedFlag"];
+    
     [[NSUserDefaults standardUserDefaults] synchronize];
     
     [self dismissViewControllerAnimated:YES completion:nil];

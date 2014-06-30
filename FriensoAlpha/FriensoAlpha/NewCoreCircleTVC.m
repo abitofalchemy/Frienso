@@ -325,7 +325,7 @@ int activeCoreFriends = 0;
         }
         i += 1;
     }
-    //NSLog(@"%@", coreCircleDic);
+    
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
     [userDefaults setObject:coreCircleDic forKey:@"CoreFriendsContactInfoDicKey"];
 #warning //[userDefaults synchronize];

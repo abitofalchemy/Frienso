@@ -112,12 +112,12 @@
                 }
             }//ends for
             _uWatchCount    = [_uWatchArray count];
-            for (PFUser *extFriend in _uWatchArray){
-                
-                //[self fetchPhoneNbrForThoseIWatch:extFriend  withCount:_uWatchCount];
-                
-                _uWatchCount--;
-            }
+//            for (PFUser *extFriend in _uWatchArray){
+//                
+//                //[self fetchPhoneNbrForThoseIWatch:extFriend  withCount:_uWatchCount];
+//                
+//                _uWatchCount--;
+//            }
             
         } else {
             NSLog(@"Error: %@ %@", error, [error userInfo]);  // Log details of the failure

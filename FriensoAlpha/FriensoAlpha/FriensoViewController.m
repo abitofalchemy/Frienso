@@ -923,10 +923,11 @@ enum PinAnnotationTypeTag {
     printf("[ Home View: FriensoVC ]\n");
     
     // Present Login these properties have not been set
-    NSString       *adminKey    = [[NSUserDefaults standardUserDefaults] objectForKey:@"adminID"];
-    if ([adminKey isEqualToString:@""] || adminKey == NULL || adminKey == nil){
-        [self performSelector:@selector(segueToLoginVC) withObject:self afterDelay:1];
-        NSLog(@"{ Presenting loginView}");
+    NSString *adminKey = [[NSUserDefaults standardUserDefaults] objectForKey:@"adminID"];
+    if ([adminKey isEqualToString:@""] || adminKey == NULL || adminKey == nil)
+    {
+        [self performSelector:@selector(segueToWelcomeVC) withObject:self afterDelay:1];
+        NSLog(@"{ Presenting Welcome View}");
     } else {
         // Check if self is currentUser (Parse)
         PFUser *currentUser = [PFUser currentUser];
@@ -980,7 +981,10 @@ enum PinAnnotationTypeTag {
     
     NSNumber *installationCount = [[NSUserDefaults standardUserDefaults] valueForKey:@"afterFirstInstall"];
     
-    if ([installationCount isEqualToNumber:[NSNumber numberWithInteger:0]] || installationCount == NULL){
+    if (![[NSUserDefaults standardUserDefaults] boolForKey:@"getStartedFlag"]){
+        [self performSelector:@selector(segueToLoginVC) withObject:self afterDelay:1];
+        NSLog(@"{ Presenting loginView}");
+    } else if ([installationCount isEqualToNumber:[NSNumber numberWithInteger:0]] || installationCount == NULL){
         NSLog(@"First install");
         
         // At first install, cache univesity/college emergency contacts
@@ -1040,7 +1044,7 @@ enum PinAnnotationTypeTag {
                                    [NSValue valueWithCGRect:self.navigationController.toolbar.frame], nil];
         
         self.friendsLocationArray = [[NSMutableArray alloc] init]; // friends location cache
-        self.pendingRqstsArray    = [[NSMutableArray alloc] init]; // Initialize pending requests holding array
+        self.pendingRqstsArray    = [[NSMutableArray alloc] init]; // Init pending requests holding array
         
         // Show progress indicator to tell user to wait a bit
         self.loadingView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
@@ -1055,7 +1059,6 @@ enum PinAnnotationTypeTag {
         [self setupMapView];
         [self setupRequestScrollView];
         [self setupEventsTableView];
-        //**********
         
         // Hide the Options Menu when navigating to Options, otherwise show
         for (id subview in [self.navigationController.toolbar subviews]){
@@ -1073,7 +1076,7 @@ enum PinAnnotationTypeTag {
             [self.loadingView stopAnimating];
         
         
-        //  cache resources from parse // The className to query on
+        //  Cache resources from parse // The className to query on
         PFQuery *query = [PFQuery queryWithClassName:@"Resources"];
         [query orderByDescending:@"createdAt"];
         query.cachePolicy = kPFCachePolicyNetworkElseCache;
@@ -1081,10 +1084,6 @@ enum PinAnnotationTypeTag {
             if (!object) {
                 NSLog(@"The getFirstObject request failed.");
             } else {
-                // The find succeeded.
-                //NSLog(@"Successfully retrieved the object.");
-                //NSLog(@"%@", object.objectId);
-                
                 
                 FriensoAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
                 
@@ -1104,8 +1103,9 @@ enum PinAnnotationTypeTag {
                     
                 }
                 if (unique) {
-                    FriensoEvent *firstFriensoEvent = [NSEntityDescription insertNewObjectForEntityForName:@"FriensoEvent"
-                                                                                    inManagedObjectContext:managedObjectContext];
+                    FriensoEvent *firstFriensoEvent =
+                    [NSEntityDescription insertNewObjectForEntityForName:@"FriensoEvent"
+                                                  inManagedObjectContext:managedObjectContext];
                     
                     if (firstFriensoEvent != nil)
                     {
@@ -1227,6 +1227,10 @@ enum PinAnnotationTypeTag {
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+#pragma mark - Segues
+- (void) segueToWelcomeVC {
+    [self performSegueWithIdentifier:@"welcomeView" sender:self];
 }
 - (void) segueToLoginVC {
     [self performSegueWithIdentifier:@"loginView" sender:self];

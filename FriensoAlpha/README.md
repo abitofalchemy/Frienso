@@ -17,13 +17,15 @@ Version History
                     list, so I made sure that when the user hits to 'back' button to end the coreCircle
                     creation -- the friends are added to the CoreFriends entity in coredata.
 
+					30Jun14/SA: Modified the welcome view that provides a brief introduction to the app
+					when first installed.
 
                     ToDo: When a user initiates a HelpMeNow event the user should see the location of his/her 
                     friends.  While it goes agains't the request/accept/reject theme these requests require
                     access one's network location to make the best decision/choices possible with all 
                     possible information available.
                     
-
+					
 
 * ver 1.5 build 61 - Moved bubbles back to the mapView (but will only show one for a friend with an ongoing
                     alert/event)

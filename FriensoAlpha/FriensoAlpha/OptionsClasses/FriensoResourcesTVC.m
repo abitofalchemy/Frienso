@@ -14,6 +14,7 @@
 #import "FriensoAppDelegate.h"
 #import "FriensoEvent.h"
 #import "CoreFriends.h"
+#import "FRStringImage.h"
 
 @interface FriensoResourcesTVC ()
 @property (nonatomic,retain) NSString * resourcePhoneNumber;
@@ -221,24 +222,13 @@
     cell.textLabel.text         = [object objectForKey:@"resource"];    // title
     cell.textLabel.font         = [UIFont fontWithName:@"AppleSDGothicNeo-Medium" size:14.0];
     self.resourcePhoneNumber    = [object objectForKey:@"phonenumber"];
-    cell.detailTextLabel.text   = fullDetails;
+    cell.detailTextLabel.text   = ([[object objectForKey:@"categoryType"] isEqualToString:@"inst,contact"]) ? [object objectForKey:@"phonenumber"] : fullDetails ;
     cell.detailTextLabel.font   = [UIFont fontWithName:@"AppleSDGothicNeo-Light" size:12.0];
     if (indexPath.row == 0 )
     {
         [cell.textLabel setNumberOfLines:3];
         [cell.textLabel adjustsFontSizeToFitWidth];
         [cell.detailTextLabel setNumberOfLines:4];
-        if ( [[object objectForKey:@"categoryType"] isEqualToString:@"general"])
-        {// image
-            NSURL *imageURL = [NSURL URLWithString:[object objectForKey:@"rImage"]];
-            NSData *imageData = [NSData dataWithContentsOfURL:imageURL];
-            UIImage *img = [UIImage imageWithData:imageData];
-            //NSLog(@"img: %2.f, %2.f", img.size.width, img.size.height);
-            //NSLog(@"cell:%2.f, %2.f", cell.frame.size.width, cell.frame.size.height);
-            CGFloat ratio = (cell.frame.size.width*0.4*cell.frame.size.height)/cell.frame.size.height;
-            cell.imageView.image = [self scaleImage:img
-                                             toSize:CGSizeMake(cell.frame.size.width*0.4,ratio)];//[self imageWithBorderFromImage:img];
-        }
     } else if ([[object objectForKey:@"categoryType"] isEqualToString:@"inst,contact"]) {
         //NSLog ( @"inst.contact,%@", object.objectId);
         if ( [self isResourceCached:object.objectId forCell:cell] ){
@@ -251,13 +241,15 @@
             cell.accessoryType = UITableViewCellAccessoryDetailButton;
             cell.accessoryView = label;
             [cell.detailTextLabel setNumberOfLines:2];
-            PFFile *instImageFile = [object objectForKey:@"image"];
+            /*PFFile *instImageFile = [object objectForKey:@"image"];
             [instImageFile getDataInBackgroundWithBlock:^(NSData *imageData, NSError *error) {
                 if (!error) {
                     UIImage *image = [UIImage imageWithData:imageData];
                     cell.imageView.image = (imageData) ? image : [UIImage imageNamed:@"und_logo29.png"];
                 } else NSLog(@"Error: %@", [error localizedDescription]);
             }];
+            */
+            
 
         } else {
             NSLog(@"Not Unique!");
@@ -266,6 +258,19 @@
             cell.detailTextLabel.textColor = [UIColor lightGrayColor];
             
         }
+    }
+    if([object objectForKey:@"rImage"] == NULL) {
+        cell.imageView.image = [[[FRStringImage alloc] init]
+                                imageWithString:@"UND"
+                                font:[UIFont fontWithName:@"AppleSDGothicNeo-Light" size:12.0]
+                                size:CGSizeMake(44,44)];
+    } else {
+        NSURL *imageURL = [NSURL URLWithString:[object objectForKey:@"rImage"]];
+        NSData *imageData = [NSData dataWithContentsOfURL:imageURL];
+        UIImage *img = [UIImage imageWithData:imageData];
+        CGFloat ratio = (cell.frame.size.width*0.4*cell.frame.size.height)/cell.frame.size.height;
+        cell.imageView.image = [self scaleImage:img
+                                         toSize:CGSizeMake(cell.frame.size.width*0.4,ratio)];
     }
     return cell;
 }
