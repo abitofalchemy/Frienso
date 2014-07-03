@@ -1391,7 +1391,9 @@ gradient.colors = [NSArray arrayWithObjects:(id)[startColour CGColor],(id)[endCo
 }
 #pragma mark - Sync from Parse Methods
 - (void) syncFromParse {
-    printf(" -- syncFromParse --\n");     // sync from parse!
+    NSLog(@"syncFromParse -- getting the coreFriends");     // sync from parse!
+    
+    NSLog(@"Current user: %@", [PFUser currentUser].username);
     
     NSMutableDictionary *udCoreCircleDictionary = [[NSUserDefaults standardUserDefaults] objectForKey:@"CoreFriendsContactInfoDicKey"];
     if ([udCoreCircleDictionary count] == 0 || udCoreCircleDictionary == NULL)

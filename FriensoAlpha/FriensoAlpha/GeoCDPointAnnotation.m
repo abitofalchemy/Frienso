@@ -20,15 +20,25 @@
     self = [super init];
     if (self) {
         _object = geoArray;
-//        NSLog(@"array: %@", geoArray);
+        NSLog(@"GeoCDPointAnnotation");
         if ([geoArray count] > 3) {
             PFGeoPoint *geoPoint = [PFGeoPoint geoPointWithLatitude:[[geoArray objectAtIndex:1] doubleValue]
                                                           longitude:[[geoArray objectAtIndex:2] doubleValue]];
             [self setGeoPoint:geoPoint];
+            //[self annotationView];
         }
         
     }
     return self;
+}
+- (MKAnnotationView *) annotationView
+{
+    MKAnnotationView *annotationView = [[MKAnnotationView alloc] initWithAnnotation:self reuseIdentifier:@"MyCustomAnnotation"];
+    annotationView.enabled = YES;
+    annotationView.canShowCallout = YES;
+    annotationView.image = [UIImage imageNamed:@"profile-24.png"];
+    annotationView.rightCalloutAccessoryView = [UIButton buttonWithType:UIButtonTypeDetailDisclosure];
+    return annotationView;
 }
 //#pragma mark - MKAnnotation
 //
@@ -49,7 +59,7 @@
 #pragma mark - ()
 
 - (void)setGeoPoint:(PFGeoPoint *)geoPoint {
-    _coordinate = CLLocationCoordinate2DMake(geoPoint.latitude, geoPoint.longitude);
+    _coordinate = CLLocationCoordinate2DMake(geoPoint.latitude,geoPoint.longitude);
     
     static NSDateFormatter *dateFormatter = nil;
     if (dateFormatter == nil) {

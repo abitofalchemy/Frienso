@@ -662,6 +662,7 @@ enum PinAnnotationTypeTag {
     self.mapView.region = MKCoordinateRegionMake(self.location.coordinate,MKCoordinateSpanMake(0.05f,0.05f));
     self.mapView.layer.borderWidth = 2.0f;
     self.mapView.layer.borderColor = [UIColor whiteColor].CGColor;//UIColorFromRGB(0x9B90C8).CGColor;
+    self.mapView.delegate = self;
     [self.view addSubview:self.mapView];
     
     // Adding a refresh mapview btn
@@ -700,7 +701,7 @@ enum PinAnnotationTypeTag {
 //    self.fullScreenBtn.layer.borderWidth = 0.5f;
 //    self.fullScreenBtn.layer.cornerRadius = self.fullScreenBtn.frame.size.height*.20;
 //    self.fullScreenBtn.layer.borderColor = [UIColor blackColor].CGColor;
-    [self.fullScreenBtn setCenter:CGPointMake(self.mapView.frame.size.width - _fullScreenBtn.center.x * 2.0,
+    [self.fullScreenBtn setCenter:CGPointMake(self.mapView.frame.size.width-_fullScreenBtn.center.x * 2.0,
                                          self.mapView.frame.size.height- _fullScreenBtn.center.y *1.2 ) ];
     [self.mapView addSubview:self.fullScreenBtn];
     
@@ -922,9 +923,8 @@ enum PinAnnotationTypeTag {
     
     printf("[ Home View: FriensoVC ]\n");
     
-    // Present Login these properties have not been set
-    NSString *adminKey = [[NSUserDefaults standardUserDefaults] objectForKey:@"adminID"];
-    if ([adminKey isEqualToString:@""] || adminKey == NULL || adminKey == nil)
+    // Present WelcomeView if these properties have not been set
+    if (![[NSUserDefaults standardUserDefaults] boolForKey:@"getStartedFlag"])
     {
         [self performSelector:@selector(segueToWelcomeVC) withObject:self afterDelay:1];
         NSLog(@"{ Presenting Welcome View}");
@@ -980,12 +980,13 @@ enum PinAnnotationTypeTag {
     NSLog(@"viewDidAppear");
     
     NSNumber *installationCount = [[NSUserDefaults standardUserDefaults] valueForKey:@"afterFirstInstall"];
-    
-    if (![[NSUserDefaults standardUserDefaults] boolForKey:@"getStartedFlag"]){
+    NSString *adminKey = [[NSUserDefaults standardUserDefaults] objectForKey:@"adminID"];
+    if ([adminKey isEqualToString:@""] || adminKey == NULL || adminKey == nil)
+    {
         [self performSelector:@selector(segueToLoginVC) withObject:self afterDelay:1];
         NSLog(@"{ Presenting loginView}");
     } else if ([installationCount isEqualToNumber:[NSNumber numberWithInteger:0]] || installationCount == NULL){
-        NSLog(@"First install");
+        NSLog(@"{First install}");
         
         // At first install, cache univesity/college emergency contacts
         [[[CloudEntityContacts alloc] initWithCampusDomain:@"nd.edu"] fetchEmergencyContacts:@"inst,contact"];
@@ -1089,6 +1090,7 @@ enum PinAnnotationTypeTag {
                 
                 NSManagedObjectContext *managedObjectContext =
                 appDelegate.managedObjectContext;
+                
                 // First check to see if the objectId already exists
                 NSEntityDescription *entityDescription = [NSEntityDescription entityForName:@"FriensoEvent"
                                                                      inManagedObjectContext:managedObjectContext];
@@ -1105,7 +1107,7 @@ enum PinAnnotationTypeTag {
                 if (unique) {
                     FriensoEvent *firstFriensoEvent =
                     [NSEntityDescription insertNewObjectForEntityForName:@"FriensoEvent"
-                                                  inManagedObjectContext:managedObjectContext];
+                                                  inManagedObjectContext:managedObjectContext];\
                     
                     if (firstFriensoEvent != nil)
                     {
@@ -1540,16 +1542,19 @@ enum PinAnnotationTypeTag {
     UIGraphicsEndImageContext();
     return testImg;
 }
-#pragma mark - MKMapViewDelegate
 
-- (MKAnnotationView *)mapView:(MKMapView *)mapView viewForAnnotation:(id<MKAnnotation>)annotation {
+#pragma mark - MKMapViewDelegate
+- (MKAnnotationView *)mapView:(MKMapView *)mapView
+            viewForAnnotation:(id<MKAnnotation>)annotation
+{
+    NSLog(@"viewFoAnnotation");
     static NSString *GeoPointAnnotationIdentifier = @"RedPinAnnotation";
     static NSString *GeoQueryAnnotationIdentifier = @"PurplePinAnnotation";
     
-    if ([annotation isKindOfClass:[GeoQueryAnnotation class]]) {
+    if ([annotation isKindOfClass:[GeoCDPointAnnotation class]]) {
         MKPinAnnotationView *annotationView =
         (MKPinAnnotationView *)[mapView
-                                dequeueReusableAnnotationViewWithIdentifier:GeoQueryAnnotationIdentifier];
+                                dequeueReusableAnnotationViewWithIdentifier:GeoPointAnnotationIdentifier];
         
         if (!annotationView) {
             annotationView = [[MKPinAnnotationView alloc]
@@ -1558,8 +1563,9 @@ enum PinAnnotationTypeTag {
             annotationView.tag = PinAnnotationTypeTagGeoQuery;
             annotationView.canShowCallout = YES;
             annotationView.pinColor = MKPinAnnotationColorPurple;
-            annotationView.animatesDrop = NO;
-            annotationView.draggable = YES;
+            annotationView.animatesDrop = YES;
+            annotationView.draggable = NO;
+            annotationView.rightCalloutAccessoryView = [UIButton buttonWithType:UIButtonTypeDetailDisclosure];
         }
         
         return annotationView;
@@ -1584,7 +1590,11 @@ enum PinAnnotationTypeTag {
     
     return nil;
 }
-
+- (void)mapView:(MKMapView *)mapView annotationView:(MKAnnotationView *)view
+calloutAccessoryControlTapped:(UIControl *)control
+{
+    NSLog(@"accessory button tapped for annotation %@", view.annotation);
+}
 //- (MKOverlayView *)mapView:(MKMapView *)mapView viewForOverlay:(id<MKOverlay>)overlay {
 //    static NSString *CircleOverlayIdentifier = @"Circle";
 //    
@@ -1797,8 +1807,7 @@ enum PinAnnotationTypeTag {
     
 #warning Insert an annotation using stored loc info fromCoreData, then update if network availability
     
-    /** location for sender.tag
-        **/
+    /** location for sender.tag **/
 
     
     if(self.selectedBubbleBtn != NULL) // hold sender and enable last selected bubble

@@ -350,11 +350,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "FriensoAlpha/FriensoViewController.m"
-            timestampString = "425841276.935501"
+            timestampString = "426072194.229056"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1413"
-            endingLineNumber = "1413"
+            startingLineNumber = "1415"
+            endingLineNumber = "1415"
             landmarkName = "-actionAddFriensoEvent:"
             landmarkType = "5">
          </BreakpointContent>
@@ -414,12 +414,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "FriensoAlpha/FriensoViewController.m"
-            timestampString = "425841276.935501"
+            timestampString = "426072599.726106"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1844"
-            endingLineNumber = "1844"
-            landmarkName = "-addCoreFriendBubblesToMap:"
+            startingLineNumber = "1865"
+            endingLineNumber = "1865"
+            landmarkName = "-updateLocations"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -430,7 +430,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "FriensoAlpha/FriensoViewController.m"
-            timestampString = "425841276.935501"
+            timestampString = "426072194.229056"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "957"

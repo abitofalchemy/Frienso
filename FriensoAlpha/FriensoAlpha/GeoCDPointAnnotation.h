@@ -14,6 +14,7 @@
 @interface GeoCDPointAnnotation : NSObject <MKAnnotation>
 
 - (id)initWithObject:(NSArray *)geoArray;
+- (MKAnnotationView *)annotationView;
 
 @property (nonatomic, readonly) CLLocationCoordinate2D coordinate;
 @property (nonatomic, readonly, copy) NSString *title;

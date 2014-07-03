@@ -10,10 +10,10 @@
 
 @interface WelcomeViewCtrl : UIViewController<UIScrollViewDelegate>
 
-@property(nonatomic, strong) UIScrollView *myScrollView;
+@property(nonatomic, strong) UIScrollView    *myScrollView;
 @property(strong, nonatomic) UIPageControl   *pageControl;
 @property(strong, nonatomic) UILabel         *infoTopLabel;
-@property(retain, nonatomic)   UIImageView     *imageView;
+@property(retain, nonatomic) UIImageView     *imageView;
 //-(void)changePage:(UIPageControl *)sender;
 
 @end
