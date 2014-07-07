@@ -39,25 +39,42 @@
     
 //    self.layer.borderColor = [UIColor whiteColor].CGColor;
 //    self.layer.borderWidth = 2;
-    
+    self.circleView = [[UIView alloc] initWithFrame:CGRectMake(0,0,10,10)];
+    self.circleView.alpha = 0.5;
+    self.circleView.layer.cornerRadius = 5;
+    self.circleView.backgroundColor = [UIColor blueColor];
+    [self addSubview:self.circleView];
+    [self.circleView setCenter:CGPointMake(self.frame.size.width - self.circleView.center.x * 2.0 , self.frame.size.height/2.0)];
+}
+-(void) enablePendingRequestsDot:(BOOL)onOffFlag
+{
+    if (onOffFlag)
+        self.circleView.backgroundColor = [UIColor blueColor];
+    else
+        self.circleView.backgroundColor = [UIColor grayColor];
 }
 -(void) setPendingRequests:(NSArray *) pendingRequestsArray {
     NSLog(@"setPendingRequests: %d", (int)pendingRequestsArray.count);
 
-    for (id subview in [self subviews]){
-        if ( [subview isKindOfClass:[UILabel class]] ) {
-            [subview removeFromSuperview];
-        }
-        
-    }
+//    for (id subview in [self subviews]){
+//        if ( [subview isKindOfClass:[UILabel class]] ) {
+//            [subview removeFromSuperview];
+//        }
+//        
+//    }
+//    
+//    UILabel *pendingReq = [[UILabel alloc] initWithFrame:CGRectZero];
+//    [pendingReq setText:[NSString stringWithFormat:@"≡ Pending:%ld", (long)[pendingRequestsArray count]]];
+//    [pendingReq setFont:[UIFont fontWithName:@"AppleSDGothicNeo-Light" size:16.0]];
+//    [pendingReq sizeToFit];
+//    [pendingReq setCenter:CGPointMake(self.frame.size.width - pendingReq.frame.size.width* 0.6,
+//                                      pendingReq.frame.size.height *0.65)];
+//    [self addSubview:pendingReq];
     
-    UILabel *pendingReq = [[UILabel alloc] initWithFrame:CGRectZero];
-    [pendingReq setText:[NSString stringWithFormat:@"≡ Pending:%ld", (long)[pendingRequestsArray count]]];
-    [pendingReq setFont:[UIFont fontWithName:@"AppleSDGothicNeo-Light" size:16.0]];
-    [pendingReq sizeToFit];
-    [pendingReq setCenter:CGPointMake(self.frame.size.width - pendingReq.frame.size.width* 0.6,
-                                      pendingReq.frame.size.height *0.65)];
-    [self addSubview:pendingReq];
+    if ([pendingRequestsArray count] == 0)
+        [self enablePendingRequestsDot:NO];
+    else
+        [self enablePendingRequestsDot:YES];
     
 }
 -(void) updatePendingRequests:(NSArray *) pendingRequestsArray {
@@ -68,6 +85,11 @@
         }
         
     }
+    if ([pendingRequestsArray count] == 0)
+        [self enablePendingRequestsDot:NO];
+    else
+        [self enablePendingRequestsDot:YES];
+    
 }
 
 #pragma mark -

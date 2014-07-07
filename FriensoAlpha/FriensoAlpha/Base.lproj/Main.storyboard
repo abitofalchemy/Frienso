@@ -26,7 +26,7 @@
                         <segue destination="aY6-gZ-dOi" kind="push" identifier="createEvent" id="KMa-pk-ZOI"/>
                         <segue destination="6kB-Zb-JaQ" kind="modal" identifier="panicEvent" id="n71-eB-Kl2"/>
                         <segue destination="3kY-1V-fX0" kind="push" identifier="instResources" id="Efz-ba-uWS"/>
-                        <segue destination="CWx-7e-tGl" kind="modal" identifier="showWelcomeView" id="85X-Sg-fyF"/>
+                        <segue destination="CWx-7e-tGl" kind="modal" identifier="welcomeView" id="85X-Sg-fyF"/>
                         <segue destination="qAg-ru-ZcY" kind="modal" identifier="loginView" id="EUB-wM-2II"/>
                         <segue destination="Ep9-nV-7ZB" kind="push" identifier="newCoreCircle" id="19Y-EC-EtC"/>
                     </connections>
@@ -240,10 +240,10 @@
             </objects>
             <point key="canvasLocation" x="-1702" y="930"/>
         </scene>
-        <!--Frienso First Screen View Controller-->
+        <!--Welcome View Ctrl-->
         <scene sceneID="T0h-JY-W6C">
             <objects>
-                <viewController id="CWx-7e-tGl" customClass="FriensoFirstScreenViewController" sceneMemberID="viewController">
+                <viewController id="CWx-7e-tGl" customClass="WelcomeViewCtrl" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="MYB-V7-ICp"/>
                         <viewControllerLayoutGuide type="bottom" id="Fvh-Bm-fFr"/>

@@ -23,7 +23,6 @@
 		180E880F18BE0C97009A570F /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 180E880E18BE0C97009A570F /* CoreLocation.framework */; };
 		180E881418BE1779009A570F /* FriensoCircleButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 180E881118BE1779009A570F /* FriensoCircleButton.m */; };
 		180E881518BE1779009A570F /* FriensoOptionsButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 180E881318BE1779009A570F /* FriensoOptionsButton.m */; };
-		180E881E18BF15F3009A570F /* FriensoFirstScreenViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 180E881D18BF15F3009A570F /* FriensoFirstScreenViewController.m */; };
 		180E882018BF1806009A570F /* first-view-cover.png in Resources */ = {isa = PBXBuildFile; fileRef = 180E881F18BF1806009A570F /* first-view-cover.png */; };
 		180E882618BF2AB5009A570F /* first-view-cover-2.png in Resources */ = {isa = PBXBuildFile; fileRef = 180E882418BF2AB4009A570F /* first-view-cover-2.png */; };
 		180E882718BF2AB5009A570F /* first-view-cover-3.png in Resources */ = {isa = PBXBuildFile; fileRef = 180E882518BF2AB5009A570F /* first-view-cover-3.png */; };
@@ -70,6 +69,11 @@
 		3E2F8C3718D4C74600FD2A99 /* FriensoQuickCircleVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E2F8C3618D4C74600FD2A99 /* FriensoQuickCircleVC.m */; };
 		3E2F8C3F18D83D8300FD2A99 /* AboutFriensoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E2F8C3E18D83D8300FD2A99 /* AboutFriensoViewController.m */; };
 		3E3BCA5F191E3402008D8ED0 /* ugc-ic-29x2.png in Resources */ = {isa = PBXBuildFile; fileRef = 3E3BCA5E191E3402008D8ED0 /* ugc-ic-29x2.png */; };
+		3E3FC2E719618A2F008EDC00 /* frienso-4.png in Resources */ = {isa = PBXBuildFile; fileRef = 3E3FC2E319618A2F008EDC00 /* frienso-4.png */; };
+		3E3FC2E819618A2F008EDC00 /* frienso-2.png in Resources */ = {isa = PBXBuildFile; fileRef = 3E3FC2E419618A2F008EDC00 /* frienso-2.png */; };
+		3E3FC2E919618A2F008EDC00 /* frienso-3.png in Resources */ = {isa = PBXBuildFile; fileRef = 3E3FC2E519618A2F008EDC00 /* frienso-3.png */; };
+		3E3FC2EA19618A2F008EDC00 /* frienso-1.png in Resources */ = {isa = PBXBuildFile; fileRef = 3E3FC2E619618A2F008EDC00 /* frienso-1.png */; };
+		3E3FC2ED19618A93008EDC00 /* WelcomeViewCtrl.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E3FC2EC19618A93008EDC00 /* WelcomeViewCtrl.m */; };
 		3E4120F818E3005E0058012B /* aBoAViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E4120F718E3005E0058012B /* aBoAViewController.m */; };
 		3E4120FC18E306630058012B /* frienso-info-0.png in Resources */ = {isa = PBXBuildFile; fileRef = 3E4120F918E306630058012B /* frienso-info-0.png */; };
 		3E4120FD18E306630058012B /* frienso-info-1.png in Resources */ = {isa = PBXBuildFile; fileRef = 3E4120FA18E306630058012B /* frienso-info-1.png */; };
@@ -134,8 +138,6 @@
 		180E881118BE1779009A570F /* FriensoCircleButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FriensoCircleButton.m; sourceTree = "<group>"; };
 		180E881218BE1779009A570F /* FriensoOptionsButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FriensoOptionsButton.h; sourceTree = "<group>"; };
 		180E881318BE1779009A570F /* FriensoOptionsButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FriensoOptionsButton.m; sourceTree = "<group>"; };
-		180E881C18BF15F3009A570F /* FriensoFirstScreenViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FriensoFirstScreenViewController.h; sourceTree = "<group>"; };
-		180E881D18BF15F3009A570F /* FriensoFirstScreenViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FriensoFirstScreenViewController.m; sourceTree = "<group>"; };
 		180E881F18BF1806009A570F /* first-view-cover.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "first-view-cover.png"; sourceTree = "<group>"; };
 		180E882418BF2AB4009A570F /* first-view-cover-2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "first-view-cover-2.png"; sourceTree = "<group>"; };
 		180E882518BF2AB5009A570F /* first-view-cover-3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "first-view-cover-3.png"; sourceTree = "<group>"; };
@@ -202,6 +204,12 @@
 		3E2F8C3D18D83D8300FD2A99 /* AboutFriensoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AboutFriensoViewController.h; sourceTree = "<group>"; };
 		3E2F8C3E18D83D8300FD2A99 /* AboutFriensoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AboutFriensoViewController.m; sourceTree = "<group>"; };
 		3E3BCA5E191E3402008D8ED0 /* ugc-ic-29x2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ugc-ic-29x2.png"; sourceTree = "<group>"; };
+		3E3FC2E319618A2F008EDC00 /* frienso-4.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "frienso-4.png"; sourceTree = "<group>"; };
+		3E3FC2E419618A2F008EDC00 /* frienso-2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "frienso-2.png"; sourceTree = "<group>"; };
+		3E3FC2E519618A2F008EDC00 /* frienso-3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "frienso-3.png"; sourceTree = "<group>"; };
+		3E3FC2E619618A2F008EDC00 /* frienso-1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "frienso-1.png"; sourceTree = "<group>"; };
+		3E3FC2EB19618A93008EDC00 /* WelcomeViewCtrl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WelcomeViewCtrl.h; sourceTree = "<group>"; };
+		3E3FC2EC19618A93008EDC00 /* WelcomeViewCtrl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WelcomeViewCtrl.m; sourceTree = "<group>"; };
 		3E4120F618E3005E0058012B /* aBoAViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = aBoAViewController.h; sourceTree = "<group>"; };
 		3E4120F718E3005E0058012B /* aBoAViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = aBoAViewController.m; sourceTree = "<group>"; };
 		3E4120F918E306630058012B /* frienso-info-0.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "frienso-info-0.png"; sourceTree = "<group>"; };
@@ -375,8 +383,8 @@
 				1827931618BE06750056C849 /* Main.storyboard */,
 				1827931918BE06750056C849 /* FriensoViewController.h */,
 				1827931A18BE06750056C849 /* FriensoViewController.m */,
-				180E881C18BF15F3009A570F /* FriensoFirstScreenViewController.h */,
-				180E881D18BF15F3009A570F /* FriensoFirstScreenViewController.m */,
+				3E3FC2EB19618A93008EDC00 /* WelcomeViewCtrl.h */,
+				3E3FC2EC19618A93008EDC00 /* WelcomeViewCtrl.m */,
 				182E86EC18C120CF009AD302 /* ABALoginTVC.h */,
 				182E86ED18C120CF009AD302 /* ABALoginTVC.m */,
 				18CD00EE18CDE557007BAC85 /* NewCoreCircleTVC.h */,
@@ -429,6 +437,10 @@
 		1827933918BE07A70056C849 /* Media */ = {
 			isa = PBXGroup;
 			children = (
+				3E3FC2E319618A2F008EDC00 /* frienso-4.png */,
+				3E3FC2E419618A2F008EDC00 /* frienso-2.png */,
+				3E3FC2E519618A2F008EDC00 /* frienso-3.png */,
+				3E3FC2E619618A2F008EDC00 /* frienso-1.png */,
 				3ED77E70193CC9AD00E0BB87 /* 01splashscreen.png */,
 				3E18547F192544B70059817D /* cell-phone-ic32.png */,
 				3E3BCA5E191E3402008D8ED0 /* ugc-ic-29x2.png */,
@@ -637,19 +649,23 @@
 				3EFEC30C1917877E002A709D /* und_logo29.png in Resources */,
 				1827931818BE06750056C849 /* Main.storyboard in Resources */,
 				3E185480192544B80059817D /* cell-phone-ic32.png in Resources */,
+				3E3FC2E819618A2F008EDC00 /* frienso-2.png in Resources */,
 				3E5EA0B5190D0A4A004A710C /* cal-ic-40.png in Resources */,
 				1827933C18BE07BD0056C849 /* alert-ring-bg.png in Resources */,
 				3E4120FD18E306630058012B /* frienso-info-1.png in Resources */,
 				180E882718BF2AB5009A570F /* first-view-cover-3.png in Resources */,
 				1827933D18BE07BD0056C849 /* frienso-alert.png in Resources */,
+				3E3FC2E919618A2F008EDC00 /* frienso-3.png in Resources */,
 				1879B59418C7277100AEA55F /* profile.png in Resources */,
 				180E882618BF2AB5009A570F /* first-view-cover-2.png in Resources */,
 				18DF849C18C275C7003F431F /* lighthouse-24.png in Resources */,
+				3E3FC2EA19618A2F008EDC00 /* frienso-1.png in Resources */,
 				1808553518C3B9810047A8BE /* README.md in Resources */,
 				1879B59318C7277100AEA55F /* Profile-256.png in Resources */,
 				3E5EA0B7190D0CDA004A710C /* cal-ic-24.png in Resources */,
 				3E9F89401903E17700DA190C /* frienso-ic-2x40.png in Resources */,
 				3E9F892318FE8D5E00DA190C /* map-btn-0.png in Resources */,
+				3E3FC2E719618A2F008EDC00 /* frienso-4.png in Resources */,
 				3E9F89411903E17700DA190C /* frienso-ic-2x60.png in Resources */,
 				3E4120FC18E306630058012B /* frienso-info-0.png in Resources */,
 				3E9F893F1903E17700DA190C /* frienso-ic-2x29.png in Resources */,
@@ -721,12 +737,12 @@
 				1827931B18BE06750056C849 /* FriensoViewController.m in Sources */,
 				187B616C195421D500DEF677 /* TrackingFriendButton.m in Sources */,
 				3E4120F818E3005E0058012B /* aBoAViewController.m in Sources */,
-				180E881E18BF15F3009A570F /* FriensoFirstScreenViewController.m in Sources */,
 				3E9B0F47193E05900019ED6A /* UserResponseScrollView.m in Sources */,
 				3EB5C447191A5EE5006557DE /* FRUserGenContentButton.m in Sources */,
 				182E86F018C120CF009AD302 /* ABALoginTVC.m in Sources */,
 				3E21A0541920EE050083F1AC /* FRStringImage.m in Sources */,
 				3E56D3D5194F96D90092CF63 /* CloudEntityContacts.m in Sources */,
+				3E3FC2ED19618A93008EDC00 /* WelcomeViewCtrl.m in Sources */,
 				1827931518BE06750056C849 /* FriensoAppDelegate.m in Sources */,
 				3ECD3998192416F000A61B83 /* FRSyncFriendConnections.m in Sources */,
 				1853403F18C2236E0094AC5A /* FriensoOptionsTVC.m in Sources */,

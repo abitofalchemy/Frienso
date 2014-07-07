@@ -83,11 +83,7 @@
     [super viewDidLoad];
     
     NSLog(@"[ ABALoginTVC ]");
-    
-    _welcomeView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, self.view.bounds.size.height)];
-    [_welcomeView setBackgroundColor: [UIColor colorWithPatternImage: [UIImage imageNamed:@"first-view-cover.png"]]];
-    [self configureView:_welcomeView];
-    
+
     // Initialization
     loginSections = [[NSArray alloc] initWithObjects:@"FRIENSO", @"Log In",@"Options",@"Footer", nil];
     loginFields   = [[NSArray alloc] initWithObjects:@"Email", @"Password", @"(312) 555 0123",@"Location", nil];
@@ -139,17 +135,8 @@
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
     if (section == 0 ){
-        /*CAGradientLayer *gradient = [CAGradientLayer layer];
-        gradient.frame       = tableView.bounds;
-        UIColor *startColour = [UIColor colorWithHue:.580555 saturation:0.31 brightness:0.90 alpha:1.0];
-        UIColor *endColour   = [UIColor colorWithHue:.58333 saturation:0.50 brightness:0.62 alpha:1.0];
-        gradient.colors = [NSArray arrayWithObjects:(id)[startColour CGColor],(id)[endColour CGColor], nil];
-        //[cell.layer insertSublayer:gradient atIndex:0];
-        [tableView.layer insertSublayer:gradient atIndex:0];
-        */
-        
         return 85;
-    }else
+    } else
         return 0;
 }
 
@@ -292,28 +279,6 @@
         cellTV.backgroundColor = [UIColor clearColor];
         cellTV.editable = NO;
         [cell addSubview:cellTV];
-        
-        // you could also just return the label (instead of making a new view and adding the label as subview. With the view you have more flexibility to make a background color or different paddings
-//        UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, tableView.bounds.size.width, tableView.sectionFooterHeight)];
-//        [cell addSubview:label];
-        
-        
-        
-//        [cell  addConstraints:
-//         @[[NSLayoutConstraint constraintWithItem:label
-//                                        attribute:NSLayoutAttributeCenterX
-//                                        relatedBy:NSLayoutRelationEqual
-//                                           toItem:view
-//                                        attribute:NSLayoutAttributeCenterX
-//                                       multiplier:1 constant:0],
-//           [NSLayoutConstraint constraintWithItem:label
-//                                        attribute:NSLayoutAttributeCenterY
-//                                        relatedBy:NSLayoutRelationEqual
-//                                           toItem:view
-//                                        attribute:NSLayoutAttributeCenterY
-//                                       multiplier:1 constant:0]]];
-//        
-//        //return view;
     }
     CAGradientLayer *gradient = [CAGradientLayer layer];
     gradient.frame       = self.view.bounds;
@@ -855,11 +820,11 @@
                                withSubtitle:@"Welcome to Frienso."]; // FriensoEvent
                 
                 // sync core circle from Parse | skip to the Frienso Dashboard
-                NSLog(@"[ skip to dashboard ]");
+                NSLog(@"--- Returning to Home View");
                 [self popDashboardVC];
                 
             } else {
-                NSLog(@"[ register new user ]");
+                NSLog(@"[ Register new user ]");
                 [self saveNewUserLocallyWithEmail:username.text plusPassword:password.text];
                 
                 [self registerNewUserToParseWithEmail:username.text
@@ -945,14 +910,17 @@
 - (void) popDashboardVC
 {
     if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"CoreFriendsContactInfoDicKey"] count] == 0)
-        [self syncFromParse];
+        [self syncFromParse]; /// how well is this working ???
     else
         NSLog(@"all loaded already");
     
-//  [self performSegueWithIdentifier:@"dashboardView" sender:self];
-//    [self.delegate afterLoginConfigureUI];
-//    FriensoViewController *parentVC = [[FriensoViewController alloc] init];
-//    [parentVC afterLoginConfigureUI];
+    [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithInteger:2]
+                                              forKey:@"afterFirstInstall"];
+    [[NSUserDefaults standardUserDefaults] setBool:YES
+                                            forKey:@"getStartedFlag"];
+    
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
@@ -1037,10 +1005,10 @@
     // add current location to User object
     [PFGeoPoint geoPointForCurrentLocationInBackground:^(PFGeoPoint *geoPoint, NSError *error) {
         if (!error) {
-            NSLog(@"User is currently at %f, %f", geoPoint.latitude, geoPoint.longitude);
-            
             [[PFUser currentUser] setObject:geoPoint forKey:@"currentLocation"];
             [[PFUser currentUser] saveInBackground];
+            //NSLog(@"User is currently at %f, %f", geoPoint.latitude, geoPoint.longitude);
+            NSLog(@"Saved your location to cloud-store");
         }
     }];
     // other fields can be set just like with PFObject
@@ -1075,17 +1043,17 @@
         [self.locationManager startUpdatingLocation];
         [self setInitialLocation:self.locationManager.location];
 
-    }else {
-    BOOL keepLoggedIn = NO;
-    if ( switchControl.on )
-        keepLoggedIn = YES;
-    else
-        keepLoggedIn = NO;
-        
-    NSUserDefaults *userInLocal = [NSUserDefaults standardUserDefaults];
-    [userInLocal setBool:keepLoggedIn forKey:@"keepUserLoggedIn"];
-    [userInLocal synchronize];
-    NSLog( @"The switch is %@", switchControl.on ? @"ON" : @"OFF" );
+    } else {
+        BOOL keepLoggedIn = NO;
+        if ( switchControl.on )
+            keepLoggedIn = YES;
+        else
+            keepLoggedIn = NO;
+            
+        NSUserDefaults *userInLocal = [NSUserDefaults standardUserDefaults];
+        [userInLocal setBool:keepLoggedIn forKey:@"keepUserLoggedIn"];
+        [userInLocal synchronize];
+        NSLog( @"The switch is %@", switchControl.on ? @"ON" : @"OFF" );
     }
 }
 - (BOOL) userInParse{
@@ -1101,7 +1069,7 @@
 #pragma mark * Actions
 - (void)setInitialLocation:(CLLocation *)aLocation {
     self.location = aLocation;
-    //    self.radius = 1000;
+    //self.radius = 1000;
     //NSLog(@"%.2f,%.2f",self.location.coordinate.latitude, self.location.coordinate.longitude);
     [PFGeoPoint geoPointForCurrentLocationInBackground:^(PFGeoPoint *geoPoint, NSError *error) {
         if (!error) {
@@ -1423,7 +1391,9 @@ gradient.colors = [NSArray arrayWithObjects:(id)[startColour CGColor],(id)[endCo
 }
 #pragma mark - Sync from Parse Methods
 - (void) syncFromParse {
-    printf(" -- syncFromParse --\n");     // sync from parse!
+    NSLog(@"syncFromParse -- getting the coreFriends");     // sync from parse!
+    
+    NSLog(@"Current user: %@", [PFUser currentUser].username);
     
     NSMutableDictionary *udCoreCircleDictionary = [[NSUserDefaults standardUserDefaults] objectForKey:@"CoreFriendsContactInfoDicKey"];
     if ([udCoreCircleDictionary count] == 0 || udCoreCircleDictionary == NULL)

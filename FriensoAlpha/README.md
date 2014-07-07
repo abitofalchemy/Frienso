@@ -5,8 +5,31 @@ Frienso iOS Alpha
 
 Version History
 ---------------
+* ver 1.5 build 6X  25Jun14/SA: Minor tweaks to the Friens & Contacts list view, disclosure detail button
+                    shows emergency contact ph#, tapping on the cell ask if you want to dial or SMS
+                    
+                    25Jun14/SA: Removed the text from the Drawer to show if there are pending requests, now
+                    it's just a dot that changes blue if pending requests and grayed out if 0 (Chad's
+                    suggestion, which I like and wanted to do for a while now any way).
 
-* ver 1.5 build 25+ - Moved bubbles back to the mapView (but will only show one for a friend with an ongoing
+
+                    25Jun14/SA: When a new user registers the coreCircle isn't available on the Friends
+                    list, so I made sure that when the user hits to 'back' button to end the coreCircle
+                    creation -- the friends are added to the CoreFriends entity in coredata.
+
+					30Jun14/SA: Modified the welcome view that provides a brief introduction to the app
+					when first installed.
+
+                    ToDo: When a user initiates a HelpMeNow event the user should see the location of his/her 
+                    friends.  While it goes agains't the request/accept/reject theme these requests require
+                    access one's network location to make the best decision/choices possible with all 
+                    possible information available.
+                    
+                    03Jun14/SA: Fixed the way the welcome view is integrated at installation time;
+                    - {working on} Adding more interaction to the mapview pins
+					
+
+* ver 1.5 build 61 - Moved bubbles back to the mapView (but will only show one for a friend with an ongoing
                     alert/event)
                     - Added a fullscreen button to the mapView; button is toggling the mapview between default
                     and FS.
@@ -106,7 +129,11 @@ Version History
 Working On
 ----------
 * SA: WatchMe switch triggers (internal alarms) and push notifications
+      - Remind the user that this event is active (bring attention to an active state)
+
 * SA: Managing and maintaining 'Requests'; at install accepting more than 1 causes problems & crash
+      - Test case: 
+
 * SA: Fix bugs
         (1) fix detecting if WatchMe events come from a user in you friends list
         Future versions of this should be push-notifications driven
@@ -120,11 +147,8 @@ ToDo
 ----
 * {SA}{bug} 19Jun14/SA: Friends requests accept caused a crash
 * {NY} Finish panic view controller
-* {SA} Add alarm timer to AlertEvent {no longer needed, events will stay
-* Cache Univ Emergency Contacts from a separate Parse class
-* Async update locations from cloud
+* Async update locations from cloud {??}
 +Add Horizontal scroll for the Active users & the rest of your friends.
-
 
 * {*** bug; created an issue to track this on GitHub} When user changes its core circle, we need only one record to be updated (not inserted or created new)
 
@@ -134,7 +158,6 @@ ToDo
 * Cache the coreF group current locations and show those until we can update them from cloud
     Try to make this work at searchviewcontroller or at FriensoQuickCircle
     ...
-* Cache Resources and update if new from Parse!
 
 * Handle Parse time-outs
     Trap parse calls to the network - network outage
@@ -143,6 +166,10 @@ ToDo
 
 Tasks Done / Project Log:
 -------------------------
+* {SA} Add alarm timer to AlertEvent {no longer needed}
+* {done} Cache Univ Emergency Contacts from a separate Parse class
+    - but not from another class, yet just from the Resources class in Parse
+* {done} Cache Resources and update if new from Parse!
 
 * {19Jun14/SA}
   ** {fixed} bugs Sal was working on: (2) {done} fix toolbar in Options View mode, the options view button should be removed from these views. (3) {done} 18Jun14/SA  MapView doesn't show a map (issue on GitHub)

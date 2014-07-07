@@ -1,14 +1,17 @@
 % SVN info for this file
-\svnidlong
-{$HeadURL$}
-{$LastChangedDate$}
-{$LastChangedRevision$}
-{$LastChangedBy$}
+%\svnidlong
+%{$HeadURL$}
+%{$LastChangedDate$}
+%{$LastChangedRevision$}
+%{$LastChangedBy$}
 
 \chapter{Introduction}
 \labelChapter{intro-chap}
 
 \begin{introduction}
+  Frienso is a micro social safety network app for, but not limited to, college students. 
+  Frienso promotes bystander interaction to help prevent assault on and around college 
+  or university campuses.
 \end{introduction}
 
 \section{Minimum Viable Product (MVP)}
@@ -68,7 +71,10 @@
 	
 \section{Feature Set}
 
-\subsection{Pending Requests}
+\subsection{Requests Notifications}
+  
+  Pending requests 
+  
   Pending requests fall into four types: watch, helpNow, and coreFriend.
   Users have the following options: to accept, reject, or dismiss the request.
     
@@ -129,7 +135,9 @@ Key-value standard defaults:
 	\emph{CoreFriendsContactInfoDicKey} & NSDictionary of user's coreCircle\\
 	\end{tabularx}
 	\end{table}%
-\subsection{CoreData}
+	
+	
+\section{CoreData}
 The Frienso projects has the following NSManagedObject subclass files and entity 
 attributes:
 \begin{itemize}
@@ -147,10 +155,10 @@ attributes:
 	\subitem \small{\@property (nonatomic, retain) NSString * resTitle;}
 	\subitem \small{\@property (nonatomic, retain) NSString * resDetail;}
 	\subitem \small{\@property (nonatomic, retain) NSString * resUrlLink;}
-	\subitem \small{$\ldots$ see the CoreDataFiles for more details}\normalsize
-\end{itemize}
+	\subitem \small{$\ldots$ see the CoreDataFiles for more details}
+\end{itemize}\normalsize
 
-\subsection{Parse - Cloud Store}
+\section{Parse - Cloud Store}
 This projects uses Parse as the cloud-store back-end and can accessed at here: 
 \href{https://www.parse.com/apps/frienso--2/collections}{$\leadsto$ Parse/Dashboard/Data Browser 
 link}.
