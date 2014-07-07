@@ -11,6 +11,7 @@
 #import <Parse/Parse.h>
 #import "FriensoAppDelegate.h"
 #import <AudioToolbox/AudioToolbox.h>
+#import <MessageUI/MessageUI.h>
 
 @interface PanicViewCtrlr ()
 {
@@ -244,6 +245,10 @@
         self.timer = nil;
     }
     
+    
+    
+    
+    
     //Code to send HelpNow!s to all friends with your location information
     
     /**************PUSH NOTIFICATIONS: HELP ME NOW!!!! *****************/
@@ -254,16 +259,19 @@
     [query whereKey:@"status" equalTo:@"accept"];
     [query whereKey:@"sender" equalTo:[PFUser currentUser]];
     [query includeKey:@"recipient"];
+    NSMutableArray *coreSMSArray = [[NSMutableArray alloc] init];
     
     [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         if (!error) {
             // The find succeeded.
-            //NSLog(@"Successfully retrieved %d scores.", objects.count);
+            NSLog(@"Successfully retrieved %d scores.", objects.count);
             // Do something with the found objects
             for (PFObject *object in objects) {
                 NSString *myString = @"Ph";
                 NSString *personalizedChannelNumber = [myString stringByAppendingString:object[@"recipient"][@"phoneNumber"]];
-                NSLog(@"Phone Number for this friend is: %@", personalizedChannelNumber);
+               // NSLog(@"Phone Number for this friend is: %@", personalizedChannelNumber);
+                NSLog(@"Phone Number for this friend is: %@", object[@"recipient"][@"phoneNumber"]);
+                [coreSMSArray addObject:object[@"recipient"][@"phoneNumber"]];
                 
                 PFPush *push = [[PFPush alloc] init];
                 
@@ -274,7 +282,21 @@
                 
                 [push setMessage:coreFrndMsg];
                 [push sendPushInBackground];
+               
             }
+            //Send Group SMSes
+            MFMessageComposeViewController *controller = [[MFMessageComposeViewController alloc] init];
+            
+            if([MFMessageComposeViewController canSendText])
+            {
+                NSLog(@"This View Controller can send SMS messages!!");
+                controller.body = @"Urgent: Help Me Now!!";
+                controller.recipients = [NSArray arrayWithObjects:coreSMSArray[0], coreSMSArray[1], coreSMSArray[2], nil];
+                controller.messageComposeDelegate = self;
+                [self presentModalViewController:controller animated:YES];
+            }
+            
+            
         } else {
             // Log details of the failure
             NSLog(@"Error: %@ %@", error, [error userInfo]);
@@ -290,4 +312,23 @@
                       cancelButtonTitle:@"OK"
                       otherButtonTitles:nil] show];
 }
+
+-(void)messageComposeViewController:(MFMessageComposeViewController *)controller didFinishWithResult:(MessageComposeResult)result{
+    
+    switch (result){
+        case MessageComposeResultCancelled:
+            NSLog(@"SMS Cancelled");
+            break;
+            //if sent show the alert sent
+        case MessageComposeResultSent:
+            NSLog(@"SMS Sent");
+            break;
+        default:
+            NSLog(@"SMS Failed");
+            break;
+    }
+    [self dismissModalViewControllerAnimated:YES];
+    
+}
+
 @end

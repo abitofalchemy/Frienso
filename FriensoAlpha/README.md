@@ -5,6 +5,9 @@ Frienso iOS Alpha
 
 Version History
 ---------------
+* ver 1.5 build 6Y  07Jul14/NY: Group SMS Sending to core friends implemented from PanicViewController. Need to add a location to the SMS message. Calling NDSP Phone after SMS sending or before needs to be decided. 
+
+
 * ver 1.5 build 6X  25Jun14/SA: Minor tweaks to the Friens & Contacts list view, disclosure detail button
                     shows emergency contact ph#, tapping on the cell ask if you want to dial or SMS
                     
