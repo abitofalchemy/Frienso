@@ -4,8 +4,17 @@
 //
 //  Created by Sal Aguinaga on 3/10/14.
 //  Copyright (c) 2014 ABitOfAlchemy. All rights reserved.
-//
-
+/*  
+ *  Description:
+ *  Fetch both contacts (friends incoming & outgoing) and institution's emergency phone #s
+ *  from Core Data and list them unde 3 categories: i) iCoreFriends, ii) oCoreFriends, and
+ *  iii) emergency phone numbers.
+ *
+ *  In future: 
+ *  1.) Allow for editing in VC and accepting and rejecting incoming Core Friend Requests
+ *  2.) Allow for discovery of new emergency contacts via Geo Location 
+ *
+ *  */
 #import "NewCoreCircleTVC.h"
 #import <CoreData/NSFetchedResultsController.h>
 #import <AddressBook/AddressBook.h>
@@ -328,7 +337,8 @@ int activeCoreFriends = 0;
     
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
     [userDefaults setObject:coreCircleDic forKey:@"CoreFriendsContactInfoDicKey"];
-#warning //[userDefaults synchronize];
+    [userDefaults synchronize];
+    
     /*
      -(void) saveCFDictionaryToNSUserDefaults:(NSDictionary *)friendsDic {
      // From Parse

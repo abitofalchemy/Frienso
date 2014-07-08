@@ -26,7 +26,7 @@ Version History
                     possible information available.
                     
                     03Jun14/SA: Fixed the way the welcome view is integrated at installation time;
-                    - {working on} Adding more interaction to the mapview pins
+                    - {working on} Adding more interaction to the mapview pins; 
 					
 
 * ver 1.5 build 61 - Moved bubbles back to the mapView (but will only show one for a friend with an ongoing

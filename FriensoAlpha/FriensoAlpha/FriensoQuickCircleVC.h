@@ -13,5 +13,5 @@
 @interface FriensoQuickCircleVC : UIViewController <NSFetchedResultsControllerDelegate,
 UITableViewDelegate,UITableViewDataSource,MFMessageComposeViewControllerDelegate,UIAlertViewDelegate>
 
-
+- (void)showSMSPicker:(id)sender;
 @end
