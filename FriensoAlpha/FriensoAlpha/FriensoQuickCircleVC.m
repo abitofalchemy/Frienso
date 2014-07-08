@@ -14,7 +14,7 @@
 #import "FRCoreDataParse.h"
 #import <Parse/Parse.h>
 #import "FRStringImage.h"
-//#import "FRSyncFriendConnections.h"
+#import "FRSyncFriendConnections.h"
 
 static NSString *coreFriendsCell = @"coreFriendsCell";
 
@@ -55,7 +55,7 @@ static NSString *coreFriendsCell = @"coreFriendsCell";
     
     //  Add new table view
     self.tableView = [[UITableView alloc] init];
-    [self.tableView setFrame:CGRectMake(0, 0, self.view.bounds.size.width, self.view.bounds.size.height)];
+    [self.tableView setFrame:CGRectMake(0,0,self.view.frame.size.width, self.view.frame.size.height*0.90)];
     
     self.tableView.dataSource = self;
     self.tableView.delegate   = self;
@@ -94,7 +94,7 @@ static NSString *coreFriendsCell = @"coreFriendsCell";
     
 	
     // [[[FRSyncFriendConnections alloc] init] listWatchCoreFriends]; // List those uWatch
-    // [[[FRSyncFriendConnections alloc] init] syncUWatchToCoreFriends]; // Sync those uWatch
+    [[[FRSyncFriendConnections alloc] init] syncUWatchToCoreFriends]; // Sync those uWatch
     
     
     // sync coreCircle of friends
@@ -294,9 +294,9 @@ static NSString *coreFriendsCell = @"coreFriendsCell";
     CoreFriends *friend = [self.frc objectAtIndexPath:indexPath];
     
     NSString *cellText = cell.textLabel.text;
-    if (friend!=NULL && [friend.coreType isEqualToString:@"Emergency"]) {
-
-    UIAlertView *alertView = [[UIAlertView alloc]
+    if (friend!=NULL && [friend.coreType isEqualToString:@"Emergency"])
+    {
+        UIAlertView *alertView = [[UIAlertView alloc]
                               initWithTitle:cellText
                               message:[NSString stringWithFormat:@"%@",friend.corePhone]
                               delegate:nil
@@ -306,7 +306,9 @@ static NSString *coreFriendsCell = @"coreFriendsCell";
     } else {
         UIAlertView *alertView = [[UIAlertView alloc]
                                   initWithTitle:cellText
-                                  message:[NSString stringWithFormat:@"%@, %@, %@",cell.detailTextLabel.text, friend.corePhone, friend.coreFirstName]
+                                  /*message:[NSString stringWithFormat:@"%@, %@, %@",(cell.detailTextLabel.text == NULL) ? friend.coreEmail : cell.detailTextLabel.text , friend.corePhone, friend.coreFirstName]
+                                   */
+                                  message:(friend.coreEmail == NULL) ? friend.corePhone : [NSString stringWithFormat:@"%@, %@",friend.coreEmail, friend.corePhone]
                                   delegate:nil
                                   cancelButtonTitle:@"OK"
                                   otherButtonTitles:nil];

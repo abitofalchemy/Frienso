@@ -133,6 +133,7 @@ Working On
 
 * SA: Managing and maintaining 'Requests'; at install accepting more than 1 causes problems & crash
       - Test case: 
+* SA: QuickCircleVC fetch list of incoming Core Friend requests & add to Core Data
 
 * SA: Fix bugs
         (1) fix detecting if WatchMe events come from a user in you friends list

@@ -995,6 +995,8 @@ enum PinAnnotationTypeTag {
     
     printf("[ Home View: FriensoVC ]\n");
     
+    NSLog(@"%ld",(long)[[NSUserDefaults standardUserDefaults] boolForKey:@"getStartedFlag"] );
+    NSLog(@"%@",[[NSUserDefaults standardUserDefaults] objectForKey:@"adminID"]  );
     // Present WelcomeView if these properties have not been set
     if (![[NSUserDefaults standardUserDefaults] boolForKey:@"getStartedFlag"])
     {
@@ -1002,12 +1004,9 @@ enum PinAnnotationTypeTag {
         NSLog(@"{ Presenting Welcome View}");
     } else if ([[NSUserDefaults standardUserDefaults] boolForKey:@"getStartedFlag"] &&
                [[NSUserDefaults standardUserDefaults] objectForKey:@"adminID"] != NULL){
-        // Check if self is currentUser (Parse)
-        PFUser *currentUser = [PFUser currentUser];
-        if (currentUser) {
-            NSLog(@"Successful login to Parse:%@",currentUser.email);
-        } else
-            NSLog(@"no current user");
+        NSLog(@"- viewDidLoad, getstarted flag ok, adminID not null");
+        
+        [self loginCurrentUserToCloudStore]; // login to cloud store
         
         // Determine App Frame
         self.appFrameProperties = [[NSArray alloc] initWithObjects:
@@ -1027,13 +1026,7 @@ enum PinAnnotationTypeTag {
         [self.loadingView setCenter:CGPointMake(self.view.center.x, self.view.bounds.size.height*0.2)];
         [self.loadingView startAnimating];
         
-        // Seting up the UI
-        [self setupMapView];
-        [self setupRequestScrollView];
-        [self setupEventsTableView];
-        
-        [self setupToolBarIcons];
-        [self setupNavigationBarImage];
+        //[self setupUI];
    
     }
     
@@ -1222,10 +1215,20 @@ enum PinAnnotationTypeTag {
         }];
 
     } else if ([installStepNum isEqualToNumber:[NSNumber numberWithInteger:3]])
-    { // else we do nothing in this method; 16Jun14:SA
-        [self runNormalModeUI];
+    {   // else we do nothing in this method; 16Jun14:SA
+        //[self runNormalModeUI];
 
     }
+}
+- (void) setupUI
+{
+    // Seting up the UI
+    [self setupMapView];
+    [self setupRequestScrollView];
+    [self setupEventsTableView];
+    
+    [self setupToolBarIcons];
+    [self setupNavigationBarImage];
 }
 - (void) runNormalModeUI {
     NSLog(@"Normal mode");
@@ -1382,6 +1385,27 @@ enum PinAnnotationTypeTag {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
+- (void) loginCurrentUserToCloudStore {
+    // Check if self is currentUser (Parse)
+    PFUser *currentUser = [PFUser currentUser];
+    if (currentUser) {
+        NSLog(@"Successful login to Parse:%@",currentUser.email);
+        [self setupUI];
+    } else {
+        //NSLog(@"no current user");
+        NSString *userName = [[NSUserDefaults standardUserDefaults] objectForKey:@"adminID"];
+        NSString *userPass = [[NSUserDefaults standardUserDefaults] objectForKey:@"adminPass"];
+        [PFUser logInWithUsernameInBackground:userName password:userPass
+                                        block:^(PFUser *user, NSError *error) {
+                                            if (user) {
+                                                NSLog(@"[ Parse successful login ]");
+                                                [self setupUI];
+                                            } else
+                                                NSLog(@"- Cloud login failed -");
+                                        }];
+    }
+}
+
 #pragma mark - Segues
 - (void) segueToWelcomeVC {
     [self performSegueWithIdentifier:@"welcomeView" sender:self];

@@ -23,6 +23,7 @@ UITableViewDelegate,UITableViewDataSource,MKMapViewDelegate,CLLocationManagerDel
 @property (nonatomic, retain) CLLocationManager *locationManager;
 @property (nonatomic, strong) MKMapView *mapView;
 
+- (void) loginCurrentUserToCloudStore;
 - (void) setInitialLocation:(CLLocation *)aLocation;
 - (void) actionAddFriensoUserLocation:(PFGeoPoint *)geoPoint forUser:(NSString *)friend;
 - (void) configureOverlay;
