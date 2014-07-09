@@ -19,13 +19,19 @@
 
 @interface FriensoViewController : UIViewController <NSFetchedResultsControllerDelegate,
 UITableViewDelegate,UITableViewDataSource,MKMapViewDelegate,CLLocationManagerDelegate,UIAlertViewDelegate,UIScrollViewDelegate,MFMessageComposeViewControllerDelegate>
-
+{
+    UISwitch       *helpMeNowSwitch;
+}
+//@property (nonatomic,strong) UISwitch       *helpMeNowSwitch;
 @property (nonatomic, retain) CLLocationManager *locationManager;
 @property (nonatomic, strong) MKMapView *mapView;
+@property (nonatomic) UIButton       *helpMeNowBtn;
+//@property (nonatomic,weak) UISwitch       *helpMeNowSwitch;
 
 - (void) loginCurrentUserToCloudStore;
 - (void) setInitialLocation:(CLLocation *)aLocation;
 - (void) actionAddFriensoUserLocation:(PFGeoPoint *)geoPoint forUser:(NSString *)friend;
 - (void) configureOverlay;
+//- (void) helpMeNowSwitchAction:(UISwitch*)sender;
 
 @end

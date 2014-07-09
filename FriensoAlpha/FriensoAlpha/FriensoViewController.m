@@ -51,7 +51,7 @@ enum PinAnnotationTypeTag {
 {
     NSMutableArray *coreFriendsArray;
     UISwitch       *trackMeOnOff;
-    UISwitch       *helpMeNowSwitch;
+
 }
 
 @property (nonatomic,strong) NSFetchedResultsController *frc;
@@ -65,9 +65,8 @@ enum PinAnnotationTypeTag {
 @property (nonatomic,strong) UITableView    *tableView;
 @property (nonatomic,strong) UIButton       *selectedBubbleBtn;
 @property (nonatomic,strong) UIButton       *fullScreenBtn;
-@property (nonatomic,strong) UIButton       *helpMeNowBtn;
+
 @property (nonatomic,strong) UISwitch       *trackMeOnOff;
-@property (nonatomic,strong) UISwitch       *helpMeNowSwitch;
 @property (nonatomic,strong) UILabel        *drawerLabel;
 @property (nonatomic)        CGFloat scrollViewY;
 @property (nonatomic)        CGRect normTableViewRect;
@@ -84,7 +83,7 @@ enum PinAnnotationTypeTag {
 @implementation FriensoViewController
 @synthesize locationManager  = _locationManager;
 @synthesize trackMeOnOff     = _trackMeOnOff;
-@synthesize helpMeNowSwitch  = _helpMeNowSwitch;
+//@synthesize helpMeNowSwitch  = _helpMeNowSwitch;
 
 /** useful calls:
  ** CGRect fullScreenRect=[[UIScreen mainScreen] applicationFrame];
@@ -123,7 +122,10 @@ enum PinAnnotationTypeTag {
     [self animateThisButton:theButton];
     [self performSegueWithIdentifier:@"showMenuOptions" sender:self];
     [theButton.layer setBorderColor:[UIColor grayColor].CGColor];
-
+    self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@""
+                                                                             style:self.navigationItem.backBarButtonItem.style
+                                                                            target:nil
+                                                                            action:nil];
 }
 
 -(void)viewCoreCircle:(UIButton *)theButton {
@@ -1081,8 +1083,27 @@ enum PinAnnotationTypeTag {
 
 -(void) viewDidAppear:(BOOL)animated{
     [super viewDidAppear:animated];
-    NSLog(@"viewDidAppear");
+    NSLog(@"!viewDidAppear");
+    // Hide the Options Menu when navigating to Options, otherwise show
+    for (id subview in [self.navigationController.toolbar subviews]){
+        if ( [subview isKindOfClass:[FriensoOptionsButton class]] )
+        {
+            if ([subview isHidden])
+                [subview setHidden:NO];
+        }
+    }
     
+    
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"helpNowCancelled"] == 1) {
+        //NSLog(@"%d",[[NSUserDefaults standardUserDefaults] boolForKey:@"helpNowCancelled"]);
+        [helpMeNowSwitch removeFromSuperview];
+        [self.helpMeNowBtn setHidden:NO];
+        
+        [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"helpNowCancelled"];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+        
+    }
+
     NSNumber *installStepNum = [[NSUserDefaults standardUserDefaults] valueForKey:@"installationStep"];
     if (installStepNum == NULL &&
         [[NSUserDefaults standardUserDefaults] boolForKey:@"getStartedFlag"])
@@ -1192,14 +1213,7 @@ enum PinAnnotationTypeTag {
         [self setupRequestScrollView];
         [self setupEventsTableView];
         
-        // Hide the Options Menu when navigating to Options, otherwise show
-        for (id subview in [self.navigationController.toolbar subviews]){
-            if ( [subview isKindOfClass:[FriensoOptionsButton class]] )
-            {
-                if ([subview isHidden])
-                    [subview setHidden:NO];
-            }
-        }
+        
         
         [self.locationManager startUpdatingLocation];
         [self setInitialLocation:self.locationManager.location];

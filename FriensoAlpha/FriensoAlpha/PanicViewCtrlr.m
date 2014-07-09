@@ -10,6 +10,7 @@
 #import "FriensoEvent.h"
 #import <Parse/Parse.h>
 #import "FriensoAppDelegate.h"
+#import "FriensoViewController.h"
 #import <AudioToolbox/AudioToolbox.h>
 #import "CloudUsrEvnts.h"
 
@@ -170,12 +171,21 @@
 }
 
 -(void) cancelPanicMethod:(id) sender {
+    //[[(FriensoViewController *)self.navigationController.parentViewController helpMeNowSwitch] setSelected:NO];
     if ( self.timer) {
         [self.timer invalidate];
         self.timer = nil;
     }
+    
+    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"helpNowCancelled"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+//    [[(FriensoViewController *)self.navigationController.parentViewController helpMeNowSwitch] removeFromSuperview];
+    
+      
     NSLog(@"[ HelpNow!ing Cancelled ]");
     [self dismissViewControllerAnimated:YES completion:nil];
+    
+    
     
 }
 // Update our timer label
@@ -313,6 +323,9 @@
     
     AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
     [self createNewEvent:@"Sent HelpNow! Notification"];
+    
+    [self.button removeFromSuperview];
+    
     [[[UIAlertView alloc] initWithTitle: @"Notifications Sent"
                                 message: @"Your core circle has been notified!"
                                delegate: nil
