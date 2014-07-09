@@ -11,6 +11,7 @@
 #import <Parse/Parse.h>
 #import "FriensoAppDelegate.h"
 #import <AudioToolbox/AudioToolbox.h>
+#import "CloudUsrEvnts.h"
 
 @interface PanicViewCtrlr ()
 {
@@ -76,15 +77,17 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	NSLog(@"Hello Panic");
+	NSLog(@"HelpMeNow (PanicViewCtrlr)");
+    
     [self setupCancelButton];
     [self setupTopLabel];
     [self setupLowerLabel];
-    
     [self setupNavigationBarImage];
-
     [self initializeTimer];
+    
     AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
+    
+    
 }
 
 - (void)didReceiveMemoryWarning
@@ -249,7 +252,7 @@
     /**************PUSH NOTIFICATIONS: HELP ME NOW!!!! *****************/
     
     //Query Parse to know who your "accepted" core friends are and send them each a notification
-    
+    /*
     PFQuery *query = [PFQuery queryWithClassName:@"CoreFriendRequest"];
     [query whereKey:@"status" equalTo:@"accept"];
     [query whereKey:@"sender" equalTo:[PFUser currentUser]];
@@ -280,6 +283,32 @@
             NSLog(@"Error: %@ %@", error, [error userInfo]);
         }
     }];
+     */
+    
+    // Log this event on Parse/UserEvents
+    CloudUsrEvnts *watchMePushNots = [[CloudUsrEvnts alloc] initWithAlertType:@"helpNow"];
+    [watchMePushNots sendToCloud];
+    
+    NSDictionary *myCoreFriendsDic = [[NSUserDefaults standardUserDefaults] dictionaryForKey:@"CoreFriendsContactInfoDicKey"];
+    //int i = 0;
+    for (id key in myCoreFriendsDic) {
+        NSLog(@"reading contact %@",[myCoreFriendsDic objectForKey:key]);
+        NSString *coreFriendPh = [self stripStringOfUnwantedChars:[myCoreFriendsDic objectForKey:key]];
+        
+        NSString *myString = @"Ph";
+        NSString *personalizedChannelNumber = [myString stringByAppendingString:coreFriendPh];
+        NSLog(@"Phone Number for this friend is: %@", personalizedChannelNumber);
+        
+        PFPush *push = [[PFPush alloc] init];
+        
+        // Be sure to use the plural 'setChannels' if you are sending to more than one channel.
+        [push setChannel:personalizedChannelNumber];
+        NSString *coreRqstHeader = @"HELP NOW REQUEST FROM: ";
+        NSString *coreFrndMsg = [coreRqstHeader stringByAppendingString:[[PFUser currentUser] objectForKey:@"username"]];
+        
+        [push setMessage:coreFrndMsg];
+        [push sendPushInBackground];
+    }
     /**************END OF PUSH NOTIFICATIONS: HELP ME NOW!!!! *****************/
     
     AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
@@ -289,5 +318,10 @@
                                delegate: nil
                       cancelButtonTitle:@"OK"
                       otherButtonTitles:nil] show];
+}
+#pragma mark - Helper methods
+- (NSString *) stripStringOfUnwantedChars:(NSString *)phoneNumber {
+    NSString *cleanedString = [[phoneNumber componentsSeparatedByCharactersInSet:[[NSCharacterSet characterSetWithCharactersInString:@"0123456789"] invertedSet]] componentsJoinedByString:@""];
+    return cleanedString;
 }
 @end

@@ -65,7 +65,7 @@
         //Channels have to start with a string, we will use "Ph" here
         NSString *myString = @"Ph";
         NSString *personalizedChannelNumber = [myString stringByAppendingString:userPhoneNumber];
-        NSLog(@"channel Name for this user is %@", personalizedChannelNumber);
+        //NSLog(@"channel Name for this user is %@", personalizedChannelNumber);
         PFInstallation *currentInstallation = [PFInstallation currentInstallation];
         [currentInstallation setDeviceTokenFromData:deviceToken];
         currentInstallation.channels = @[@"global", @"ndDOTedu", personalizedChannelNumber];
@@ -91,7 +91,7 @@
     NSLog(@"Received a JSON object from Parse"); /*********** TAKE ACTION ****/
     if([userInfo objectForKey:@"group"]!=NULL) {
         NSString *myMessage = [NSString stringWithFormat:@"From %@", [userInfo objectForKey:@"group"]];
-        NSLog(@"Group Sending Message %@",[userInfo objectForKey:@"group"]);
+        //NSLog(@"Group Sending Message %@",[userInfo objectForKey:@"group"]);
         
         /*
          UINavigationController *navigationController = (UINavigationController*)_window.rootViewController;

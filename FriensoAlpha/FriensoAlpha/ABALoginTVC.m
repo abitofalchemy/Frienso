@@ -825,6 +825,9 @@
                 
             } else {
                 NSLog(@"[ Register new user ]");
+                [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"newUserFlag"];
+                [[NSUserDefaults standardUserDefaults] synchronize];
+                
                 [self saveNewUserLocallyWithEmail:username.text plusPassword:password.text];
                 
                 [self registerNewUserToParseWithEmail:username.text
@@ -926,8 +929,8 @@
 
 - (void) popCoreCircleSetupVC
 {
-    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"newUserFlag"];
-    [[NSUserDefaults standardUserDefaults] synchronize];
+//    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"newUserFlag"];
+//    [[NSUserDefaults standardUserDefaults] synchronize];
     
 //    UIStoryboard *mainStoryboard = [UIStoryboard storyboardWithName:@"Main"  bundle:nil];
 //    NewCoreCircleTVC  *coreCircleController = (NewCoreCircleTVC*)[mainStoryboard instantiateViewControllerWithIdentifier: @"coreCircleView"];
@@ -1053,7 +1056,7 @@
         NSUserDefaults *userInLocal = [NSUserDefaults standardUserDefaults];
         [userInLocal setBool:keepLoggedIn forKey:@"keepUserLoggedIn"];
         [userInLocal synchronize];
-        NSLog( @"The switch is %@", switchControl.on ? @"ON" : @"OFF" );
+        //NSLog( @"The switch is %@", switchControl.on ? @"ON" : @"OFF" );
     }
 }
 - (BOOL) userInParse{

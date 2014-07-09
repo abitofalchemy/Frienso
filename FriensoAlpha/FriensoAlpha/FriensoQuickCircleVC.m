@@ -320,9 +320,9 @@ static NSString *coreFriendsCell = @"coreFriendsCell";
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
         return [tableView rowHeight]*1.15;
 }
-#pragma mark - Actions
 
-//-(void) performSMS:(UIButton *)sender {
+
+#pragma mark - Actions
 -(void) performSMS:(UIButton *)sender withEvent:(UIEvent *) event {
     [UIView animateWithDuration:1.0
                      animations:^{

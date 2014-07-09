@@ -59,8 +59,12 @@ int activeCoreFriends = 0;
     
     
     self.navigationController.navigationBarHidden = NO;
-
-    self.navigationItem.title = @"Setup Core Circle";
+    self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Done"
+                                                                             style:UIBarButtonItemStyleBordered
+                                                                            target:nil
+                                                                            action:nil];
+    self.navigationItem.title = @"Core Circle";
+    
     
     self.coreCircleContacts = [[NSMutableArray alloc] init]; //stores phone #s
     self.coreCircleRequestStatus = [[NSMutableArray alloc] init ]; //stores status of the requests

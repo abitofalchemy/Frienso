@@ -5,6 +5,12 @@
 //  Created by Sal Aguinaga on 2/26/14.
 //  Copyright (c) 2014 ABitOfAlchemy. All rights reserved.
 //
+/*  Actions:
+ *  helpMeNowSwitchAction:(UISwitch*)sender
+ *      This is intended to turn off the switch and trigger notifications that everthing is ok
+ *      Will send PN and SMS?  Should it be controlled from the settings btn?
+ *
+ ** */
 
 #import "FriensoViewController.h"
 #import "FriensoOptionsButton.h"
@@ -27,13 +33,13 @@
 #import "FriensoQuickCircleVC.h"
 
 #define MAPVIEW_DEFAULT_BOUNDS  CGRectMake(0,0,self.view.bounds.size.width,self.view.bounds.size.height * 0.5)
-#define ARC4RANDOM_MAX          0x100000000
-#define UIColorFromRGB(rgbValue)    [UIColor colorWithRed:((float)((rgbValue & 0xFF0000) >> 16))/255.0 green:((float)((rgbValue & 0xFF00) >> 8))/255.0 blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
-#define CELL_CONTENT_MARGIN     10.0f
+#define ARC4RANDOM_MAX  0x100000000
+#define UIColorFromRGB(rgbValue)  [UIColor colorWithRed:((float)((rgbValue & 0xFF0000) >> 16))/255.0 green:((float)((rgbValue & 0xFF00) >> 8))/255.0 blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
+#define CELL_CONTENT_MARGIN  10.0f
 
-static NSString *eventCell = @"eventCell";
-static NSString *trackRequest = @"trackRequest";
-static NSString *coreFriendRequest = @"coreFriendRequest";
+static NSString *eventCell          = @"eventCell";
+static NSString *trackRequest       = @"trackRequest";
+static NSString *coreFriendRequest  = @"coreFriendRequest";
 
 enum PinAnnotationTypeTag {
     PinAnnotationTypeTagGeoPoint = 0,
@@ -41,12 +47,13 @@ enum PinAnnotationTypeTag {
 };
 
 
-
 @interface FriensoViewController ()
 {
     NSMutableArray *coreFriendsArray;
     UISwitch       *trackMeOnOff;
+    UISwitch       *helpMeNowSwitch;
 }
+
 @property (nonatomic,strong) NSFetchedResultsController *frc;
 @property (nonatomic,strong) UIActivityIndicatorView    *loadingView;
 @property (nonatomic,strong) UserResponseScrollView     *scrollView;
@@ -58,7 +65,9 @@ enum PinAnnotationTypeTag {
 @property (nonatomic,strong) UITableView    *tableView;
 @property (nonatomic,strong) UIButton       *selectedBubbleBtn;
 @property (nonatomic,strong) UIButton       *fullScreenBtn;
+@property (nonatomic,strong) UIButton       *helpMeNowBtn;
 @property (nonatomic,strong) UISwitch       *trackMeOnOff;
+@property (nonatomic,strong) UISwitch       *helpMeNowSwitch;
 @property (nonatomic,strong) UILabel        *drawerLabel;
 @property (nonatomic)        CGFloat scrollViewY;
 @property (nonatomic)        CGRect normTableViewRect;
@@ -69,11 +78,13 @@ enum PinAnnotationTypeTag {
 -(void)viewCoreCircle:  (UIButton *)theButton;
 -(void)makeFriensoEvent:(UIButton *)theButton;
 
+
 @end
 
 @implementation FriensoViewController
 @synthesize locationManager  = _locationManager;
 @synthesize trackMeOnOff     = _trackMeOnOff;
+@synthesize helpMeNowSwitch  = _helpMeNowSwitch;
 
 /** useful calls:
  ** CGRect fullScreenRect=[[UIScreen mainScreen] applicationFrame];
@@ -82,8 +93,26 @@ enum PinAnnotationTypeTag {
 
 -(void)actionPanicEvent:(UIButton *)theButton {
     [self animateThisButton:theButton];
+    [theButton setHidden:YES];
     [theButton.layer setBorderColor:[UIColor redColor].CGColor];
     [self performSegueWithIdentifier:@"panicEvent" sender:self];
+    
+    [self setupHelpMeNowSwitch];
+}
+-(void) setupHelpMeNowSwitch
+{
+    helpMeNowSwitch = [[UISwitch alloc] init];
+    [helpMeNowSwitch addTarget:self action:@selector(helpMeNowSwitchAction:)
+           forControlEvents:UIControlEventValueChanged];
+    [helpMeNowSwitch setCenter:CGPointMake(self.navigationController.toolbar.bounds.size.width*0.85, 22)];
+    helpMeNowSwitch.layer.cornerRadius = helpMeNowSwitch.frame.size.height/2.0;
+    helpMeNowSwitch.layer.borderWidth =  1.0;
+    helpMeNowSwitch.layer.borderColor = [UIColor blackColor].CGColor;
+    [self.navigationController.toolbar addSubview:helpMeNowSwitch];
+    [helpMeNowSwitch setCenter:self.helpMeNowBtn.center];
+    [helpMeNowSwitch setOn:YES animated:YES];
+    [helpMeNowSwitch setOnTintColor:[UIColor redColor]];
+    
 }
 -(void)makeFriensoEvent:(UIButton *)theButton {
     [self animateThisButton:theButton];
@@ -100,6 +129,10 @@ enum PinAnnotationTypeTag {
 -(void)viewCoreCircle:(UIButton *)theButton {
     [self animateThisButton:theButton];
     [self performSegueWithIdentifier:@"showMyCircle" sender:self];
+    self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@""
+                                                                             style:self.navigationItem.backBarButtonItem.style
+                                                                            target:nil
+                                                                            action:nil];
 }
 
 
@@ -223,6 +256,23 @@ enum PinAnnotationTypeTag {
 }
 
 #pragma mark - Local Actions
+-(void) helpMeNowSwitchAction:(UISwitch*)sender
+{
+//    NSLog(@"%ld", [sender state]);
+//    if ([sender isOn]) {
+        // log event locally and
+        
+        // log event on the cloud
+        CloudUsrEvnts *watchMeEvent = [[CloudUsrEvnts alloc] initWithAlertType:@"helpNow"];
+        [watchMeEvent disableEvent];
+        
+        // Remove switch from UI
+        [helpMeNowSwitch removeFromSuperview];
+        
+        // Add back the std icon/btn 
+        [self.helpMeNowBtn setHidden:NO];
+//    }
+}
 -(void) contactByDialingFriendWithEmail:(NSString *)friendEmail
 {
     PFQuery *query= [PFUser query];
@@ -883,7 +933,6 @@ enum PinAnnotationTypeTag {
     coreCircleBtn.layer.cornerRadius = 4.0;
     coreCircleBtn.layer.borderWidth  =  1.0;
     coreCircleBtn.layer.borderColor  = UIColorFromRGB(0x006bb6).CGColor;
-    
     if (![coreCircleBtn isEnabled])
         [coreCircleBtn setEnabled:YES];
     [coreCircleBtn addTarget:self action:@selector(viewCoreCircle:)
@@ -902,35 +951,21 @@ enum PinAnnotationTypeTag {
     [button setCenter:CGPointMake(self.navigationController.toolbar.frame.size.width - button.center.x*2.0, 22)];
         //self.navigationItem.rightBarButtonItem=barButton;
     
-    /**
-    FriensoPersonalEvent *calEventBtn = [[FriensoPersonalEvent alloc]
-                                            initWithFrame:CGRectMake(0, 0, 27, 27)];
-    calEventBtn.layer.cornerRadius = 4.0f;
-    calEventBtn.layer.borderWidth = 1.0f;
-    calEventBtn.layer.borderColor = UIColorFromRGB(0x006bb6).CGColor;
-    [calEventBtn addTarget:self action:@selector(makeFriensoEvent:)
-          forControlEvents:UIControlEventTouchUpInside];
-    [calEventBtn setCenter:CGPointMake(self.navigationController.toolbar.bounds.size.width - 44.0f,22)];
-    [calEventBtn setTitleShadowColor:[UIColor grayColor] forState:UIControlStateHighlighted];
-    **/
-    
-    
-    
     
     // center toolbar btn
-    UIButton *panicButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 27, 27)];
-    [panicButton addTarget:self action:@selector(actionPanicEvent:)
+    self.helpMeNowBtn = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 27, 27)];
+    [self.helpMeNowBtn addTarget:self action:@selector(actionPanicEvent:)
           forControlEvents:UIControlEventTouchUpInside];
-    [panicButton setTitle:@"\u26A0" forState:(UIControlStateNormal)];
-    panicButton.layer.cornerRadius = 4.0f;
-    panicButton.layer.borderWidth  = 1.0f;
-    panicButton.layer.borderColor  = UIColorFromRGB(0x006bb6).CGColor;;
-    panicButton.titleLabel.textColor = [UIColor colorWithRed:0.0/255.0 green:107.0/255.0 blue:182.0/255.0 alpha:1.0];
-    [panicButton setCenter:CGPointMake(self.navigationController.toolbar.center.x, 22)];
+    [self.helpMeNowBtn setTitle:@"\u26A0" forState:(UIControlStateNormal)];
+    self.helpMeNowBtn.layer.cornerRadius = 4.0f;
+    self.helpMeNowBtn.layer.borderWidth  = 1.0f;
+    self.helpMeNowBtn.layer.borderColor  = UIColorFromRGB(0x006bb6).CGColor;;
+    self.helpMeNowBtn.titleLabel.textColor = [UIColor colorWithRed:0.0/255.0 green:107.0/255.0 blue:182.0/255.0 alpha:1.0];
+    [self.helpMeNowBtn setCenter:CGPointMake(self.navigationController.toolbar.center.x, 22)];
     
     [self.navigationController.toolbar addSubview:coreCircleBtn]; // left
     [self.navigationController.toolbar addSubview:button]; // right
-    [self.navigationController.toolbar addSubview:panicButton]; // center
+    [self.navigationController.toolbar addSubview:self.helpMeNowBtn]; // center
 
 }
 -(void) setupNavigationBarImage{
@@ -995,8 +1030,27 @@ enum PinAnnotationTypeTag {
     
     printf("[ Home View: FriensoVC ]\n");
     
-    NSLog(@"%ld",(long)[[NSUserDefaults standardUserDefaults] boolForKey:@"getStartedFlag"] );
-    NSLog(@"%@",[[NSUserDefaults standardUserDefaults] objectForKey:@"adminID"]  );
+    // Determine App Frame
+    self.appFrameProperties = [[NSArray alloc] initWithObjects:
+                               [NSValue valueWithCGRect:[[UIScreen mainScreen] applicationFrame]],
+                               [NSValue valueWithCGRect:self.navigationController.navigationBar.frame],
+                               [NSValue valueWithCGRect:self.navigationController.toolbar.frame], nil];
+    
+    self.friendsLocationArray = [[NSMutableArray alloc] init]; // friends location cache
+    self.pendingRqstsArray    = [[NSMutableArray alloc] init]; // Init pending requests holding array
+    self.watchingCoFrArray    = [[NSMutableArray alloc] init];
+    
+    
+    
+    // Show progress indicator to tell user to wait a bit
+    self.loadingView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+    [self.loadingView setColor:UIColorFromRGB(0xf47d44)];
+    [self.view addSubview:self.loadingView];
+    [self.loadingView setCenter:CGPointMake(self.view.center.x, self.view.bounds.size.height*0.2)];
+    [self.loadingView startAnimating];
+    
+    //NSLog(@"%ld",(long)[[NSUserDefaults standardUserDefaults] boolForKey:@"getStartedFlag"] );
+    //NSLog(@"%@",[[NSUserDefaults standardUserDefaults] objectForKey:@"adminID"]  );
     // Present WelcomeView if these properties have not been set
     if (![[NSUserDefaults standardUserDefaults] boolForKey:@"getStartedFlag"])
     {
@@ -1008,23 +1062,7 @@ enum PinAnnotationTypeTag {
         
         [self loginCurrentUserToCloudStore]; // login to cloud store
         
-        // Determine App Frame
-        self.appFrameProperties = [[NSArray alloc] initWithObjects:
-                                   [NSValue valueWithCGRect:[[UIScreen mainScreen] applicationFrame]],
-                                   [NSValue valueWithCGRect:self.navigationController.navigationBar.frame],
-                                   [NSValue valueWithCGRect:self.navigationController.toolbar.frame], nil];
         
-        self.friendsLocationArray = [[NSMutableArray alloc] init]; // friends location cache
-        self.pendingRqstsArray    = [[NSMutableArray alloc] init]; // Init pending requests holding array
-        self.watchingCoFrArray    = [[NSMutableArray alloc] init];
-        
-        
-        // Show progress indicator to tell user to wait a bit
-        self.loadingView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
-        [self.loadingView setColor:UIColorFromRGB(0xf47d44)];
-        [self.view addSubview:self.loadingView];
-        [self.loadingView setCenter:CGPointMake(self.view.center.x, self.view.bounds.size.height*0.2)];
-        [self.loadingView startAnimating];
         
         //[self setupUI];
    
@@ -1049,8 +1087,9 @@ enum PinAnnotationTypeTag {
     if (installStepNum == NULL &&
         [[NSUserDefaults standardUserDefaults] boolForKey:@"getStartedFlag"])
     {
+        // Presenting loginView
         [self performSelector:@selector(segueToLoginVC) withObject:self afterDelay:1];
-        NSLog(@"{ Presenting loginView}");
+        
         
         [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithInteger:0] forKey:@"installationStep"];
         [[NSUserDefaults standardUserDefaults] synchronize];
@@ -1063,24 +1102,45 @@ enum PinAnnotationTypeTag {
         // At first install, cache univesity/college emergency contacts
         [[[CloudEntityContacts alloc] initWithCampusDomain:@"nd.edu"] fetchEmergencyContacts:@"inst,contact"];
         
-        [self runNormalModeUI];
+        // Login to Parse
+        NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+        if ( [userDefaults objectForKey:@"adminID"] != NULL ) {
+            [PFUser logInWithUsernameInBackground:[userDefaults objectForKey:@"adminID"]
+                                         password:[userDefaults objectForKey:@"adminPass"]
+                                            block:^(PFUser *user, NSError *error) {
+                                                if (!user) {
+                                                    NSLog(@"Login to Parse failed with this error: %@",error);
+                                                } else {
+                                                    [self runNormalModeUI];
+                                                }
+                                            }];
+            
+            // If the following ACL settins are required: Set the proper ACLs
+            /*        PFACL *ACL = [PFACL ACLWithUser:[PFUser currentUser]];
+             [ACL setPublicReadAccess:YES];
+             [PFACL setDefaultACL:ACL withAccessForCurrentUser:YES];
+             */
+        } // otherwise do nothing
+        
         
         [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithInteger:1] forKey:@"installationStep"];
         [[NSUserDefaults standardUserDefaults] synchronize];
         
-    } else if ([installStepNum isEqualToNumber:[NSNumber numberWithInteger:1]])
-    {
-        NSLog(@"After First install");
+        if ([[NSUserDefaults standardUserDefaults] boolForKey:@"newUserFlag"]){
+            [self performSegueWithIdentifier:@"newCoreCircle" sender:self];
+            //NSLog(@"{Presenting newCoreCircle}");
+        }
+        
+    } else if ([installStepNum isEqualToNumber:[NSNumber numberWithInteger:1]])     {
+        NSLog(@"  After First install");
         [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithInteger:2] forKey:@"installationStep"];
         [[NSUserDefaults standardUserDefaults] synchronize];
         
-        BOOL newUser = [[NSUserDefaults standardUserDefaults] boolForKey:@"newUserFlag"];
-        if (newUser == YES){
+        if ([[NSUserDefaults standardUserDefaults] boolForKey:@"newUserFlag"]){
             [self performSegueWithIdentifier:@"newCoreCircle" sender:self];
-            NSLog(@"{Presenting newCoreCircle}");
+            //NSLog(@"{Presenting newCoreCircle}");
         }
-    } else if ([installStepNum isEqualToNumber:[NSNumber numberWithInteger:2]])
-    {
+    } else if ([installStepNum isEqualToNumber:[NSNumber numberWithInteger:2]])     {
         NSLog(@"+++++++++++   Returns from coreCircle vc");
         [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithInteger:3] forKey:@"installationStep"];
         [[NSUserDefaults standardUserDefaults] synchronize];
@@ -1108,10 +1168,6 @@ enum PinAnnotationTypeTag {
             NSLog(@"Successful login to Parse:%@",currentUser.email);
         } else
             NSLog(@"no current user");
-        
-        // Cache your extended circle of Friends
-        //[[[FRSyncFriendConnections alloc] init] syncUWatchToCoreFriends]; // Sync those uWatch
-        
         
         // Determine App Frame
         self.appFrameProperties = [[NSArray alloc] initWithObjects:
@@ -1214,10 +1270,6 @@ enum PinAnnotationTypeTag {
             }
         }];
 
-    } else if ([installStepNum isEqualToNumber:[NSNumber numberWithInteger:3]])
-    {   // else we do nothing in this method; 16Jun14:SA
-        //[self runNormalModeUI];
-
     }
 }
 - (void) setupUI
@@ -1233,29 +1285,13 @@ enum PinAnnotationTypeTag {
 - (void) runNormalModeUI {
     NSLog(@"Normal mode");
     
-    // Login to Parse
-    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-    if ( [userDefaults objectForKey:@"adminID"] != NULL ) {
-        [PFUser logInWithUsernameInBackground:[userDefaults objectForKey:@"adminID"]
-                                     password:[userDefaults objectForKey:@"adminPass"]
-                                        block:^(PFUser *user, NSError *error) {
-                                            if (!user) {
-                                                NSLog(@"Login to Parse failed with this error: %@",error);
-                                            }
-                                        }];
-        
-        // If the following ACL settins are required: Set the proper ACLs
-        /*        PFACL *ACL = [PFACL ACLWithUser:[PFUser currentUser]];
-         [ACL setPublicReadAccess:YES];
-         [PFACL setDefaultACL:ACL withAccessForCurrentUser:YES];
-         */
-    } // otherwise do nothing
-    // Check if self is currentUser (Parse)
-    PFUser *currentUser = [PFUser currentUser];
-    if (currentUser) {
-        NSLog(@"Successful login to Parse:%@",currentUser.email);
-    } else
-        NSLog(@"no current user");
+    
+//    // Check if self is currentUser (Parse)
+//    PFUser *currentUser = [PFUser currentUser];
+//    if (currentUser) {
+//        NSLog(@"Successful login to Parse:%@",currentUser.email);
+//    } else
+//        NSLog(@"no current user");
     
     // Cache your extended circle of Friends
     //[[[FRSyncFriendConnections alloc] init] syncUWatchToCoreFriends]; // Sync those uWatch
@@ -1882,9 +1918,15 @@ calloutAccessoryControlTapped:(UIControl *)control
             
             for (PFObject *userEvent in objects){
                 PFUser *friensoUser    = [userEvent valueForKey:@"friensoUser"];
-                if ([friensoUser.username isEqualToString:[PFUser currentUser].username])
-                    [trackMeOnOff setOn:YES animated:YES]; // check if self has an active Event going
-                else if ([self inYourCoreUserWithPhNumber:[friensoUser valueForKey:@"phoneNumber"]] )
+                if ([friensoUser.username isEqualToString:[PFUser currentUser].username] &&
+                    [[userEvent objectForKey:@"eventType"] isEqualToString:@"watch"]) {
+                    // check if self has an active Event going
+                    [trackMeOnOff setOn:YES animated:YES];
+                } else if ([friensoUser.username isEqualToString:[PFUser currentUser].username] &&
+                           [[userEvent objectForKey:@"eventType"] isEqualToString:@"helpNow"]) {
+                    [self setupHelpMeNowSwitch];
+                    
+                } else if ([self inYourCoreUserWithPhNumber:[friensoUser valueForKey:@"phoneNumber"]] )
                 {
                     // Check if this user is in your core or watchCircle
                     // friensoUser is in my network, am I tracking him/her?
@@ -2346,4 +2388,6 @@ calloutAccessoryControlTapped:(UIControl *)control
  *  http://stackoverflow.com/questions/14924151/create-a-round-gradient-progress-bar-in-ios-with-coregraphics
  *
  **/
+
 @end
+

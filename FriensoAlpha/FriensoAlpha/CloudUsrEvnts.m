@@ -133,7 +133,7 @@
 -(void) sendToCloud
 {
     PFObject *userEvent = [PFObject objectWithClassName:@"UserEvent" ];
-    [userEvent setObject:@"watch" forKey:@"eventType"];
+    [userEvent setObject:self.alertType forKey:@"eventType"];
     [userEvent setObject:[NSNumber numberWithBool:YES] forKey:@"eventActive"];
     [userEvent setObject:[PFUser currentUser] forKey:@"friensoUser"];
     [userEvent saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
