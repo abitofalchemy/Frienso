@@ -177,9 +177,9 @@ static NSString *coreFriendsCell = @"coreFriendsCell";
 - (NSArray *)sectionIndexTitlesForTableView:(UITableView *)tableView {
     return [self.frc sectionIndexTitles];
 }
-- (NSInteger)tableView:(UITableView *)tableView sectionForSectionIndexTitle:(NSString *)title atIndex:(NSInteger)index {
-    return [self.frc sectionForSectionIndexTitle:title atIndex:index];
-}
+//- (NSInteger)tableView:(UITableView *)tableView sectionForSectionIndexTitle:(NSString *)title atIndex:(NSInteger)index {
+//    return [self.frc sectionForSectionIndexTitle:title atIndex:index];
+//}
 
 - (UITableViewCell *)tableView:(UITableView *)theTableView
          cellForRowAtIndexPath:(NSIndexPath *)indexPath {

@@ -5,6 +5,8 @@ Frienso iOS Alpha
 
 Version History
 ---------------
+09Jul14/SA: Working redesign after HelpMeNow notifications are sent.
+
 * ver 1.5 build 6X  25Jun14/SA: Minor tweaks to the Friens & Contacts list view, disclosure detail button
                     shows emergency contact ph#, tapping on the cell ask if you want to dial or SMS
                     

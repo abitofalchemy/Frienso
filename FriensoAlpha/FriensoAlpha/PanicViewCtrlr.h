@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface PanicViewCtrlr : UIViewController
+@interface PanicViewCtrlr : UIViewController <UITableViewDelegate,UITableViewDataSource>
 
 @end

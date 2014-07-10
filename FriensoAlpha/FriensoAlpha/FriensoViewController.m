@@ -95,7 +95,10 @@ enum PinAnnotationTypeTag {
     [theButton setHidden:YES];
     [theButton.layer setBorderColor:[UIColor redColor].CGColor];
     [self performSegueWithIdentifier:@"panicEvent" sender:self];
-    
+    self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@""
+                                                                             style:self.navigationItem.backBarButtonItem.style
+                                                                            target:nil
+                                                                            action:nil];
     [self setupHelpMeNowSwitch];
 }
 -(void) setupHelpMeNowSwitch
@@ -971,9 +974,28 @@ enum PinAnnotationTypeTag {
 
 }
 -(void) setupNavigationBarImage{
+    // #3498db peter river
+    // #ecf0f1 clouds
     
-    [[UINavigationBar appearance] setTitleTextAttributes: [NSDictionary dictionaryWithObjectsAndKeys:[UIColor blackColor], NSForegroundColorAttributeName, [UIFont fontWithName:@"AppleSDGothicNeo-Light" size:16.0], NSFontAttributeName,nil]];
+    //[self.navigationController.navigationBar setBarTintColor:UIColorFromRGB(0x3498db)];//[UIColor colorWithHue:.580555 saturation:0.31 brightness:0.90 alpha:0.5]
+    [self.navigationController.navigationBar setBarTintColor:[UIColor colorWithHue:.580555 saturation:0.31 brightness:0.90 alpha:0.5]];
+    //[self.navigationController.toolbar setBarTintColor:UIColorFromRGB(0xecf0f1)];
+    //[self.navigationController.toolbar setBarTintColor:[UIColor colorWithWhite:0.9 alpha:0.5]];
+    
+    //[self.view setBackgroundColor:UIColorFromRGB(0xecf0f1)];
+    //[self.view setBackgroundColor:[UIColor colorWithHue:.580555 saturation:0.31 brightness:0.90 alpha:0.5]];
+    NSShadow *shadow = [[NSShadow alloc] init];
+    shadow.shadowColor = [UIColor colorWithRed:1.0 green:1.0 blue:1.0 alpha:0.8];
+    shadow.shadowOffset = CGSizeMake(0, 1);
+    [self.navigationController.navigationBar setTranslucent:YES];
+    [self.navigationController.navigationBar setTitleTextAttributes: [NSDictionary dictionaryWithObjectsAndKeys:
+                                                                      [UIColor whiteColor], NSForegroundColorAttributeName,
+                                                                      shadow, NSShadowAttributeName,
+                                                                      [UIFont fontWithName:@"AppleSDGothicNeo-Light" size:21.0], NSFontAttributeName, nil]];
     self.navigationItem.title = @"FRIENSO";
+    
+    //[self.navigationController.navigationBar setTitleTextAttributes: [NSDictionary dictionaryWithObjectsAndKeys:[UIColor blackColor], NSForegroundColorAttributeName, [UIFont fontWithName:@"AppleSDGothicNeo-Light" size:16.0], NSFontAttributeName,nil]];
+    
     
     // Right Options Button
     trackMeOnOff = [[UISwitch alloc] init];

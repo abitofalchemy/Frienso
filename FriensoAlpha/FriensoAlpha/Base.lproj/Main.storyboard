@@ -24,7 +24,7 @@
                         <segue destination="CWf-g8-ITg" kind="push" identifier="showMyCircle" id="BSs-oi-hx2"/>
                         <segue destination="sRi-j8-7s4" kind="push" identifier="showFriesoMap" id="HKj-DF-MrE"/>
                         <segue destination="aY6-gZ-dOi" kind="push" identifier="createEvent" id="KMa-pk-ZOI"/>
-                        <segue destination="6kB-Zb-JaQ" kind="modal" identifier="panicEvent" id="n71-eB-Kl2"/>
+                        <segue destination="6kB-Zb-JaQ" kind="push" identifier="panicEvent" id="n71-eB-Kl2"/>
                         <segue destination="3kY-1V-fX0" kind="push" identifier="instResources" id="Efz-ba-uWS"/>
                         <segue destination="CWx-7e-tGl" kind="modal" identifier="welcomeView" id="85X-Sg-fyF"/>
                         <segue destination="qAg-ru-ZcY" kind="modal" identifier="loginView" id="EUB-wM-2II"/>
