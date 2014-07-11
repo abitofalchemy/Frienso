@@ -34,7 +34,7 @@
 @implementation NewCoreCircleTVC
 @synthesize checkCloud = _checkCloud;
 
-static NSString * coreFriendAcceptMessage = @"Request accepted. User added to core circle";
+static NSString * coreFriendAcceptMessage = @"User added to core circle";
 static NSString * coreFriendRejectMessage = @"Request rejected. Click to select someone else";
 static NSString * coreFriendRequestSendMessage = @"Request send. Awaiting response";
 static NSString * coreFriendNotOnFriensoMessage = @"User not on Frienso";
@@ -227,6 +227,7 @@ int activeCoreFriends = 0;
     PFQuery * pfquery = [PFQuery queryWithClassName:@"CoreFriendRequest"];
     [pfquery includeKey:@"recipient"];
     [pfquery whereKey:@"sender" equalTo:[PFUser currentUser]];
+    [pfquery orderByAscending:@"recipientName"];
     //[pfquery whereKey:@"awaitingResponseFrom" equalTo:@"sender"];
     [pfquery findObjectsInBackgroundWithBlock:^(NSArray *objects,
                                                 NSError *error) {
@@ -237,7 +238,7 @@ int activeCoreFriends = 0;
                 //reload the table view
                 
                 for (id object in objects) {
-                    NSLog(@"Number of active friends %d",activeCoreFriends);
+                //    NSLog(@"Number of active friends %d",activeCoreFriends);
                     if(activeCoreFriends >= MAX_CORE_FRIENDS) {
                         NSLog(@"Atleast %d  core friends found in frienso",MAX_CORE_FRIENDS);
                         break;
@@ -272,6 +273,7 @@ int activeCoreFriends = 0;
                 // check if the contact is pending list, then show that information
                 PFQuery * pfquery = [PFQuery queryWithClassName:@"CoreFriendNotOnFriensoYet"];
                 [pfquery whereKey:@"sender" equalTo:[PFUser currentUser]];
+                [pfquery orderByAscending:@"recipientName"];
                 // [pfquery whereKey:@"recipientPhoneNumber" containedIn:self.coreCircleContacts];
                 [pfquery findObjectsInBackgroundWithBlock:^(NSArray *objects,
                                                             NSError *error) {
@@ -297,6 +299,20 @@ int activeCoreFriends = 0;
                     }else {
                         NSLog(@"%@",error);
                     }
+                    
+                   // NSLog(@"Number of active friends - %d",activeCoreFriends);
+
+                    // less than MAX friends are now found in the Parse DB. remove the entries from user defaults. and also from the table.
+                    if(activeCoreFriends < MAX_CORE_FRIENDS) {
+                        
+                        for (int i=activeCoreFriends ; i<MAX_CORE_FRIENDS; i++){
+                            NSString * name = [NSString stringWithFormat:@"Core Friend %d",i+1];
+                            [self.coreCircleOfFriends replaceObjectAtIndex:i withObject:name];
+                            [self.coreCircleContacts replaceObjectAtIndex:i withObject:@""]; // we use this to check if the contact is valid to save.
+                            [self.coreCircleRequestStatus replaceObjectAtIndex:i withObject:@"Click to select a core friend from contacts"];
+
+                        }
+                    }
                     [self refresh];
                 }];
             } else {
@@ -319,8 +335,9 @@ int activeCoreFriends = 0;
     
     for (NSString *circleContactName in self.coreCircleOfFriends){
         //check to avoid writing contacts with no phoneNumbers
-        if(![[self.coreCircleContacts objectAtIndex:i] isEqualToString:@""]) {
+        if(![[self.coreCircleContacts objectAtIndex:i] isEqualToString:@""] && [[self.coreCircleRequestStatus objectAtIndex:i] isEqualToString:coreFriendAcceptMessage]) {
             [coreCircleDic setValue:[self.coreCircleContacts objectAtIndex:i] forKey:circleContactName];
+           // NSLog(@"added to NSUSER DEFAULT %@",circleContactName);
         
         }
         i += 1;
@@ -648,12 +665,12 @@ int activeCoreFriends = 0;
                         [pfobject setObject:curUser forKey:@"sender"];
                         [pfobject setObject:pfuser forKey:@"recipient"];
                         [pfobject setObject:[self.coreCircleOfFriends objectAtIndex:cellNumber] forKey:@"recipientName"];
-                        [pfobject setObject:@"send" forKey:@"status"];
-                        [pfobject setObject:@"recipient" forKey:@"awaitingResponseFrom" ];
+                        [pfobject setObject:@"accept" forKey:@"status"];
+                        [pfobject setObject:@"sender" forKey:@"awaitingResponseFrom" ];
                         [pfobject setACL:pfacl];
                         [pfobject saveInBackground];
                         [self.coreCircleRequestStatus replaceObjectAtIndex:cellNumber
-                                                                withObject:coreFriendRequestSendMessage];
+                                                                withObject:coreFriendAcceptMessage];
                         //Reload the TableView as the status has changed.
                         [self refresh];
                         /**************CORE FRIEND REQUEST: PUSH NOTIFICATION STUFF*****************/
