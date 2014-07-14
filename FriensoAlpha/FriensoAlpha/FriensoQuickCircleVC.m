@@ -270,6 +270,9 @@ static NSString *coreFriendsCell = @"coreFriendsCell";
     
     // if Resource, we should just dial it!
     CoreFriends *friend = [self.frc objectAtIndexPath:indexPath];
+    self.friendToContactDic = [[NSDictionary alloc] initWithObjects:@[[self  stripStringOfUnwantedChars:friend.corePhone]]
+                                                            forKeys:@[friend.coreFirstName]];
+    
     if (friend!=NULL && [friend.coreType isEqualToString:@"Emergency"]) {
         [[[UIAlertView alloc] initWithTitle:nil
                                     message:nil
@@ -338,7 +341,7 @@ static NSString *coreFriendsCell = @"coreFriendsCell";
     if ( [friend.coreType isEqualToString:@"Resource"])
         self.friendToContactDic = [[NSDictionary alloc] initWithObjects:@[[self  stripStringOfUnwantedChars:friend.corePhone]]
                                                                 forKeys:@[friend.coreTitle]];
-    else if ([friend.coreType isEqualToString:@"OnWatch"])
+    else if ([friend.coreType isEqualToString:@"oCore Friends"])
         self.friendToContactDic = [[NSDictionary alloc] initWithObjects:@[[self  stripStringOfUnwantedChars:friend.corePhone]] forKeys:@[friend.coreNickName]];
     else
         self.friendToContactDic = [[NSDictionary alloc] initWithObjects:@[friend.corePhone] forKeys:@[friend.coreFirstName]];
@@ -389,6 +392,7 @@ static NSString *coreFriendsCell = @"coreFriendsCell";
             NSLog(@"Cancel");
             break;
         case 1:{
+#warning something totally off here!!
             NSString *phoneNumber = [NSString stringWithFormat:@"tel://%@",[self.friendToContactDic allValues][0]];
             @try {
             [[UIApplication sharedApplication] openURL:[NSURL URLWithString:phoneNumber]];

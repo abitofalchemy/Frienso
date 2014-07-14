@@ -13,8 +13,8 @@ Version History
     to CoreFriends, then if the user goes back to the home view, the user can choose to contact friends
     and or turn off the HelpMeNow alert/alarm.
 
-    13Jul14/SA: Fix when contacting your friends 
-    
+    13Jul14/SA: Fixed the problem of a null phone number when contacting your friends in the
+    FriensoQuickCircle VC.
 * ver 1.5 build 71
 
     09Jul14/SA: Working redesign after HelpMeNow notifications are sent.

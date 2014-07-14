@@ -1043,8 +1043,6 @@ enum PinAnnotationTypeTag {
 //    FriensoCircleButton *coreCircleBtn = [[FriensoCircleButton alloc]
 //                                          initWithFrame:CGRectMake(0, 0, 27, 27)];
     UIButton *coreCircleBtn = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 27, 27)];
-    [coreCircleBtn addTarget:self action:@selector(actionPanicEvent:)
-                forControlEvents:UIControlEventTouchUpInside];
     [coreCircleBtn setTitle:@"👥" forState:(UIControlStateNormal)];
     if (![coreCircleBtn isEnabled])
         [coreCircleBtn setEnabled:YES];
@@ -1056,9 +1054,9 @@ enum PinAnnotationTypeTag {
     
     // Right tool bar btn
     FriensoOptionsButton *button = [[FriensoOptionsButton alloc] initWithFrame:CGRectMake(0, 0, 27, 27)];
-    button.layer.cornerRadius = 4.0;
-    button.layer.borderWidth =  1.0;
-    button.layer.borderColor = [UIColor blackColor].CGColor;
+//    button.layer.cornerRadius = 4.0;
+//    button.layer.borderWidth =  1.0;
+//    button.layer.borderColor = [UIColor blackColor].CGColor;
     [button addTarget:self action:@selector(viewMenuOptions:)
      forControlEvents:UIControlEventTouchUpInside];
     [button setCenter:CGPointMake(self.navigationController.toolbar.frame.size.width - button.center.x*2.0, 22)];
@@ -1070,9 +1068,9 @@ enum PinAnnotationTypeTag {
     [self.helpMeNowBtn addTarget:self action:@selector(actionPanicEvent:)
           forControlEvents:UIControlEventTouchUpInside];
     [self.helpMeNowBtn setTitle:@"\u26A0" forState:(UIControlStateNormal)];
-    self.helpMeNowBtn.layer.cornerRadius = 4.0f;
-    self.helpMeNowBtn.layer.borderWidth  = 1.0f;
-    self.helpMeNowBtn.layer.borderColor  = UIColorFromRGB(0x006bb6).CGColor;;
+//    self.helpMeNowBtn.layer.cornerRadius = 4.0f;
+//    self.helpMeNowBtn.layer.borderWidth  = 1.0f;
+//    self.helpMeNowBtn.layer.borderColor  = UIColorFromRGB(0x006bb6).CGColor;;
     self.helpMeNowBtn.titleLabel.textColor = [UIColor colorWithRed:0.0/255.0 green:107.0/255.0 blue:182.0/255.0 alpha:1.0];
     [self.helpMeNowBtn setCenter:CGPointMake(self.navigationController.toolbar.center.x, 22)];
     
