@@ -1040,11 +1040,12 @@ enum PinAnnotationTypeTag {
 
     //UIColor *violetTulip = [UIColor colorWithRed:155.0/255.0 green:144.0/255.0 blue:182.0/255.0 alpha:1.0];
     // Left CoreCircle button
-    FriensoCircleButton *coreCircleBtn = [[FriensoCircleButton alloc]
-                                          initWithFrame:CGRectMake(0, 0, 27, 27)];
-    coreCircleBtn.layer.cornerRadius = 4.0;
-    coreCircleBtn.layer.borderWidth  =  1.0;
-    coreCircleBtn.layer.borderColor  = UIColorFromRGB(0x006bb6).CGColor;
+//    FriensoCircleButton *coreCircleBtn = [[FriensoCircleButton alloc]
+//                                          initWithFrame:CGRectMake(0, 0, 27, 27)];
+    UIButton *coreCircleBtn = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 27, 27)];
+    [coreCircleBtn addTarget:self action:@selector(actionPanicEvent:)
+                forControlEvents:UIControlEventTouchUpInside];
+    [coreCircleBtn setTitle:@"👥" forState:(UIControlStateNormal)];
     if (![coreCircleBtn isEnabled])
         [coreCircleBtn setEnabled:YES];
     [coreCircleBtn addTarget:self action:@selector(viewCoreCircle:)
