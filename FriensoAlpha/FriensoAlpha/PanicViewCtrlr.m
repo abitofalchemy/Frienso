@@ -133,12 +133,13 @@ static NSString *contactCell          = @"contactCell";
     if (newEvent != nil){
         
         newEvent.eventTitle = eventTitleStr;
-        newEvent.eventSubtitle = @"Panic alarm timed out and alerts were sent";
+        newEvent.eventSubtitle = @"HelpMeNow alarm timed out and alerts were sent";
         //TODO: Need to figure out core location
         newEvent.eventLocation  = @"Here";
         newEvent.eventContact   = [[NSUserDefaults standardUserDefaults] objectForKey:@"adminID"];
         newEvent.eventCreated   = [NSDate date];
         newEvent.eventModified  = [NSDate date];
+        newEvent.eventCategory  =  @"helpNow";
         
         NSError *savingError = nil;
         

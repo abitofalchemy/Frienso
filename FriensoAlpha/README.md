@@ -5,33 +5,39 @@ Frienso iOS Alpha
 
 Version History
 ---------------
-09Jul14/SA: Working redesign after HelpMeNow notifications are sent.
 
-* ver 1.5 build 6X  25Jun14/SA: Minor tweaks to the Friens & Contacts list view, disclosure detail button
+* ver 1.5 build 71+
+
+    13Jul14/SA: Behavior when HelpMeNow is triggered is now working, this means triggering a helpMeNow
+    request shows a timer VC and after that can be canceled if needed, or if it times out PN are sent
+    to CoreFriends, then if the user goes back to the home view, the user can choose to contact friends
+    and or turn off the HelpMeNow alert/alarm.
+
+* ver 1.5 build 71
+
+    09Jul14/SA: Working redesign after HelpMeNow notifications are sent.
+    10Jul14/SA: Need to make sure group SMS is working on the Help now vc
+
+    25Jun14/SA: Minor tweaks to the Friens & Contacts list view, disclosure detail button
                     shows emergency contact ph#, tapping on the cell ask if you want to dial or SMS
-                    
-                    25Jun14/SA: Removed the text from the Drawer to show if there are pending requests, now
+                        
+    25Jun14/SA: Removed the text from the Drawer to show if there are pending requests, now
                     it's just a dot that changes blue if pending requests and grayed out if 0 (Chad's
                     suggestion, which I like and wanted to do for a while now any way).
 
 
-                    25Jun14/SA: When a new user registers the coreCircle isn't available on the Friends
+    25Jun14/SA: When a new user registers the coreCircle isn't available on the Friends
                     list, so I made sure that when the user hits to 'back' button to end the coreCircle
                     creation -- the friends are added to the CoreFriends entity in coredata.
 
-					30Jun14/SA: Modified the welcome view that provides a brief introduction to the app
-					when first installed.
-
-                    ToDo: When a user initiates a HelpMeNow event the user should see the location of his/her 
-                    friends.  While it goes agains't the request/accept/reject theme these requests require
-                    access one's network location to make the best decision/choices possible with all 
-                    possible information available.
+    30Jun14/SA: Modified the welcome view that provides a brief introduction to the app
+                    when first installed.
                     
-                    03Jun14/SA: Fixed the way the welcome view is integrated at installation time;
-                    - {working on} Adding more interaction to the mapview pins; 
+    03Jun14/SA: Fixed the way the welcome view is integrated at installation time;
+                    - {basic done} Adding more interaction to the mapview pins;
 					
 
-* ver 1.5 build 61 - Moved bubbles back to the mapView (but will only show one for a friend with an ongoing
+* ver 1.5 build 61  - Moved bubbles back to the mapView (but will only show one for a friend with an ongoing
                     alert/event)
                     - Added a fullscreen button to the mapView; button is toggling the mapview between default
                     and FS.
@@ -148,6 +154,10 @@ Working On
 
 ToDo
 ----
+* When a user initiates a HelpMeNow event the user should see the location of his/her
+                    friends.  While it goes agains't the request/accept/reject theme these requests require
+                    access one's network location to make the best decision/choices possible with all 
+                    possible information available.
 * {SA}{bug} 19Jun14/SA: Friends requests accept caused a crash
 * {NY} Finish panic view controller
 * Async update locations from cloud {??}

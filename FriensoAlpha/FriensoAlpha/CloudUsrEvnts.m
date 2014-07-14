@@ -98,7 +98,7 @@
     
 //    [[NSUserDefaults standardUserDefaults] setObject:dic forKey:@"watchObjId"];
 //    [[NSUserDefaults standardUserDefaults] synchronize];
-//    
+    
 }
 -(BOOL) activeAlertCheck {
     NSDictionary *dic = [[NSUserDefaults standardUserDefaults] objectForKey:@"alertDic"];
@@ -142,9 +142,13 @@
             
             NSLog(@"! error adding userEvent to cloud-store: %@", error);
         } else {
-            NSLog(@"Success");
-            [[NSUserDefaults standardUserDefaults] setObject:userEvent.objectId forKey:@"watchObjId"];
-            [[NSUserDefaults standardUserDefaults] synchronize];
+            NSLog(@"Event logged  on cloud-store");
+            if ([self.alertType isEqualToString:@"watchMe"])
+                [[NSUserDefaults standardUserDefaults] setObject:userEvent.objectId forKey:@"watchObjId"];
+            else {
+                [[NSUserDefaults standardUserDefaults] setObject:userEvent.objectId forKey:@"helpObjId"];
+                [[NSUserDefaults standardUserDefaults] synchronize];
+            }
         }
     }];
     /**
@@ -177,8 +181,12 @@
 }
 - (void) disableEvent
 {
+
     PFQuery *query = [PFQuery queryWithClassName:@"UserEvent"];
-    [query whereKey:@"objectId" equalTo:[[NSUserDefaults standardUserDefaults] objectForKey:@"watchObjId"]];
+    if ([self.alertType isEqualToString:@"watchMe"])
+        [query whereKey:@"objectId" equalTo:[[NSUserDefaults standardUserDefaults] objectForKey:@"watchObjId"]];
+    else
+        [query whereKey:@"objectId" equalTo:[[NSUserDefaults standardUserDefaults] objectForKey:@"helpObjId"]];
     [query getFirstObjectInBackgroundWithBlock:^(PFObject * userEvent, NSError *error) {
         if (!error) {
             // Found UserStats
@@ -195,6 +203,34 @@
     NSDateComponents *comps = [calendar components: NSEraCalendarUnit|NSYearCalendarUnit| NSMonthCalendarUnit|NSDayCalendarUnit|NSHourCalendarUnit fromDate: inDate];
     [comps setHour: [comps hour]+1]; // Here you may also need to check if it's the last hour of the day
     return [calendar dateFromComponents:comps];
+}
+- (void) logEventOnFriensoEvent:(NSString*)objId
+{
+    NSLog(@"--------- logEvent to FriensoEvent: %@", objId);
+    FriensoAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+    
+    NSManagedObjectContext *managedObjectContext = appDelegate.managedObjectContext;
+    
+    FriensoEvent *firstFriensoEvent = [NSEntityDescription insertNewObjectForEntityForName:@"FriensoEvent"
+                                                                    inManagedObjectContext:managedObjectContext];
+    /** What the right way to manage geolocation points between coredata and parse.com? **/
+    if (firstFriensoEvent != nil){
+        
+        firstFriensoEvent.eventTitle     = [NSString stringWithFormat:@"%@ event triggered!", self.alertType];
+        //firstFriensoEvent.eventLocation  = [NSString stringWithFormat:@"%f,%f", self.coordinate.latitude, self.coordinate.longitude];
+        firstFriensoEvent.eventContact   = [[NSUserDefaults standardUserDefaults] objectForKey:@"adminID"];
+        firstFriensoEvent.eventObjId     = objId;
+        firstFriensoEvent.eventCreated   = [NSDate date];
+        firstFriensoEvent.eventModified  = [NSDate date];
+        
+        NSError *savingError = nil;
+        if([managedObjectContext save:&savingError]) {
+            NSLog(@"%@ event stored locally",self.alertType);
+        } else { NSLog(@"Failed to save the context. Error = %@", savingError); }
+    } else {
+        NSLog(@"Failed to create a new event.");
+    }
+    
 }
 #pragma mark
 #pragma mark - Helper methods

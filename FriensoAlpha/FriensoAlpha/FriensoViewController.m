@@ -15,7 +15,7 @@
 #import "FriensoViewController.h"
 #import "FriensoOptionsButton.h"
 #import "FriensoCircleButton.h"
-#import "FriensoPersonalEvent.h"
+//#import "FriensoPersonalEvent.h"
 #import <QuartzCore/QuartzCore.h>
 #import "FriensoAppDelegate.h"
 #import "FriensoEvent.h"
@@ -261,22 +261,63 @@ enum PinAnnotationTypeTag {
 }
 
 #pragma mark - Local Actions
+//- (void) locateCoreFriends {
+//    //NSLog(@"! Locate Core Friends");
+//    NSString *helpObjId = [[NSUserDefaults standardUserDefaults] objectForKey:@"helpObjId"];
+//    if (helpObjId != nil ) {
+//        NSLog(@"    We have an active helpMeNow event");
+//    } else
+//        NSLog(@"    NO active helpMeNow event");
+//    
+//    //    // round up your core Friends and show them on the map and have access to their location
+////    // First check to see if the objectId already exists
+////    NSEntityDescription *entityDescription = [NSEntityDescription entityForName:@"FriensoEvent"
+////                                                         inManagedObjectContext:[self managedObjectContext]];
+////    NSFetchRequest *request = [[NSFetchRequest alloc] init];
+////    [request setPredicate:[NSPredicate predicateWithFormat:@"eventCategory like 'helpNow'"]];
+////    [request setEntity:entityDescription];
+////    // Create the sort descriptors array.
+////    NSSortDescriptor *authorDescriptor = [[NSSortDescriptor alloc] initWithKey:@"eventCreated" ascending:NO];
+////    NSSortDescriptor *titleDescriptor = [[NSSortDescriptor alloc] initWithKey:@"eventModified" ascending:NO];
+////    NSArray *sortDescriptors = @[authorDescriptor, titleDescriptor];
+////    [request setSortDescriptors:sortDescriptors];
+////
+////    //BOOL unique = YES;
+////    NSError  *error;
+////    NSArray *items = [[self managedObjectContext] executeFetchRequest:request error:&error];
+////    NSLog(@"items: %u", items.count);
+////    if (items != nil) {
+////        for (NSManagedObject *mObject in items) {
+////            NSLog(@"  %@,%@,%@,%@",[mObject valueForKey:@"eventTitle"],[mObject valueForKey:@"eventObjId"],
+////                  [mObject valueForKey:@"eventCategory"],[mObject valueForKey:@"eventModified"]);
+////        }
+////    }
+//#warning Add a status to the FriensoEvent entity to maintain the status of the event
+//#warning Disable when the user turns off the button; remove coreFriends from mapView
+//    
+//}
 -(void) helpMeNowSwitchAction:(UISwitch*)sender
 {
-//    NSLog(@"%ld", [sender state]);
-//    if ([sender isOn]) {
-        // log event locally and
-        
-        // log event on the cloud
-        CloudUsrEvnts *watchMeEvent = [[CloudUsrEvnts alloc] initWithAlertType:@"helpNow"];
-        [watchMeEvent disableEvent];
-        
-        // Remove switch from UI
-        [helpMeNowSwitch removeFromSuperview];
-        
-        // Add back the std icon/btn 
-        [self.helpMeNowBtn setHidden:NO];
-//    }
+    
+    // log event on the cloud
+    CloudUsrEvnts *watchMeEvent = [[CloudUsrEvnts alloc] initWithAlertType:@"helpNow"];
+    [watchMeEvent disableEvent];
+    
+    [[NSUserDefaults standardUserDefaults] setObject:nil forKey:@"helpObjId"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+
+    // Remove switch from UI
+    [helpMeNowSwitch removeFromSuperview];
+    // Remove buttons and labels corresponding to coreFriends
+    for (id subview in [self.mapView subviews])
+    {
+        UILabel *label = subview;
+        if (label.tag > 99)
+            [label removeFromSuperview];
+    }
+    
+    // Add back the std icon/btn
+    [self.helpMeNowBtn setHidden:NO];
 }
 -(void) contactByDialingFriendWithEmail:(NSString *)friendEmail
 {
@@ -359,7 +400,7 @@ enum PinAnnotationTypeTag {
             [subview removeFromSuperview];
         }
     }
-    NSLog(@"Friends I currently track:");
+    //NSLog(@"Friends I currently track:");
     
     
     NSInteger btnNbr = 0;
@@ -392,9 +433,71 @@ enum PinAnnotationTypeTag {
     }
     
 }
+-(void) addCoreFriendLocationToMap:(PFUser *)parseUser withIndex:(NSInteger)mapIndex
+{
+    CGPoint refreshLoc;
+    for (id subview in [self.mapView subviews]){
+        if ( [subview isKindOfClass:[UIButton class]]
+            && [[subview titleLabel].text isEqualToString:@"↺"] )
+        {
+            UIButton *refreshMap = (UIButton *)subview;
+            refreshLoc = refreshMap.center;
+        }
+        
+    }
+    TrackingFriendButton *cfCircleBtn = [[TrackingFriendButton alloc] initWithFrame:CGRectMake(0, 0, 44, 44)];
+    UIImage *img =[[FRStringImage alloc] imageTextBubbleOfSize:cfCircleBtn.frame.size];
+    [cfCircleBtn setBackgroundImage:img forState:UIControlStateNormal];
+    [cfCircleBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [cfCircleBtn setTitleColor:UIColorFromRGB(0x8e44ad) forState:UIControlStateHighlighted];
+    [cfCircleBtn setAlpha:0.8];
+    
+    PFGeoPoint *geoPoint = [parseUser objectForKey:@"currentLocation"];
+    CLLocation *locA = [[CLLocation alloc] initWithLatitude:geoPoint.latitude
+                                                  longitude:geoPoint.longitude];
+    PFGeoPoint *myPointLoc = [[PFUser currentUser] objectForKey:@"currentLocation"];
+    CLLocation *locB = [[CLLocation alloc] initWithLatitude:myPointLoc.latitude
+                                                  longitude:myPointLoc.longitude];
+    CLLocationDistance distance = [locA distanceFromLocation:locB] * 0.621371 /* convert to miles */;
+    //  NSString *coreFriendDistance = [NSString stringWithFormat:@"%.2f %@ away",distance,@"miles" ];
+    
+    [cfCircleBtn addTarget:self action:@selector(coreFriendOnMapInteraction:)
+      forControlEvents:UIControlEventTouchUpInside];
+    [cfCircleBtn setTag:mapIndex+100];
+    
+    [self.mapView addSubview:cfCircleBtn];
+    NSString *bubbleLabel = [[parseUser.username substringToIndex:2] uppercaseString];
+    [cfCircleBtn setTitle:[NSString stringWithFormat:@"%@\n%.2f",bubbleLabel,distance] forState:UIControlStateNormal];
+    //[cfCircleBtn setSubTitle:coreFriendDistance];
+//    [cfCircleBtn setTag:btnNbr];
+//    CGFloat marginOffset = 5.0;
+//    CGFloat btnCenterX   = cfCircleBtn.center.x + cfCircleBtn.center.x*2*btnNbr + marginOffset;
+//    //[cfCircleBtn setCenter:CGPointMake(btnCenterX, self.mapView.frame.size.height - cfCircleBtn.center.y)];
+    CGFloat frienYPoint = refreshLoc.y*2 + (cfCircleBtn.center.y*1.5 + 10/*y offset*/) * mapIndex;
+    //[coreFriendMapLabel setCenter:CGPointMake(refreshLoc.x + coreFriendMapLabel.center.x , frienYPoint)];
+    [cfCircleBtn setCenter:CGPointMake(refreshLoc.x, frienYPoint)];
+//
+//    
+//    // Allows access to location info to userBubble
+//    PFGeoPoint *geoNDIN = [PFGeoPoint geoPointWithLatitude:41.700278
+//                                                 longitude:-86.238611];// notre dame, in
+//    [self.friendsLocationArray insertObject:([parseUser valueForKey:@"currentLocation"] == NULL)  ? geoNDIN : [parseUser valueForKey:@"currentLocation"]  atIndex:btnNbr];
+//    
+//    NSString *twoInitials = [parseUser.username substringToIndex:2];
+//    //[coreFriendMapLabel setText:[twoInitials uppercaseString]];
+
+//    [coreFriendMapLabel setText:[NSString stringWithFormat:@"%@, %@",[twoInitials uppercaseString],
+//                                 coreFriendDistance]];
+//    [coreFriendMapLabel sizeToFit];
+//    [self.mapView addSubview:coreFriendMapLabel];
+//    CGFloat frienYPoint = refreshLoc.y*2 + (coreFriendMapLabel.center.y + 10/*y offset*/) * mapIndex;
+//    [coreFriendMapLabel setCenter:CGPointMake(refreshLoc.x + coreFriendMapLabel.center.x , frienYPoint)];
+    
+
+}
 -(void) addUserBubbleToMap:(PFUser *)parseUser withTag:(NSInteger)tagNbr {
     
-    //    NSLog(@"addUserBubbleToMap: %ld",tagNbr);
+    //    NSLog(@"add User Bubble To Map: %ld",tagNbr);
     //    NSLog(@"subviews: %ld", [self.mapView subviews].count);
     //
     for (id subview in [self.mapView subviews]){
@@ -405,6 +508,7 @@ enum PinAnnotationTypeTag {
                 tagNbr +=1;
         }
     }
+
     UIButton *mLocBtn = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 44, 44)];
     UIImage *img =[[FRStringImage alloc] imageTextBubbleOfSize:mLocBtn.frame.size];
     [mLocBtn setBackgroundImage:img forState:UIControlStateNormal];
@@ -422,11 +526,14 @@ enum PinAnnotationTypeTag {
     CGFloat btnCenterX = mLocBtn.center.x*2 + mLocBtn.center.x*2*tagNbr;
     [mLocBtn setCenter:CGPointMake(btnCenterX, self.mapView.frame.size.height - mLocBtn.center.y)];
     
+    
+    /* HOW DO WE GIVE BUTTON ACCESS TO user's Location?
+     *
     // Allows access to location info to userBubble
     PFGeoPoint *geoNDIN = [PFGeoPoint geoPointWithLatitude:41.700278
                                                  longitude:-86.238611];// notre dame, in
     [self.friendsLocationArray insertObject:([parseUser valueForKey:@"currentLocation"] == NULL)  ? geoNDIN : [parseUser valueForKey:@"currentLocation"]  atIndex:tagNbr];
-    
+    */
 }
 -(void) closeFullscreenTableViewAction:(UIButton*)sender {
     [UIView animateWithDuration:0.3 animations:^{
@@ -1095,17 +1202,15 @@ enum PinAnnotationTypeTag {
     
     
 }
-// viewDidUnload is deprecated
 
 -(void) viewWillAppear:(BOOL)animated {
     [super viewWillAppear:YES];
-    //NSLog(@"viewWillAppear");
-    
 }
 
 -(void) viewDidAppear:(BOOL)animated{
     [super viewDidAppear:animated];
     NSLog(@"!viewDidAppear");
+
     // Hide the Options Menu when navigating to Options, otherwise show
     for (id subview in [self.navigationController.toolbar subviews]){
         if ( [subview isKindOfClass:[FriensoOptionsButton class]] )
@@ -1115,6 +1220,13 @@ enum PinAnnotationTypeTag {
         }
     }
     
+//    [[NSUserDefaults standardUserDefaults] setObject:nil forKey:@"helpObjId"];
+//    [[NSUserDefaults standardUserDefaults] synchronize];
+//
+//    NSLog(@"%@",[[NSUserDefaults standardUserDefaults] objectForKey:@"helpObjId"]);
+    
+    if ([[NSUserDefaults standardUserDefaults] objectForKey:@"helpObjId"] != nil )
+        [self updateLocations];
     
     if ([[NSUserDefaults standardUserDefaults] boolForKey:@"helpNowCancelled"] == 1) {
         //NSLog(@"%d",[[NSUserDefaults standardUserDefaults] boolForKey:@"helpNowCancelled"]);
@@ -1961,6 +2073,7 @@ calloutAccessoryControlTapped:(UIControl *)control
                 } else if ([friensoUser.username isEqualToString:[PFUser currentUser].username] &&
                            [[userEvent objectForKey:@"eventType"] isEqualToString:@"helpNow"]) {
                     [self setupHelpMeNowSwitch];
+                    [self updateLocations]; // puts core circle on mapview
                     
                 } else if ([self inYourCoreUserWithPhNumber:[friensoUser valueForKey:@"phoneNumber"]] )
                 {
@@ -2035,7 +2148,48 @@ calloutAccessoryControlTapped:(UIControl *)control
     }];
 
 }
--(void)friendLocInteraction:(UIButton *)sender
+-(void) coreFriendOnMapInteraction:(TrackingFriendButton*)sender
+{
+    if ( ![sender isSelected] )
+    {
+        [sender setSelected:YES];
+        
+        // Animate selected bubble
+        [UIView beginAnimations:nil context:nil];
+        [UIView setAnimationDuration:0.5f];
+        
+        sender.center = CGPointMake(sender.center.x + 10.0f, sender.center.y );
+        sender.center = CGPointMake(sender.center.x - 10.0f, sender.center.y);
+        
+        [UIView commitAnimations];
+        
+        NSString *distance = [sender.titleLabel.text componentsSeparatedByString:@"\n"][1];
+        UILabel *label = [[UILabel alloc] init];
+        [label setText:[NSString stringWithFormat:@"%@\nmiles from you", distance]];
+        [label setFont:[UIFont fontWithName:@"AppleSDGothicNeo-Light" size:14]];
+        [label setNumberOfLines:2];
+        [label setTag:sender.tag];
+        [self.mapView addSubview:label];
+        [label setFrame:CGRectMake(0, sender.frame.origin.y, 120, sender.frame.size.height)];
+        [label setCenter:CGPointMake(0, sender.center.y)];
+        [UIView animateWithDuration:0.5 animations:^{
+            //[label setCenter:CGPointMake(-label.frame.size.width,sender.center.y)];
+            [label setBackgroundColor:[UIColor colorWithWhite:1.0 alpha:0.5f]];
+            [label setCenter:CGPointMake(sender.frame.size.width + 10 + label.frame.size.width/2, sender.center.y)];
+            }];
+    } else {
+        [sender setSelected:NO];
+        for (id subview in [self.mapView subviews]){
+            if ( [subview isKindOfClass:[UILabel class]] && [subview tag] == sender.tag) {
+                [subview removeFromSuperview];
+                break;
+            }
+        }
+    }
+    
+    
+}
+-(void) friendLocInteraction:(UIButton *)sender
 {
     /* friendLocInteraction:
     ** Is the action triggered when user touches the button overlay on the mapview.
@@ -2118,49 +2272,61 @@ calloutAccessoryControlTapped:(UIControl *)control
 }
 
 - (void)updateLocations {
+    NSLog(@"****** UPDATELOCATIONS");
     /** this adds bubbles to the map for all Persons in your CoreFriends list (local core data store) **/
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init]; // Create the fetch request
     NSEntityDescription *entity = [NSEntityDescription entityForName:@"CoreFriends"
                                               inManagedObjectContext:[self managedObjectContext]];
     
     [fetchRequest setEntity:entity];
-    [fetchRequest setPredicate:[NSPredicate predicateWithFormat:@"coreType like 'Person' || coreType like 'OnWatch'"]];
-    NSSortDescriptor *phoneSort =  [[NSSortDescriptor alloc] initWithKey:@"corePhone"
-                                                                  ascending:YES];
-        
-    fetchRequest.sortDescriptors = @[phoneSort];
+    [fetchRequest setPredicate:[NSPredicate predicateWithFormat:@"coreType like 'iCore Friends'"]];
+//    NSSortDescriptor *phoneSort =  [[NSSortDescriptor alloc] initWithKey:@"corePhone"
+//                                                                  ascending:YES];
+//        
+//    fetchRequest.sortDescriptors = @[phoneSort];
     
     NSError *error;
     NSArray *fetchedObjects = [[self managedObjectContext] executeFetchRequest:fetchRequest error:&error];
     if (fetchedObjects == nil) {
         // Handle the error.
-    } else if ( [[self.mapView subviews] count] < [fetchedObjects count]){
-        NSInteger i = 0;
+    } else /*if ( [[self.mapView subviews] count] < [fetchedObjects count])*/{
+        NSInteger j = 0;
         for (NSManagedObject *mObject in fetchedObjects) {
+            //NSLog(@"    %@ | %@ | %@", [mObject valueForKey:@"coreFirstName"], [mObject valueForKey:@"corePhone"], [mObject valueForKey:@"coreLocation"]);
+            PFQuery *userQuery = [PFUser query];
+            NSString *longPhoneNumber = [self stripStringOfUnwantedChars:[mObject valueForKey:@"corePhone"]];
+            NSString *basePhoneNumber = [longPhoneNumber substringFromIndex:(longPhoneNumber.length-10)];
             
+            [userQuery whereKey:@"phoneNumber" equalTo:basePhoneNumber];
+            [userQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+                if (!error) {
+                    PFUser * pfuser = [objects firstObject];
+                    if(pfuser != nil) {
+                        /* NSLog(@"user %@", [pfuser username]);
+                        NSLog(@"phone %@", [pfuser objectForKey:@"phoneNumber"]);
+                        NSLog(@"location %@", [pfuser objectForKey:@"currentLocation"]);
+                        */
+                        //NSLog(@"%d: %@",j, basePhoneNumber);
+                        [self addCoreFriendLocationToMap:pfuser withIndex:j];
+                    }
+                } else {
+                    NSLog(@"%@", error);
+                }
+            }];
+            j++;
+            //NSLog(@"%@",[self stripStringOfUnwantedChars:[mObject valueForKey:@"corePhone"]]);
             
-            UIButton *mLocBtn = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 44, 44)];
-            UIImage *img =[[FRStringImage alloc] imageTextBubbleOfSize:mLocBtn.frame.size];
-            [mLocBtn setBackgroundImage:img forState:UIControlStateNormal];
-            NSString *bubbleLabel = ([mObject valueForKey:@"coreNickName"] == NULL) ? [mObject valueForKey:@"coreFirstName"] :  [mObject valueForKey:@"coreNickName"];
-//            NSLog(@"coreLocation: %@, name: %@, objId:%@",[mObject valueForKey:@"coreLocation"], [[bubbleLabel substringToIndex:2] uppercaseString],
-//                  [mObject valueForKey:@"coreObjId"]);
-            if (bubbleLabel.length >1 )
-            [mLocBtn setTitle:[[bubbleLabel substringToIndex:2] uppercaseString] forState:UIControlStateNormal];
-            else
-                [mLocBtn setTitle:[bubbleLabel uppercaseString] forState:UIControlStateNormal];
-            [mLocBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-            [mLocBtn setTitleColor:UIColorFromRGB(0x8e44ad) forState:UIControlStateHighlighted];
-            [mLocBtn setAlpha:0.8];
-            [mLocBtn setTag:i];
-            [mLocBtn addTarget:self action:@selector(friendLocInteraction:)
-              forControlEvents:UIControlEventTouchUpInside];
-            [self.mapView addSubview:mLocBtn];
-            [mLocBtn setCenter:CGPointMake(mLocBtn.frame.size.width + mLocBtn.center.x + i*(mLocBtn.frame.size.width), self.mapView.frame.size.height - mLocBtn.center.y)];
+        }
+        // Animate friends overlays
+//        NSInteger k = 0;
+        for (id subview in [self.mapView subviews]){
+            if ( [subview isKindOfClass:[UILabel class]])
+            {
+//                [UIView animateWithDuration:0.5 animations:^{
+//                    [(UILabel*)subview].frame.center = CGPointMake(self.view.x, <#CGFloat y#>)
+                //NSLog(@"Label");
+            }
             
-                
-            [self.friendsLocationArray insertObject:([mObject valueForKey:@"coreLocation"] == NULL)  ? @"0,0" : [mObject valueForKey:@"coreLocation"]  atIndex:i];
-            i++;
         }
     }
     
