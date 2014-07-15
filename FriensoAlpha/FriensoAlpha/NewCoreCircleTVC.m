@@ -30,6 +30,7 @@
 @interface NewCoreCircleTVC ()
 {
     BOOL checkCloud;
+    NSMutableArray *editedCoreList;
 }
 
 @property (nonatomic, strong) UITableView *tableView;
@@ -69,9 +70,12 @@ int activeCoreFriends = 0;
     self.coreCircleContacts = [[NSMutableArray alloc] init]; //stores phone #s
     self.coreCircleRequestStatus = [[NSMutableArray alloc] init ]; //stores status of the requests
     self.coreCircleOfFriends =[[NSMutableArray alloc] init]; //stores the name
+    editedCoreList = [[NSMutableArray alloc] init];
     
-    [self updateLocalArray];
-    //self.coreCircleContacts = [[NSMutableArray alloc] initWithObjects:@"0",@"0",@"0",nil];
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"newUserFlag"])
+        [self setCoreCircleWithBlanks];
+    else
+        [self updateLocalArray];
     
     // add tableview
     self.tableView = [[UITableView alloc] init];
@@ -89,6 +93,10 @@ int activeCoreFriends = 0;
     [super viewWillDisappear:animated];
     [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"newUserFlag"];
     [[NSUserDefaults standardUserDefaults] synchronize];
+    
+//    NSDictionary *coreFriendsDic = [[NSUserDefaults standardUserDefaults] dictionaryForKey:@"CoreFriendsContactInfoDicKey"];
+//    NSLog(@"%@", [coreFriendsDic allKeys]);
+//    NSLog(@"%@", [coreFriendsDic allValues]);
     
     if ([self.navigationController.viewControllers indexOfObject:self]==NSNotFound) {
       [self copyCoreCircleToCoreFriendsEntity]; // enables user to interact with contacts immediately
@@ -159,6 +167,7 @@ int activeCoreFriends = 0;
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     [self showPickerForIndex:indexPath.row];
+    [editedCoreList addObject:indexPath];
     
 }
 
@@ -219,10 +228,19 @@ int activeCoreFriends = 0;
     return  [dirtyContactName stringByTrimmingCharactersInSet: [NSCharacterSet characterSetWithCharactersInString:@".$() -"]];
 }
 
+- (void) setCoreCircleWithBlanks {
+    for (int i = 0 ; i < MAX_CORE_FRIENDS; i++) {
+        NSString * name = [NSString stringWithFormat:@"Core Friend %d",i+1];
+        [self.coreCircleOfFriends addObject:name];
+        [self.coreCircleContacts addObject:@""]; // we use this to check if the contact is valid to save.
+        [self.coreCircleRequestStatus addObject:@"Click to select a core friend from contacts"];
+    }
+    //NSLog(@"%@", self.coreCircleContacts);
 
+}
 -(void) updateLocalArray
 {
-    NSLog(@"--- updateLocalArray ");
+    //NSLog(@"--- updateLocalArray ");
     //[self showCoreCircle];
     activeCoreFriends = 0;
     for (int i = 0 ; i < MAX_CORE_FRIENDS; i++) {
@@ -232,6 +250,7 @@ int activeCoreFriends = 0;
         [self.coreCircleRequestStatus addObject:@"Click to select a core friend from contacts"];
        // NSLog(@"Added to Array %d",i);
     }
+    
     
     //read from cache
     [self updateFromUserDefaults];
@@ -250,7 +269,7 @@ int activeCoreFriends = 0;
                 //reload the table view
                 
                 for (id object in objects) {
-                    NSLog(@"Number of active friends %d",activeCoreFriends);
+                    //NSLog(@"Number of active friends %d",activeCoreFriends);
                     if(activeCoreFriends >= MAX_CORE_FRIENDS) {
                         NSLog(@"Atleast %d  core friends found in frienso",MAX_CORE_FRIENDS);
                         break;
@@ -387,60 +406,66 @@ int activeCoreFriends = 0;
 }
 
 -(void) updateFromUserDefaults {
-    NSDictionary *retrievedCoreFriendsDictionary = [[NSUserDefaults standardUserDefaults] dictionaryForKey:@"CoreFriendsContactInfoDicKey"];
+    NSDictionary *cfDic = [[NSUserDefaults standardUserDefaults] dictionaryForKey:@"CoreFriendsContactInfoDicKey"];
     int i = 0;
-    for (id key in retrievedCoreFriendsDictionary) {
+    for (id key in cfDic) {
         //NSLog(@"reading contact %@",[retrievedCoreFriendsDictionary objectForKey:key]);
         [self.coreCircleOfFriends replaceObjectAtIndex:i withObject:key];
-        [self.coreCircleContacts replaceObjectAtIndex:i  withObject:[retrievedCoreFriendsDictionary objectForKey:key]];
+        [self.coreCircleContacts replaceObjectAtIndex:i  withObject:[cfDic objectForKey:key]];
         [self.coreCircleRequestStatus replaceObjectAtIndex:i withObject:contactingServersForUpdate];
         i++;
         if(i == MAX_CORE_FRIENDS) {
             break;
         }
     }
+    //NSLog(@"coreCircleOfFriends:%@", self.coreCircleOfFriends);
 }
 
 -(void) copyCoreCircleToCoreFriendsEntity
 {
-#warning ensure that this doesn't append to the iCoreFriends section, but instead replaces the record
-#warning to be done in the next round 
+    // Replaces the contacts with the list as seen in the CoreCircle VC
+    FriensoAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+    NSManagedObjectContext *managedObjectContext = appDelegate.managedObjectContext;
     
     NSInteger i = 0;
     
-    for (NSString *circleContactName in self.coreCircleOfFriends){
-        //check to avoid writing contacts with no phoneNumbers
-        if(![[self.coreCircleContacts objectAtIndex:i] isEqualToString:@""]) {
-            // 25Jun14/SA
-            // saving to entity CoreFriends and start interacting with them //
-            FriensoAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
-            
-            NSManagedObjectContext *managedObjectContext =
-            appDelegate.managedObjectContext;
-            CoreFriends *cFriends = [NSEntityDescription insertNewObjectForEntityForName:@"CoreFriends"
-                                                                  inManagedObjectContext:managedObjectContext];
-            if (cFriends != nil){
-                cFriends.coreFirstName = circleContactName;
-                cFriends.corePhone     = [self.coreCircleContacts objectAtIndex:i];
-                cFriends.coreCreated   = [NSDate date];
-                cFriends.coreModified  = [NSDate date];
-                cFriends.coreType      = @"iCore Friends";
-                //NSLog(@"%@",[coreCircle objectAtIndex:i] );
-                
-                NSError *savingError = nil;
-                
-                if ([managedObjectContext save:&savingError]){
-                    NSLog(@"Successfully saved contacts to CoreCircle.");
-                } else {
-                    NSLog(@"Failed to save the managed object context.");
-                }
-            } else {
-                NSLog(@"Failed to create the new person object.");
-            }
-            
+    for (NSString *coreFriend in self.coreCircleOfFriends)
+    {
+        CoreFriends *cFriends = nil;
+        NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
+        
+        NSEntityDescription *entity = [NSEntityDescription entityForName:@"CoreFriends"
+                                                  inManagedObjectContext:managedObjectContext];
+        
+        [fetchRequest setEntity:entity];
+        NSError *error;
+        NSArray *fetchedObjects = [managedObjectContext executeFetchRequest:fetchRequest error:&error];
+        if (fetchedObjects == nil) {
+            // Handle the error.
         }
-        i += 1;
-    }
+
+        cFriends = [fetchedObjects objectAtIndex:i];
+        if (cFriends != nil){
+            cFriends.coreFirstName = coreFriend;
+            cFriends.corePhone     = [self.coreCircleContacts  objectAtIndex:i];
+            cFriends.coreCreated   = [NSDate date];
+            cFriends.coreModified  = [NSDate date];
+            cFriends.coreType      = @"iCore Friends";
+            //NSLog(@"%@",[coreCircle objectAtIndex:i] );
+            
+            NSError *savingError = nil;
+            
+            if ([managedObjectContext save:&savingError]){
+                NSLog(@"Successfully saved contacts to CoreCircle.");
+            } else {
+                NSLog(@"Failed to save the managed object context.");
+            }
+        } else {
+            NSLog(@"Failed to create the new person object.");
+        }
+            
+        i += 1; // increment index
+    } // ends for loop
 
 }
 -(void) checkCloudForCircle {
@@ -475,6 +500,8 @@ int activeCoreFriends = 0;
     NSCharacterSet *toExclude = [NSCharacterSet characterSetWithCharactersInString:@"/.()-  "];
     contactPhoneNumber = [[contactPhoneNumber componentsSeparatedByCharactersInSet:toExclude] componentsJoinedByString:@""];
     //NSLog(@"phone# %@",contactPhoneNumber);
+    
+    NSLog(@"Replacing %@ with %@", [self.coreCircleOfFriends objectAtIndex:self.cellNumberSelected],tempStr);
     
     //if the same contact is chosen again
     if( ([self.coreCircleContacts count] > self.cellNumberSelected)  && [contactPhoneNumber isEqualToString:[self.coreCircleContacts objectAtIndex:self.cellNumberSelected] ]) {
@@ -517,19 +544,20 @@ int activeCoreFriends = 0;
     //remove the existing contact from the cloud at the picked location
     [self removeCoreFriendCloud:self.cellNumberSelected];
 
-        NSLog(@"udayan");
+    //    NSLog(@"udayan");
     
     //send the core friend request to Parse.
     [self sendCoreFriendRequest:contactPhoneNumber withIndex:self.cellNumberSelected];
 
     [self.coreCircleContacts replaceObjectAtIndex:self.cellNumberSelected
                                   withObject:contactPhoneNumber];//(__bridge_transfer NSString *)(ABMultiValueCopyValueAtIndex(phones, 0))];
-    //NSLog(@"%@", self.coreCircleContacts);
+    //
     [self.coreCircleOfFriends replaceObjectAtIndex:self.cellNumberSelected withObject:tempStr];
     
     [self dismissViewControllerAnimated:YES completion:nil];
     [self.tableView reloadRowsAtIndexPaths:[self.tableView indexPathsForVisibleRows]
                           withRowAnimation:UITableViewRowAnimationNone];
+    //NSLog(@"%@", self.coreCircleContacts);
     [self refresh];
     return NO;
 }

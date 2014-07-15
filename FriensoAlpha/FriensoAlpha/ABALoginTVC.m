@@ -48,7 +48,9 @@
 @property (nonatomic) CLLocationCoordinate2D coordinate;
 @property (nonatomic, strong) PFGeoPoint *geoPoint;
 @property (nonatomic,strong) UIView *welcomeView;
-@property (nonatomic,retain) NSMutableArray *coreFriendsArray;
+@property (nonatomic, retain) NSMutableArray *coreFriendsArray;
+@property (nonatomic, strong) NSMutableArray *coreCircleOfFriends;
+@property (nonatomic, strong) NSMutableArray *coreCircleContacts;
 @property (nonatomic,retain) UISwitch *locationSwitch;
 @property (nonatomic,strong) CLLocation *location;
 
@@ -66,6 +68,14 @@
 @synthesize retVal          = _retVal;
 @synthesize keepMeLoggedin = _keepMeLoggedin;
 @synthesize welcomeView = _welcomeView;
+
+//int activeCoreFriends = 0;
+static int MAX_CORE_FRIENDS = 3;
+static NSString * coreFriendAcceptMessage = @"Request accepted. User added to core circle";
+static NSString * coreFriendRejectMessage = @"Request rejected. Click to select someone else";
+static NSString * coreFriendRequestSendMessage = @"Request send. Awaiting response";
+static NSString * coreFriendNotOnFriensoMessage = @"User not on Frienso";
+static NSString * contactingServersForUpdate = @"Trying to get latest status from the servers";
 
 
 - (id)initWithStyle:(UITableViewStyle)style
@@ -90,6 +100,9 @@
     loginBtnLabel = [[NSMutableArray alloc] initWithObjects:@"Sign In", @"Register", nil];
     
     [self.navigationController.navigationBar setHidden:YES];
+    
+    self.coreCircleRequestStatus = [[NSMutableArray alloc] init ]; //stores status of the requests
+    self.coreCircleContacts = [[NSMutableArray alloc] init]; //stores phone #s
     
     //[self getDeviceLocationInfo];
     
@@ -1407,6 +1420,36 @@ gradient.colors = [NSArray arrayWithObjects:(id)[startColour CGColor],(id)[endCo
                                             if (user) {
                                                 NSLog(@"[ Parse successful login ]"); // Do stuff after successful login.
                                                 // sync from parse!
+                                                //[self syncExistingCoreFriendsFromParseForUser:user];
+                                                PFQuery * pfquery = [PFQuery queryWithClassName:@"CoreFriendRequest"];
+                                                [pfquery whereKey:  @"sender" equalTo:user];
+                                                [pfquery includeKey:@"recipient"];
+                                                [pfquery findObjectsInBackgroundWithBlock:^(NSArray *objects,
+                                                                                            NSError *error)
+                                                {
+                                                    if (!error) {
+                                                        //NSLog(@"number of sent requests: %ld",objects.count);
+                                                        //NSLog(@"%@",objects);
+                                                        for (PFObject *object in objects) {
+                                                            NSLog(@"%@", [object objectForKey:@"recipientName"]);
+                                                        }
+                                                    }
+                                                }];
+                                                PFQuery *query = [PFQuery queryWithClassName:@"CoreFriendNotOnFriensoYet"];
+                                                [query whereKey:  @"sender" equalTo:user];
+                                                [query includeKey:@"recipient"];
+                                                [query findObjectsInBackgroundWithBlock:^(NSArray *objects,
+                                                                                            NSError *error)
+                                                 {
+                                                     if (!error) {
+                                                         //NSLog(@"number of sent requests to users not on frienso: %ld",objects.count);
+                                                         //NSLog(@"%@",objects);
+                                                         for (PFObject *object in objects) {
+                                                             NSLog(@"%@", [object objectForKey:@"recipientName"]);
+                                                         }
+                                                     }
+                                                 }];
+                                                /********************************************
                                                 PFQuery *query = [PFQuery queryWithClassName:@"UserCoreFriends"];
                                                 [query whereKey:@"user" equalTo:user];
                                                 [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error)
@@ -1422,9 +1465,9 @@ gradient.colors = [NSArray arrayWithObjects:(id)[startColour CGColor],(id)[endCo
                                                              [self saveCFDictionaryToNSUserDefaults:parseCoreFriendsDic];
                                                              self.coreFriendsArray = [[NSMutableArray alloc] initWithArray:[parseCoreFriendsDic allKeys]];
                                                              
-                                                             /* cache those uWatch
-                                                             [[[FRSyncFriendConnections alloc] init] syncUWatchToCoreFriends]; // Sync those uWatch
-                                                              */
+                                                             // cache those uWatch
+                                                             //[[[FRSyncFriendConnections alloc] init] syncUWatchToCoreFriends]; // Sync those uWatch
+                                                 
                                                          }
                                                          // Notify that records were fetched from Parse
                                                          [self  actionAddFriensoEvent:@"Contacts successfully fetched and restored."];
@@ -1433,7 +1476,7 @@ gradient.colors = [NSArray arrayWithObjects:(id)[startColour CGColor],(id)[endCo
                                                          NSLog(@"!Error: %@ %@", error, [error userInfo]);
                                                      }
                                                  }];
-                                                
+                                                ********************************************/
                                                 
                                             } else {
                                                 NSLog(@"[ ERROR: Login failed | %@",error);// The login failed. Check error to see why.
@@ -1509,5 +1552,94 @@ gradient.colors = [NSArray arrayWithObjects:(id)[startColour CGColor],(id)[endCo
     }
     //[self configureOverlay]; NSLog(@"calling configureOverlay");
     
+}
+- (void) syncExistingCoreFriendsFromParseForUser:(PFUser*)thisUser
+{
+    
+    ///update status from Parse:
+    PFQuery * pfquery = [PFQuery queryWithClassName:@"CoreFriendRequest"];
+    [pfquery includeKey:@"recipient"];
+    [pfquery whereKey:  @"sender" equalTo:[PFUser currentUser]];
+    [pfquery findObjectsInBackgroundWithBlock:^(NSArray *objects,
+                                                NSError *error) {
+        NSInteger i = 0;
+        int activeCoreFriends = 0;
+        if(!error) {
+            if([objects count] >0) {//if atleast one record is found, then only we want to
+                //reload the table view
+                //NSLog(@"no of core friend req's: %ld",objects.count);
+                for (id object in objects) {
+                    NSLog(@"Number of active friends %d",activeCoreFriends);
+                    if(activeCoreFriends >= MAX_CORE_FRIENDS) {
+                        NSLog(@"Atleast %d  core friends found in frienso",MAX_CORE_FRIENDS);
+                        break;
+                    }
+                    //PFObject * pfobject = object;
+                    PFUser * sender = [object objectForKey:@"recipient"];
+                    NSString *senderPhoneNumber = sender[@"phoneNumber"];
+                    NSString *response = [object objectForKey:@"status"];
+                    NSString *senderName = [object objectForKey:@"recipientName"];
+                    [self.coreCircleRequestStatus replaceObjectAtIndex:i withObject:coreFriendRequestSendMessage];
+                    [self.coreCircleContacts replaceObjectAtIndex:i withObject:senderPhoneNumber];
+                    [self.coreCircleOfFriends replaceObjectAtIndex:i withObject:senderName];
+                    
+                    //NSLog(@"> %@,%@,%@,%@",sender, senderName,response, senderPhoneNumber);
+                    
+                    if([response isEqualToString:@"send"]) {
+                        [self.coreCircleRequestStatus replaceObjectAtIndex:i withObject:coreFriendRequestSendMessage];
+                    } else if ([response isEqualToString:@"reject"]) {
+                        [self.coreCircleRequestStatus replaceObjectAtIndex:i withObject:coreFriendRejectMessage];
+                    } else  if([response isEqualToString:@"accept"]) {
+                        [self.coreCircleRequestStatus replaceObjectAtIndex:i withObject:coreFriendAcceptMessage];
+                    } else {
+                        [self.coreCircleRequestStatus replaceObjectAtIndex:i withObject:response];
+                    }
+                    i++;
+                    activeCoreFriends++;
+                    
+                }
+            }
+            
+            //only if max are not found.
+//            if(activeCoreFriends < MAX_CORE_FRIENDS) {
+//                
+//                // check if the contact is pending list, then show that information
+//                PFQuery * pfquery = [PFQuery queryWithClassName:@"CoreFriendNotOnFriensoYet"];
+//                [pfquery whereKey:@"sender" equalTo:[PFUser currentUser]];
+//                // [pfquery whereKey:@"recipientPhoneNumber" containedIn:self.coreCircleContacts];
+//                [pfquery findObjectsInBackgroundWithBlock:^(NSArray *objects,
+//                                                            NSError *error) {
+//                    if(!error) {
+//                        int i = activeCoreFriends;
+//                        if([objects count] >0) {//if atleast one record is found, then only we want to
+//                            //reload the table view
+//                            for (id object in objects) {
+//                                if(activeCoreFriends >= MAX_CORE_FRIENDS) {
+//                                    NSLog(@"Atleast %d  core friends found",MAX_CORE_FRIENDS);
+//                                    break;
+//                                }
+//                                
+//                                NSString *senderPhoneNumber = (NSString *)object[@"recipientPhoneNumber"];
+//                                NSString *senderName = [object objectForKey:@"recipientName"];
+//                                [self.coreCircleContacts replaceObjectAtIndex:i withObject:senderPhoneNumber];
+//                                [self.coreCircleOfFriends replaceObjectAtIndex:i withObject:senderName];
+//                                [self.coreCircleRequestStatus replaceObjectAtIndex:i withObject:coreFriendNotOnFriensoMessage];
+//                                i++;
+//                                activeCoreFriends++;
+//                            }
+//                        }
+//                    }else {
+//                        NSLog(@"%@",error);
+//                    }
+//                    //[self refresh];
+//                }];
+//            } else {
+//                //[self refresh];
+//            }
+        } else {
+            NSLog(@"%@",error);
+        }
+    }];
+
 }
 @end

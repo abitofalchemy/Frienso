@@ -91,7 +91,9 @@ static NSString *coreFriendsCell = @"coreFriendsCell";
     //[frCDPObject updateThisUserLocation];
     //[frCDPObject updateCoreFriendsLocation];
     
-    
+    NSDictionary *coreFriendsDic = [[NSUserDefaults standardUserDefaults] dictionaryForKey:@"CoreFriendsContactInfoDicKey"];
+    NSLog(@"%@", [coreFriendsDic allKeys]);
+    NSLog(@"%@", [coreFriendsDic allValues]);
 	
     // [[[FRSyncFriendConnections alloc] init] listWatchCoreFriends]; // List those uWatch
     [[[FRSyncFriendConnections alloc] init] syncUWatchToCoreFriends]; // Sync those uWatch

@@ -5,8 +5,18 @@ Frienso iOS Alpha
 
 Version History
 ---------------
+* ver 1.5 build 74+
+    15Jul14/SA: Fixing the sync from parse using Udayan's code in Profile/Core Friends
+    copyCoreCircleToCoreFriendsEntity is fixed to create and edit the core list more accurately
 
-* ver 1.5 build 71+
+    Test the new account reg on a phone
+    
+    Test the login into account on phone
+    
+    
+* ver 1.5 build 74
+
+    14Jul14/SA New distribution build 
 
     13Jul14/SA: Behavior when HelpMeNow is triggered is now working, this means triggering a helpMeNow
     request shows a timer VC and after that can be canceled if needed, or if it times out PN are sent

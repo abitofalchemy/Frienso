@@ -1265,7 +1265,15 @@ enum PinAnnotationTypeTag {
                                                 if (!user) {
                                                     NSLog(@"Login to Parse failed with this error: %@",error);
                                                 } else {
-                                                    [self runNormalModeUI];
+                                                    
+                                                    [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithInteger:1] forKey:@"installationStep"];
+                                                    [[NSUserDefaults standardUserDefaults] synchronize];
+                                                    
+                                                    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"newUserFlag"]){
+                                                        [self performSegueWithIdentifier:@"newCoreCircle" sender:self];
+                                                        //NSLog(@"{Presenting newCoreCircle}");
+                                                    } else
+                                                        [self runNormalModeUI];
                                                 }
                                             }];
             
@@ -1277,151 +1285,154 @@ enum PinAnnotationTypeTag {
         } // otherwise do nothing
         
         
-        [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithInteger:1] forKey:@"installationStep"];
-        [[NSUserDefaults standardUserDefaults] synchronize];
         
-        if ([[NSUserDefaults standardUserDefaults] boolForKey:@"newUserFlag"]){
-            [self performSegueWithIdentifier:@"newCoreCircle" sender:self];
-            //NSLog(@"{Presenting newCoreCircle}");
-        }
         
     } else if ([installStepNum isEqualToNumber:[NSNumber numberWithInteger:1]])     {
         NSLog(@"  After First install");
         [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithInteger:2] forKey:@"installationStep"];
         [[NSUserDefaults standardUserDefaults] synchronize];
         
-        if ([[NSUserDefaults standardUserDefaults] boolForKey:@"newUserFlag"]){
-            [self performSegueWithIdentifier:@"newCoreCircle" sender:self];
-            //NSLog(@"{Presenting newCoreCircle}");
-        }
-    } else if ([installStepNum isEqualToNumber:[NSNumber numberWithInteger:2]])     {
-        NSLog(@"+++++++++++   Returns from coreCircle vc");
-        [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithInteger:3] forKey:@"installationStep"];
-        [[NSUserDefaults standardUserDefaults] synchronize];
-        
-        // Login to Parse
-        NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-        if ( [userDefaults objectForKey:@"adminID"] != NULL ) {
-            [PFUser logInWithUsernameInBackground:[userDefaults objectForKey:@"adminID"]
-                                         password:[userDefaults objectForKey:@"adminPass"]
-                                            block:^(PFUser *user, NSError *error) {
-                                                if (!user) {
-                                                    NSLog(@"Login to Parse failed with this error: %@",error);
-                                                }
-                                            }];
-            
-            // If the following ACL settins are required: Set the proper ACLs
-            /*        PFACL *ACL = [PFACL ACLWithUser:[PFUser currentUser]];
-             [ACL setPublicReadAccess:YES];
-             [PFACL setDefaultACL:ACL withAccessForCurrentUser:YES];
-             */
-        } // otherwise do nothing
-        // Check if self is currentUser (Parse)
-        PFUser *currentUser = [PFUser currentUser];
-        if (currentUser) {
-            NSLog(@"Successful login to Parse:%@",currentUser.email);
-        } else
-            NSLog(@"no current user");
-        
-        // Determine App Frame
-        self.appFrameProperties = [[NSArray alloc] initWithObjects:
-                                   [NSValue valueWithCGRect:[[UIScreen mainScreen] applicationFrame]],
-                                   [NSValue valueWithCGRect:self.navigationController.navigationBar.frame],
-                                   [NSValue valueWithCGRect:self.navigationController.toolbar.frame], nil];
-        
-        self.friendsLocationArray = [[NSMutableArray alloc] init]; // friends location cache
-        self.pendingRqstsArray    = [[NSMutableArray alloc] init]; // Init pending requests holding array
-        
-        // Show progress indicator to tell user to wait a bit
-        self.loadingView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
-        [self.loadingView setColor:UIColorFromRGB(0xf47d44)];
-        [self.view addSubview:self.loadingView];
-        [self.loadingView setCenter:CGPointMake(self.view.center.x, self.view.bounds.size.height*0.2)];
-        [self.loadingView startAnimating];
-        
-        // Seting up the UI
-        [self setupToolBarIcons];
-        [self setupNavigationBarImage];
-        [self setupMapView];
-        [self setupRequestScrollView];
-        [self setupEventsTableView];
-        
-        
-        
-        [self.locationManager startUpdatingLocation];
-        [self setInitialLocation:self.locationManager.location];
-        self.mapView.region = MKCoordinateRegionMake(self.location.coordinate, MKCoordinateSpanMake(0.05f, 0.05f));
-        if([self.loadingView isAnimating])
-            [self.loadingView stopAnimating];
-        
-        
-        //  Cache resources from parse // The className to query on
-        PFQuery *query = [PFQuery queryWithClassName:@"Resources"];
-        [query orderByDescending:@"createdAt"];
-        query.cachePolicy = kPFCachePolicyNetworkElseCache;
-        [query getFirstObjectInBackgroundWithBlock:^(PFObject *object, NSError *error) {
-            if (!object) {
-                NSLog(@"The getFirstObject request failed.");
-            } else {
-                
-                FriensoAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
-                
-                NSManagedObjectContext *managedObjectContext =
-                appDelegate.managedObjectContext;
-                
-                // First check to see if the objectId already exists
-                NSEntityDescription *entityDescription = [NSEntityDescription entityForName:@"FriensoEvent"
-                                                                     inManagedObjectContext:managedObjectContext];
-                NSFetchRequest *request = [[NSFetchRequest alloc] init];
-                [request setPredicate:[NSPredicate predicateWithFormat:@"eventObjId like %@",object.objectId]];
-                [request setEntity:entityDescription];
-                BOOL unique = YES;
-                NSError  *error;
-                NSArray *items = [managedObjectContext executeFetchRequest:request error:&error];
-                if(items.count > 0){
-                    unique = NO;
-                    
-                }
-                if (unique) {
-                    FriensoEvent *firstFriensoEvent =
-                    [NSEntityDescription insertNewObjectForEntityForName:@"FriensoEvent"
-                                                  inManagedObjectContext:managedObjectContext];\
-                    
-                    if (firstFriensoEvent != nil)
-                    {
-                        
-                        firstFriensoEvent.eventTitle     = [object valueForKey:@"resource"];
-                        firstFriensoEvent.eventSubtitle  = [object valueForKey:@"detail"];
-                        firstFriensoEvent.eventLocation  = [object valueForKey:@"ResourceLink"];
-                        firstFriensoEvent.eventCategory  = [object valueForKey:@"categoryType"];
-                        firstFriensoEvent.eventCreated   = [NSDate date];
-                        firstFriensoEvent.eventModified  = object.createdAt;
-                        firstFriensoEvent.eventObjId     = object.objectId;
-                        firstFriensoEvent.eventImage     = [object valueForKey:@"rImage"];
-                        firstFriensoEvent.eventPriority  = [NSNumber numberWithInteger:2];
-                        
-                        NSError *savingError = nil;
-                        if([managedObjectContext save:&savingError]) {
-                            NSLog(@"Successfully cached the resource");
-                        } else
-                            NSLog(@"Failed to save the context. Error = %@", savingError);
-                        // update the Parse record:
-                        [object setObject:[NSNumber numberWithBool:YES]
-                                   forKey:@"wasCached"];
-                        [object saveInBackground];
-                        
-                    } else {
-                        NSLog(@"Failed to create a new event.");
-                    }
-                } //else NSLog(@"! Parse event is not unique");
-            }
-        }];
+        [self runNormalModeUI];
+//        if ([[NSUserDefaults standardUserDefaults] boolForKey:@"newUserFlag"]){
+//            [self performSegueWithIdentifier:@"newCoreCircle" sender:self];
+//            //NSLog(@"{Presenting newCoreCircle}");
+//        } else
+//            [self runNormalModeUI];
+//        
+//    } else if ([installStepNum isEqualToNumber:[NSNumber numberWithInteger:2]])     {
+//        NSLog(@"+++++++++++   Returns from coreCircle vc");
+//        [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithInteger:3] forKey:@"installationStep"];
+//        [[NSUserDefaults standardUserDefaults] synchronize];
+//        
+//        // Login to Parse
+//        NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+//        if ( [userDefaults objectForKey:@"adminID"] != NULL ) {
+//            [PFUser logInWithUsernameInBackground:[userDefaults objectForKey:@"adminID"]
+//                                         password:[userDefaults objectForKey:@"adminPass"]
+//                                            block:^(PFUser *user, NSError *error) {
+//                                                if (!user) {
+//                                                    NSLog(@"Login to Parse failed with this error: %@",error);
+//                                                }
+//                                            }];
+//            
+//            // If the following ACL settins are required: Set the proper ACLs
+//            /*        PFACL *ACL = [PFACL ACLWithUser:[PFUser currentUser]];
+//             [ACL setPublicReadAccess:YES];
+//             [PFACL setDefaultACL:ACL withAccessForCurrentUser:YES];
+//             */
+//        } // otherwise do nothing
+//        // Check if self is currentUser (Parse)
+//        PFUser *currentUser = [PFUser currentUser];
+//        if (currentUser) {
+//            NSLog(@"Successful login to Parse:%@",currentUser.email);
+//        } else
+//            NSLog(@"no current user");
+//        
+//        // Determine App Frame
+//        self.appFrameProperties = [[NSArray alloc] initWithObjects:
+//                                   [NSValue valueWithCGRect:[[UIScreen mainScreen] applicationFrame]],
+//                                   [NSValue valueWithCGRect:self.navigationController.navigationBar.frame],
+//                                   [NSValue valueWithCGRect:self.navigationController.toolbar.frame], nil];
+//        
+//        self.friendsLocationArray = [[NSMutableArray alloc] init]; // friends location cache
+//        self.pendingRqstsArray    = [[NSMutableArray alloc] init]; // Init pending requests holding array
+//        
+//        // Show progress indicator to tell user to wait a bit
+//        self.loadingView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+//        [self.loadingView setColor:UIColorFromRGB(0xf47d44)];
+//        [self.view addSubview:self.loadingView];
+//        [self.loadingView setCenter:CGPointMake(self.view.center.x, self.view.bounds.size.height*0.2)];
+//        [self.loadingView startAnimating];
+//        
+//        // Seting up the UI
+//        [self setupToolBarIcons];
+//        [self setupNavigationBarImage];
+//        [self setupMapView];
+//        [self setupRequestScrollView];
+//        [self setupEventsTableView];
+//        
+//        
+//        
+//        [self.locationManager startUpdatingLocation];
+//        [self setInitialLocation:self.locationManager.location];
+//        self.mapView.region = MKCoordinateRegionMake(self.location.coordinate, MKCoordinateSpanMake(0.05f, 0.05f));
+//        if([self.loadingView isAnimating])
+//            [self.loadingView stopAnimating];
+//        
+//        
+//        //  Cache resources from parse // The className to query on
+//        PFQuery *query = [PFQuery queryWithClassName:@"Resources"];
+//        [query orderByDescending:@"createdAt"];
+//        query.cachePolicy = kPFCachePolicyNetworkElseCache;
+//        [query getFirstObjectInBackgroundWithBlock:^(PFObject *object, NSError *error) {
+//            if (!object) {
+//                NSLog(@"The getFirstObject request failed.");
+//            } else {
+//                
+//                FriensoAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+//                
+//                NSManagedObjectContext *managedObjectContext =
+//                appDelegate.managedObjectContext;
+//                
+//                // First check to see if the objectId already exists
+//                NSEntityDescription *entityDescription = [NSEntityDescription entityForName:@"FriensoEvent"
+//                                                                     inManagedObjectContext:managedObjectContext];
+//                NSFetchRequest *request = [[NSFetchRequest alloc] init];
+//                [request setPredicate:[NSPredicate predicateWithFormat:@"eventObjId like %@",object.objectId]];
+//                [request setEntity:entityDescription];
+//                BOOL unique = YES;
+//                NSError  *error;
+//                NSArray *items = [managedObjectContext executeFetchRequest:request error:&error];
+//                if(items.count > 0){
+//                    unique = NO;
+//                    
+//                }
+//                if (unique) {
+//                    FriensoEvent *firstFriensoEvent =
+//                    [NSEntityDescription insertNewObjectForEntityForName:@"FriensoEvent"
+//                                                  inManagedObjectContext:managedObjectContext];\
+//                    
+//                    if (firstFriensoEvent != nil)
+//                    {
+//                        
+//                        firstFriensoEvent.eventTitle     = [object valueForKey:@"resource"];
+//                        firstFriensoEvent.eventSubtitle  = [object valueForKey:@"detail"];
+//                        firstFriensoEvent.eventLocation  = [object valueForKey:@"ResourceLink"];
+//                        firstFriensoEvent.eventCategory  = [object valueForKey:@"categoryType"];
+//                        firstFriensoEvent.eventCreated   = [NSDate date];
+//                        firstFriensoEvent.eventModified  = object.createdAt;
+//                        firstFriensoEvent.eventObjId     = object.objectId;
+//                        firstFriensoEvent.eventImage     = [object valueForKey:@"rImage"];
+//                        firstFriensoEvent.eventPriority  = [NSNumber numberWithInteger:2];
+//                        
+//                        NSError *savingError = nil;
+//                        if([managedObjectContext save:&savingError]) {
+//                            NSLog(@"Successfully cached the resource");
+//                        } else
+//                            NSLog(@"Failed to save the context. Error = %@", savingError);
+//                        // update the Parse record:
+//                        [object setObject:[NSNumber numberWithBool:YES]
+//                                   forKey:@"wasCached"];
+//                        [object saveInBackground];
+//                        
+//                    } else {
+//                        NSLog(@"Failed to create a new event.");
+//                    }
+//                } //else NSLog(@"! Parse event is not unique");
+//            }
+//        }];
 
+    } else if ([[NSUserDefaults standardUserDefaults] boolForKey:@"getStartedFlag"] &&
+                       [[NSUserDefaults standardUserDefaults] objectForKey:@"adminID"] != NULL)
+    {
+        NSLog(@"- viewDidLoad, getstarted flag ok, adminID not null");
+        [self runNormalModeUI];
     }
 }
 - (void) setupUI
 {
     // Seting up the UI
+    NSLog(@"Setup UI");
     [self setupMapView];
     [self setupRequestScrollView];
     [self setupEventsTableView];
@@ -1431,18 +1442,6 @@ enum PinAnnotationTypeTag {
 }
 - (void) runNormalModeUI {
     NSLog(@"Normal mode");
-    
-    
-//    // Check if self is currentUser (Parse)
-//    PFUser *currentUser = [PFUser currentUser];
-//    if (currentUser) {
-//        NSLog(@"Successful login to Parse:%@",currentUser.email);
-//    } else
-//        NSLog(@"no current user");
-    
-    // Cache your extended circle of Friends
-    //[[[FRSyncFriendConnections alloc] init] syncUWatchToCoreFriends]; // Sync those uWatch
-    
     
     // Determine App Frame
     self.appFrameProperties = [[NSArray alloc] initWithObjects:
@@ -1460,12 +1459,13 @@ enum PinAnnotationTypeTag {
     [self.loadingView setCenter:CGPointMake(self.view.center.x, self.view.bounds.size.height*0.2)];
     [self.loadingView startAnimating];
     
-    // Seting up the UI
-    [self setupToolBarIcons];
-    [self setupNavigationBarImage];
-    [self setupMapView];
-    [self setupRequestScrollView];
-    [self setupEventsTableView];
+//    // Seting up the UI
+//    [self setupToolBarIcons];
+//    [self setupNavigationBarImage];
+//    [self setupMapView];
+//    [self setupRequestScrollView];
+//    [self setupEventsTableView];
+    [self setupUI];
     
     // Hide the Options Menu when navigating to Options, otherwise show
     for (id subview in [self.navigationController.toolbar subviews]){

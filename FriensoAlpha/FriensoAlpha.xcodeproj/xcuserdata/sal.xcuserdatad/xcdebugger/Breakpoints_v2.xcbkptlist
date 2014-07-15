@@ -47,7 +47,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "867"
             endingLineNumber = "867"
-            landmarkName = "-reloadSection:withRowAnimation:"
+            landmarkName = "-tableView:didSelectRowAtIndexPath:"
             landmarkType = "5">
             <Locations>
                <Location
@@ -88,11 +88,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "FriensoAlpha/NewCoreCircleTVC.m"
-            timestampString = "426615755.236527"
+            timestampString = "427142338.646572"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "124"
-            endingLineNumber = "124"
+            startingLineNumber = "132"
+            endingLineNumber = "132"
             landmarkName = "-tableView:cellForRowAtIndexPath:"
             landmarkType = "5">
          </BreakpointContent>
@@ -350,7 +350,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "FriensoAlpha/FriensoViewController.m"
-            timestampString = "427001984.022214"
+            timestampString = "427152943.256634"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1754"
@@ -414,7 +414,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "FriensoAlpha/FriensoViewController.m"
-            timestampString = "427001984.022214"
+            timestampString = "427152943.256634"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "2264"
@@ -437,6 +437,38 @@
             endingLineNumber = "11"
             landmarkName = "@implementation CDFriensoEvent"
             landmarkType = "3">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "FriensoAlpha/ABALoginTVC.m"
+            timestampString = "427114605.066883"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1572"
+            endingLineNumber = "1572"
+            landmarkName = "-syncExistingCoreFriendsFromParseForUser:"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "FriensoAlpha/ABALoginTVC.m"
+            timestampString = "427114605.066883"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1586"
+            endingLineNumber = "1586"
+            landmarkName = "-syncExistingCoreFriendsFromParseForUser:"
+            landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>
