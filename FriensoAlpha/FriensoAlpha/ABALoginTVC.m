@@ -92,7 +92,7 @@ static NSString * contactingServersForUpdate = @"Trying to get latest status fro
 {
     [super viewDidLoad];
     
-    NSLog(@"[ ABALoginTVC ]");
+    if (DBG) NSLog(@"[ ABALoginTVC ]");
 
     // Initialization
     loginSections = [[NSArray alloc] initWithObjects:@"FRIENSO", @"Log In",@"Options",@"Footer", nil];
@@ -101,9 +101,9 @@ static NSString * contactingServersForUpdate = @"Trying to get latest status fro
     
     [self.navigationController.navigationBar setHidden:YES];
     
-    self.coreCircleRequestStatus = [[NSMutableArray alloc] init ]; //stores status of the requests
-    self.coreCircleContacts = [[NSMutableArray alloc] init]; //stores phone #s
-    
+    self.coreCircleRequestStatus= [[NSMutableArray alloc] init ]; //stores status of the requests
+    self.coreCircleContacts     = [[NSMutableArray alloc] init]; //stores phone #s
+    self.coreCircleOfFriends    = [[NSMutableArray alloc] init];
     //[self getDeviceLocationInfo];
     
     
@@ -140,7 +140,7 @@ static NSString * contactingServersForUpdate = @"Trying to get latest status fro
         return 3;
 }
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
-    //NSLog(@"%f",[tableView rowHeight]);
+    //if (DBG) NSLog(@"%f",[tableView rowHeight]);
     if (indexPath.section == 3)
         return [tableView rowHeight]*2.0f;
     else return [tableView rowHeight];
@@ -432,7 +432,7 @@ static NSString * contactingServersForUpdate = @"Trying to get latest status fro
         //[self.tableView reloadData];
         //self.tableView set[username setText:nameTextField];
         [self reloadSection:1 withRowAnimation:UITableViewRowAnimationNone];
-        //NSLog(@"[ Register Email]");
+        //if (DBG) NSLog(@"[ Register Email]");
     }
 }
 
@@ -440,7 +440,7 @@ static NSString * contactingServersForUpdate = @"Trying to get latest status fro
 {
     BOOL returnVal = NO;
     // look for the saved search location in NSUserDefaults
-    //NSLog(@"isUserInNSUserDefuaults");
+    //if (DBG) NSLog(@"isUserInNSUserDefuaults");
     NSUserDefaults *userInLocal = [NSUserDefaults standardUserDefaults];
     NSString *adminKey = [userInLocal objectForKey:@"adminID"];
     NSString *passwKey = [userInLocal objectForKey:@"adminPass"];
@@ -456,7 +456,7 @@ static NSString * contactingServersForUpdate = @"Trying to get latest status fro
         } else {
             
             //if ([adminKey isEqualToString:user] && [passwKey isEqualToString:pass]) {
-            NSLog(@"*** in NSUserDefaults and a match ***");
+            if (DBG) NSLog(@"*** in NSUserDefaults and a match ***");
             returnVal = YES;
         }
         
@@ -495,7 +495,7 @@ static NSString * contactingServersForUpdate = @"Trying to get latest status fro
                 **/
                 
                 
-                //  NSLog(@"existingUser set");
+                //  if (DBG) NSLog(@"existingUser set");
                 //  Sign In and skip coreCircle View Controller
                 [userInLocal setObject:@"1" forKey:@"existingUser"];
                 [userInLocal synchronize];
@@ -517,7 +517,7 @@ static NSString * contactingServersForUpdate = @"Trying to get latest status fro
 //     * http://www.theappcodeblog.com/2011/05/16/nsnotificationcenter-tutorial-using-the-notification-center-in-your-iphone-app/
 //     * */
 //{
-//    NSLog(@"*** registerAdminUser ***");
+//    if (DBG) NSLog(@"*** registerAdminUser ***");
 //    _retVal = NO;
 //    
 //    if ([self validUsername:email andPassword:passWrd]){
@@ -550,7 +550,7 @@ static NSString * contactingServersForUpdate = @"Trying to get latest status fro
 //                                                   NSData *data, NSError *error) {
 //                                               if ([data length] >0 && error == nil){
 //                                                   NSString *html = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-//                                                   NSLog(@"HTML = %@", html);
+//                                                   if (DBG) NSLog(@"HTML = %@", html);
 //                                                   UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Response from server"
 //                                                                                                       message:html
 //                                                                                                      delegate:nil
@@ -564,18 +564,18 @@ static NSString * contactingServersForUpdate = @"Trying to get latest status fro
 //                                                   
 //                                               }
 //                                               else if ([data length] == 0 && error == nil){
-//                                                   NSLog(@"Nothing was downloaded.");
+//                                                   if (DBG) NSLog(@"Nothing was downloaded.");
 //                                                   
 //                                               }
 //                                               else if (error != nil){
-//                                                   NSLog(@"Error happened = %@", error);
+//                                                   if (DBG) NSLog(@"Error happened = %@", error);
 //                                                   
 //                                               }
 //                                           }];
 //        
 //        /*   or can we use :
 //         NSString *str = [self stringFromDict:dict];
-//         NSLog(@"from: writeDictionary:%@",str);
+//         if (DBG) NSLog(@"from: writeDictionary:%@",str);
 //         NSData *myRequestData = [str dataUsingEncoding:NSASCIIStringEncoding allowLossyConversion:NO];
 //         
 //        [[NSNotification ]removeObserver:self];
@@ -583,7 +583,7 @@ static NSString * contactingServersForUpdate = @"Trying to get latest status fro
 //        
 //        [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:@"RegisterUserWithUserAccountDictNotification" object:self userInfo:newUserDict]];
 //        [[NSNotification defaultCenter]removeObserver:self];
-//        NSLog(@"Notification with dict: %@", newUserDict);
+//        if (DBG) NSLog(@"Notification with dict: %@", newUserDict);
 //         */
 //        
 //        return _retVal = YES;
@@ -618,7 +618,7 @@ static NSString * contactingServersForUpdate = @"Trying to get latest status fro
 
 //-(void)registerUserWithUserAccountDictNotification:(NSNotification *)notification{
 //    
-//    NSLog(@"notification: %@", notification);
+//    if (DBG) NSLog(@"notification: %@", notification);
 //    
 //    NSMutableDictionary *accountDict = [notification object];
 //    NSString *emailStr = [accountDict objectForKey:@"user_email"];
@@ -677,7 +677,7 @@ static NSString * contactingServersForUpdate = @"Trying to get latest status fro
     
     
     NSString *str = [self stringFromDict:dict];
-    NSLog(@"from: writeDictionary:%@",str);
+    if (DBG) NSLog(@"from: writeDictionary:%@",str);
     NSData *myRequestData = [str dataUsingEncoding:NSASCIIStringEncoding allowLossyConversion:NO];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
     [request setHTTPMethod: @"POST"];
@@ -690,13 +690,13 @@ static NSString * contactingServersForUpdate = @"Trying to get latest status fro
     
     NSString *responseStr = [[NSString alloc] initWithData:responseData encoding:NSASCIIStringEncoding] ;
     
-    NSLog(@"Response string from writedict... is : %@",responseStr);
+    if (DBG) NSLog(@"Response string from writedict... is : %@",responseStr);
     return responseStr;
     
 }
 
 -(NSString *)stringFromDict:(NSDictionary *)dict{
-    //NSLog(@"stringFromDict %d", dict.count);
+    //if (DBG) NSLog(@"stringFromDict %d", dict.count);
     NSArray * myA = [dict allKeys];
     NSString *key;
     NSString *val;
@@ -812,14 +812,14 @@ static NSString * contactingServersForUpdate = @"Trying to get latest status fro
         
         if ( [self validUsername:username.text andPassword:password.text]) // Is input valid?
         {
-            NSLog(@"** valid input **");
+            if (DBG) NSLog(@"** valid input **");
         } else {
             return ;
         }
         
         if ( [self isUserInNSUserDefaults: username.text havingPassword:password.text]){
             // Case might occur when user created an account but did not complete coreCircle
-            NSLog(@"Already Stored Locally, check cloud if a circle exists");
+            if (DBG) NSLog(@"Already Stored Locally, check cloud if a circle exists");
             [self presentCoreCircleSetupAndCheckCloudVC];
             //add logic to handle if the user is already in Parse!
                 
@@ -833,11 +833,11 @@ static NSString * contactingServersForUpdate = @"Trying to get latest status fro
                                withSubtitle:@"Welcome to Frienso."]; // FriensoEvent
                 
                 // sync core circle from Parse | skip to the Frienso Dashboard
-                NSLog(@"--- Returning to Home View");
+                if (DBG) NSLog(@"--- Returning to Home View");
                 [self popDashboardVC];
                 
             } else {
-                NSLog(@"[ Register new user ]");
+                if (DBG) NSLog(@"[ Register new user ]");
                 [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"newUserFlag"];
                 [[NSUserDefaults standardUserDefaults] synchronize];
                 
@@ -852,7 +852,7 @@ static NSString * contactingServersForUpdate = @"Trying to get latest status fro
         }
         
     } else if (indexPath.section == 2){
-        //NSLog(@"section 2: %d",tableView.indexPathForSelectedRow.row);
+        //if (DBG) NSLog(@"section 2: %d",tableView.indexPathForSelectedRow.row);
         NSString *alertTitleStr = [tableView cellForRowAtIndexPath:indexPath].textLabel.text;
         UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:alertTitleStr
                                                             message:@"Enter your institution email"
@@ -873,7 +873,7 @@ static NSString * contactingServersForUpdate = @"Trying to get latest status fro
 }
 
 - (void) reloadSection:(NSInteger)section withRowAnimation:(UITableViewRowAnimation)rowAnimation {
-    //NSLog(@"login btn label %@", loginBtnLabel);
+    //if (DBG) NSLog(@"login btn label %@", loginBtnLabel);
     NSRange range = NSMakeRange(section, 1);
     NSIndexSet *sectionToReload = [NSIndexSet indexSetWithIndexesInRange:range];
     [self.tableView reloadSections:sectionToReload withRowAnimation:rowAnimation];
@@ -883,12 +883,12 @@ static NSString * contactingServersForUpdate = @"Trying to get latest status fro
     [PFUser logInWithUsernameInBackground:userName password:userPass
                                     block:^(PFUser *user, NSError *error) {
                                         if (user) {
-                                            NSLog(@"[ Parse successful login ]"); // Do stuff after successful login.
+                                            if (DBG) NSLog(@"[ Parse successful login ]"); // Do stuff after successful login.
                                             [self insertCurrentLocation:user];
-                                            NSLog(@"[ Stored this user's current loc ]");
+                                            if (DBG) NSLog(@"[ Stored this user's current loc ]");
                                             [PFGeoPoint geoPointForCurrentLocationInBackground:^(PFGeoPoint *geoPoint, NSError *error) {
                                                 if (!error) {
-                                                    NSLog(@"User is currently at %f, %f", geoPoint.latitude, geoPoint.longitude);
+                                                    if (DBG) NSLog(@"User is currently at %f, %f", geoPoint.latitude, geoPoint.longitude);
                                                     
                                                     [[PFUser currentUser] setObject:geoPoint forKey:@"currentLocation"];
                                                     [[PFUser currentUser] saveInBackground];
@@ -902,24 +902,24 @@ static NSString * contactingServersForUpdate = @"Trying to get latest status fro
                                              {
                                                  if (!error) {
                                                      // The find succeeded.
-                                                     NSLog(@"Successfully retrieved %d scores.", (int)objects.count);
+                                                     if (DBG) NSLog(@"Successfully retrieved %d scores.", (int)objects.count);
                                                      // Do something with the found objects
                                                      for (PFObject *object in objects) {
-                                                         NSLog(@"%@", object.objectId);
+                                                         if (DBG) NSLog(@"%@", object.objectId);
                                                      }
                                                  } else {
                                                      // Log details of the failure
-                                                     NSLog(@"Error: %@ %@", error, [error userInfo]);
+                                                     if (DBG) NSLog(@"Error: %@ %@", error, [error userInfo]);
                                                  }
                                              }];
                                             
-                                            NSLog(@" setting existingUser ");
+                                            if (DBG) NSLog(@" setting existingUser ");
                                             //ToDo: set existsingUser to 2 = synchronized (downloaded info)
                                             NSUserDefaults *userInLocal = [NSUserDefaults standardUserDefaults];
                                             [userInLocal setObject:@"2" forKey:@"existingUser"];
                                             [userInLocal synchronize];
                                         } else {
-                                            NSLog(@"[ ERROR: Login failed | %@",error);// The login failed. Check error to see why.
+                                            if (DBG) NSLog(@"[ ERROR: Login failed | %@",error);// The login failed. Check error to see why.
                                         }
                                     }];
 }
@@ -928,7 +928,7 @@ static NSString * contactingServersForUpdate = @"Trying to get latest status fro
     if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"CoreFriendsContactInfoDicKey"] count] == 0)
         [self syncFromParse]; /// how well is this working ???
     else
-        NSLog(@"all loaded already");
+        if (DBG) NSLog(@"all loaded already");
     
     [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithInteger:2]
                                               forKey:@"afterFirstInstall"];
@@ -966,7 +966,7 @@ static NSString * contactingServersForUpdate = @"Trying to get latest status fro
 
 #pragma mark - CoreData helper methods
 - (void) actionAddFriensoEvent:(NSString *) message withSubtitle:(NSString *)subtitle{
-    NSLog(@"[ actionAddFriensoEvent ]");
+    if (DBG) NSLog(@"[ actionAddFriensoEvent ]");
     FriensoAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
     
     NSManagedObjectContext *managedObjectContext =
@@ -986,10 +986,10 @@ static NSString * contactingServersForUpdate = @"Trying to get latest status fro
         
         NSError *savingError = nil;
         if([managedObjectContext save:&savingError]) {
-            NSLog(@"Successfully saved the context");
-        } else { NSLog(@"Failed to save the context. Error = %@", savingError); }
+            if (DBG) NSLog(@"Successfully saved the context");
+        } else { if (DBG) NSLog(@"Failed to save the context. Error = %@", savingError); }
     } else {
-        NSLog(@"Failed to create a new event.");
+        if (DBG) NSLog(@"Failed to create a new event.");
     }
 }
 - (void)saveNewUserLocallyWithEmail:(NSString *)newUserEmail plusPassword:(NSString *)newUserPassword
@@ -1002,7 +1002,7 @@ static NSString * contactingServersForUpdate = @"Trying to get latest status fro
         [userInLocal setObject:@"0" forKey:@"adminInParse"];
         [userInLocal setObject:phoneNumber.text forKey:@"userPhone"];
         [userInLocal synchronize];
-        NSLog(@"[New user saved locally]");
+        if (DBG) NSLog(@"[New user saved locally]");
     }
 
 // register or sign-up
@@ -1023,8 +1023,8 @@ static NSString * contactingServersForUpdate = @"Trying to get latest status fro
         if (!error) {
             [[PFUser currentUser] setObject:geoPoint forKey:@"currentLocation"];
             [[PFUser currentUser] saveInBackground];
-            //NSLog(@"User is currently at %f, %f", geoPoint.latitude, geoPoint.longitude);
-            NSLog(@"Saved your location to cloud-store");
+            //if (DBG) NSLog(@"User is currently at %f, %f", geoPoint.latitude, geoPoint.longitude);
+            if (DBG) NSLog(@"Saved your location to cloud-store");
         }
     }];
     // other fields can be set just like with PFObject
@@ -1040,12 +1040,12 @@ static NSString * contactingServersForUpdate = @"Trying to get latest status fro
             [userInLocal setObject:@"1" forKey:@"adminInParse"];
             [userInLocal setBool:YES forKey:@"isUserNew"];
             [userInLocal synchronize];
-            NSLog(@"[NSUserDefaults/Parse sync confirmed]");
+            if (DBG) NSLog(@"[NSUserDefaults/Parse sync confirmed]");
             
         } else {
             NSString *errorString = [[error userInfo] objectForKey:@"error"];
             // Show the errorString somewhere and let the user try again.
-            NSLog(@"Error: %@",errorString);
+            if (DBG) NSLog(@"Error: %@",errorString);
         }
     }];
 }
@@ -1055,7 +1055,7 @@ static NSString * contactingServersForUpdate = @"Trying to get latest status fro
     
     if (switchControl.tag == 10)
     {
-        NSLog(@"loc switch activated");
+        if (DBG) NSLog(@"loc switch activated");
         [self.locationManager startUpdatingLocation];
         [self setInitialLocation:self.locationManager.location];
 
@@ -1069,7 +1069,7 @@ static NSString * contactingServersForUpdate = @"Trying to get latest status fro
         NSUserDefaults *userInLocal = [NSUserDefaults standardUserDefaults];
         [userInLocal setBool:keepLoggedIn forKey:@"keepUserLoggedIn"];
         [userInLocal synchronize];
-        //NSLog( @"The switch is %@", switchControl.on ? @"ON" : @"OFF" );
+        //if (DBG) NSLog( @"The switch is %@", switchControl.on ? @"ON" : @"OFF" );
     }
 }
 - (BOOL) userInParse{
@@ -1086,10 +1086,10 @@ static NSString * contactingServersForUpdate = @"Trying to get latest status fro
 - (void)setInitialLocation:(CLLocation *)aLocation {
     self.location = aLocation;
     //self.radius = 1000;
-    //NSLog(@"%.2f,%.2f",self.location.coordinate.latitude, self.location.coordinate.longitude);
+    //if (DBG) NSLog(@"%.2f,%.2f",self.location.coordinate.latitude, self.location.coordinate.longitude);
     [PFGeoPoint geoPointForCurrentLocationInBackground:^(PFGeoPoint *geoPoint, NSError *error) {
         if (!error) {
-            NSLog(@"My geo-location: %f, %f", geoPoint.latitude, geoPoint.longitude);
+            if (DBG) NSLog(@"My geo-location: %f, %f", geoPoint.latitude, geoPoint.longitude);
             NSNumber *lat = [NSNumber numberWithDouble:geoPoint.latitude];
             NSNumber *lon = [NSNumber numberWithDouble:geoPoint.longitude];
             NSDictionary *userLocation=@{@"lat":lat,@"long":lon};
@@ -1111,13 +1111,13 @@ static NSString * contactingServersForUpdate = @"Trying to get latest status fro
                                         if (user) {
                                             PFUser *currentUser = [PFUser currentUser];
                                             if (currentUser) {
-                                                NSLog(@"%@, login successful",currentUser.email);
+                                                if (DBG) NSLog(@"%@, login successful",currentUser.email);
                                             } else {
                                                 // show the signup or login screen
-                                                NSLog(@"no current user");
+                                                if (DBG) NSLog(@"no current user");
                                             }
                                         } else {
-                                            NSLog(@"The login failed. Check error to see why. %@",error);
+                                            if (DBG) NSLog(@"The login failed. Check error to see why. %@",error);
                                         }
                                     }];
     */
@@ -1130,16 +1130,16 @@ static NSString * contactingServersForUpdate = @"Trying to get latest status fro
     userCoreFriends.ACL = ACL;// [PFACL ACLWithUser:[PFUser currentUser]];
     
     PFUser *user = [PFUser currentUser];
-    NSLog(@"%@",user.email);
+    if (DBG) NSLog(@"%@",user.email);
     [userCoreFriends setObject:user forKey:@"user"];
     [userCoreFriends saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
         if (!error) {
             //[self refresh:nil];
-            NSLog(@"[ CoreFriends Dictionary for User upload attempted. ]");
+            if (DBG) NSLog(@"[ CoreFriends Dictionary for User upload attempted. ]");
         }
         else{
             // Log details of the failure
-            NSLog(@"Error: %@ %@", error, [error userInfo]);
+            if (DBG) NSLog(@"Error: %@ %@", error, [error userInfo]);
         }
     }];
     
@@ -1162,7 +1162,7 @@ static NSString * contactingServersForUpdate = @"Trying to get latest status fro
                                                       cancelButtonTitle:@"Okay" otherButtonTitles:nil, nil];
             [alertView show];
         }else {
-            NSLog(@"Bad input!");
+            if (DBG) NSLog(@"Bad input!");
             UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Incorrect Email Format"
                                                                 message:@"Please try again"
                                                                delegate:nil
@@ -1182,12 +1182,12 @@ static NSString * contactingServersForUpdate = @"Trying to get latest status fro
     
     CLLocation *lastLocation = [locations lastObject];
     CLLocationAccuracy accuracy = [lastLocation horizontalAccuracy];
-	NSLog(@"Received location %@ with accuracy %f", lastLocation, accuracy);
+	if (DBG) NSLog(@"Received location %@ with accuracy %f", lastLocation, accuracy);
     CLLocation *location = manager.location;
 
 	if(accuracy <= 50.0) {
 		//4
-//        NSLog(@"latitude and longitude: %ld, %@", [locations count], locations );
+//        if (DBG) NSLog(@"latitude and longitude: %ld, %@", [locations count], locations );
         self.coordinate = [location coordinate];
         
         self.geoPoint = [PFGeoPoint geoPointWithLatitude:self.coordinate.latitude
@@ -1201,7 +1201,7 @@ static NSString * contactingServersForUpdate = @"Trying to get latest status fro
 }
 - (void) locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error
 {
-    NSLog(@"Failed to receive location information, see error: %@", error);
+    if (DBG) NSLog(@"Failed to receive location information, see error: %@", error);
 }
 
 -(void) getDeviceLocationInfo {
@@ -1212,13 +1212,13 @@ static NSString * contactingServersForUpdate = @"Trying to get latest status fro
         self.myLocationManager.delegate = self;
         [self.myLocationManager startUpdatingLocation];
     } else
-        NSLog(@"Location services are not enabled");
+        if (DBG) NSLog(@"Location services are not enabled");
         
         
 }
 
 - (void) insertCurrentLocation:(PFUser *)pfUser {
-    NSLog(@"-- insertCurrentLocation --");
+    if (DBG) NSLog(@"-- insertCurrentLocation --");
     [self getDeviceLocationInfo];
     
 	// If it's not possible to get a location, then return.
@@ -1237,7 +1237,7 @@ static NSString * contactingServersForUpdate = @"Trying to get latest status fro
     [object saveEventually:^(BOOL succeeded, NSError *error) {
         if (succeeded) {
             // Reload the PFQueryTableViewController
-            NSLog(@"...location saved to cloud");//[self loadObjects];
+            if (DBG) NSLog(@"...location saved to cloud");//[self loadObjects];
             [self actionAddFriensoEvent:@"Location Saved"
                            withSubtitle:[NSString stringWithFormat:@"%4.f, %4.f",coordinate.latitude, coordinate.longitude]];
         }
@@ -1325,7 +1325,7 @@ static NSString * contactingServersForUpdate = @"Trying to get latest status fro
 //    
 //    // Create and configure a fetch request with the Book entity.
 //    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
-//    NSLog(@"[1]");
+//    if (DBG) NSLog(@"[1]");
 //    NSEntityDescription *entity = [NSEntityDescription entityForName:@"FriensoEvent" inManagedObjectContext:self.managedObjectContext];
 //    [fetchRequest setEntity:entity];
 //    
@@ -1407,9 +1407,9 @@ gradient.colors = [NSArray arrayWithObjects:(id)[startColour CGColor],(id)[endCo
 }
 #pragma mark - Sync from Parse Methods
 - (void) syncFromParse {
-    NSLog(@"syncFromParse -- getting the coreFriends");     // sync from parse!
+    if (DBG) NSLog(@"syncFromParse -- getting the coreFriends");     // sync from parse!
     
-    NSLog(@"Current user: %@", [PFUser currentUser].username);
+    //if (DBG) NSLog(@"Current user: %@", [PFUser currentUser].username);
     
     NSMutableDictionary *udCoreCircleDictionary = [[NSUserDefaults standardUserDefaults] objectForKey:@"CoreFriendsContactInfoDicKey"];
     if ([udCoreCircleDictionary count] == 0 || udCoreCircleDictionary == NULL)
@@ -1417,8 +1417,9 @@ gradient.colors = [NSArray arrayWithObjects:(id)[startColour CGColor],(id)[endCo
         [PFUser logInWithUsernameInBackground:[[NSUserDefaults standardUserDefaults] objectForKey:@"adminID"]
                                      password:[[NSUserDefaults standardUserDefaults] objectForKey:@"adminPass"]
                                         block:^(PFUser *user, NSError *error) {
+                                            
                                             if (user) {
-                                                NSLog(@"[ Parse successful login ]"); // Do stuff after successful login.
+                                                if (DBG) NSLog(@"[ Parse successful login ]"); // Do stuff after successful login.
                                                 // sync from parse!
                                                 //[self syncExistingCoreFriendsFromParseForUser:user];
                                                 PFQuery * pfquery = [PFQuery queryWithClassName:@"CoreFriendRequest"];
@@ -1428,11 +1429,19 @@ gradient.colors = [NSArray arrayWithObjects:(id)[startColour CGColor],(id)[endCo
                                                                                             NSError *error)
                                                 {
                                                     if (!error) {
-                                                        //NSLog(@"number of sent requests: %ld",objects.count);
-                                                        //NSLog(@"%@",objects);
+                                                        //if (DBG) NSLog(@"number of sent requests: %ld",objects.count);
+                                                        //if (DBG) NSLog(@"%@",objects);
                                                         for (PFObject *object in objects) {
-                                                            NSLog(@"%@", [object objectForKey:@"recipientName"]);
+                                                            if (DBG) NSLog(@"of: %@", [object objectForKey:@"recipientName"]);
+                                                            [self.coreCircleOfFriends addObject:[object objectForKey:@"recipientName"]];
+                                                            PFUser *pUser = [object objectForKey:@"recipient"];
+                                                            [self.coreCircleContacts  addObject:[pUser objectForKey:@"phoneNumber"]];
+                                                            if (self.coreCircleContacts.count ==3){
+                                                                [self coreFriendsListToPersistentStorage];
+                                                                break;
+                                                            }
                                                         }
+                                                        
                                                     }
                                                 }];
                                                 PFQuery *query = [PFQuery queryWithClassName:@"CoreFriendNotOnFriensoYet"];
@@ -1442,13 +1451,23 @@ gradient.colors = [NSArray arrayWithObjects:(id)[startColour CGColor],(id)[endCo
                                                                                             NSError *error)
                                                  {
                                                      if (!error) {
-                                                         //NSLog(@"number of sent requests to users not on frienso: %ld",objects.count);
-                                                         //NSLog(@"%@",objects);
+                                                         //if (DBG) NSLog(@"number of sent requests to users not on frienso: %ld",objects.count);
+                                                         //if (DBG) NSLog(@"%@",objects);
                                                          for (PFObject *object in objects) {
-                                                             NSLog(@"%@", [object objectForKey:@"recipientName"]);
+                                                             if (DBG) NSLog(@"nof: %@", [object objectForKey:@"recipientName"]);
+                                                             [self.coreCircleOfFriends addObject:[object objectForKey:@"recipientName"]];
+                                                             //PFUser *pUser = [object objectForKey:@"recipient"];
+                                                             [self.coreCircleContacts  addObject:[object objectForKey:@"recipientPhoneNumber"]];
+                                                             if (self.coreCircleContacts.count ==3)
+                                                             {
+                                                                 if (DBG) NSLog(@"Save coreFriends to NSUserDefs and to CoreFriends");
+                                                                 [self coreFriendsListToPersistentStorage];
+                                                                 break;
+                                                             }
                                                          }
                                                      }
                                                  }];
+                                                
                                                 /********************************************
                                                 PFQuery *query = [PFQuery queryWithClassName:@"UserCoreFriends"];
                                                 [query whereKey:@"user" equalTo:user];
@@ -1473,63 +1492,69 @@ gradient.colors = [NSArray arrayWithObjects:(id)[startColour CGColor],(id)[endCo
                                                          [self  actionAddFriensoEvent:@"Contacts successfully fetched and restored."];
                                                      } else {
                                                          // Log details of the failure
-                                                         NSLog(@"!Error: %@ %@", error, [error userInfo]);
+                                                         if (DBG) NSLog(@"!Error: %@ %@", error, [error userInfo]);
                                                      }
                                                  }];
                                                 ********************************************/
                                                 
                                             } else {
-                                                NSLog(@"[ ERROR: Login failed | %@",error);// The login failed. Check error to see why.
+                                                if (DBG) NSLog(@"[ ERROR: Login failed | %@",error);// The login failed. Check error to see why.
                                             }
                                         }];
     }// testing if core circle dic is in nsuserdefaults
-    else        NSLog(@"not nil");
+    else        if (DBG) NSLog(@"not nil");
+}
+- (void) coreFriendsListToPersistentStorage {
+    
+    if(DBG) NSLog(@"%@", self.coreCircleOfFriends);
+    if(DBG) NSLog(@"%@", self.coreCircleContacts);
+    
+    NSDictionary *dic = [[NSDictionary alloc] initWithObjects:self.coreCircleContacts forKeys:self.coreCircleOfFriends];
+    if(DBG) NSLog(@"%@", dic);
+    
+    [self saveCFDictionaryToNSUserDefaults:dic];
 }
 -(void) saveCFDictionaryToNSUserDefaults:(NSDictionary *)friendsDic {
     // From Parse
-    NSLog(@"[ saveCFDictionaryToNSUserDefaults ]");
+    if(DBG) NSLog(@"[ saveCFDictionaryToNSUserDefaults ]");
     
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
     [userDefaults setObject:friendsDic forKey:@"CoreFriendsContactInfoDicKey"];
-    [userDefaults setBool:YES forKey:@"coreFriendsSet"];
     [userDefaults synchronize];
     
     // Save dictionary to CoreFriends Entity (CoreData)
-    NSEnumerator    *enumerator = [friendsDic keyEnumerator];
-    NSMutableArray  *coreCircle = [[NSMutableArray alloc] initWithArray:[enumerator allObjects]];
-    NSArray *valueArray         = [friendsDic allValues]; // holds phone numbers
+    NSArray *coreCircle = [friendsDic allKeys];   // holds names
+    NSArray *valueArray = [friendsDic allValues]; // holds phone numbers
+
     
     // Access to CoreData
     for (int i=0; i<[coreCircle count]; i++) {
-        CoreFriends *cFriends = [NSEntityDescription insertNewObjectForEntityForName:@"CoreFriends"
-                                                              inManagedObjectContext:[self managedObjectContext]];
+       CoreFriends *cFriends = [NSEntityDescription insertNewObjectForEntityForName:@"CoreFriends"
+                                                             inManagedObjectContext:[self managedObjectContext]];
         if (cFriends != nil){
             cFriends.coreFirstName = [coreCircle objectAtIndex:i];
-            cFriends.coreLastName  = @"";
             cFriends.corePhone     = [valueArray objectAtIndex:i];
             cFriends.coreCreated   =  [NSDate date];
             cFriends.coreModified  = [NSDate date];
             cFriends.coreType      = @"iCore Friends";
-            //NSLog(@"%@",[coreCircle objectAtIndex:i] );
-            NSError *savingError = nil;
             
+            NSError *savingError = nil;
             if ([[self managedObjectContext] save:&savingError]){
-                NSLog(@"Successfully saved contacts to CoreCircle.");
+                if (DBG) if (DBG) NSLog(@"Successfully saved contacts to CoreCircle.");
             } else {
-                NSLog(@"Failed to save the managed object context.");
+                if (DBG) NSLog(@"Failed to save the managed object context.");
             }
         } else {
-            NSLog(@"Failed to create the new person object.");
+            if (DBG) NSLog(@"Failed to create the new person object.");
         }
     }
     
 }
 - (void) actionAddFriensoEvent:(NSString *) message {
-    NSLog(@"[ actionAddFriensoEvent ]");
+    if (DBG) NSLog(@"[ actionAddFriensoEvent ]");
     FriensoAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
     
-    NSManagedObjectContext *managedObjectContext =
-    appDelegate.managedObjectContext;
+    NSManagedObjectContext *managedObjectContext = appDelegate.managedObjectContext;
     
     FriensoEvent *firstFriensoEvent = [NSEntityDescription insertNewObjectForEntityForName:@"FriensoEvent"
                                                                     inManagedObjectContext:managedObjectContext];
@@ -1545,12 +1570,12 @@ gradient.colors = [NSArray arrayWithObjects:(id)[startColour CGColor],(id)[endCo
         
         NSError *savingError = nil;
         if([managedObjectContext save:&savingError]) {
-            NSLog(@"Successfully saved the context");
-        } else { NSLog(@"Failed to save the context. Error = %@", savingError); }
+            if (DBG) NSLog(@"Successfully saved the context");
+        } else { if (DBG) NSLog(@"Failed to save the context. Error = %@", savingError); }
     } else {
-        NSLog(@"Failed to create a new event.");
+        if (DBG) NSLog(@"Failed to create a new event.");
     }
-    //[self configureOverlay]; NSLog(@"calling configureOverlay");
+    //[self configureOverlay]; if (DBG) NSLog(@"calling configureOverlay");
     
 }
 - (void) syncExistingCoreFriendsFromParseForUser:(PFUser*)thisUser
@@ -1567,11 +1592,11 @@ gradient.colors = [NSArray arrayWithObjects:(id)[startColour CGColor],(id)[endCo
         if(!error) {
             if([objects count] >0) {//if atleast one record is found, then only we want to
                 //reload the table view
-                //NSLog(@"no of core friend req's: %ld",objects.count);
+                //if (DBG) NSLog(@"no of core friend req's: %ld",objects.count);
                 for (id object in objects) {
-                    NSLog(@"Number of active friends %d",activeCoreFriends);
+                    if (DBG) NSLog(@"Number of active friends %d",activeCoreFriends);
                     if(activeCoreFriends >= MAX_CORE_FRIENDS) {
-                        NSLog(@"Atleast %d  core friends found in frienso",MAX_CORE_FRIENDS);
+                        if (DBG) NSLog(@"Atleast %d  core friends found in frienso",MAX_CORE_FRIENDS);
                         break;
                     }
                     //PFObject * pfobject = object;
@@ -1583,7 +1608,7 @@ gradient.colors = [NSArray arrayWithObjects:(id)[startColour CGColor],(id)[endCo
                     [self.coreCircleContacts replaceObjectAtIndex:i withObject:senderPhoneNumber];
                     [self.coreCircleOfFriends replaceObjectAtIndex:i withObject:senderName];
                     
-                    //NSLog(@"> %@,%@,%@,%@",sender, senderName,response, senderPhoneNumber);
+                    //if (DBG) NSLog(@"> %@,%@,%@,%@",sender, senderName,response, senderPhoneNumber);
                     
                     if([response isEqualToString:@"send"]) {
                         [self.coreCircleRequestStatus replaceObjectAtIndex:i withObject:coreFriendRequestSendMessage];
@@ -1615,7 +1640,7 @@ gradient.colors = [NSArray arrayWithObjects:(id)[startColour CGColor],(id)[endCo
 //                            //reload the table view
 //                            for (id object in objects) {
 //                                if(activeCoreFriends >= MAX_CORE_FRIENDS) {
-//                                    NSLog(@"Atleast %d  core friends found",MAX_CORE_FRIENDS);
+//                                    if (DBG) NSLog(@"Atleast %d  core friends found",MAX_CORE_FRIENDS);
 //                                    break;
 //                                }
 //                                
@@ -1629,7 +1654,7 @@ gradient.colors = [NSArray arrayWithObjects:(id)[startColour CGColor],(id)[endCo
 //                            }
 //                        }
 //                    }else {
-//                        NSLog(@"%@",error);
+//                        if (DBG) NSLog(@"%@",error);
 //                    }
 //                    //[self refresh];
 //                }];
@@ -1637,7 +1662,7 @@ gradient.colors = [NSArray arrayWithObjects:(id)[startColour CGColor],(id)[endCo
 //                //[self refresh];
 //            }
         } else {
-            NSLog(@"%@",error);
+            if (DBG) NSLog(@"%@",error);
         }
     }];
 

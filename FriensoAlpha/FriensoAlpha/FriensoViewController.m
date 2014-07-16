@@ -15,7 +15,6 @@
 #import "FriensoViewController.h"
 #import "FriensoOptionsButton.h"
 #import "FriensoCircleButton.h"
-//#import "FriensoPersonalEvent.h"
 #import <QuartzCore/QuartzCore.h>
 #import "FriensoAppDelegate.h"
 #import "FriensoEvent.h"
@@ -99,7 +98,6 @@ enum PinAnnotationTypeTag {
                                                                              style:self.navigationItem.backBarButtonItem.style
                                                                             target:nil
                                                                             action:nil];
-    [self setupHelpMeNowSwitch];
 }
 -(void) setupHelpMeNowSwitch
 {
@@ -110,11 +108,14 @@ enum PinAnnotationTypeTag {
     helpMeNowSwitch.layer.cornerRadius = helpMeNowSwitch.frame.size.height/2.0;
     helpMeNowSwitch.layer.borderWidth =  1.0;
     helpMeNowSwitch.layer.borderColor = [UIColor blackColor].CGColor;
+    if (DBG) NSLog(@"[self.navigationController.toolbar addSubview:helpMeNowSwitch]");
     [self.navigationController.toolbar addSubview:helpMeNowSwitch];
     [helpMeNowSwitch setCenter:self.helpMeNowBtn.center];
     [helpMeNowSwitch setOn:YES animated:YES];
     [helpMeNowSwitch setOnTintColor:[UIColor redColor]];
     
+    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"helpMeUI"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
 }
 -(void)makeFriensoEvent:(UIButton *)theButton {
     [self animateThisButton:theButton];
@@ -209,7 +210,7 @@ enum PinAnnotationTypeTag {
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSLog(@"%ld", (long)[tableView cellForRowAtIndexPath:indexPath].tag);
+    if (DBG) NSLog(@"%ld", (long)[tableView cellForRowAtIndexPath:indexPath].tag);
     switch ([tableView cellForRowAtIndexPath:indexPath].tag)
     {
         case 10:
@@ -224,7 +225,7 @@ enum PinAnnotationTypeTag {
 {
     CGRect  fullScreenRect=[[UIScreen mainScreen] applicationFrame];
     CGFloat tvFrameOriginOffset_y = fullScreenRect.size.height *0.05;
-    NSLog(@"table view origin %f", self.tableView.frame.origin.y);
+    if (DBG) NSLog(@"table view origin %f", self.tableView.frame.origin.y);
     
     if (scrollView.contentOffset.y == 0 && (self.tableView.frame.origin.y > fullScreenRect.size.height/2.0))
     {
@@ -262,12 +263,12 @@ enum PinAnnotationTypeTag {
 
 #pragma mark - Local Actions
 //- (void) locateCoreFriends {
-//    //NSLog(@"! Locate Core Friends");
+//    //if (DBG) NSLog(@"! Locate Core Friends");
 //    NSString *helpObjId = [[NSUserDefaults standardUserDefaults] objectForKey:@"helpObjId"];
 //    if (helpObjId != nil ) {
-//        NSLog(@"    We have an active helpMeNow event");
+//        if (DBG) NSLog(@"    We have an active helpMeNow event");
 //    } else
-//        NSLog(@"    NO active helpMeNow event");
+//        if (DBG) NSLog(@"    NO active helpMeNow event");
 //    
 //    //    // round up your core Friends and show them on the map and have access to their location
 ////    // First check to see if the objectId already exists
@@ -285,10 +286,10 @@ enum PinAnnotationTypeTag {
 ////    //BOOL unique = YES;
 ////    NSError  *error;
 ////    NSArray *items = [[self managedObjectContext] executeFetchRequest:request error:&error];
-////    NSLog(@"items: %u", items.count);
+////    if (DBG) NSLog(@"items: %u", items.count);
 ////    if (items != nil) {
 ////        for (NSManagedObject *mObject in items) {
-////            NSLog(@"  %@,%@,%@,%@",[mObject valueForKey:@"eventTitle"],[mObject valueForKey:@"eventObjId"],
+////            if (DBG) NSLog(@"  %@,%@,%@,%@",[mObject valueForKey:@"eventTitle"],[mObject valueForKey:@"eventObjId"],
 ////                  [mObject valueForKey:@"eventCategory"],[mObject valueForKey:@"eventModified"]);
 ////        }
 ////    }
@@ -326,16 +327,16 @@ enum PinAnnotationTypeTag {
     [query getFirstObjectInBackgroundWithBlock:^(PFObject *object, NSError *error) {
         if (!error)
         {
-            //NSLog(@"%@", [object objectForKey:@"phoneNumber"]);
+            //if (DBG) NSLog(@"%@", [object objectForKey:@"phoneNumber"]);
             NSString *phoneNumber = [NSString stringWithFormat:@"tel://%@",[object objectForKey:@"phoneNumber"]];
             @try {
                 [[UIApplication sharedApplication] openURL:[NSURL URLWithString:phoneNumber]];
             }
             @catch (NSException *exception){
-                NSLog(@"%@", exception.reason);
+                if (DBG) NSLog(@"%@", exception.reason);
             }
             @finally {
-                NSLog(@"Calling: %@",friendEmail);
+                if (DBG) NSLog(@"Calling: %@",friendEmail);
             }
             
         }
@@ -347,13 +348,13 @@ enum PinAnnotationTypeTag {
 {
     /*  the query is not working
         might want to consider querying coreData */
-    //NSLog(@"friend email: %@", friendEmail);
+    //if (DBG) NSLog(@"friend email: %@", friendEmail);
     PFQuery *query= [PFUser query];
     [query whereKey:@"username" equalTo:friendEmail];
     [query getFirstObjectInBackgroundWithBlock:^(PFObject *object, NSError *error) {
         if (!error)
         {
-            //NSLog(@"%@", [object objectForKey:@"phoneNumber"]);
+            //if (DBG) NSLog(@"%@", [object objectForKey:@"phoneNumber"]);
             NSString *phoneNumber = [object objectForKey:@"phoneNumber"];
             // You must check that the current device can send SMS messages before you
             // attempt to create an instance of MFMessageComposeViewController.  If the
@@ -383,7 +384,7 @@ enum PinAnnotationTypeTag {
             {
                 //        self.feedbackMsg.hidden = NO;
                 //		self.feedbackMsg.text = @"Device not configured to send SMS.";
-                NSLog(@"Device not configured to send SMS.");
+                if (DBG) NSLog(@"Device not configured to send SMS.");
             }
             
             
@@ -400,13 +401,13 @@ enum PinAnnotationTypeTag {
             [subview removeFromSuperview];
         }
     }
-    //NSLog(@"Friends I currently track:");
+    //if (DBG) NSLog(@"Friends I currently track:");
     
     
     NSInteger btnNbr = 0;
     for (PFUser *parseUser  in trackingFriendsArray)
     {
-        NSLog(@"\t %@", parseUser.username);
+        if (DBG) NSLog(@"\t %@", parseUser.username);
         TrackingFriendButton *mLocBtn = [[TrackingFriendButton alloc] initWithFrame:CGRectMake(0, 0, 44, 44)];
         UIImage *img =[[FRStringImage alloc] imageTextBubbleOfSize:mLocBtn.frame.size];
         [mLocBtn setBackgroundImage:img forState:UIControlStateNormal];
@@ -497,13 +498,13 @@ enum PinAnnotationTypeTag {
 }
 -(void) addUserBubbleToMap:(PFUser *)parseUser withTag:(NSInteger)tagNbr {
     
-    //    NSLog(@"add User Bubble To Map: %ld",tagNbr);
-    //    NSLog(@"subviews: %ld", [self.mapView subviews].count);
+    //    if (DBG) NSLog(@"add User Bubble To Map: %ld",tagNbr);
+    //    if (DBG) NSLog(@"subviews: %ld", [self.mapView subviews].count);
     //
     for (id subview in [self.mapView subviews]){
         if ( [subview isKindOfClass:[UIButton class]] )
         {
-            //NSLog(@"subview tag: %ld", [subview tag]);
+            //if (DBG) NSLog(@"subview tag: %ld", [subview tag]);
             if ([subview tag] > 0)
                 tagNbr +=1;
         }
@@ -552,7 +553,7 @@ enum PinAnnotationTypeTag {
     if([type isEqualToString:coreFriendRequest]) { //if core friend request
         //TODO: we do not need to add the btn.tag here.
         //may be we can extend UIAlertView and add a variable for the index.
-        //NSLog(@"btn tag = %d",btn.tag);
+        //if (DBG) NSLog(@"btn tag = %d",btn.tag);
         UIAlertView *coreFriendRequestAlertView =
         [[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"Core Friend Request:%2ld",(long)btn.tag]
                                     message:[NSString stringWithFormat:@"from %@",friensoUser.username]
@@ -596,8 +597,8 @@ enum PinAnnotationTypeTag {
             [subview removeFromSuperview];
         }
     }
-    
-    [self configureOverlay];
+    if ([[NSUserDefaults standardUserDefaults] objectForKey:@"adminID"] != NULL)
+        [self configureOverlay];
 }
 
 -(void) openCloseDrawer
@@ -661,14 +662,14 @@ enum PinAnnotationTypeTag {
 }
 -(void) addPendingRequest:(NSArray*)userRequestArray {
 
-    NSLog(@"-- addPendingRequest:(NSArray*)userRequestArray --");
+    if (!DEBUG) DLog(@"-- addPendingRequest:(NSArray*)userRequestArray --");
     [self.scrollView setPendingRequests:self.pendingRqstsArray];
     NSInteger arrayIndex = 0;
     for (PFObject *eventObject in userRequestArray)
     {
         NSString *reqType     = ([eventObject valueForKey:@"eventType"]==NULL) ? coreFriendRequest : [eventObject valueForKey:@"eventType"];
         PFUser   *friensoUser = ([eventObject objectForKey:@"friensoUser"] == NULL) ? [eventObject objectForKey:@"sender"] : [eventObject objectForKey:@"friensoUser"];
-        NSLog(@"{%@} is requesting a <%@> request.", friensoUser.username, reqType);
+        if (DBG) NSLog(@"{%@} is requesting a <%@> request.", friensoUser.username, reqType);
         [self addPendingRequest:friensoUser
                         withTag:arrayIndex
                         reqtype:reqType];
@@ -703,14 +704,14 @@ enum PinAnnotationTypeTag {
     [self.scrollView addSubview:pndngRqstBtn];
     
     CGFloat btnCenterX = pndngRqstBtn.center.x*2 + pndngRqstBtn.center.x*2*tagNbr;
-    //NSLog(@"%f",self.scrollView.frame.size.height*1.6);
+    //if (DBG) NSLog(@"%f",self.scrollView.frame.size.height*1.6);
     [pndngRqstBtn setCenter:CGPointMake(btnCenterX, pndngRqstBtn.center.y*1.3)];
 }
 
 
 
 -(void) trackMeSwitchEnabled:(UISwitch *)sender {
-    NSLog(@"********* trackMeswitchEnabled ****");
+    if (DBG) NSLog(@"********* trackMeswitchEnabled ****");
     
     if ([sender isOn]){
         // Alert the user
@@ -736,7 +737,7 @@ enum PinAnnotationTypeTag {
         
         
     } else {
-        NSLog(@"Stop the watchMe event");
+        if (DBG) NSLog(@"Stop the watchMe event");
         [[[UIAlertView alloc] initWithTitle:@"WatchMe"
                                     message:@"Your location sharing will stop"
                                    delegate:self
@@ -775,7 +776,7 @@ enum PinAnnotationTypeTag {
 
 #define BYPASSFRIENDREQUESTS 1
 -(void) logAndNotifyCoreFriendsToWatchMe {
-    NSLog(@"logAndNotifyCoreFriendsToWatchMe");
+    if (DBG) NSLog(@"logAndNotifyCoreFriendsToWatchMe");
     
     /**************PUSH NOTIFICATIONS: WATCH ME NOW!!!! *****************/
     if (BYPASSFRIENDREQUESTS) {
@@ -793,12 +794,12 @@ enum PinAnnotationTypeTag {
     [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         if (!error) {
             // The find succeeded.
-            NSLog(@"Successfully retrieved %ld scores.", (unsigned long)objects.count);
+            if (DBG) NSLog(@"Successfully retrieved %ld scores.", (unsigned long)objects.count);
             // Do something with the found objects
             for (PFObject *object in objects) {
                 NSString *myString = @"Ph";
                 NSString *personalizedChannelNumber = [myString stringByAppendingString:object[@"recipient"][@"phoneNumber"]];
-                NSLog(@"Phone Number for this friend is: %@", personalizedChannelNumber);
+                if (DBG) NSLog(@"Phone Number for this friend is: %@", personalizedChannelNumber);
                 
                 PFPush *push = [[PFPush alloc] init];
                 
@@ -812,7 +813,7 @@ enum PinAnnotationTypeTag {
             }
         } else {
             // Log details of the failure
-            NSLog(@"Error: %@ %@", error, [error userInfo]);
+            if (DBG) NSLog(@"Error: %@ %@", error, [error userInfo]);
         }
     }];
     /**************END OF PUSH NOTIFICATIONS: WATCH ME!!!! *****************/
@@ -947,7 +948,8 @@ enum PinAnnotationTypeTag {
         [self.loadingView stopAnimating];
     
     // CONFIGUREOVERLAY->check for pending requests-> if user accepts requests, add overlay to mapview
-    [self configureOverlay];
+    if ([[NSUserDefaults standardUserDefaults] objectForKey:@"adminID"] != NULL)
+        [self configureOverlay];
     
 
 }
@@ -1023,9 +1025,9 @@ enum PinAnnotationTypeTag {
     self.frc.delegate = self;
     NSError *fetchingError = nil;
     if ([self.frc performFetch:&fetchingError]){
-        // local events fetched ok ->NSLog(@"Successfully fetched.");
+        // local events fetched ok ->if (DBG) NSLog(@"Successfully fetched.");
     } else {
-        NSLog(@"Failed to fetch.");
+        if (DBG) NSLog(@"Failed to fetch.");
     }
     
     [self.tableView addSubview:tableHelpView];
@@ -1115,7 +1117,7 @@ enum PinAnnotationTypeTag {
     
     // Local store check for active event
     if( [[[CloudUsrEvnts alloc] init] activeAlertCheck]) {
-        NSLog(@"Yes, an alert is active!");
+        if (DBG) NSLog(@"Yes, an alert is active!");
         [trackMeOnOff setOn:YES animated:YES];
     } else
         [trackMeOnOff setOn:NO animated:YES];
@@ -1160,35 +1162,24 @@ enum PinAnnotationTypeTag {
     
     printf("[ Home View: FriensoVC ]\n");
     
-    // Determine App Frame
-    self.appFrameProperties = [[NSArray alloc] initWithObjects:
-                               [NSValue valueWithCGRect:[[UIScreen mainScreen] applicationFrame]],
-                               [NSValue valueWithCGRect:self.navigationController.navigationBar.frame],
-                               [NSValue valueWithCGRect:self.navigationController.toolbar.frame], nil];
+    
     
     self.friendsLocationArray = [[NSMutableArray alloc] init]; // friends location cache
     self.pendingRqstsArray    = [[NSMutableArray alloc] init]; // Init pending requests holding array
     self.watchingCoFrArray    = [[NSMutableArray alloc] init];
     
+    [self setupUI];
     
+    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"getStartedFlag"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
     
-    // Show progress indicator to tell user to wait a bit
-    self.loadingView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
-    [self.loadingView setColor:UIColorFromRGB(0xf47d44)];
-    [self.view addSubview:self.loadingView];
-    [self.loadingView setCenter:CGPointMake(self.view.center.x, self.view.bounds.size.height*0.2)];
-    [self.loadingView startAnimating];
-    
-    //NSLog(@"%ld",(long)[[NSUserDefaults standardUserDefaults] boolForKey:@"getStartedFlag"] );
-    //NSLog(@"%@",[[NSUserDefaults standardUserDefaults] objectForKey:@"adminID"]  );
-    // Present WelcomeView if these properties have not been set
     if (![[NSUserDefaults standardUserDefaults] boolForKey:@"getStartedFlag"])
     {
         [self performSelector:@selector(segueToWelcomeVC) withObject:self afterDelay:1];
-        NSLog(@"{ Presenting Welcome View}");
+        if (DBG) NSLog(@"{ Presenting Welcome View}");
     } else if ([[NSUserDefaults standardUserDefaults] boolForKey:@"getStartedFlag"] &&
                [[NSUserDefaults standardUserDefaults] objectForKey:@"adminID"] != NULL){
-        NSLog(@"- viewDidLoad, getstarted flag ok, adminID not null");
+        iLog(@"{ viewDidLoad } getstarted flag ok, adminID not null");
         
         [self loginCurrentUserToCloudStore]; // login to cloud store
         
@@ -1208,7 +1199,7 @@ enum PinAnnotationTypeTag {
 
 -(void) viewDidAppear:(BOOL)animated{
     [super viewDidAppear:animated];
-    NSLog(@"!viewDidAppear");
+    if (DBG) NSLog(@"!viewDidAppear");
 
     // Hide the Options Menu when navigating to Options, otherwise show
     for (id subview in [self.navigationController.toolbar subviews]){
@@ -1219,16 +1210,8 @@ enum PinAnnotationTypeTag {
         }
     }
     
-//    [[NSUserDefaults standardUserDefaults] setObject:nil forKey:@"helpObjId"];
-//    [[NSUserDefaults standardUserDefaults] synchronize];
-//
-//    NSLog(@"%@",[[NSUserDefaults standardUserDefaults] objectForKey:@"helpObjId"]);
-    
-    if ([[NSUserDefaults standardUserDefaults] objectForKey:@"helpObjId"] != nil )
-        [self updateLocations];
-    
     if ([[NSUserDefaults standardUserDefaults] boolForKey:@"helpNowCancelled"] == 1) {
-        //NSLog(@"%d",[[NSUserDefaults standardUserDefaults] boolForKey:@"helpNowCancelled"]);
+        //if (DBG) NSLog(@"%d",[[NSUserDefaults standardUserDefaults] boolForKey:@"helpNowCancelled"]);
         [helpMeNowSwitch removeFromSuperview];
         [self.helpMeNowBtn setHidden:NO];
         
@@ -1236,22 +1219,32 @@ enum PinAnnotationTypeTag {
         [[NSUserDefaults standardUserDefaults] synchronize];
         
     }
+    NSString *helpObjId = [[NSUserDefaults standardUserDefaults] objectForKey:@"helpObjId"];
+    if (helpObjId != nil && ![[NSUserDefaults standardUserDefaults] boolForKey:@"helpMeUI"])
+    {   /* if a parse objectId exist locally and helpMeNowSwitch was NOT setup *
+         * otherwise, leave the switch along */
+        [self setupHelpMeNowSwitch];
+        if (DBG) NSLog(@"    We have an active helpMeNow event");
+    } else
+        if (DBG) NSLog(@"    NO active helpMeNow event");
+
 
     NSNumber *installStepNum = [[NSUserDefaults standardUserDefaults] valueForKey:@"installationStep"];
     if (installStepNum == NULL &&
         [[NSUserDefaults standardUserDefaults] boolForKey:@"getStartedFlag"])
     {
+        if (DBG) NSLog(@"LoginView");
         // Presenting loginView
         [self performSelector:@selector(segueToLoginVC) withObject:self afterDelay:1];
-        
         
         [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithInteger:0] forKey:@"installationStep"];
         [[NSUserDefaults standardUserDefaults] synchronize];
         
-    } else if ([installStepNum isEqualToNumber:[NSNumber numberWithInteger:0]] &&
+    }
+    else if ([installStepNum isEqualToNumber:[NSNumber numberWithInteger:0]] &&
                [[NSUserDefaults standardUserDefaults] objectForKey:@"adminID"] != NULL ) {
     
-        NSLog(@"{First install}");
+        if (DBG) NSLog(@"{First install}");
         
         // At first install, cache univesity/college emergency contacts
         [[[CloudEntityContacts alloc] initWithCampusDomain:@"nd.edu"] fetchEmergencyContacts:@"inst,contact"];
@@ -1263,17 +1256,19 @@ enum PinAnnotationTypeTag {
                                          password:[userDefaults objectForKey:@"adminPass"]
                                             block:^(PFUser *user, NSError *error) {
                                                 if (!user) {
-                                                    NSLog(@"Login to Parse failed with this error: %@",error);
+                                                    iLog(@"Login to Parse failed with this error: %@",error);
                                                 } else {
-                                                    
+                                                    iLog(@"Login to Parse: SUCCESS");
                                                     [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithInteger:1] forKey:@"installationStep"];
                                                     [[NSUserDefaults standardUserDefaults] synchronize];
                                                     
                                                     if ([[NSUserDefaults standardUserDefaults] boolForKey:@"newUserFlag"]){
                                                         [self performSegueWithIdentifier:@"newCoreCircle" sender:self];
-                                                        //NSLog(@"{Presenting newCoreCircle}");
-                                                    } else
+                                                        //if (DBG) NSLog(@"{Presenting newCoreCircle}");
+                                                    } else{
+                                                        
                                                         [self runNormalModeUI];
+                                                    }
                                                 }
                                             }];
             
@@ -1288,169 +1283,27 @@ enum PinAnnotationTypeTag {
         
         
     } else if ([installStepNum isEqualToNumber:[NSNumber numberWithInteger:1]])     {
-        NSLog(@"  After First install");
+        if (DBG) NSLog(@"  After First install");
         [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithInteger:2] forKey:@"installationStep"];
         [[NSUserDefaults standardUserDefaults] synchronize];
-        
         [self runNormalModeUI];
-//        if ([[NSUserDefaults standardUserDefaults] boolForKey:@"newUserFlag"]){
-//            [self performSegueWithIdentifier:@"newCoreCircle" sender:self];
-//            //NSLog(@"{Presenting newCoreCircle}");
-//        } else
-//            [self runNormalModeUI];
-//        
-//    } else if ([installStepNum isEqualToNumber:[NSNumber numberWithInteger:2]])     {
-//        NSLog(@"+++++++++++   Returns from coreCircle vc");
-//        [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithInteger:3] forKey:@"installationStep"];
-//        [[NSUserDefaults standardUserDefaults] synchronize];
-//        
-//        // Login to Parse
-//        NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-//        if ( [userDefaults objectForKey:@"adminID"] != NULL ) {
-//            [PFUser logInWithUsernameInBackground:[userDefaults objectForKey:@"adminID"]
-//                                         password:[userDefaults objectForKey:@"adminPass"]
-//                                            block:^(PFUser *user, NSError *error) {
-//                                                if (!user) {
-//                                                    NSLog(@"Login to Parse failed with this error: %@",error);
-//                                                }
-//                                            }];
-//            
-//            // If the following ACL settins are required: Set the proper ACLs
-//            /*        PFACL *ACL = [PFACL ACLWithUser:[PFUser currentUser]];
-//             [ACL setPublicReadAccess:YES];
-//             [PFACL setDefaultACL:ACL withAccessForCurrentUser:YES];
-//             */
-//        } // otherwise do nothing
-//        // Check if self is currentUser (Parse)
-//        PFUser *currentUser = [PFUser currentUser];
-//        if (currentUser) {
-//            NSLog(@"Successful login to Parse:%@",currentUser.email);
-//        } else
-//            NSLog(@"no current user");
-//        
-//        // Determine App Frame
-//        self.appFrameProperties = [[NSArray alloc] initWithObjects:
-//                                   [NSValue valueWithCGRect:[[UIScreen mainScreen] applicationFrame]],
-//                                   [NSValue valueWithCGRect:self.navigationController.navigationBar.frame],
-//                                   [NSValue valueWithCGRect:self.navigationController.toolbar.frame], nil];
-//        
-//        self.friendsLocationArray = [[NSMutableArray alloc] init]; // friends location cache
-//        self.pendingRqstsArray    = [[NSMutableArray alloc] init]; // Init pending requests holding array
-//        
-//        // Show progress indicator to tell user to wait a bit
-//        self.loadingView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
-//        [self.loadingView setColor:UIColorFromRGB(0xf47d44)];
-//        [self.view addSubview:self.loadingView];
-//        [self.loadingView setCenter:CGPointMake(self.view.center.x, self.view.bounds.size.height*0.2)];
-//        [self.loadingView startAnimating];
-//        
-//        // Seting up the UI
-//        [self setupToolBarIcons];
-//        [self setupNavigationBarImage];
-//        [self setupMapView];
-//        [self setupRequestScrollView];
-//        [self setupEventsTableView];
-//        
-//        
-//        
-//        [self.locationManager startUpdatingLocation];
-//        [self setInitialLocation:self.locationManager.location];
-//        self.mapView.region = MKCoordinateRegionMake(self.location.coordinate, MKCoordinateSpanMake(0.05f, 0.05f));
-//        if([self.loadingView isAnimating])
-//            [self.loadingView stopAnimating];
-//        
-//        
-//        //  Cache resources from parse // The className to query on
-//        PFQuery *query = [PFQuery queryWithClassName:@"Resources"];
-//        [query orderByDescending:@"createdAt"];
-//        query.cachePolicy = kPFCachePolicyNetworkElseCache;
-//        [query getFirstObjectInBackgroundWithBlock:^(PFObject *object, NSError *error) {
-//            if (!object) {
-//                NSLog(@"The getFirstObject request failed.");
-//            } else {
-//                
-//                FriensoAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
-//                
-//                NSManagedObjectContext *managedObjectContext =
-//                appDelegate.managedObjectContext;
-//                
-//                // First check to see if the objectId already exists
-//                NSEntityDescription *entityDescription = [NSEntityDescription entityForName:@"FriensoEvent"
-//                                                                     inManagedObjectContext:managedObjectContext];
-//                NSFetchRequest *request = [[NSFetchRequest alloc] init];
-//                [request setPredicate:[NSPredicate predicateWithFormat:@"eventObjId like %@",object.objectId]];
-//                [request setEntity:entityDescription];
-//                BOOL unique = YES;
-//                NSError  *error;
-//                NSArray *items = [managedObjectContext executeFetchRequest:request error:&error];
-//                if(items.count > 0){
-//                    unique = NO;
-//                    
-//                }
-//                if (unique) {
-//                    FriensoEvent *firstFriensoEvent =
-//                    [NSEntityDescription insertNewObjectForEntityForName:@"FriensoEvent"
-//                                                  inManagedObjectContext:managedObjectContext];\
-//                    
-//                    if (firstFriensoEvent != nil)
-//                    {
-//                        
-//                        firstFriensoEvent.eventTitle     = [object valueForKey:@"resource"];
-//                        firstFriensoEvent.eventSubtitle  = [object valueForKey:@"detail"];
-//                        firstFriensoEvent.eventLocation  = [object valueForKey:@"ResourceLink"];
-//                        firstFriensoEvent.eventCategory  = [object valueForKey:@"categoryType"];
-//                        firstFriensoEvent.eventCreated   = [NSDate date];
-//                        firstFriensoEvent.eventModified  = object.createdAt;
-//                        firstFriensoEvent.eventObjId     = object.objectId;
-//                        firstFriensoEvent.eventImage     = [object valueForKey:@"rImage"];
-//                        firstFriensoEvent.eventPriority  = [NSNumber numberWithInteger:2];
-//                        
-//                        NSError *savingError = nil;
-//                        if([managedObjectContext save:&savingError]) {
-//                            NSLog(@"Successfully cached the resource");
-//                        } else
-//                            NSLog(@"Failed to save the context. Error = %@", savingError);
-//                        // update the Parse record:
-//                        [object setObject:[NSNumber numberWithBool:YES]
-//                                   forKey:@"wasCached"];
-//                        [object saveInBackground];
-//                        
-//                    } else {
-//                        NSLog(@"Failed to create a new event.");
-//                    }
-//                } //else NSLog(@"! Parse event is not unique");
-//            }
-//        }];
-
-    } else if ([[NSUserDefaults standardUserDefaults] boolForKey:@"getStartedFlag"] &&
+    }
+    else if ([[NSUserDefaults standardUserDefaults] boolForKey:@"getStartedFlag"] &&
                        [[NSUserDefaults standardUserDefaults] objectForKey:@"adminID"] != NULL)
     {
-        NSLog(@"- viewDidLoad, getstarted flag ok, adminID not null");
+        if (DBG) NSLog(@"- viewDidLoad, getstarted flag ok, adminID not null");
         [self runNormalModeUI];
     }
 }
 - (void) setupUI
 {
     // Seting up the UI
-    NSLog(@"Setup UI");
+    if (DBG) NSLog(@"Setup UI");
     [self setupMapView];
     [self setupRequestScrollView];
     [self setupEventsTableView];
-    
     [self setupToolBarIcons];
     [self setupNavigationBarImage];
-}
-- (void) runNormalModeUI {
-    NSLog(@"Normal mode");
-    
-    // Determine App Frame
-    self.appFrameProperties = [[NSArray alloc] initWithObjects:
-                               [NSValue valueWithCGRect:[[UIScreen mainScreen] applicationFrame]],
-                               [NSValue valueWithCGRect:self.navigationController.navigationBar.frame],
-                               [NSValue valueWithCGRect:self.navigationController.toolbar.frame], nil];
-    
-    self.friendsLocationArray = [[NSMutableArray alloc] init]; // friends location cache
-    self.pendingRqstsArray    = [[NSMutableArray alloc] init]; // Init pending requests holding array
     
     // Show progress indicator to tell user to wait a bit
     self.loadingView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
@@ -1459,13 +1312,11 @@ enum PinAnnotationTypeTag {
     [self.loadingView setCenter:CGPointMake(self.view.center.x, self.view.bounds.size.height*0.2)];
     [self.loadingView startAnimating];
     
-//    // Seting up the UI
-//    [self setupToolBarIcons];
-//    [self setupNavigationBarImage];
-//    [self setupMapView];
-//    [self setupRequestScrollView];
-//    [self setupEventsTableView];
-    [self setupUI];
+    
+}
+- (void) runNormalModeUI {
+    if (DBG) NSLog(@"Normal mode");
+    
     
     // Hide the Options Menu when navigating to Options, otherwise show
     for (id subview in [self.navigationController.toolbar subviews]){
@@ -1505,11 +1356,11 @@ enum PinAnnotationTypeTag {
     query.cachePolicy = kPFCachePolicyNetworkElseCache;
     [query getFirstObjectInBackgroundWithBlock:^(PFObject *object, NSError *error) {
         if (!object) {
-            NSLog(@"The getFirstObject request failed.");
+            if (DBG) NSLog(@"The getFirstObject request failed.");
         } else {
             // The find succeeded.
-            //NSLog(@"Successfully retrieved the object.");
-            //NSLog(@"%@", object.objectId);
+            //if (DBG) NSLog(@"Successfully retrieved the object.");
+            //if (DBG) NSLog(@"%@", object.objectId);
             
             
             FriensoAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
@@ -1548,18 +1399,18 @@ enum PinAnnotationTypeTag {
                     
                     NSError *savingError = nil;
                     if([managedObjectContext save:&savingError]) {
-                        NSLog(@"Successfully cached the resource");
+                        if (DBG) NSLog(@"Successfully cached the resource");
                     } else
-                        NSLog(@"Failed to save the context. Error = %@", savingError);
+                        if (DBG) NSLog(@"Failed to save the context. Error = %@", savingError);
                     // update the Parse record:
                     [object setObject:[NSNumber numberWithBool:YES]
                                forKey:@"wasCached"];
                     [object saveInBackground];
                     
                 } else {
-                    NSLog(@"Failed to create a new event.");
+                    if (DBG) NSLog(@"Failed to create a new event.");
                 }
-            } //else NSLog(@"! Parse event is not unique");
+            } //else if (DBG) NSLog(@"! Parse event is not unique");
         }
     }];
 }
@@ -1572,19 +1423,18 @@ enum PinAnnotationTypeTag {
     // Check if self is currentUser (Parse)
     PFUser *currentUser = [PFUser currentUser];
     if (currentUser) {
-        NSLog(@"Successful login to Parse:%@",currentUser.email);
-        [self setupUI];
+        iLog(@"Successful login to Parse:%@",currentUser.email);
+        //[self setupUI];
     } else {
-        //NSLog(@"no current user");
+        //if (DBG) NSLog(@"no current user");
         NSString *userName = [[NSUserDefaults standardUserDefaults] objectForKey:@"adminID"];
         NSString *userPass = [[NSUserDefaults standardUserDefaults] objectForKey:@"adminPass"];
         [PFUser logInWithUsernameInBackground:userName password:userPass
                                         block:^(PFUser *user, NSError *error) {
                                             if (user) {
-                                                NSLog(@"[ Parse successful login ]");
-                                                [self setupUI];
+                                                iLog(@"[ Parse successful login ]");
                                             } else
-                                                NSLog(@"- Cloud login failed -");
+                                                iLog(@"- Cloud login failed -");
                                         }];
     }
 }
@@ -1611,10 +1461,10 @@ enum PinAnnotationTypeTag {
         
         NSError *savingError = nil;
         if(![[self managedObjectContext] save:&savingError])
-            NSLog(@"Failed to save the context. Error = %@", savingError);
+            if (DBG) NSLog(@"Failed to save the context. Error = %@", savingError);
         
     } else {
-        NSLog(@"Failed to create a new event.");
+        if (DBG) NSLog(@"Failed to create a new event.");
     }
 
 }
@@ -1637,18 +1487,18 @@ enum PinAnnotationTypeTag {
                                                                          error:&error];
     if (fetchedObjects == nil) {
         // Handle the error.
-        NSLog(@"Handle the error: %@", error);
+        if (DBG) NSLog(@"Handle the error: %@", error);
     } else {
         for (NSManagedObject *object in fetchedObjects) {
             
-            NSLog(@"%@", object);
+            if (DBG) NSLog(@"%@", object);
             
         }
     }
 }
 -(BOOL) amiWatchingUserEvent:(NSString *)userEventObjId
 {
-    //NSLog(@"%@", userEventObjId);
+    //if (DBG) NSLog(@"%@", userEventObjId);
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init]; // Create the fetch request
     NSEntityDescription *entity  = [NSEntityDescription entityForName:@"FriensoEvent"
                                                inManagedObjectContext:[self managedObjectContext]];
@@ -1698,7 +1548,7 @@ enum PinAnnotationTypeTag {
         retBool = NO;
     }  else {
        for (NSManagedObject *mObject in fetchedObjects) {
-           NSLog(@"     %@,%@",[mObject valueForKey:@"eventTitle"],[mObject valueForKey:@"eventSubtitle"]);
+           if (DBG) NSLog(@"     %@,%@",[mObject valueForKey:@"eventTitle"],[mObject valueForKey:@"eventSubtitle"]);
            if ([[mObject valueForKey:@"eventContact"] rangeOfString:friensoUser.username].location == NSNotFound)
                retBool = NO;
            else
@@ -1724,10 +1574,10 @@ enum PinAnnotationTypeTag {
         
         NSError *savingError = nil;
         if([managedObjectContext save:&savingError]) {
-            NSLog(@"Successfully saved the context");
-        } else { NSLog(@"Failed to save the context. Error = %@", savingError); }
+            if (DBG) NSLog(@"Successfully saved the context");
+        } else { if (DBG) NSLog(@"Failed to save the context. Error = %@", savingError); }
     } else {
-        NSLog(@"Failed to create a new event.");
+        if (DBG) NSLog(@"Failed to create a new event.");
     }
 }
 
@@ -1756,15 +1606,15 @@ enum PinAnnotationTypeTag {
         
         NSError *savingError = nil;
         if([managedObjectContext save:&savingError]) {
-            NSLog(@"Successfully saved the context");
-        } else { NSLog(@"Failed to save the context. Error = %@", savingError); }
+            if (DBG) NSLog(@"Successfully saved the context");
+        } else { if (DBG) NSLog(@"Failed to save the context. Error = %@", savingError); }
     } else {
-        NSLog(@"Failed to create a new event.");
+        if (DBG) NSLog(@"Failed to create a new event.");
     }
 }
 
 - (void) actionAddFriensoEvent:(NSString *) message {
-    NSLog(@"[ actionAddFriensoEvent ]");
+    if (DBG) NSLog(@"[ actionAddFriensoEvent ]");
     FriensoAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
     
     NSManagedObjectContext *managedObjectContext =
@@ -1784,15 +1634,15 @@ enum PinAnnotationTypeTag {
         
         NSError *savingError = nil;
         if([managedObjectContext save:&savingError]) {
-            NSLog(@"Successfully saved the context");
-        } else { NSLog(@"Failed to save the context. Error = %@", savingError); }
+            if (DBG) NSLog(@"Successfully saved the context");
+        } else { if (DBG) NSLog(@"Failed to save the context. Error = %@", savingError); }
     } else {
-        NSLog(@"Failed to create a new event.");
+        if (DBG) NSLog(@"Failed to create a new event.");
     }
     
 }
 -(void) syncCoreFriendsLocation {
-    NSLog(@"--- syncCoreFriendsLocation  [ Sync friends' location to CoreData ]");
+    if (DBG) NSLog(@"--- syncCoreFriendsLocation  [ Sync friends' location to CoreData ]");
     FRCoreDataParse *frCDPObject = [[FRCoreDataParse alloc] init];
     [frCDPObject updateThisUserLocation];
     //[frCDPObject updateCoreFriendsLocation];
@@ -1847,7 +1697,7 @@ enum PinAnnotationTypeTag {
 //    NSDictionary* stringAttrs = @{ NSFontAttributeName: font, NSForegroundColorAttributeName: textColor};
 //    NSAttributedString* attrStr = [[NSAttributedString alloc] initWithString:@"SA"
 //                                                                  attributes:stringAttrs];
-//    NSLog(@"size-width: %f", attrStr.size.width);
+//    if (DBG) NSLog(@"size-width: %f", attrStr.size.width);
 //    [attrStr drawAtPoint:CGPointMake(size.width*0.22,size.width*0.22)];
 //    UIImage *image = UIGraphicsGetImageFromCurrentImageContext(); // and create an image from the context
 //    
@@ -1906,7 +1756,7 @@ enum PinAnnotationTypeTag {
 - (MKAnnotationView *)mapView:(MKMapView *)mapView
             viewForAnnotation:(id<MKAnnotation>)annotation
 {
-    NSLog(@"viewFoAnnotation");
+    if (DBG) NSLog(@"viewFoAnnotation");
     static NSString *GeoPointAnnotationIdentifier = @"RedPinAnnotation";
     static NSString *GeoQueryAnnotationIdentifier = @"PurplePinAnnotation";
     
@@ -1952,10 +1802,10 @@ enum PinAnnotationTypeTag {
 - (void)mapView:(MKMapView *)mapView annotationView:(MKAnnotationView *)view
 calloutAccessoryControlTapped:(UIControl *)control
 {
-    //NSLog(@"accessory button tapped for annotation %@", view.annotation);
-    //NSLog(@"%@", [view.annotation description]);
-//    NSLog(@"%@", [view.annotation title]);
-//    NSLog(@"%@", [view.annotation subtitle]);
+    //if (DBG) NSLog(@"accessory button tapped for annotation %@", view.annotation);
+    //if (DBG) NSLog(@"%@", [view.annotation description]);
+//    if (DBG) NSLog(@"%@", [view.annotation title]);
+//    if (DBG) NSLog(@"%@", [view.annotation subtitle]);
     UIAlertView *contactFriendAV = [[UIAlertView alloc] initWithTitle:[view.annotation subtitle]
                                                               message:nil
                                                              delegate:self
@@ -2008,7 +1858,8 @@ calloutAccessoryControlTapped:(UIControl *)control
         MKPinAnnotationView *pinAnnotationView = (MKPinAnnotationView *)view;
         GeoQueryAnnotation *geoQueryAnnotation = (GeoQueryAnnotation *)pinAnnotationView.annotation;
         self.location = [[CLLocation alloc] initWithLatitude:geoQueryAnnotation.coordinate.latitude longitude:geoQueryAnnotation.coordinate.longitude];
-        [self configureOverlay];                  // the method also checks for pending requests
+        if ([[NSUserDefaults standardUserDefaults] objectForKey:@"adminID"] != NULL)
+            [self configureOverlay];
     }
 }
 
@@ -2042,8 +1893,11 @@ calloutAccessoryControlTapped:(UIControl *)control
             [[NSUserDefaults standardUserDefaults] synchronize];
             [[PFUser currentUser] setObject:geoPoint forKey:@"currentLocation"];
             [[PFUser currentUser] saveInBackground];
+            
+            iLog(@"Your Current Location: %.4f, %.4f",geoPoint.latitude,geoPoint.longitude);
         }
     }];
+    
 }
 
 - (void)configureOverlay {
@@ -2053,14 +1907,14 @@ calloutAccessoryControlTapped:(UIControl *)control
  *
  ** */
     
-    NSLog(@"configureOverlay method");
+    if (DBG) NSLog(@"configureOverlay method");
     
     // Check for friends with active alerts
     PFQuery *query = [PFQuery queryWithClassName:@"UserEvent"];
     [query whereKey:@"eventActive" equalTo:[NSNumber numberWithBool:YES]];
     [query includeKey:@"friensoUser"];
     [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
-        NSLog(@"------ Checking for Events ...");
+        if (DBG) NSLog(@"------ Checking for Events ...");
         if (!error) {
             
             for (PFObject *userEvent in objects){
@@ -2071,26 +1925,26 @@ calloutAccessoryControlTapped:(UIControl *)control
                     [trackMeOnOff setOn:YES animated:YES];
                 } else if ([friensoUser.username isEqualToString:[PFUser currentUser].username] &&
                            [[userEvent objectForKey:@"eventType"] isEqualToString:@"helpNow"]) {
-                    [self setupHelpMeNowSwitch];
+                    //
                     [self updateLocations]; // puts core circle on mapview
                     
                 } else if ([self inYourCoreUserWithPhNumber:[friensoUser valueForKey:@"phoneNumber"]] )
                 {
                     // Check if this user is in your core or watchCircle
                     // friensoUser is in my network, am I tracking him/her?
-                    NSLog(@"Friend: %@ w/active event of type: %@, %@, %@",friensoUser.username,
+                    if (DBG) NSLog(@"Friend: %@ w/active event of type: %@, %@, %@",friensoUser.username,
                           [userEvent valueForKey:@"eventType"],userEvent.objectId, [userEvent objectForKey:@"eventActive"]);
                     
-                    //NSLog(@"am I watching him/her?: %d", [self ])
+                    //if (DBG) NSLog(@"am I watching him/her?: %d", [self ])
                     //[[[CloudUsrEvnts alloc] init] isUserInMy2WatchList:friensoUser];
                      
                      if ([self amiWatchingUserEvent:userEvent.objectId])
                      {
-                         //NSLog(@"!!! YES");
+                         //if (DBG) NSLog(@"!!! YES");
                          [self.watchingCoFrArray addObject:friensoUser];
                      }else
                      {
-                         //NSLog(@"!!! NO");
+                         //if (DBG) NSLog(@"!!! NO");
                          /*NSDictionary *dic =[[NSDictionary alloc] initWithObjects:@[friensoUser, forKeys:<#(NSArray *)#>]*/
                          [self.pendingRqstsArray addObject:userEvent];
                      }
@@ -2101,10 +1955,10 @@ calloutAccessoryControlTapped:(UIControl *)control
 
             [self addPendingRequest:self.pendingRqstsArray];
 //            [self.scrollView setPendingRequests:self.pendingRqstsArray];
-            //NSLog(@"pendingRqstsArray: %@", self.pendingRqstsArray);
+            //if (DBG) NSLog(@"pendingRqstsArray: %@", self.pendingRqstsArray);
             [self updateMapViewWithUserBubbles: self.watchingCoFrArray];
         } else
-            NSLog(@"parse error: %@", error.localizedDescription);
+            if (DBG) NSLog(@"parse error: %@", error.localizedDescription);
     }];
     
 
@@ -2117,13 +1971,13 @@ calloutAccessoryControlTapped:(UIControl *)control
     [pfquery whereKey:@"recipient" equalTo:[PFUser currentUser]];
     [pfquery includeKey:@"sender"];
     [pfquery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
-        NSLog(@"------ Checking CoreFriendRequest ...");
+        if (DBG) NSLog(@"------ Checking CoreFriendRequest ...");
         if(!error) {
             NSInteger i = [self.pendingRqstsArray count]; // get the next insert position
-            //NSLog(@"CoreFriend Request: recipient, req ObjId, status, awaitingResponseFrom");
+            //if (DBG) NSLog(@"CoreFriend Request: recipient, req ObjId, status, awaitingResponseFrom");
             for (PFObject *object in objects) {
                 //PFUser * sender = [object objectForKey:@"sender"];
-                //NSLog(@"%@ : %@ : %@ : %@",sender.objectId, object.objectId, [object objectForKey:@"status"], sender.email);
+                //if (DBG) NSLog(@"%@ : %@ : %@ : %@",sender.objectId, object.objectId, [object objectForKey:@"status"], sender.email);
                 
                 if ( [[object objectForKey:@"status"] isEqualToString:@"send"] ){
                 /*[self addPendingRequest:sender withTag:i reqtype:coreFriendRequest]; // temp add to drawwer+slider
@@ -2142,7 +1996,7 @@ calloutAccessoryControlTapped:(UIControl *)control
             [self addPendingRequest:self.pendingRqstsArray];
         } else {
             // Did not find any UserStats for the current user
-            NSLog(@"Error: %@", error);
+            if (DBG) NSLog(@"Error: %@", error);
         }
     }];
 
@@ -2193,10 +2047,10 @@ calloutAccessoryControlTapped:(UIControl *)control
     /* friendLocInteraction:
     ** Is the action triggered when user touches the button overlay on the mapview.
     ** */
-    //NSLog(@"...friendLocInteraction");
-//    NSLog(@"[tag:%ld], %@", [sender tag],self.friendsLocationArray);// objectAtIndex:sender.tag]);
-//    NSLog(@"watchingCoFrArray:%ld", [self.watchingCoFrArray count]);
-//    NSLog(@"%@", self.watchingCoFrArray);
+    //if (DBG) NSLog(@"...friendLocInteraction");
+//    if (DBG) NSLog(@"[tag:%ld], %@", [sender tag],self.friendsLocationArray);// objectAtIndex:sender.tag]);
+//    if (DBG) NSLog(@"watchingCoFrArray:%ld", [self.watchingCoFrArray count]);
+//    if (DBG) NSLog(@"%@", self.watchingCoFrArray);
     
     //NSString *coordinateStr =[self.friendsLocationArray objectAtIndex:sender.tag];
     PFGeoPoint *coordinatesPoint = [self.friendsLocationArray objectAtIndex:sender.tag];
@@ -2271,7 +2125,7 @@ calloutAccessoryControlTapped:(UIControl *)control
 }
 
 - (void)updateLocations {
-    NSLog(@"****** UPDATELOCATIONS");
+    if (DBG) NSLog(@"****** UPDATELOCATIONS");
     /** this adds bubbles to the map for all Persons in your CoreFriends list (local core data store) **/
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init]; // Create the fetch request
     NSEntityDescription *entity = [NSEntityDescription entityForName:@"CoreFriends"
@@ -2291,7 +2145,7 @@ calloutAccessoryControlTapped:(UIControl *)control
     } else /*if ( [[self.mapView subviews] count] < [fetchedObjects count])*/{
         NSInteger j = 0;
         for (NSManagedObject *mObject in fetchedObjects) {
-            //NSLog(@"    %@ | %@ | %@", [mObject valueForKey:@"coreFirstName"], [mObject valueForKey:@"corePhone"], [mObject valueForKey:@"coreLocation"]);
+            if (DBG) NSLog(@"    %@ | %@ | %@", [mObject valueForKey:@"coreFirstName"], [mObject valueForKey:@"corePhone"], [mObject valueForKey:@"coreLocation"]);
             PFQuery *userQuery = [PFUser query];
             NSString *longPhoneNumber = [self stripStringOfUnwantedChars:[mObject valueForKey:@"corePhone"]];
             NSString *basePhoneNumber = [longPhoneNumber substringFromIndex:(longPhoneNumber.length-10)];
@@ -2301,36 +2155,26 @@ calloutAccessoryControlTapped:(UIControl *)control
                 if (!error) {
                     PFUser * pfuser = [objects firstObject];
                     if(pfuser != nil) {
-                        /* NSLog(@"user %@", [pfuser username]);
-                        NSLog(@"phone %@", [pfuser objectForKey:@"phoneNumber"]);
-                        NSLog(@"location %@", [pfuser objectForKey:@"currentLocation"]);
+                        if (DEBUG) if (DBG) NSLog(@"users on parse: %@", [pfuser username]); //
+                        /*if (DBG) NSLog(@"user %@", [pfuser username]);// these
+                        
+                        if (DBG) NSLog(@"phone %@", [pfuser objectForKey:@"phoneNumber"]);
+                        if (DBG) NSLog(@"location %@", [pfuser objectForKey:@"currentLocation"]);
                         */
-                        //NSLog(@"%d: %@",j, basePhoneNumber);
+                        //if (DBG) NSLog(@"%d: %@",j, basePhoneNumber);
                         [self addCoreFriendLocationToMap:pfuser withIndex:j];
                     }
                 } else {
-                    NSLog(@"%@", error);
+                    if (DBG) NSLog(@"%@", error);
                 }
             }];
             j++;
-            //NSLog(@"%@",[self stripStringOfUnwantedChars:[mObject valueForKey:@"corePhone"]]);
+            //if (DBG) NSLog(@"%@",[self stripStringOfUnwantedChars:[mObject valueForKey:@"corePhone"]]);
             
         }
-        // Animate friends overlays
-//        NSInteger k = 0;
-        for (id subview in [self.mapView subviews]){
-            if ( [subview isKindOfClass:[UILabel class]])
-            {
-//                [UIView animateWithDuration:0.5 animations:^{
-//                    [(UILabel*)subview].frame.center = CGPointMake(self.view.x, <#CGFloat y#>)
-                //NSLog(@"Label");
-            }
-            
-        }
+        
     }
     
-//    NSLog(@"subviews: %ld", [[self.mapView subviews] count]);
-
     // Async update locations from cloud
 }
 -(void) fetchCurrentLocationForUser:(NSString *) coreFriendObjectId {
@@ -2344,7 +2188,7 @@ calloutAccessoryControlTapped:(UIControl *)control
                                  block:^(PFObject *object, NSError *error)
      {
          if (!error) {
-             //NSLog(@"%@, %@", (NSString *)[object valueForKey:@"email"], (PFGeoPoint *)[object valueForKey:@"currentLocation"]);
+             //if (DBG) NSLog(@"%@, %@", (NSString *)[object valueForKey:@"email"], (PFGeoPoint *)[object valueForKey:@"currentLocation"]);
              [self updateCoreFriendEntity:(NSString *)[object valueForKey:@"email"]
                              withLocation:(PFGeoPoint *)[object valueForKey:@"currentLocation"]];
              // Center the map view around this geopoint:
@@ -2363,7 +2207,7 @@ calloutAccessoryControlTapped:(UIControl *)control
              [self actionAddFriensoUserLocation:geoPoint forUser:(NSString *)[object valueForKey:@"username"]];
             
          } else
-             NSLog(@"!Error: %@ %@", error, [error userInfo]); // Log details of the failure
+             if (DBG) NSLog(@"!Error: %@ %@", error, [error userInfo]); // Log details of the failure
      }];
 }
 -(void) lastKnownLocationForFriend:(NSString *)phoneNumber
@@ -2372,19 +2216,19 @@ calloutAccessoryControlTapped:(UIControl *)control
     //NSString *pNumber = [coFrDic objectForKey:keys[1]];
     NSRange substrRange = NSMakeRange(phoneNumber.length-10, 10);
     [query whereKey:@"userNumber" containsString:[phoneNumber substringWithRange:substrRange]];
-    //NSLog(@"%@",[phoneNumber substringWithRange:substrRange]);
+    //if (DBG) NSLog(@"%@",[phoneNumber substringWithRange:substrRange]);
     [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error)
      {
          if (!error) { // The find succeeded.
-             //NSLog(@"%@", objects);
+             //if (DBG) NSLog(@"%@", objects);
              for (PFObject *object in objects) { // Do something w/ found objects
-                 //NSLog(@"%@", object);
-                 //NSLog(@"%@", [[object valueForKey:@"user"] objectId]);
+                 //if (DBG) NSLog(@"%@", object);
+                 //if (DBG) NSLog(@"%@", [[object valueForKey:@"user"] objectId]);
                  [self fetchCurrentLocationForUser:[[object valueForKey:@"user"] objectId]];
              }
          } else {
              // Log details of the failure
-             NSLog(@"!!Error: %@ %@", error, [error userInfo]);
+             if (DBG) NSLog(@"!!Error: %@ %@", error, [error userInfo]);
          }
      }];
 }
@@ -2392,9 +2236,9 @@ calloutAccessoryControlTapped:(UIControl *)control
 #pragma mark - MFMessageComposeViewController Delegate method
 - (void)messageComposeViewController:(MFMessageComposeViewController *)controller didFinishWithResult:(MessageComposeResult)result {
     switch (result) {
-        case MessageComposeResultSent: NSLog(@"SENT"); [self dismissViewControllerAnimated:YES completion:nil]; break;
-        case MessageComposeResultFailed: NSLog(@"FAILED"); [self dismissViewControllerAnimated:YES completion:nil]; break;
-        case MessageComposeResultCancelled: NSLog(@"CANCELLED"); [self dismissViewControllerAnimated:YES completion:nil]; break;
+        case MessageComposeResultSent: if (DBG) NSLog(@"SENT"); [self dismissViewControllerAnimated:YES completion:nil]; break;
+        case MessageComposeResultFailed: if (DBG) NSLog(@"FAILED"); [self dismissViewControllerAnimated:YES completion:nil]; break;
+        case MessageComposeResultCancelled: if (DBG) NSLog(@"CANCELLED"); [self dismissViewControllerAnimated:YES completion:nil]; break;
     }
 }
 #pragma mark - AlertView Delegate
@@ -2403,10 +2247,10 @@ calloutAccessoryControlTapped:(UIControl *)control
     return YES;
 }
 -(void)alertView:(UIAlertView *)alertView willDismissWithButtonIndex:(NSInteger)buttonIndex {
-    //NSLog(@"[ will dismiss ]");
+    //if (DBG) NSLog(@"[ will dismiss ]");
 }
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
-    //NSLog(@"[ did dismiss ]");
+    //if (DBG) NSLog(@"[ did dismiss ]");
 }
 -(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
@@ -2420,24 +2264,24 @@ calloutAccessoryControlTapped:(UIControl *)control
                 [trackMeOnOff setOn:NO animated:YES]; // Nothing happens -- no action
                 break;
             case 1: // accept
-                //NSLog(@"Accept: 1:%ld", buttonIndex);
+                //if (DBG) NSLog(@"Accept: 1:%ld", buttonIndex);
                 [self logAndNotifyCoreFriendsToWatchMe];
                 break;
             default:
                 break;
         }
     } else if (tag_no >= 100) {
-        NSLog(@"CONTACT FRIEND");
+        if (DBG) NSLog(@"CONTACT FRIEND");
         switch (buttonIndex) {
             case 0: // dismiss, cancel, or okay
-                NSLog(@"cancel");
+                if (DBG) NSLog(@"cancel");
                 break;
             case 1: // accept
-                NSLog(@"Dial");
+                if (DBG) NSLog(@"Dial");
                 [self contactByDialingFriendWithEmail:title];
                 break;
             case 2: // SMS
-                NSLog(@"SMS");
+                if (DBG) NSLog(@"SMS");
                 [self contactBySMSingFriendWithEmail:title];
             default:
                 break;
@@ -2455,7 +2299,7 @@ calloutAccessoryControlTapped:(UIControl *)control
         NSString *requestType     = ([userEventObject valueForKey:@"eventType"]==NULL) ? coreFriendRequest : [userEventObject valueForKey:@"eventType"];
         PFUser   *friensoUser = ([userEventObject objectForKey:@"friensoUser"] == NULL) ? [userEventObject objectForKey:@"sender"] : [userEventObject objectForKey:@"friensoUser"];
         
-        NSLog(@"%@, %@, %@",friensoUser.username, requestType, userEventObject.objectId);
+        if (DBG) NSLog(@"%@, %@, %@",friensoUser.username, requestType, userEventObject.objectId);
         
         if([requestType isEqualToString:coreFriendRequest])
         {
@@ -2465,12 +2309,12 @@ calloutAccessoryControlTapped:(UIControl *)control
             if (buttonIndex == 1) // accept
             {
                 response = @"accept";
-                NSLog(@" corefriend request accepted");
+                if (DBG) NSLog(@" corefriend request accepted");
             } else if (buttonIndex == 2) { //reject
                 response = @"reject";
-                NSLog(@" corefriend request rejected");
+                if (DBG) NSLog(@" corefriend request rejected");
             } else { //dismiss
-                NSLog(@"dismissed alertview");
+                if (DBG) NSLog(@"dismissed alertview");
                 return;
             }
             
@@ -2511,16 +2355,16 @@ calloutAccessoryControlTapped:(UIControl *)control
             if (buttonIndex == 1) // accept
             {
                 //[self addUserBubbleToMap:friensoUser  withTag:tag_no]; // accepted to watch this user
-                //NSLog(@"number of subviews: %ld", (long)[self.scrollView subviews].count);
+                //if (DBG) NSLog(@"number of subviews: %ld", (long)[self.scrollView subviews].count);
                 // Remove pending request bubble from pendingDrawer
                 for (id subview in [self.scrollView subviews]){
                     
                     if ( [subview isKindOfClass:[PendingRequestButton class]] ) {
-                        NSLog(@"self.pendingRqstsArray: %ld",(long)self.pendingRqstsArray.count);
+                        if (DBG) NSLog(@"self.pendingRqstsArray: %ld",(long)self.pendingRqstsArray.count);
                         if (tag_no ==  [(PendingRequestButton *)subview tag] &&
                             (self.pendingRqstsArray.count > 0))
                         {
-                            //NSLog(@"[0]:tag=%ld, tag_no: %d", (long)[(UIButton *)subview tag], (int) tag_no );
+                            //if (DBG) NSLog(@"[0]:tag=%ld, tag_no: %d", (long)[(UIButton *)subview tag], (int) tag_no );
                             [subview removeFromSuperview];
                             
                             // UserEvent maintain request status (tracking)
@@ -2544,7 +2388,7 @@ calloutAccessoryControlTapped:(UIControl *)control
                 [self updateMapViewWithUserBubbles: self.watchingCoFrArray];
             } else if (buttonIndex == 2) // reject
             {
-                NSLog(@"'request' rejected ");
+                if (DBG) NSLog(@"'request' rejected ");
                 // log the reject to the cloud
                 // remove the request and update
                 
@@ -2568,7 +2412,7 @@ calloutAccessoryControlTapped:(UIControl *)control
                 }
             }else // dismiss
             {
-                NSLog(@"dismissed alertview");
+                if (DBG) NSLog(@"dismissed alertview");
             }
         } // ends the if/else for the requestType
     }

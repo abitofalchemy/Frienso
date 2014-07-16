@@ -9,6 +9,7 @@
 #import "UserResponseScrollView.h"
 #import <QuartzCore/QuartzCore.h>
 
+BOOL dbg = NO;
 
 @implementation UserResponseScrollView
 
@@ -54,7 +55,7 @@
         self.circleView.backgroundColor = [UIColor grayColor];
 }
 -(void) setPendingRequests:(NSArray *) pendingRequestsArray {
-    NSLog(@"setPendingRequests: %d", (int)pendingRequestsArray.count);
+    if (dbg) NSLog(@"setPendingRequests: %d", (int)pendingRequestsArray.count);
 
 //    for (id subview in [self subviews]){
 //        if ( [subview isKindOfClass:[UILabel class]] ) {

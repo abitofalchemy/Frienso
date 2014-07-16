@@ -28,7 +28,7 @@ UITableViewDelegate,UITableViewDataSource,MKMapViewDelegate,CLLocationManagerDel
 @property (nonatomic) UIButton       *helpMeNowBtn;
 //@property (nonatomic,weak) UISwitch       *helpMeNowSwitch;
 
-- (void) loginCurrentUserToCloudStore;
+//- (void) loginCurrentUserToCloudStore;
 - (void) setInitialLocation:(CLLocation *)aLocation;
 - (void) actionAddFriensoUserLocation:(PFGeoPoint *)geoPoint forUser:(NSString *)friend;
 - (void) configureOverlay;

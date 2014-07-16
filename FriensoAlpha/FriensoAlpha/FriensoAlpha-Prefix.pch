@@ -14,3 +14,7 @@
     #import <UIKit/UIKit.h>
     #import <Foundation/Foundation.h>
 #endif
+
+#define DLog(...) NSLog(__VA_ARGS__)
+#define iLog(...) NSLog(__VA_ARGS__)
+#define DBG NO

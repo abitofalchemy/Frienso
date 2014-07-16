@@ -26,9 +26,11 @@
 #import "FriensoViewController.h"
 #import "FriensoAppDelegate.h"
 
+//BOOL DBG = NO;
 
 @interface NewCoreCircleTVC ()
 {
+    
     BOOL checkCloud;
     NSMutableArray *editedCoreList;
 }
@@ -95,13 +97,16 @@ int activeCoreFriends = 0;
     [[NSUserDefaults standardUserDefaults] synchronize];
     
 //    NSDictionary *coreFriendsDic = [[NSUserDefaults standardUserDefaults] dictionaryForKey:@"CoreFriendsContactInfoDicKey"];
-//    NSLog(@"%@", [coreFriendsDic allKeys]);
-//    NSLog(@"%@", [coreFriendsDic allValues]);
+//    if (DBG) if (DBG) NSLog(@"%@", [coreFriendsDic allKeys]);
+//    if (DBG) NSLog(@"%@", [coreFriendsDic allValues]);
+    
     
     if ([self.navigationController.viewControllers indexOfObject:self]==NSNotFound) {
-      [self copyCoreCircleToCoreFriendsEntity]; // enables user to interact with contacts immediately
+        [self copyCoreCircleToCoreFriendsEntity]; // enables user to interact with contacts immediately
+        
     }
 }
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
@@ -121,7 +126,7 @@ int activeCoreFriends = 0;
 {
 //#warning Incomplete method implementation.
     // Return the number of rows in the section.
-    //NSLog(@"%lu", (unsigned long)self.coreCircleOfFriends.count);
+    //if (DBG) NSLog(@"%lu", (unsigned long)self.coreCircleOfFriends.count);
     return self.coreCircleOfFriends.count;
 }
 
@@ -140,7 +145,7 @@ int activeCoreFriends = 0;
     // if the coreCircleOfFriends is not set then
     cell.detailTextLabel.text = [self.coreCircleRequestStatus objectAtIndex:indexPath.row];
 
-    // ok NSLog(@"what?f%@",[coreCircleOfFriends objectAtIndex:0]);
+    // ok if (DBG) NSLog(@"what?f%@",[coreCircleOfFriends objectAtIndex:0]);
     NSString *path = [[NSBundle mainBundle] pathForResource:@"profile" ofType:@"png"];
     UIImage *theImage = [UIImage imageWithContentsOfFile:path];
     cell.imageView.contentMode = UIViewContentModeScaleAspectFit;
@@ -235,12 +240,12 @@ int activeCoreFriends = 0;
         [self.coreCircleContacts addObject:@""]; // we use this to check if the contact is valid to save.
         [self.coreCircleRequestStatus addObject:@"Click to select a core friend from contacts"];
     }
-    //NSLog(@"%@", self.coreCircleContacts);
+    //if (DBG) NSLog(@"%@", self.coreCircleContacts);
 
 }
 -(void) updateLocalArray
 {
-    //NSLog(@"--- updateLocalArray ");
+    //if (DBG) NSLog(@"--- updateLocalArray ");
     //[self showCoreCircle];
     activeCoreFriends = 0;
     for (int i = 0 ; i < MAX_CORE_FRIENDS; i++) {
@@ -248,7 +253,7 @@ int activeCoreFriends = 0;
         [self.coreCircleOfFriends addObject:name];
         [self.coreCircleContacts addObject:@""]; // we use this to check if the contact is valid to save.
         [self.coreCircleRequestStatus addObject:@"Click to select a core friend from contacts"];
-       // NSLog(@"Added to Array %d",i);
+       // if (DBG) NSLog(@"Added to Array %d",i);
     }
     
     
@@ -269,9 +274,9 @@ int activeCoreFriends = 0;
                 //reload the table view
                 
                 for (id object in objects) {
-                    //NSLog(@"Number of active friends %d",activeCoreFriends);
+                    //if (DBG) NSLog(@"Number of active friends %d",activeCoreFriends);
                     if(activeCoreFriends >= MAX_CORE_FRIENDS) {
-                        NSLog(@"Atleast %d  core friends found in frienso",MAX_CORE_FRIENDS);
+                        if (DBG) NSLog(@"Atleast %d  core friends found in frienso",MAX_CORE_FRIENDS);
                         break;
                     }
                     PFObject * pfobject = object;
@@ -313,7 +318,7 @@ int activeCoreFriends = 0;
                             //reload the table view
                             for (id object in objects) {
                                 if(activeCoreFriends >= MAX_CORE_FRIENDS) {
-                                    NSLog(@"Atleast %d  core friends found",MAX_CORE_FRIENDS);
+                                    if (DBG) NSLog(@"Atleast %d  core friends found",MAX_CORE_FRIENDS);
                                     break;
                                 }
 
@@ -327,7 +332,7 @@ int activeCoreFriends = 0;
                             }
                         }
                     }else {
-                        NSLog(@"%@",error);
+                        if (DBG) NSLog(@"%@",error);
                     }
                     [self refresh];
                 }];
@@ -335,7 +340,7 @@ int activeCoreFriends = 0;
                 [self refresh];
             }
         } else {
-            NSLog(@"%@",error);
+            if (DBG) NSLog(@"%@",error);
         }
     }];
 }
@@ -365,7 +370,7 @@ int activeCoreFriends = 0;
     /*
      -(void) saveCFDictionaryToNSUserDefaults:(NSDictionary *)friendsDic {
      // From Parse
-     NSLog(@"[ saveCFDictionaryToNSUserDefaults ]");
+     if (DBG) NSLog(@"[ saveCFDictionaryToNSUserDefaults ]");
      
      NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
      [userDefaults setObject:friendsDic forKey:@"CoreFriendsContactInfoDicKey"];
@@ -388,16 +393,16 @@ int activeCoreFriends = 0;
      cFriends.coreCreated   =  [NSDate date];
      cFriends.coreModified  = [NSDate date];
      cFriends.coreType      = @"iCore Friends";
-     //NSLog(@"%@",[coreCircle objectAtIndex:i] );
+     //if (DBG) NSLog(@"%@",[coreCircle objectAtIndex:i] );
      NSError *savingError = nil;
      
      if ([[self managedObjectContext] save:&savingError]){
-     NSLog(@"Successfully saved contacts to CoreCircle.");
+     if (DBG) NSLog(@"Successfully saved contacts to CoreCircle.");
      } else {
-     NSLog(@"Failed to save the managed object context.");
+     if (DBG) NSLog(@"Failed to save the managed object context.");
      }
      } else {
-     NSLog(@"Failed to create the new person object.");
+     if (DBG) NSLog(@"Failed to create the new person object.");
      }
      }
      
@@ -409,7 +414,7 @@ int activeCoreFriends = 0;
     NSDictionary *cfDic = [[NSUserDefaults standardUserDefaults] dictionaryForKey:@"CoreFriendsContactInfoDicKey"];
     int i = 0;
     for (id key in cfDic) {
-        //NSLog(@"reading contact %@",[retrievedCoreFriendsDictionary objectForKey:key]);
+        //if (DBG) NSLog(@"reading contact %@",[retrievedCoreFriendsDictionary objectForKey:key]);
         [self.coreCircleOfFriends replaceObjectAtIndex:i withObject:key];
         [self.coreCircleContacts replaceObjectAtIndex:i  withObject:[cfDic objectForKey:key]];
         [self.coreCircleRequestStatus replaceObjectAtIndex:i withObject:contactingServersForUpdate];
@@ -418,7 +423,7 @@ int activeCoreFriends = 0;
             break;
         }
     }
-    //NSLog(@"coreCircleOfFriends:%@", self.coreCircleOfFriends);
+    //if (DBG) NSLog(@"coreCircleOfFriends:%@", self.coreCircleOfFriends);
 }
 
 -(void) copyCoreCircleToCoreFriendsEntity
@@ -451,17 +456,17 @@ int activeCoreFriends = 0;
             cFriends.coreCreated   = [NSDate date];
             cFriends.coreModified  = [NSDate date];
             cFriends.coreType      = @"iCore Friends";
-            //NSLog(@"%@",[coreCircle objectAtIndex:i] );
+            //if (DBG) NSLog(@"%@",[coreCircle objectAtIndex:i] );
             
             NSError *savingError = nil;
             
             if ([managedObjectContext save:&savingError]){
-                NSLog(@"Successfully saved contacts to CoreCircle.");
+                if (DBG) NSLog(@"Successfully saved contacts to CoreCircle.");
             } else {
-                NSLog(@"Failed to save the managed object context.");
+                if (DBG) NSLog(@"Failed to save the managed object context.");
             }
         } else {
-            NSLog(@"Failed to create the new person object.");
+            if (DBG) NSLog(@"Failed to create the new person object.");
         }
             
         i += 1; // increment index
@@ -480,7 +485,7 @@ int activeCoreFriends = 0;
     NSMutableString *tempStr = [[NSMutableString alloc] init];
     NSString *firstName = (__bridge_transfer NSString *)(ABRecordCopyValue(person, kABPersonFirstNameProperty));
     NSString *lastName  = (__bridge_transfer NSString *)(ABRecordCopyValue(person, kABPersonLastNameProperty));
-    //NSLog(@"%@", lastName);
+    //if (DBG) NSLog(@"%@", lastName);
     if ( firstName != nil ) {
         [tempStr appendString: firstName];
         [tempStr appendString:@" "];
@@ -492,21 +497,21 @@ int activeCoreFriends = 0;
         [tempStr appendString:@"unknow"];
     
     ABMultiValueRef phones = ABRecordCopyValue(person, kABPersonPhoneProperty);
-    //NSLog(@"%@", phones);
+    //if (DBG) NSLog(@"%@", phones);
     //[tmpStr appendString: (__bridge_transfer NSString *)(ABMultiValueCopyValueAtIndex(phones, 0));
-    //NSLog(@"phone# %@",(__bridge_transfer NSString *)(ABMultiValueCopyValueAtIndex(phones, 0)));
+    //if (DBG) NSLog(@"phone# %@",(__bridge_transfer NSString *)(ABMultiValueCopyValueAtIndex(phones, 0)));
     #warning check for all potential phone numbers
     NSString *contactPhoneNumber = (__bridge_transfer NSString *)(ABMultiValueCopyValueAtIndex(phones, 0));
     NSCharacterSet *toExclude = [NSCharacterSet characterSetWithCharactersInString:@"/.()-  "];
     contactPhoneNumber = [[contactPhoneNumber componentsSeparatedByCharactersInSet:toExclude] componentsJoinedByString:@""];
-    //NSLog(@"phone# %@",contactPhoneNumber);
+    //if (DBG) NSLog(@"phone# %@",contactPhoneNumber);
     
-    NSLog(@"Replacing %@ with %@", [self.coreCircleOfFriends objectAtIndex:self.cellNumberSelected],tempStr);
+    if (DBG) NSLog(@"Replacing %@ with %@", [self.coreCircleOfFriends objectAtIndex:self.cellNumberSelected],tempStr);
     
     //if the same contact is chosen again
     if( ([self.coreCircleContacts count] > self.cellNumberSelected)  && [contactPhoneNumber isEqualToString:[self.coreCircleContacts objectAtIndex:self.cellNumberSelected] ]) {
         //nothing to be done as user already added.
-        NSLog(@"Core user not changed. Aborting");
+        if (DBG) NSLog(@"Core user not changed. Aborting");
         [self dismissViewControllerAnimated:YES completion:nil];
         return NO;
     }
@@ -514,7 +519,7 @@ int activeCoreFriends = 0;
     // if the contact is already selected at other location in core friend list
     for (NSString * number in self.coreCircleContacts) {
         if([contactPhoneNumber isEqualToString:number]) {
-            NSLog(@"User already present at another slot. Aborting");
+            if (DBG) NSLog(@"User already present at another slot. Aborting");
             NSString * message =[NSString stringWithFormat:@"%@ already added to Core Friends. Please select someone else", tempStr];
             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error: Already in Core Friends"
                                                             message:message
@@ -544,7 +549,7 @@ int activeCoreFriends = 0;
     //remove the existing contact from the cloud at the picked location
     [self removeCoreFriendCloud:self.cellNumberSelected];
 
-    //    NSLog(@"udayan");
+    //    if (DBG) NSLog(@"udayan");
     
     //send the core friend request to Parse.
     [self sendCoreFriendRequest:contactPhoneNumber withIndex:self.cellNumberSelected];
@@ -557,7 +562,7 @@ int activeCoreFriends = 0;
     [self dismissViewControllerAnimated:YES completion:nil];
     [self.tableView reloadRowsAtIndexPaths:[self.tableView indexPathsForVisibleRows]
                           withRowAnimation:UITableViewRowAnimationNone];
-    //NSLog(@"%@", self.coreCircleContacts);
+    //if (DBG) NSLog(@"%@", self.coreCircleContacts);
     [self refresh];
     return NO;
 }
@@ -571,7 +576,7 @@ int activeCoreFriends = 0;
     }
 
     if(phoneNumber == nil) {
-        NSLog(@"Invalid number. no request send to parse");
+        if (DBG) NSLog(@"Invalid number. no request send to parse");
         return;
     }
     //Remove dash from phone Number
@@ -579,7 +584,7 @@ int activeCoreFriends = 0;
     
     PFUser *curUser = [PFUser currentUser];
     if(curUser == nil) {
-        NSLog(@"current user object is nill");
+        if (DBG) NSLog(@"current user object is nill");
         return;
     }
     
@@ -591,7 +596,7 @@ int activeCoreFriends = 0;
         if (!error) {
             PFUser * pfuser = [objects firstObject];
             if(pfuser == nil) {
-                NSLog(@"User to be removed not found in the User list");
+                if (DBG) NSLog(@"User to be removed not found in the User list");
                 //Remove from CoreFriendNotOnFriensoYet
                 PFQuery * pfquerynotonfrienso =  [PFQuery queryWithClassName:@"CoreFriendNotOnFriensoYet"];
                 
@@ -620,21 +625,21 @@ int activeCoreFriends = 0;
                             [object deleteInBackground];
                         }
                     } else {
-                        NSLog(@"Core friend request already send to this contact %@", phoneNumber);
+                        if (DBG) NSLog(@"Core friend request already send to this contact %@", phoneNumber);
                     }
                 }
             }];
             //TODO: Also remove any pending/ongoing track request.
             
         } else {
-            NSLog(@"%@", error);
+            if (DBG) NSLog(@"%@", error);
         }
     }];
 }
 
 - (void) sendCoreFriendRequest:(NSString *) phoneNumber withIndex:(NSInteger)cellNumber {
     if(phoneNumber == nil) {
-        NSLog(@"Invalid number. no request send to parse");
+        if (DBG) NSLog(@"Invalid number. no request send to parse");
         return;
     }
     //Remove dash from phone Number
@@ -644,7 +649,7 @@ int activeCoreFriends = 0;
     
     PFUser *curUser = [PFUser currentUser];
     if(curUser == nil) {
-        NSLog(@"current user object is nill");
+        if (DBG) NSLog(@"current user object is nill");
         return;
     }
     
@@ -656,7 +661,7 @@ int activeCoreFriends = 0;
         if (!error) {
             PFUser * pfuser = [objects firstObject];
             if(pfuser == nil) {
-                NSLog(@"User not found in the User list");
+                if (DBG) NSLog(@"User not found in the User list");
                 //we are sending pending requests here, for users who do not exist in parse yet.
                 PFObject * pfobject = [PFObject
                                        objectWithClassName:@"CoreFriendNotOnFriensoYet"];
@@ -722,12 +727,12 @@ int activeCoreFriends = 0;
                         /**************END OF PUSH NOTIFICATION STUFF****************/
 
                     } else {
-                        NSLog(@"Core friend request already send to this contact %@", phoneNumber);
+                        if (DBG) NSLog(@"Core friend request already send to this contact %@", phoneNumber);
                     }
                 }
             }];
         } else {
-            NSLog(@"%@", error);
+            if (DBG) NSLog(@"%@", error);
         }
     }];
 }
