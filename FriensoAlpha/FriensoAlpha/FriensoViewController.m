@@ -662,7 +662,7 @@ enum PinAnnotationTypeTag {
 }
 -(void) addPendingRequest:(NSArray*)userRequestArray {
 
-    if (!DEBUG) DLog(@"-- addPendingRequest:(NSArray*)userRequestArray --");
+    if (DBG) DLog(@"-- addPendingRequest:(NSArray*)userRequestArray --");
     [self.scrollView setPendingRequests:self.pendingRqstsArray];
     NSInteger arrayIndex = 0;
     for (PFObject *eventObject in userRequestArray)
@@ -1170,8 +1170,8 @@ enum PinAnnotationTypeTag {
     
     [self setupUI];
     
-    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"getStartedFlag"];
-    [[NSUserDefaults standardUserDefaults] synchronize];
+//    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"getStartedFlag"];
+//    [[NSUserDefaults standardUserDefaults] synchronize];
     
     if (![[NSUserDefaults standardUserDefaults] boolForKey:@"getStartedFlag"])
     {
@@ -2155,7 +2155,7 @@ calloutAccessoryControlTapped:(UIControl *)control
                 if (!error) {
                     PFUser * pfuser = [objects firstObject];
                     if(pfuser != nil) {
-                        if (DEBUG) if (DBG) NSLog(@"users on parse: %@", [pfuser username]); //
+                        if (DBG) NSLog(@"users on parse: %@", [pfuser username]); //
                         /*if (DBG) NSLog(@"user %@", [pfuser username]);// these
                         
                         if (DBG) NSLog(@"phone %@", [pfuser objectForKey:@"phoneNumber"]);

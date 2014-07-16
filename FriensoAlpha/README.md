@@ -5,15 +5,18 @@ Frienso iOS Alpha
 
 Version History
 ---------------
-* ver 1.5 build 74+
+
+* ver 1.6 build 76+
+
+* ver 1.5 build 76
+    16Jul14/SA: Fixed issues with login and registering a new account; fixed problems with 
+    synching an existing coreCircle; and made sure that the coreCircle is correctly updated/
+    copied to the CoreData Friends/Contacts List.
+    Tested behavior for WatchMe and HelpMe alerts!
+
     15Jul14/SA: Fixing the sync from parse using Udayan's code in Profile/Core Friends
     copyCoreCircleToCoreFriendsEntity is fixed to create and edit the core list more accurately
 
-    Test the new account reg on a phone
-    
-    Test the login into account on phone
-    
-    
 * ver 1.5 build 74
 
     14Jul14/SA New distribution build 

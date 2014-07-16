@@ -62,6 +62,7 @@
 		18DF849E18C279A5003F431F /* profile-24.png in Resources */ = {isa = PBXBuildFile; fileRef = 18DF849D18C279A5003F431F /* profile-24.png */; };
 		18DF84A118C27D58003F431F /* umbrella-24.png in Resources */ = {isa = PBXBuildFile; fileRef = 18DF849F18C27D58003F431F /* umbrella-24.png */; };
 		18DF84A218C27D58003F431F /* watching-24.png in Resources */ = {isa = PBXBuildFile; fileRef = 18DF84A018C27D58003F431F /* watching-24.png */; };
+		3E0EDD661976F7830024124B /* frienso-0.png in Resources */ = {isa = PBXBuildFile; fileRef = 3E0EDD651976F7830024124B /* frienso-0.png */; };
 		3E185480192544B80059817D /* cell-phone-ic32.png in Resources */ = {isa = PBXBuildFile; fileRef = 3E18547F192544B70059817D /* cell-phone-ic32.png */; };
 		3E1FBD281958424A00AC7197 /* Parse.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E1FBD271958424A00AC7197 /* Parse.framework */; };
 		3E21A0541920EE050083F1AC /* FRStringImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E21A0531920EE050083F1AC /* FRStringImage.m */; };
@@ -69,7 +70,6 @@
 		3E2F8C3718D4C74600FD2A99 /* FriensoQuickCircleVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E2F8C3618D4C74600FD2A99 /* FriensoQuickCircleVC.m */; };
 		3E2F8C3F18D83D8300FD2A99 /* AboutFriensoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E2F8C3E18D83D8300FD2A99 /* AboutFriensoViewController.m */; };
 		3E3BCA5F191E3402008D8ED0 /* ugc-ic-29x2.png in Resources */ = {isa = PBXBuildFile; fileRef = 3E3BCA5E191E3402008D8ED0 /* ugc-ic-29x2.png */; };
-		3E3FC2E719618A2F008EDC00 /* frienso-4.png in Resources */ = {isa = PBXBuildFile; fileRef = 3E3FC2E319618A2F008EDC00 /* frienso-4.png */; };
 		3E3FC2E819618A2F008EDC00 /* frienso-2.png in Resources */ = {isa = PBXBuildFile; fileRef = 3E3FC2E419618A2F008EDC00 /* frienso-2.png */; };
 		3E3FC2E919618A2F008EDC00 /* frienso-3.png in Resources */ = {isa = PBXBuildFile; fileRef = 3E3FC2E519618A2F008EDC00 /* frienso-3.png */; };
 		3E3FC2EA19618A2F008EDC00 /* frienso-1.png in Resources */ = {isa = PBXBuildFile; fileRef = 3E3FC2E619618A2F008EDC00 /* frienso-1.png */; };
@@ -191,6 +191,7 @@
 		18DF849D18C279A5003F431F /* profile-24.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "profile-24.png"; sourceTree = "<group>"; };
 		18DF849F18C27D58003F431F /* umbrella-24.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "umbrella-24.png"; sourceTree = "<group>"; };
 		18DF84A018C27D58003F431F /* watching-24.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "watching-24.png"; sourceTree = "<group>"; };
+		3E0EDD651976F7830024124B /* frienso-0.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "frienso-0.png"; sourceTree = "<group>"; };
 		3E18547F192544B70059817D /* cell-phone-ic32.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "cell-phone-ic32.png"; sourceTree = "<group>"; };
 		3E1FBD271958424A00AC7197 /* Parse.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Parse.framework; sourceTree = "<group>"; };
 		3E21A0521920EE050083F1AC /* FRStringImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FRStringImage.h; sourceTree = "<group>"; };
@@ -202,7 +203,6 @@
 		3E2F8C3D18D83D8300FD2A99 /* AboutFriensoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AboutFriensoViewController.h; sourceTree = "<group>"; };
 		3E2F8C3E18D83D8300FD2A99 /* AboutFriensoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AboutFriensoViewController.m; sourceTree = "<group>"; };
 		3E3BCA5E191E3402008D8ED0 /* ugc-ic-29x2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ugc-ic-29x2.png"; sourceTree = "<group>"; };
-		3E3FC2E319618A2F008EDC00 /* frienso-4.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "frienso-4.png"; sourceTree = "<group>"; };
 		3E3FC2E419618A2F008EDC00 /* frienso-2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "frienso-2.png"; sourceTree = "<group>"; };
 		3E3FC2E519618A2F008EDC00 /* frienso-3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "frienso-3.png"; sourceTree = "<group>"; };
 		3E3FC2E619618A2F008EDC00 /* frienso-1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "frienso-1.png"; sourceTree = "<group>"; };
@@ -435,7 +435,7 @@
 		1827933918BE07A70056C849 /* Media */ = {
 			isa = PBXGroup;
 			children = (
-				3E3FC2E319618A2F008EDC00 /* frienso-4.png */,
+				3E0EDD651976F7830024124B /* frienso-0.png */,
 				3E3FC2E419618A2F008EDC00 /* frienso-2.png */,
 				3E3FC2E519618A2F008EDC00 /* frienso-3.png */,
 				3E3FC2E619618A2F008EDC00 /* frienso-1.png */,
@@ -658,10 +658,10 @@
 				3E3FC2EA19618A2F008EDC00 /* frienso-1.png in Resources */,
 				1808553518C3B9810047A8BE /* README.md in Resources */,
 				1879B59318C7277100AEA55F /* Profile-256.png in Resources */,
+				3E0EDD661976F7830024124B /* frienso-0.png in Resources */,
 				3E5EA0B7190D0CDA004A710C /* cal-ic-24.png in Resources */,
 				3E9F89401903E17700DA190C /* frienso-ic-2x40.png in Resources */,
 				3E9F892318FE8D5E00DA190C /* map-btn-0.png in Resources */,
-				3E3FC2E719618A2F008EDC00 /* frienso-4.png in Resources */,
 				3E9F89411903E17700DA190C /* frienso-ic-2x60.png in Resources */,
 				3E4120FC18E306630058012B /* frienso-info-0.png in Resources */,
 				3E9F893F1903E17700DA190C /* frienso-ic-2x29.png in Resources */,
@@ -826,7 +826,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				ONLY_ACTIVE_ARCH = YES;
-				PROVISIONING_PROFILE = "9E99B625-BE55-42F9-A8D5-68B7E593CD94";
+				PROVISIONING_PROFILE = "71BFB0A6-BFE2-400F-B2A9-F3BDC7625905";
 				SDKROOT = iphoneos;
 			};
 			name = Debug;
@@ -858,7 +858,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
-				PROVISIONING_PROFILE = "9E99B625-BE55-42F9-A8D5-68B7E593CD94";
+				PROVISIONING_PROFILE = "71BFB0A6-BFE2-400F-B2A9-F3BDC7625905";
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
 			};
