@@ -1227,6 +1227,8 @@ static NSString * contactingServersForUpdate = @"Trying to get latest status fro
 		return;
 	}
     
+    /*  NO LONGER NEEDED, location is now tracked via User object 
+     *
 	// Configure the new event with information from the location.
 	CLLocationCoordinate2D coordinate = [location coordinate];
     PFGeoPoint *geoPoint = [PFGeoPoint geoPointWithLatitude:coordinate.latitude longitude:coordinate.longitude];
@@ -1242,6 +1244,7 @@ static NSString * contactingServersForUpdate = @"Trying to get latest status fro
                            withSubtitle:[NSString stringWithFormat:@"%4.f, %4.f",coordinate.latitude, coordinate.longitude]];
         }
     }];
+     */
 }
 #pragma mark - Configure UIView
 -(void) setupTopLabel{
@@ -1467,6 +1470,9 @@ gradient.colors = [NSArray arrayWithObjects:(id)[startColour CGColor],(id)[endCo
                                                          }
                                                      }
                                                  }];
+                                                // Notify that records were fetched from Parse
+                                                [self  actionAddFriensoEvent:@"Your Core Friends fetched and restored."
+                                                                withSubtitle:@"Select the Friends icon to review the list"];
                                                 
                                                 /********************************************
                                                 PFQuery *query = [PFQuery queryWithClassName:@"UserCoreFriends"];

@@ -301,8 +301,8 @@ enum PinAnnotationTypeTag {
 {
     
     // log event on the cloud
-    CloudUsrEvnts *watchMeEvent = [[CloudUsrEvnts alloc] initWithAlertType:@"helpNow"];
-    [watchMeEvent disableEvent];
+    CloudUsrEvnts *helpMeEvent = [[CloudUsrEvnts alloc] initWithAlertType:@"helpNow"];
+    [helpMeEvent disableEvent];
     
     [[NSUserDefaults standardUserDefaults] setObject:nil forKey:@"helpObjId"];
     [[NSUserDefaults standardUserDefaults] synchronize];
@@ -745,6 +745,8 @@ enum PinAnnotationTypeTag {
                           otherButtonTitles:nil] show];
         CloudUsrEvnts *watchMeEvent = [[CloudUsrEvnts alloc] initWithAlertType:@"watchMe"];
         [watchMeEvent disableEvent];
+        [[NSUserDefaults standardUserDefaults] setObject:nil forKey:@"watchObjId"];
+        [[NSUserDefaults standardUserDefaults] synchronize];
     }
 }
 -(void) animateHelpView:(UIView *)helpView {
@@ -774,9 +776,9 @@ enum PinAnnotationTypeTag {
     [self performSegueWithIdentifier:@"showFriesoMap" sender:self];
 }
 
-#define BYPASSFRIENDREQUESTS 1
+#define BYPASSFRIENDREQUESTS 0
 -(void) logAndNotifyCoreFriendsToWatchMe {
-    if (DBG) NSLog(@"logAndNotifyCoreFriendsToWatchMe");
+    if (!DBG) NSLog(@"logAndNotifyCoreFriendsToWatchMe");
     
     /**************PUSH NOTIFICATIONS: WATCH ME NOW!!!! *****************/
     if (BYPASSFRIENDREQUESTS) {
@@ -784,6 +786,28 @@ enum PinAnnotationTypeTag {
         [watchMePushNots sendNotificationsToCoreCircle];
         
     } else {
+        NSDictionary *myCoreFriendsDic = [[NSUserDefaults standardUserDefaults] dictionaryForKey:@"CoreFriendsContactInfoDicKey"];
+        //int i = 0;
+        for (id key in myCoreFriendsDic) {
+            NSLog(@"reading contact %@",[myCoreFriendsDic objectForKey:key]);
+            NSString *coreFriendPh = [self stripStringOfUnwantedChars:[myCoreFriendsDic objectForKey:key]];
+            
+            NSString *myString = @"Ph";
+            NSString *personalizedChannelNumber = [myString stringByAppendingString:coreFriendPh];
+            NSLog(@"Phone Number for this friend is: %@", personalizedChannelNumber);
+            
+            PFPush *push = [[PFPush alloc] init];
+            
+            // Be sure to use the plural 'setChannels' if you are sending to more than one channel.
+            [push setChannel:personalizedChannelNumber];
+            NSString *coreRqstHeader = @"HELP NOW REQUEST FROM: ";
+            NSString *coreFrndMsg = [coreRqstHeader stringByAppendingString:[[PFUser currentUser] objectForKey:@"username"]];
+            
+            [push setMessage:coreFrndMsg];
+            [push sendPushInBackground];
+        }// ends for loop
+    /***    
+    
     //Query Parse to know who your "accepted" core friends are and send them each a notification
     
     PFQuery *query = [PFQuery queryWithClassName:@"CoreFriendRequest"];
@@ -799,7 +823,7 @@ enum PinAnnotationTypeTag {
             for (PFObject *object in objects) {
                 NSString *myString = @"Ph";
                 NSString *personalizedChannelNumber = [myString stringByAppendingString:object[@"recipient"][@"phoneNumber"]];
-                if (DBG) NSLog(@"Phone Number for this friend is: %@", personalizedChannelNumber);
+                if (!DBG) NSLog(@"Phone Number for this friend is: %@", personalizedChannelNumber);
                 
                 PFPush *push = [[PFPush alloc] init];
                 
@@ -816,14 +840,16 @@ enum PinAnnotationTypeTag {
             if (DBG) NSLog(@"Error: %@ %@", error, [error userInfo]);
         }
     }];
+     ****/
     /**************END OF PUSH NOTIFICATIONS: WATCH ME!!!! *****************/
     }
     
     // Watch Me event tracking
     CloudUsrEvnts *watchMeEvent = [[CloudUsrEvnts alloc] initWithAlertType:@"watchMe"
                                                         eventStartDateTime:[NSDate date] ];
-    [watchMeEvent setPersonalEvent];
+    //[watchMeEvent setPersonalEvent];
     [watchMeEvent sendToCloud];
+    
 }
 
 #pragma mark - Interaction with NSUserDefaults
@@ -1226,7 +1252,7 @@ enum PinAnnotationTypeTag {
         [self setupHelpMeNowSwitch];
         if (DBG) NSLog(@"    We have an active helpMeNow event");
     } else
-        if (DBG) NSLog(@"    NO active helpMeNow event");
+        NSLog(@"    NO active helpMeNow event");
 
 
     NSNumber *installStepNum = [[NSUserDefaults standardUserDefaults] valueForKey:@"installationStep"];
@@ -1918,15 +1944,25 @@ calloutAccessoryControlTapped:(UIControl *)control
         if (!error) {
             
             for (PFObject *userEvent in objects){
-                PFUser *friensoUser    = [userEvent valueForKey:@"friensoUser"];
+                PFUser *friensoUser = [userEvent valueForKey:@"friensoUser"];
                 if ([friensoUser.username isEqualToString:[PFUser currentUser].username] &&
-                    [[userEvent objectForKey:@"eventType"] isEqualToString:@"watch"]) {
-                    // check if self has an active Event going
-                    [trackMeOnOff setOn:YES animated:YES];
+                    [[userEvent objectForKey:@"eventType"] isEqualToString:@"watch"])
+                {
+                    if ([[NSUserDefaults standardUserDefaults] objectForKey:@"watchObjId"] == nil ){
+                        [userEvent setObject:[NSNumber numberWithBool:NO] forKey:@"eventActive"];
+                        [userEvent saveInBackground];
+                    } else
+                        [trackMeOnOff setOn:YES animated:YES]; // check if self has an active Event going
                 } else if ([friensoUser.username isEqualToString:[PFUser currentUser].username] &&
-                           [[userEvent objectForKey:@"eventType"] isEqualToString:@"helpNow"]) {
-                    //
-                    [self updateLocations]; // puts core circle on mapview
+                           [[userEvent objectForKey:@"eventType"] isEqualToString:@"helpNow"])
+                {
+                    if (DBG) NSLog(@"ObjId: %@", userEvent.objectId);
+                    // In certain cases, the NSUserDefaults is the ground truth
+                    if ([[NSUserDefaults standardUserDefaults] objectForKey:@"helpObjId"] == nil ){
+                        [userEvent setObject:[NSNumber numberWithBool:NO] forKey:@"eventActive"];
+                        [userEvent saveInBackground];
+                    } else
+                        [self updateLocations]; // puts core circle on mapview
                     
                 } else if ([self inYourCoreUserWithPhNumber:[friensoUser valueForKey:@"phoneNumber"]] )
                 {
@@ -1954,8 +1990,6 @@ calloutAccessoryControlTapped:(UIControl *)control
             }
 
             [self addPendingRequest:self.pendingRqstsArray];
-//            [self.scrollView setPendingRequests:self.pendingRqstsArray];
-            //if (DBG) NSLog(@"pendingRqstsArray: %@", self.pendingRqstsArray);
             [self updateMapViewWithUserBubbles: self.watchingCoFrArray];
         } else
             if (DBG) NSLog(@"parse error: %@", error.localizedDescription);
@@ -2125,7 +2159,10 @@ calloutAccessoryControlTapped:(UIControl *)control
 }
 
 - (void)updateLocations {
-    if (DBG) NSLog(@"****** UPDATELOCATIONS");
+    if (!DBG) NSLog(@"****** UPDATELOCATIONS");
+    
+    
+    
     /** this adds bubbles to the map for all Persons in your CoreFriends list (local core data store) **/
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init]; // Create the fetch request
     NSEntityDescription *entity = [NSEntityDescription entityForName:@"CoreFriends"
@@ -2145,7 +2182,7 @@ calloutAccessoryControlTapped:(UIControl *)control
     } else /*if ( [[self.mapView subviews] count] < [fetchedObjects count])*/{
         NSInteger j = 0;
         for (NSManagedObject *mObject in fetchedObjects) {
-            if (DBG) NSLog(@"    %@ | %@ | %@", [mObject valueForKey:@"coreFirstName"], [mObject valueForKey:@"corePhone"], [mObject valueForKey:@"coreLocation"]);
+            if (!DBG) NSLog(@"    %@ | %@ | %@", [mObject valueForKey:@"coreFirstName"], [mObject valueForKey:@"corePhone"], [mObject valueForKey:@"coreLocation"]);
             PFQuery *userQuery = [PFUser query];
             NSString *longPhoneNumber = [self stripStringOfUnwantedChars:[mObject valueForKey:@"corePhone"]];
             NSString *basePhoneNumber = [longPhoneNumber substringFromIndex:(longPhoneNumber.length-10)];

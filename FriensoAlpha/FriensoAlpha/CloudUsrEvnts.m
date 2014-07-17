@@ -147,8 +147,9 @@
                 [[NSUserDefaults standardUserDefaults] setObject:userEvent.objectId forKey:@"watchObjId"];
             else {
                 [[NSUserDefaults standardUserDefaults] setObject:userEvent.objectId forKey:@"helpObjId"];
-                [[NSUserDefaults standardUserDefaults] synchronize];
+                
             }
+            [[NSUserDefaults standardUserDefaults] synchronize];
         }
     }];
     /**
