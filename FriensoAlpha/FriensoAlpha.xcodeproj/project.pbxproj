@@ -78,6 +78,7 @@
 		3E4120FC18E306630058012B /* frienso-info-0.png in Resources */ = {isa = PBXBuildFile; fileRef = 3E4120F918E306630058012B /* frienso-info-0.png */; };
 		3E4120FD18E306630058012B /* frienso-info-1.png in Resources */ = {isa = PBXBuildFile; fileRef = 3E4120FA18E306630058012B /* frienso-info-1.png */; };
 		3E4120FE18E306630058012B /* frienso-info-2.png in Resources */ = {isa = PBXBuildFile; fileRef = 3E4120FB18E306630058012B /* frienso-info-2.png */; };
+		3E4579E3197962E8008499B7 /* help-switch-bg.png in Resources */ = {isa = PBXBuildFile; fileRef = 3E4579E2197962E8008499B7 /* help-switch-bg.png */; };
 		3E56D3D5194F96D90092CF63 /* CloudEntityContacts.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E56D3D4194F96D90092CF63 /* CloudEntityContacts.m */; };
 		3E570171190A665C0056EFD7 /* AlarmTimerTriggersTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E570170190A665C0056EFD7 /* AlarmTimerTriggersTVC.m */; };
 		3E5EA0B5190D0A4A004A710C /* cal-ic-40.png in Resources */ = {isa = PBXBuildFile; fileRef = 3E5EA0B4190D0A4A004A710C /* cal-ic-40.png */; };
@@ -213,6 +214,7 @@
 		3E4120F918E306630058012B /* frienso-info-0.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "frienso-info-0.png"; sourceTree = "<group>"; };
 		3E4120FA18E306630058012B /* frienso-info-1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "frienso-info-1.png"; sourceTree = "<group>"; };
 		3E4120FB18E306630058012B /* frienso-info-2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "frienso-info-2.png"; sourceTree = "<group>"; };
+		3E4579E2197962E8008499B7 /* help-switch-bg.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "help-switch-bg.png"; sourceTree = "<group>"; };
 		3E56D3D3194F96D90092CF63 /* CloudEntityContacts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CloudEntityContacts.h; sourceTree = "<group>"; };
 		3E56D3D4194F96D90092CF63 /* CloudEntityContacts.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CloudEntityContacts.m; sourceTree = "<group>"; };
 		3E57016F190A665C0056EFD7 /* AlarmTimerTriggersTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AlarmTimerTriggersTVC.h; path = ../AlarmTimerTriggersTVC.h; sourceTree = "<group>"; };
@@ -435,6 +437,7 @@
 		1827933918BE07A70056C849 /* Media */ = {
 			isa = PBXGroup;
 			children = (
+				3E4579E2197962E8008499B7 /* help-switch-bg.png */,
 				3E0EDD651976F7830024124B /* frienso-0.png */,
 				3E3FC2E419618A2F008EDC00 /* frienso-2.png */,
 				3E3FC2E519618A2F008EDC00 /* frienso-3.png */,
@@ -656,6 +659,7 @@
 				180E882618BF2AB5009A570F /* first-view-cover-2.png in Resources */,
 				18DF849C18C275C7003F431F /* lighthouse-24.png in Resources */,
 				3E3FC2EA19618A2F008EDC00 /* frienso-1.png in Resources */,
+				3E4579E3197962E8008499B7 /* help-switch-bg.png in Resources */,
 				1808553518C3B9810047A8BE /* README.md in Resources */,
 				1879B59318C7277100AEA55F /* Profile-256.png in Resources */,
 				3E0EDD661976F7830024124B /* frienso-0.png in Resources */,

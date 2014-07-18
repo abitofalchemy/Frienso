@@ -90,9 +90,9 @@ enum PinAnnotationTypeTag {
 
 
 -(void)actionPanicEvent:(UIButton *)theButton {
-    [self animateThisButton:theButton];
-    [theButton setHidden:YES];
-    [theButton.layer setBorderColor:[UIColor redColor].CGColor];
+//    [self animateThisButton:theButton];
+//    [theButton setHidden:YES];
+//    [theButton.layer setBorderColor:[UIColor redColor].CGColor];
     [self performSegueWithIdentifier:@"panicEvent" sender:self];
     self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@""
                                                                              style:self.navigationItem.backBarButtonItem.style
@@ -104,18 +104,23 @@ enum PinAnnotationTypeTag {
     helpMeNowSwitch = [[UISwitch alloc] init];
     [helpMeNowSwitch addTarget:self action:@selector(helpMeNowSwitchAction:)
            forControlEvents:UIControlEventValueChanged];
-    [helpMeNowSwitch setCenter:CGPointMake(self.navigationController.toolbar.bounds.size.width*0.85, 22)];
     helpMeNowSwitch.layer.cornerRadius = helpMeNowSwitch.frame.size.height/2.0;
     helpMeNowSwitch.layer.borderWidth =  1.0;
-    helpMeNowSwitch.layer.borderColor = [UIColor blackColor].CGColor;
-    if (DBG) NSLog(@"[self.navigationController.toolbar addSubview:helpMeNowSwitch]");
-    [self.navigationController.toolbar addSubview:helpMeNowSwitch];
-    [helpMeNowSwitch setCenter:self.helpMeNowBtn.center];
-    [helpMeNowSwitch setOn:YES animated:YES];
+    helpMeNowSwitch.layer.borderColor = [UIColor whiteColor].CGColor;
+    [helpMeNowSwitch setCenter:CGPointMake(self.navigationController.toolbar.center.x, 22)];
+    [helpMeNowSwitch setOn:NO animated:YES];
     [helpMeNowSwitch setOnTintColor:[UIColor redColor]];
+    [helpMeNowSwitch setBackgroundColor:[UIColor clearColor]];
+    [self.navigationController.toolbar addSubview:helpMeNowSwitch];
+    if (DBG) NSLog(@"[self.navigationController.toolbar addSubview:helpMeNowSwitch]");
     
-    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"helpMeUI"];
-    [[NSUserDefaults standardUserDefaults] synchronize];
+    UILabel *label = [[UILabel alloc] initWithFrame:CGRectZero];
+    [label setText:@"help"];
+    [label setFont:[UIFont fontWithName:@"AppleSDGothicNeo-Light" size:11.0]];
+    [label sizeToFit];
+    [label setTag:100];
+    [label setCenter:CGPointMake(label.center.x+4.0f, label.center.y + 9)];
+    [helpMeNowSwitch addSubview:label];
 }
 -(void)makeFriensoEvent:(UIButton *)theButton {
     [self animateThisButton:theButton];
@@ -247,7 +252,7 @@ enum PinAnnotationTypeTag {
             [tvHeaderView setFrame:CGRectMake(0,0,self.view.bounds.size.width,self.tableView.frame.origin.y)];
             [tvHeaderView setBackgroundColor:[UIColor blackColor]];
             [tvHeaderView.titleLabel setTextAlignment:NSTextAlignmentRight];
-            [tvHeaderView setTitle:@"▽ Dismiss" forState:UIControlStateNormal];
+            [tvHeaderView setTitle:@"╳ Dismiss" forState:UIControlStateNormal];
             [tvHeaderView addTarget:self action:@selector(closeFullscreenTableViewAction:)
                    forControlEvents:UIControlEventTouchUpInside];//tvFSCloseAction) withSender:self];
             [self.view addSubview:tvHeaderView];
@@ -299,26 +304,32 @@ enum PinAnnotationTypeTag {
 //}
 -(void) helpMeNowSwitchAction:(UISwitch*)sender
 {
-    
-    // log event on the cloud
-    CloudUsrEvnts *helpMeEvent = [[CloudUsrEvnts alloc] initWithAlertType:@"helpNow"];
-    [helpMeEvent disableEvent];
-    
-    [[NSUserDefaults standardUserDefaults] setObject:nil forKey:@"helpObjId"];
-    [[NSUserDefaults standardUserDefaults] synchronize];
+    if ([sender isOn]) {
+        for (id subview in [sender subviews])
+        {
+            UILabel *label = subview;
+            if (label.tag > 99)
+                [label removeFromSuperview];
+        }
+        [self actionPanicEvent:nil];
+    } else  {
+        // log event on the cloud
+        CloudUsrEvnts *helpMeEvent = [[CloudUsrEvnts alloc] initWithAlertType:@"helpNow"];
+        [helpMeEvent disableEvent];
+        
+        [[NSUserDefaults standardUserDefaults] setObject:nil forKey:@"helpObjId"];
+        [[NSUserDefaults standardUserDefaults] synchronize];
 
-    // Remove switch from UI
-    [helpMeNowSwitch removeFromSuperview];
-    // Remove buttons and labels corresponding to coreFriends
-    for (id subview in [self.mapView subviews])
-    {
-        UILabel *label = subview;
-        if (label.tag > 99)
-            [label removeFromSuperview];
+        // switch from ON to OFF
+        [helpMeNowSwitch setOn:NO animated:YES];
+        // Remove buttons and labels corresponding to coreFriends
+        for (id subview in [self.mapView subviews])
+        {
+            UILabel *label = subview;
+            if (label.tag > 99)
+                [label removeFromSuperview];
+        }
     }
-    
-    // Add back the std icon/btn
-    [self.helpMeNowBtn setHidden:NO];
 }
 -(void) contactByDialingFriendWithEmail:(NSString *)friendEmail
 {
@@ -459,7 +470,7 @@ enum PinAnnotationTypeTag {
     PFGeoPoint *myPointLoc = [[PFUser currentUser] objectForKey:@"currentLocation"];
     CLLocation *locB = [[CLLocation alloc] initWithLatitude:myPointLoc.latitude
                                                   longitude:myPointLoc.longitude];
-    CLLocationDistance distance = [locA distanceFromLocation:locB] * 0.621371 /* convert to miles */;
+    CLLocationDistance distance = [locA distanceFromLocation:locB] * 0.000621371 /* convert to miles */;
     //  NSString *coreFriendDistance = [NSString stringWithFormat:@"%.2f %@ away",distance,@"miles" ];
     
     [cfCircleBtn addTarget:self action:@selector(coreFriendOnMapInteraction:)
@@ -545,10 +556,12 @@ enum PinAnnotationTypeTag {
 }
 -(void) pendingRqstAction:(id) sender {
     UIButton *btn = (UIButton *) sender;
+    if (!DBG) NSLog (@"pendingRqstAction ... ");
     
     NSDictionary *frUserDic = [self.pendingRqstsArray objectAtIndex:btn.tag]; // 10Jun14:SA
     PFUser *friensoUser = [frUserDic objectForKey:@"pfUser"];  // 10Jun14:SA
     NSString * type = [frUserDic objectForKey:@"reqType"];
+    if (!DBG) NSLog (@"Request type: %@", type );
     
     if([type isEqualToString:coreFriendRequest]) { //if core friend request
         //TODO: we do not need to add the btn.tag here.
@@ -714,6 +727,12 @@ enum PinAnnotationTypeTag {
     if (DBG) NSLog(@"********* trackMeswitchEnabled ****");
     
     if ([sender isOn]){
+        for (id subview in [sender subviews])
+        {
+            UILabel *label = subview;
+            if (label.tag > 99)
+                [label removeFromSuperview];
+        }
         // Alert the user
         [[[UIAlertView alloc] initWithTitle:@"WatchMe"
                                     message:@"CoreCircle of friends will be notified and your location shared."
@@ -723,8 +742,13 @@ enum PinAnnotationTypeTag {
         
         UILabel *trackMeLabel = [[UILabel alloc] initWithFrame:CGRectZero];
         [trackMeLabel setText:@"Watch Me"];
-        [trackMeLabel setFont:[UIFont fontWithName:@"AppleSDGothicNeo-Thin" size:14.0]];
-        [trackMeLabel sizeToFit];
+        [trackMeLabel setFont:[UIFont fontWithName:@"AppleSDGothicNeo-Light" size:12.0]];
+        [trackMeLabel setTextAlignment:NSTextAlignmentCenter];
+        [trackMeLabel setBounds:CGRectMake(0, 0, sender.bounds.size.width*1.2, sender.bounds.size.height)];
+        trackMeLabel.layer.cornerRadius = sender.frame.size.height/2.0;
+        trackMeLabel.layer.borderWidth =  1.0;
+        trackMeLabel.layer.borderColor = [UIColor whiteColor].CGColor;
+        trackMeLabel.layer.masksToBounds = YES;
         [self.navigationController.navigationBar addSubview:trackMeLabel];
         [trackMeLabel setBackgroundColor:[UIColor colorWithWhite:1.0 alpha:1.0]];
         [trackMeLabel setCenter:sender.center];
@@ -1065,6 +1089,7 @@ enum PinAnnotationTypeTag {
 
 -(void) setupToolBarIcons{
     self.navigationController.toolbarHidden = NO;
+    [self.navigationController.toolbar setBarTintColor:[UIColor colorWithHue:.580555 saturation:0.31 brightness:0.90 alpha:0.5]];
 
     //UIColor *violetTulip = [UIColor colorWithRed:155.0/255.0 green:144.0/255.0 blue:182.0/255.0 alpha:1.0];
     // Left CoreCircle button
@@ -1092,32 +1117,30 @@ enum PinAnnotationTypeTag {
     
     
     // center toolbar btn
-    self.helpMeNowBtn = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 27, 27)];
-    [self.helpMeNowBtn addTarget:self action:@selector(actionPanicEvent:)
-          forControlEvents:UIControlEventTouchUpInside];
-    [self.helpMeNowBtn setTitle:@"\u26A0" forState:(UIControlStateNormal)];
-//    self.helpMeNowBtn.layer.cornerRadius = 4.0f;
-//    self.helpMeNowBtn.layer.borderWidth  = 1.0f;
-//    self.helpMeNowBtn.layer.borderColor  = UIColorFromRGB(0x006bb6).CGColor;;
-    self.helpMeNowBtn.titleLabel.textColor = [UIColor colorWithRed:0.0/255.0 green:107.0/255.0 blue:182.0/255.0 alpha:1.0];
-    [self.helpMeNowBtn setCenter:CGPointMake(self.navigationController.toolbar.center.x, 22)];
+//    self.helpMeNowBtn = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 27, 27)];
+//    [self.helpMeNowBtn addTarget:self action:@selector(actionPanicEvent:)
+//          forControlEvents:UIControlEventTouchUpInside];
+//    [self.helpMeNowBtn setTitle:@"\u26A0" forState:(UIControlStateNormal)];
+////    self.helpMeNowBtn.layer.cornerRadius = 4.0f;
+////    self.helpMeNowBtn.layer.borderWidth  = 1.0f;
+////    self.helpMeNowBtn.layer.borderColor  = UIColorFromRGB(0x006bb6).CGColor;;
+//    self.helpMeNowBtn.titleLabel.textColor = [UIColor colorWithRed:0.0/255.0 green:107.0/255.0 blue:182.0/255.0 alpha:1.0];
+//    [self.helpMeNowBtn setCenter:CGPointMake(self.navigationController.toolbar.center.x, 22)];
+    [self setupHelpMeNowSwitch];
     
     [self.navigationController.toolbar addSubview:coreCircleBtn]; // left
     [self.navigationController.toolbar addSubview:button]; // right
-    [self.navigationController.toolbar addSubview:self.helpMeNowBtn]; // center
+//    [self.navigationController.toolbar addSubview:self.helpMeNowBtn]; // center
 
 }
 -(void) setupNavigationBarImage{
-    // #3498db peter river
-    // #ecf0f1 clouds
+    // Colors
+    //  0x3498db peter river
+    //  0xecf0f1 clouds
     
     //[self.navigationController.navigationBar setBarTintColor:UIColorFromRGB(0x3498db)];//[UIColor colorWithHue:.580555 saturation:0.31 brightness:0.90 alpha:0.5]
     [self.navigationController.navigationBar setBarTintColor:[UIColor colorWithHue:.580555 saturation:0.31 brightness:0.90 alpha:0.5]];
-    //[self.navigationController.toolbar setBarTintColor:UIColorFromRGB(0xecf0f1)];
-    //[self.navigationController.toolbar setBarTintColor:[UIColor colorWithWhite:0.9 alpha:0.5]];
     
-    //[self.view setBackgroundColor:UIColorFromRGB(0xecf0f1)];
-    //[self.view setBackgroundColor:[UIColor colorWithHue:.580555 saturation:0.31 brightness:0.90 alpha:0.5]];
     NSShadow *shadow = [[NSShadow alloc] init];
     shadow.shadowColor = [UIColor colorWithRed:1.0 green:1.0 blue:1.0 alpha:0.8];
     shadow.shadowOffset = CGSizeMake(0, 1);
@@ -1140,6 +1163,15 @@ enum PinAnnotationTypeTag {
     trackMeOnOff.layer.cornerRadius = trackMeOnOff.frame.size.height/2.0;
     trackMeOnOff.layer.borderWidth =  1.0;
     trackMeOnOff.layer.borderColor = [UIColor whiteColor].CGColor;
+    UILabel *label = [[UILabel alloc] initWithFrame:CGRectZero];
+    [label setText:@"\u2316"];
+    [label setTextColor:[UIColor colorWithHue:.580555 saturation:0.31 brightness:0.90 alpha:0.5]];
+    [label setFont:[UIFont fontWithName:@"AppleSDGothicNeo-Thin" size:24.0]];
+    [label sizeToFit];
+    [label setTag:100];
+    [label setCenter:CGPointMake(label.center.x+4.0f, label.center.y)];
+    [trackMeOnOff addSubview:label];
+    
     
     // Local store check for active event
     if( [[[CloudUsrEvnts alloc] init] activeAlertCheck]) {
@@ -1237,20 +1269,19 @@ enum PinAnnotationTypeTag {
     }
     
     if ([[NSUserDefaults standardUserDefaults] boolForKey:@"helpNowCancelled"] == 1) {
-        //if (DBG) NSLog(@"%d",[[NSUserDefaults standardUserDefaults] boolForKey:@"helpNowCancelled"]);
-        [helpMeNowSwitch removeFromSuperview];
-        [self.helpMeNowBtn setHidden:NO];
+        if (!DBG) NSLog(@"%d",[[NSUserDefaults standardUserDefaults] boolForKey:@"helpNowCancelled"]);
+        [helpMeNowSwitch setOn:NO animated:YES];
         
         [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"helpNowCancelled"];
         [[NSUserDefaults standardUserDefaults] synchronize];
         
     }
     NSString *helpObjId = [[NSUserDefaults standardUserDefaults] objectForKey:@"helpObjId"];
-    if (helpObjId != nil && ![[NSUserDefaults standardUserDefaults] boolForKey:@"helpMeUI"])
+    if (helpObjId != nil )
     {   /* if a parse objectId exist locally and helpMeNowSwitch was NOT setup *
          * otherwise, leave the switch along */
-        [self setupHelpMeNowSwitch];
-        if (DBG) NSLog(@"    We have an active helpMeNow event");
+        [helpMeNowSwitch setOn:YES];
+        if (!DBG) NSLog(@"    We have an active helpMeNow event");
     } else
         NSLog(@"    NO active helpMeNow event");
 
@@ -1939,61 +1970,103 @@ calloutAccessoryControlTapped:(UIControl *)control
     PFQuery *query = [PFQuery queryWithClassName:@"UserEvent"];
     [query whereKey:@"eventActive" equalTo:[NSNumber numberWithBool:YES]];
     [query includeKey:@"friensoUser"];
+    [query orderByDescending:@"createdAt"];
     [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
-        if (DBG) NSLog(@"------ Checking for Events ...");
+        if (!DBG) NSLog(@"------ Checking for Events ...");
         if (!error) {
-            
-            for (PFObject *userEvent in objects){
-                PFUser *friensoUser = [userEvent valueForKey:@"friensoUser"];
-                if ([friensoUser.username isEqualToString:[PFUser currentUser].username] &&
-                    [[userEvent objectForKey:@"eventType"] isEqualToString:@"watch"])
-                {
-                    if ([[NSUserDefaults standardUserDefaults] objectForKey:@"watchObjId"] == nil ){
-                        [userEvent setObject:[NSNumber numberWithBool:NO] forKey:@"eventActive"];
-                        [userEvent saveInBackground];
-                    } else
-                        [trackMeOnOff setOn:YES animated:YES]; // check if self has an active Event going
-                } else if ([friensoUser.username isEqualToString:[PFUser currentUser].username] &&
-                           [[userEvent objectForKey:@"eventType"] isEqualToString:@"helpNow"])
-                {
-                    if (DBG) NSLog(@"ObjId: %@", userEvent.objectId);
-                    // In certain cases, the NSUserDefaults is the ground truth
-                    if ([[NSUserDefaults standardUserDefaults] objectForKey:@"helpObjId"] == nil ){
-                        [userEvent setObject:[NSNumber numberWithBool:NO] forKey:@"eventActive"];
-                        [userEvent saveInBackground];
-                    } else
-                        [self updateLocations]; // puts core circle on mapview
-                    
-                } else if ([self inYourCoreUserWithPhNumber:[friensoUser valueForKey:@"phoneNumber"]] )
-                {
-                    // Check if this user is in your core or watchCircle
-                    // friensoUser is in my network, am I tracking him/her?
-                    if (DBG) NSLog(@"Friend: %@ w/active event of type: %@, %@, %@",friensoUser.username,
-                          [userEvent valueForKey:@"eventType"],userEvent.objectId, [userEvent objectForKey:@"eventActive"]);
-                    
-                    //if (DBG) NSLog(@"am I watching him/her?: %d", [self ])
-                    //[[[CloudUsrEvnts alloc] init] isUserInMy2WatchList:friensoUser];
-                     
-                     if ([self amiWatchingUserEvent:userEvent.objectId])
-                     {
-                         //if (DBG) NSLog(@"!!! YES");
-                         [self.watchingCoFrArray addObject:friensoUser];
-                     }else
-                     {
-                         //if (DBG) NSLog(@"!!! NO");
-                         /*NSDictionary *dic =[[NSDictionary alloc] initWithObjects:@[friensoUser, forKeys:<#(NSArray *)#>]*/
-                         [self.pendingRqstsArray addObject:userEvent];
-                     }
-                }
-
+            for (PFObject *object in objects) {
+//            NSLog(@"%@", [object objectForKey:@"eventType"]);
+//            NSLog(@"%@", [object objectForKey:@"eventActive"]);
+//            NSLog(@"%@", object.objectId);
+            PFUser *friensoUser = [object objectForKey:@"friensoUser"];
+            NSLog(@"%@", friensoUser.username);
+            if ([friensoUser.username isEqualToString:[PFUser currentUser].username] &&
+                [[object objectForKey:@"eventType"] isEqualToString:@"watchMe"])
+            {
+                if (!DBG) NSLog(@"usern: %@",friensoUser.username);
+                if (!DBG) NSLog(@"event: %@",[object valueForKey:@"eventType"]);
+                if (!DBG) NSLog(@"ObjId: %@", object.objectId);
+                if ([[NSUserDefaults standardUserDefaults] objectForKey:@"watchObjId"] == nil ){
+                    [object setObject:[NSNumber numberWithBool:NO] forKey:@"eventActive"];
+                    [object saveInBackground];
+                } else
+                    [trackMeOnOff setOn:YES animated:YES]; // check if self has an active Event going
+            } else if ([friensoUser.username isEqualToString:[PFUser currentUser].username] &&
+                       [[object objectForKey:@"eventType"] isEqualToString:@"helpNow"])
+            {
+                if (!DBG) NSLog(@"ObjId: %@", object.objectId);
+                // In certain cases, the NSUserDefaults is the ground truth
+                if ([[NSUserDefaults standardUserDefaults] objectForKey:@"helpObjId"] == nil ){
+                    [object setObject:[NSNumber numberWithBool:NO] forKey:@"eventActive"];
+                    [object saveInBackground];
+                } else
+                    [self updateLocations]; // puts core circle on mapview
                 
             }
-
-            [self addPendingRequest:self.pendingRqstsArray];
-            [self updateMapViewWithUserBubbles: self.watchingCoFrArray];
-        } else
-            if (DBG) NSLog(@"parse error: %@", error.localizedDescription);
+            }// ends for loop
+        }
     }];
+    
+//            NSLog(@"[0]%ld", (long)objects.count);
+//            for (PFObject *userEvent in objects){
+//                PFUser *friensoUser = [userEvent valueForKey:@"friensoUser"];
+//                //NSLog(@"%@",[userEvent objectForKey:@"eventType"]);
+//                
+//                if ((friensoUser == [PFUser currentUser]) &&
+//                    [[userEvent objectForKey:@"eventType"] isEqualToString:@"watchMe"])
+//                {
+//                    if (!DBG) NSLog(@"usern: %@",friensoUser.username);
+//                    if (!DBG) NSLog(@"event: %@",[userEvent valueForKey:@"eventType"]);
+//                    if (!DBG) NSLog(@"ObjId: %@", userEvent.objectId);
+//                    if ([[NSUserDefaults standardUserDefaults] objectForKey:@"watchObjId"] == nil ){
+//                        [userEvent setObject:[NSNumber numberWithBool:NO] forKey:@"eventActive"];
+//                        [userEvent saveInBackground];
+//                    } else
+//                        [trackMeOnOff setOn:YES animated:YES]; // check if self has an active Event going
+//                } else if ([friensoUser.username isEqualToString:[PFUser currentUser].username] &&
+//                           [[userEvent objectForKey:@"eventType"] isEqualToString:@"helpNow"])
+//                {
+//                    if (!DBG) NSLog(@"ObjId: %@", userEvent.objectId);
+//                    // In certain cases, the NSUserDefaults is the ground truth
+//                    if ([[NSUserDefaults standardUserDefaults] objectForKey:@"helpObjId"] == nil ){
+//                        [userEvent setObject:[NSNumber numberWithBool:NO] forKey:@"eventActive"];
+//                        [userEvent saveInBackground];
+//                    } else
+//                        [self updateLocations]; // puts core circle on mapview
+//                    
+//                } else if ([self inYourCoreUserWithPhNumber:[friensoUser valueForKey:@"phoneNumber"]] )
+//                {
+//                    // Check if this user is in your core or watchCircle
+//                    // friensoUser is in my network, am I tracking him/her?
+//                    if (DBG) NSLog(@"Friend: %@ w/active event of type: %@, %@, %@",friensoUser.username,
+//                                   [userEvent valueForKey:@"eventType"],userEvent.objectId, [userEvent objectForKey:@"eventActive"]);
+//                    
+//                    //if (DBG) NSLog(@"am I watching him/her?: %d", [self ])
+//                    //[[[CloudUsrEvnts alloc] init] isUserInMy2WatchList:friensoUser];
+//                    
+//                    if ([self amiWatchingUserEvent:userEvent.objectId])
+//                    {
+//                        //if (DBG) NSLog(@"!!! YES");
+//                        [self.watchingCoFrArray addObject:friensoUser];
+//                    }else
+//                    {
+//                        //if (DBG) NSLog(@"!!! NO");
+//                        /*NSDictionary *dic =[[NSDictionary alloc] initWithObjects:@[friensoUser, forKeys:<#(NSArray *)#>]*/
+//                        [self.pendingRqstsArray addObject:userEvent];
+//                    }
+//                }
+//                
+//                
+//            }
+//            
+//            [self addPendingRequest:self.pendingRqstsArray];
+//            NSLog(@"[1]");
+//            [self updateMapViewWithUserBubbles:self.watchingCoFrArray];
+//            NSLog(@"[2]");
+//        } else
+//            if (DBG) NSLog(@"parse error: %@", error.localizedDescription);
+//    }];
+//    }];
     
 
     
@@ -2005,7 +2078,7 @@ calloutAccessoryControlTapped:(UIControl *)control
     [pfquery whereKey:@"recipient" equalTo:[PFUser currentUser]];
     [pfquery includeKey:@"sender"];
     [pfquery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
-        if (DBG) NSLog(@"------ Checking CoreFriendRequest ...");
+        if (!DBG) NSLog(@"------ Checking CoreFriendRequest ...");
         if(!error) {
             NSInteger i = [self.pendingRqstsArray count]; // get the next insert position
             //if (DBG) NSLog(@"CoreFriend Request: recipient, req ObjId, status, awaitingResponseFrom");

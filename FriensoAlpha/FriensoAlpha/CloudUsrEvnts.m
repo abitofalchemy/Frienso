@@ -132,10 +132,16 @@
 }
 -(void) sendToCloud
 {
+    // If the following ACL settins are required: Set the proper ACLs
+    PFACL *pAcl = [PFACL ACLWithUser:[PFUser currentUser]];
+    [pAcl setPublicReadAccess:YES];
+    [PFACL setDefaultACL:pAcl withAccessForCurrentUser:YES];
+    
     PFObject *userEvent = [PFObject objectWithClassName:@"UserEvent" ];
     [userEvent setObject:self.alertType forKey:@"eventType"];
     [userEvent setObject:[NSNumber numberWithBool:YES] forKey:@"eventActive"];
     [userEvent setObject:[PFUser currentUser] forKey:@"friensoUser"];
+    [userEvent setACL:pAcl];
     [userEvent saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
         if (!succeeded) {
             

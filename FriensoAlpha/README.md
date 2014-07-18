@@ -6,11 +6,20 @@ Frienso iOS Alpha
 Version History
 ---------------
 
-* ver 1.6 build 77
-    Tweaks to the Welcome View and this is the most solid version of Frienso we have to date.
+* ver 1.6 build 79+
+    18Jul14/SA: Simplified the way we do the HelpMe and WatchMe alerts.  Converted the button
+    for HelpMe to a Switch.
+
+* ver 1.6 build 78
     17Jul14/SA: Purged the Parse database, added checks to ensure that if an event is turned OFF
     locally, but its state on the cloud doesn't get flipped correctly, it retries and takes
     as ground truth the state on the phone of the user that triggers it.
+    
+    Looking at friend requests crashes.
+    
+* ver 1.6 build 77
+    Tweaks to the Welcome View and this is the most solid version of Frienso we have to date.
+
 
 * ver 1.5 build 76
     16Jul14/SA: Fixed issues with login and registering a new account; fixed problems with 
