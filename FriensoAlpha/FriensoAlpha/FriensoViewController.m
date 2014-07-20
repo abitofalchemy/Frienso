@@ -277,27 +277,27 @@ enum PinAnnotationTypeTag {
 //    
 //    //    // round up your core Friends and show them on the map and have access to their location
 ////    // First check to see if the objectId already exists
-////    NSEntityDescription *entityDescription = [NSEntityDescription entityForName:@"FriensoEvent"
-////                                                         inManagedObjectContext:[self managedObjectContext]];
-////    NSFetchRequest *request = [[NSFetchRequest alloc] init];
-////    [request setPredicate:[NSPredicate predicateWithFormat:@"eventCategory like 'helpNow'"]];
-////    [request setEntity:entityDescription];
-////    // Create the sort descriptors array.
-////    NSSortDescriptor *authorDescriptor = [[NSSortDescriptor alloc] initWithKey:@"eventCreated" ascending:NO];
-////    NSSortDescriptor *titleDescriptor = [[NSSortDescriptor alloc] initWithKey:@"eventModified" ascending:NO];
-////    NSArray *sortDescriptors = @[authorDescriptor, titleDescriptor];
-////    [request setSortDescriptors:sortDescriptors];
-////
-////    //BOOL unique = YES;
-////    NSError  *error;
-////    NSArray *items = [[self managedObjectContext] executeFetchRequest:request error:&error];
-////    if (DBG) NSLog(@"items: %u", items.count);
-////    if (items != nil) {
-////        for (NSManagedObject *mObject in items) {
-////            if (DBG) NSLog(@"  %@,%@,%@,%@",[mObject valueForKey:@"eventTitle"],[mObject valueForKey:@"eventObjId"],
-////                  [mObject valueForKey:@"eventCategory"],[mObject valueForKey:@"eventModified"]);
-////        }
-////    }
+//    NSEntityDescription *entityDescription = [NSEntityDescription entityForName:@"FriensoEvent"
+//                                                         inManagedObjectContext:[self managedObjectContext]];
+//    NSFetchRequest *request = [[NSFetchRequest alloc] init];
+//    [request setPredicate:[NSPredicate predicateWithFormat:@"eventCategory like 'helpNow'"]];
+//    [request setEntity:entityDescription];
+//    // Create the sort descriptors array.
+//    NSSortDescriptor *authorDescriptor = [[NSSortDescriptor alloc] initWithKey:@"eventCreated" ascending:NO];
+//    NSSortDescriptor *titleDescriptor = [[NSSortDescriptor alloc] initWithKey:@"eventModified" ascending:NO];
+//    NSArray *sortDescriptors = @[authorDescriptor, titleDescriptor];
+//    [request setSortDescriptors:sortDescriptors];
+//
+//    //BOOL unique = YES;
+//    NSError  *error;
+//    NSArray *items = [[self managedObjectContext] executeFetchRequest:request error:&error];
+//    if (DBG) NSLog(@"items: %u", items.count);
+//    if (items != nil) {
+//        for (NSManagedObject *mObject in items) {
+//            if (DBG) NSLog(@"  %@,%@,%@,%@",[mObject valueForKey:@"eventTitle"],[mObject valueForKey:@"eventObjId"],
+//                  [mObject valueForKey:@"eventCategory"],[mObject valueForKey:@"eventModified"]);
+//        }
+//    }
 //#warning Add a status to the FriensoEvent entity to maintain the status of the event
 //#warning Disable when the user turns off the button; remove coreFriends from mapView
 //    
@@ -412,13 +412,13 @@ enum PinAnnotationTypeTag {
             [subview removeFromSuperview];
         }
     }
-    //if (DBG) NSLog(@"Friends I currently track:");
+    if (!DBG) NSLog(@"Friends I currently track:");
     
     
     NSInteger btnNbr = 0;
     for (PFUser *parseUser  in trackingFriendsArray)
     {
-        if (DBG) NSLog(@"\t %@", parseUser.username);
+        if (!DBG) NSLog(@"\t %@", parseUser.username);
         TrackingFriendButton *mLocBtn = [[TrackingFriendButton alloc] initWithFrame:CGRectMake(0, 0, 44, 44)];
         UIImage *img =[[FRStringImage alloc] imageTextBubbleOfSize:mLocBtn.frame.size];
         [mLocBtn setBackgroundImage:img forState:UIControlStateNormal];
@@ -436,14 +436,40 @@ enum PinAnnotationTypeTag {
         //[mLocBtn setCenter:CGPointMake(btnCenterX, self.mapView.frame.size.height - mLocBtn.center.y)];
         [mLocBtn setCenter:CGPointMake(btnCenterX, self.mapView.frame.size.height - mLocBtn.center.y*2)];
         
+        //[self findInFriensoEvents:parseUser];
+        
+        
         
         // Allows access to location info to userBubble
-        PFGeoPoint *geoNDIN = [PFGeoPoint geoPointWithLatitude:41.700278
-                                                     longitude:-86.238611];// notre dame, in
+        PFGeoPoint *geoNDIN = [PFGeoPoint geoPointWithLatitude:41.702652
+                                                     longitude:-86.239450];// notre dame, in
         [self.friendsLocationArray insertObject:([parseUser valueForKey:@"currentLocation"] == NULL)  ? geoNDIN : [parseUser valueForKey:@"currentLocation"]  atIndex:btnNbr];
         btnNbr++;
     }
     
+}
+// move to more appropritate spot
+- (void) findInFriensoEvents:(PFUser*)parseUser {
+    // Search locally for the type of event this user has triggered & we are watching
+    NSEntityDescription *entityDescription = [NSEntityDescription entityForName:@"FriensoEvent"
+                                                         inManagedObjectContext:[self managedObjectContext]];
+    NSFetchRequest *request = [[NSFetchRequest alloc] init];
+    [request setPredicate:[NSPredicate predicateWithFormat:@"eventContact like %@",parseUser.username]];
+    [request setEntity:entityDescription];
+    // Create the sort descriptors array.
+    NSSortDescriptor *dateDescriptor = [[NSSortDescriptor alloc] initWithKey:@"eventCreated" ascending:NO];
+    NSArray *sortDescriptors = @[dateDescriptor];
+    [request setSortDescriptors:sortDescriptors];
+    
+    NSError  *error;
+    NSArray *items = [[self managedObjectContext] executeFetchRequest:request error:&error];
+    if (!DBG) NSLog(@"items: %ld", items.count);
+    //        if (items != nil) {
+    //            for (NSManagedObject *mObject in items) {
+    //                if (DBG) NSLog(@"  %@,%@,%@,%@",[mObject valueForKey:@"eventTitle"],[mObject valueForKey:@"eventObjId"],
+    //                               [mObject valueForKey:@"eventCategory"],[mObject valueForKey:@"eventModified"]);
+    //            }
+    //        }
 }
 -(void) addCoreFriendLocationToMap:(PFUser *)parseUser withIndex:(NSInteger)mapIndex
 {
@@ -491,8 +517,8 @@ enum PinAnnotationTypeTag {
 //
 //    
 //    // Allows access to location info to userBubble
-//    PFGeoPoint *geoNDIN = [PFGeoPoint geoPointWithLatitude:41.700278
-//                                                 longitude:-86.238611];// notre dame, in
+//    PFGeoPoint *geoNDIN = [PFGeoPoint geoPointWithLatitude:41.702652
+//                                                 longitude:--86.239450];// notre dame, in
 //    [self.friendsLocationArray insertObject:([parseUser valueForKey:@"currentLocation"] == NULL)  ? geoNDIN : [parseUser valueForKey:@"currentLocation"]  atIndex:btnNbr];
 //    
 //    NSString *twoInitials = [parseUser.username substringToIndex:2];
@@ -542,8 +568,8 @@ enum PinAnnotationTypeTag {
     /* HOW DO WE GIVE BUTTON ACCESS TO user's Location?
      *
     // Allows access to location info to userBubble
-    PFGeoPoint *geoNDIN = [PFGeoPoint geoPointWithLatitude:41.700278
-                                                 longitude:-86.238611];// notre dame, in
+    PFGeoPoint *geoNDIN = [PFGeoPoint geoPointWithLatitude:41.702652
+                                                 longitude:--86.239450];// notre dame, in
     [self.friendsLocationArray insertObject:([parseUser valueForKey:@"currentLocation"] == NULL)  ? geoNDIN : [parseUser valueForKey:@"currentLocation"]  atIndex:tagNbr];
     */
 }
@@ -556,12 +582,13 @@ enum PinAnnotationTypeTag {
 }
 -(void) pendingRqstAction:(id) sender {
     UIButton *btn = (UIButton *) sender;
-    if (!DBG) NSLog (@"pendingRqstAction ... ");
+    if (DBG) NSLog (@"pendingRqstAction ... ");
     
-    NSDictionary *frUserDic = [self.pendingRqstsArray objectAtIndex:btn.tag]; // 10Jun14:SA
-    PFUser *friensoUser = [frUserDic objectForKey:@"pfUser"];  // 10Jun14:SA
-    NSString * type = [frUserDic objectForKey:@"reqType"];
-    if (!DBG) NSLog (@"Request type: %@", type );
+    //NSDictionary *frUserDic = [self.pendingRqstsArray objectAtIndex:btn.tag]; // 10Jun14:SA
+    PFObject *frUserEventObj = [self.pendingRqstsArray objectAtIndex:btn.tag]; // 10Jun14:SA
+    PFUser *friensoUser = [frUserEventObj objectForKey:@"friensoUser"];  // 10Jun14:SA
+    NSString * type = [frUserEventObj objectForKey:@"eventType"];
+    if (DBG) NSLog (@"Request type: %@", type );
     
     if([type isEqualToString:coreFriendRequest]) { //if core friend request
         //TODO: we do not need to add the btn.tag here.
@@ -675,14 +702,15 @@ enum PinAnnotationTypeTag {
 }
 -(void) addPendingRequest:(NSArray*)userRequestArray {
 
-    if (DBG) DLog(@"-- addPendingRequest:(NSArray*)userRequestArray --");
+    if (!DBG) DLog(@"-- addPendingRequest:(NSArray*)userRequestArray --");
     [self.scrollView setPendingRequests:self.pendingRqstsArray];
     NSInteger arrayIndex = 0;
     for (PFObject *eventObject in userRequestArray)
     {
-        NSString *reqType     = ([eventObject valueForKey:@"eventType"]==NULL) ? coreFriendRequest : [eventObject valueForKey:@"eventType"];
+        NSString *reqType = ([eventObject valueForKey:@"eventType"]==NULL) ? coreFriendRequest :
+                            [eventObject valueForKey:@"eventType"];
         PFUser   *friensoUser = ([eventObject objectForKey:@"friensoUser"] == NULL) ? [eventObject objectForKey:@"sender"] : [eventObject objectForKey:@"friensoUser"];
-        if (DBG) NSLog(@"{%@} is requesting a <%@> request.", friensoUser.username, reqType);
+        if (!DBG) NSLog(@"{%@} is requesting a <%@> request.", friensoUser.username, reqType);
         [self addPendingRequest:friensoUser
                         withTag:arrayIndex
                         reqtype:reqType];
@@ -691,20 +719,20 @@ enum PinAnnotationTypeTag {
     }
 }
 -(void) addPendingRequest:(PFUser *)parseFriend withTag:(NSInteger)tagNbr reqtype:(NSString *) type{
-    if ([type isEqualToString:coreFriendRequest]) {
-        [self addPndngRqstButton:[UIColor redColor] withFriensoUser:parseFriend withTag:tagNbr];
+    if ([type isEqualToString:@"helpNow"]) {
+        [self addPndngRqstButton:[UIColor redColor] withFriensoUser:parseFriend withTag:tagNbr ofType:type];
     } else {
-        [self addPndngRqstButton:[UIColor whiteColor] withFriensoUser:parseFriend withTag:tagNbr];
+        [self addPndngRqstButton:[UIColor whiteColor] withFriensoUser:parseFriend withTag:tagNbr ofType:type];
         
-        PFGeoPoint *geoNDIN = [PFGeoPoint geoPointWithLatitude:41.700278
-                                                      longitude:-86.238611];// notre dame, in
+        PFGeoPoint *geoNDIN = [PFGeoPoint geoPointWithLatitude:41.702652
+                                                      longitude:-86.239450];// notre dame, in
         [self.friendsLocationArray insertObject:([parseFriend valueForKey:@"currentLocation"] == NULL)  ? geoNDIN  : [parseFriend valueForKey:@"currentLocation"]  atIndex:tagNbr];
     }
 }
 
-- (void) addPndngRqstButton: (UIColor *) fontColor  withFriensoUser:(PFUser *)parseFriend withTag:(NSInteger)tagNbr{
+- (void) addPndngRqstButton: (UIColor *) fontColor  withFriensoUser:(PFUser *)parseFriend withTag:(NSInteger)tagNbr ofType:(NSString *)eventType{
     // addPendingRequest  adds a pending request to drawer+slider that user can interact w/ Pfuser
-    PendingRequestButton *pndngRqstBtn = [[PendingRequestButton alloc] initWithFrame:CGRectMake(0, 0, 44, 44)];
+    PendingRequestButton *pndngRqstBtn= [[PendingRequestButton alloc] initWithFrame:CGRectMake(0,0,44,44)];
     UIImage *img =[[FRStringImage alloc] imageTextBubbleOfSize:pndngRqstBtn.frame.size];
     [pndngRqstBtn setBackgroundImage:img forState:UIControlStateNormal];
     NSString *bubbleLabel = [[parseFriend.username substringToIndex:2] uppercaseString];
@@ -712,6 +740,11 @@ enum PinAnnotationTypeTag {
     [pndngRqstBtn setTitleColor:fontColor forState:UIControlStateNormal];
     [pndngRqstBtn setTitleColor:UIColorFromRGB(0x8e44ad) forState:UIControlStateHighlighted];
     [pndngRqstBtn setTag:tagNbr];
+    if ([eventType isEqualToString:@"helpNow"]){
+        pndngRqstBtn.layer.borderColor = [UIColor blueColor].CGColor;
+        pndngRqstBtn.layer.borderWidth = 1.5f;
+        pndngRqstBtn.layer.cornerRadius = pndngRqstBtn.center.x;
+    }
     [pndngRqstBtn addTarget:self action:@selector(pendingRqstAction:)
            forControlEvents:UIControlEventTouchUpInside];
     [self.scrollView addSubview:pndngRqstBtn];
@@ -802,7 +835,7 @@ enum PinAnnotationTypeTag {
 
 #define BYPASSFRIENDREQUESTS 0
 -(void) logAndNotifyCoreFriendsToWatchMe {
-    if (!DBG) NSLog(@"logAndNotifyCoreFriendsToWatchMe");
+    if (DBG) NSLog(@"logAndNotifyCoreFriendsToWatchMe");
     
     /**************PUSH NOTIFICATIONS: WATCH ME NOW!!!! *****************/
     if (BYPASSFRIENDREQUESTS) {
@@ -847,7 +880,7 @@ enum PinAnnotationTypeTag {
             for (PFObject *object in objects) {
                 NSString *myString = @"Ph";
                 NSString *personalizedChannelNumber = [myString stringByAppendingString:object[@"recipient"][@"phoneNumber"]];
-                if (!DBG) NSLog(@"Phone Number for this friend is: %@", personalizedChannelNumber);
+                if (DBG) NSLog(@"Phone Number for this friend is: %@", personalizedChannelNumber);
                 
                 PFPush *push = [[PFPush alloc] init];
                 
@@ -1269,7 +1302,7 @@ enum PinAnnotationTypeTag {
     }
     
     if ([[NSUserDefaults standardUserDefaults] boolForKey:@"helpNowCancelled"] == 1) {
-        if (!DBG) NSLog(@"%d",[[NSUserDefaults standardUserDefaults] boolForKey:@"helpNowCancelled"]);
+        if (DBG) NSLog(@"%d",[[NSUserDefaults standardUserDefaults] boolForKey:@"helpNowCancelled"]);
         [helpMeNowSwitch setOn:NO animated:YES];
         
         [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"helpNowCancelled"];
@@ -1281,7 +1314,7 @@ enum PinAnnotationTypeTag {
     {   /* if a parse objectId exist locally and helpMeNowSwitch was NOT setup *
          * otherwise, leave the switch along */
         [helpMeNowSwitch setOn:YES];
-        if (!DBG) NSLog(@"    We have an active helpMeNow event");
+        if (DBG) NSLog(@"    We have an active helpMeNow event");
     } else
         NSLog(@"    NO active helpMeNow event");
 
@@ -1506,6 +1539,7 @@ enum PinAnnotationTypeTag {
 #pragma mark - CoreData helper methods
 -(void) trackUserEventLocally:(PFObject *)userEventObject
 {
+    if (!DBG) NSLog(@"track userEvent locally");
     FriensoEvent *frEvent = [NSEntityDescription insertNewObjectForEntityForName:@"FriensoEvent"
                                                                     inManagedObjectContext:[self managedObjectContext]];
     
@@ -1518,11 +1552,10 @@ enum PinAnnotationTypeTag {
         
         NSError *savingError = nil;
         if(![[self managedObjectContext] save:&savingError])
-            if (DBG) NSLog(@"Failed to save the context. Error = %@", savingError);
+            if (!DBG) NSLog(@"Failed to save the context. Error = %@", savingError);
         
-    } else {
-        if (DBG) NSLog(@"Failed to create a new event.");
-    }
+    } else
+        if (!DBG) NSLog(@"Failed to create a new event.");
 
 }
 -(void) updateCoreFriendEntity:(NSString *)friendEmail
@@ -1975,17 +2008,17 @@ calloutAccessoryControlTapped:(UIControl *)control
         if (!DBG) NSLog(@"------ Checking for Events ...");
         if (!error) {
             for (PFObject *object in objects) {
-//            NSLog(@"%@", [object objectForKey:@"eventType"]);
+            if(DBG) NSLog(@"%@", [object objectForKey:@"eventType"]);
 //            NSLog(@"%@", [object objectForKey:@"eventActive"]);
 //            NSLog(@"%@", object.objectId);
             PFUser *friensoUser = [object objectForKey:@"friensoUser"];
-            NSLog(@"%@", friensoUser.username);
+            if (DBG) NSLog(@"%@", friensoUser.username);
             if ([friensoUser.username isEqualToString:[PFUser currentUser].username] &&
                 [[object objectForKey:@"eventType"] isEqualToString:@"watchMe"])
             {
-                if (!DBG) NSLog(@"usern: %@",friensoUser.username);
-                if (!DBG) NSLog(@"event: %@",[object valueForKey:@"eventType"]);
-                if (!DBG) NSLog(@"ObjId: %@", object.objectId);
+                if (DBG) NSLog(@"usern: %@",friensoUser.username);
+                if (DBG) NSLog(@"event: %@",[object valueForKey:@"eventType"]);
+                if (DBG) NSLog(@"ObjId: %@", object.objectId);
                 if ([[NSUserDefaults standardUserDefaults] objectForKey:@"watchObjId"] == nil ){
                     [object setObject:[NSNumber numberWithBool:NO] forKey:@"eventActive"];
                     [object saveInBackground];
@@ -1994,7 +2027,9 @@ calloutAccessoryControlTapped:(UIControl *)control
             } else if ([friensoUser.username isEqualToString:[PFUser currentUser].username] &&
                        [[object objectForKey:@"eventType"] isEqualToString:@"helpNow"])
             {
-                if (!DBG) NSLog(@"ObjId: %@", object.objectId);
+                if (DBG) NSLog(@"ObjId: %@", object.objectId);
+                if (DBG) NSLog(@"event: %@",[object valueForKey:@"eventType"]);
+
                 // In certain cases, the NSUserDefaults is the ground truth
                 if ([[NSUserDefaults standardUserDefaults] objectForKey:@"helpObjId"] == nil ){
                     [object setObject:[NSNumber numberWithBool:NO] forKey:@"eventActive"];
@@ -2002,9 +2037,39 @@ calloutAccessoryControlTapped:(UIControl *)control
                 } else
                     [self updateLocations]; // puts core circle on mapview
                 
+            } else if ([self inYourCoreUserWithPhNumber:[friensoUser valueForKey:@"phoneNumber"]] )
+            {
+                // Check if this user is in your core or watchCircle
+                // friensoUser is in my network, am I tracking him/her?
+                if (DBG) NSLog(@"Friend: %@ w/active event of type: %@, %@, %@",friensoUser.username,
+                               [object valueForKey:@"eventType"],object.objectId, [object objectForKey:@"eventActive"]);
+                
+                //if (DBG) NSLog(@"am I watching him/her?: %d", [self ])
+                //[[[CloudUsrEvnts alloc] init] isUserInMy2WatchList:friensoUser];
+                
+                if ([self amiWatchingUserEvent:object.objectId])
+                {
+                    //if (DBG) NSLog(@"!!! YES");
+                    [self.watchingCoFrArray addObject:friensoUser];
+                }else
+                {
+                    //if (DBG) NSLog(@"!!! NO");
+                    /*NSDictionary *dic =[[NSDictionary alloc] initWithObjects:@[friensoUser, forKeys:<#(NSArray *)#>]*/
+                    [self.pendingRqstsArray addObject:object];
+                }
             }
+            
+            
+        
+
             }// ends for loop
-        }
+            [self addPendingRequest:self.pendingRqstsArray];
+            [self updateMapViewWithUserBubbles:self.watchingCoFrArray];
+            
+            
+        } else
+            if (DBG) NSLog(@"parse error: %@", error.localizedDescription);
+
     }];
     
 //            NSLog(@"[0]%ld", (long)objects.count);
@@ -2015,9 +2080,9 @@ calloutAccessoryControlTapped:(UIControl *)control
 //                if ((friensoUser == [PFUser currentUser]) &&
 //                    [[userEvent objectForKey:@"eventType"] isEqualToString:@"watchMe"])
 //                {
-//                    if (!DBG) NSLog(@"usern: %@",friensoUser.username);
-//                    if (!DBG) NSLog(@"event: %@",[userEvent valueForKey:@"eventType"]);
-//                    if (!DBG) NSLog(@"ObjId: %@", userEvent.objectId);
+//                    if (DBG) NSLog(@"usern: %@",friensoUser.username);
+//                    if (DBG) NSLog(@"event: %@",[userEvent valueForKey:@"eventType"]);
+//                    if (DBG) NSLog(@"ObjId: %@", userEvent.objectId);
 //                    if ([[NSUserDefaults standardUserDefaults] objectForKey:@"watchObjId"] == nil ){
 //                        [userEvent setObject:[NSNumber numberWithBool:NO] forKey:@"eventActive"];
 //                        [userEvent saveInBackground];
@@ -2026,7 +2091,7 @@ calloutAccessoryControlTapped:(UIControl *)control
 //                } else if ([friensoUser.username isEqualToString:[PFUser currentUser].username] &&
 //                           [[userEvent objectForKey:@"eventType"] isEqualToString:@"helpNow"])
 //                {
-//                    if (!DBG) NSLog(@"ObjId: %@", userEvent.objectId);
+//                    if (DBG) NSLog(@"ObjId: %@", userEvent.objectId);
 //                    // In certain cases, the NSUserDefaults is the ground truth
 //                    if ([[NSUserDefaults standardUserDefaults] objectForKey:@"helpObjId"] == nil ){
 //                        [userEvent setObject:[NSNumber numberWithBool:NO] forKey:@"eventActive"];
@@ -2058,7 +2123,7 @@ calloutAccessoryControlTapped:(UIControl *)control
 //                
 //                
 //            }
-//            
+//
 //            [self addPendingRequest:self.pendingRqstsArray];
 //            NSLog(@"[1]");
 //            [self updateMapViewWithUserBubbles:self.watchingCoFrArray];
@@ -2078,7 +2143,7 @@ calloutAccessoryControlTapped:(UIControl *)control
     [pfquery whereKey:@"recipient" equalTo:[PFUser currentUser]];
     [pfquery includeKey:@"sender"];
     [pfquery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
-        if (!DBG) NSLog(@"------ Checking CoreFriendRequest ...");
+        if (DBG) NSLog(@"------ Checking CoreFriendRequest ...");
         if(!error) {
             NSInteger i = [self.pendingRqstsArray count]; // get the next insert position
             //if (DBG) NSLog(@"CoreFriend Request: recipient, req ObjId, status, awaitingResponseFrom");
@@ -2232,7 +2297,7 @@ calloutAccessoryControlTapped:(UIControl *)control
 }
 
 - (void)updateLocations {
-    if (!DBG) NSLog(@"****** UPDATELOCATIONS");
+    if (DBG) NSLog(@"****** UPDATELOCATIONS");
     
     
     
@@ -2255,7 +2320,7 @@ calloutAccessoryControlTapped:(UIControl *)control
     } else /*if ( [[self.mapView subviews] count] < [fetchedObjects count])*/{
         NSInteger j = 0;
         for (NSManagedObject *mObject in fetchedObjects) {
-            if (!DBG) NSLog(@"    %@ | %@ | %@", [mObject valueForKey:@"coreFirstName"], [mObject valueForKey:@"corePhone"], [mObject valueForKey:@"coreLocation"]);
+            if (DBG) NSLog(@"    %@ | %@ | %@", [mObject valueForKey:@"coreFirstName"], [mObject valueForKey:@"corePhone"], [mObject valueForKey:@"coreLocation"]);
             PFQuery *userQuery = [PFUser query];
             NSString *longPhoneNumber = [self stripStringOfUnwantedChars:[mObject valueForKey:@"corePhone"]];
             NSString *basePhoneNumber = [longPhoneNumber substringFromIndex:(longPhoneNumber.length-10)];
@@ -2465,12 +2530,12 @@ calloutAccessoryControlTapped:(UIControl *)control
             if (buttonIndex == 1) // accept
             {
                 //[self addUserBubbleToMap:friensoUser  withTag:tag_no]; // accepted to watch this user
-                //if (DBG) NSLog(@"number of subviews: %ld", (long)[self.scrollView subviews].count);
+                if (!DBG) NSLog(@"number of subviews: %ld", (long)[self.scrollView subviews].count);
                 // Remove pending request bubble from pendingDrawer
                 for (id subview in [self.scrollView subviews]){
                     
                     if ( [subview isKindOfClass:[PendingRequestButton class]] ) {
-                        if (DBG) NSLog(@"self.pendingRqstsArray: %ld",(long)self.pendingRqstsArray.count);
+                        if (!DBG) NSLog(@"self.pendingRqstsArray: %ld",(long)self.pendingRqstsArray.count);
                         if (tag_no ==  [(PendingRequestButton *)subview tag] &&
                             (self.pendingRqstsArray.count > 0))
                         {
@@ -2495,7 +2560,16 @@ calloutAccessoryControlTapped:(UIControl *)control
                         
                     }   // ends if
                 }       // ends for
+                NSLog(@"pending requests: %ld",self.pendingRqstsArray.count);
                 [self updateMapViewWithUserBubbles: self.watchingCoFrArray];
+                for (id subview in [self.scrollView subviews]){
+                    if ( [subview isKindOfClass:[PendingRequestButton class]] ) {
+                        NSLog(@"A PENDING REQUEST FOUND IN SCROLLVIEW");
+                        [self refreshMapViewAction:nil];
+                    }
+                    
+                }
+                
             } else if (buttonIndex == 2) // reject
             {
                 if (DBG) NSLog(@"'request' rejected ");

@@ -80,12 +80,12 @@ BOOL dbg = NO;
 }
 -(void) updatePendingRequests:(NSArray *) pendingRequestsArray {
     // warning this is updating two labels.....
-    for (id subview in [self subviews]){
-        if ( [subview isKindOfClass:[UILabel class]] ) {
-            [subview setText:[NSString stringWithFormat:@"≡ Pending:%ld", (long)[pendingRequestsArray count]]];
-        }
-        
-    }
+//    for (id subview in [self subviews]){
+//        if ( [subview isKindOfClass:[UILabel class]] ) {
+//            [subview setText:[NSString stringWithFormat:@"≡ Pending:%ld", (long)[pendingRequestsArray count]]];
+//        }
+//        
+//    }
     if ([pendingRequestsArray count] == 0)
         [self enablePendingRequestsDot:NO];
     else

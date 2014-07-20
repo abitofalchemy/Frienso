@@ -7,8 +7,12 @@ Version History
 ---------------
 
 * ver 1.6 build 79+
+    20Jul14/SA: Fixed accessing the pending requests and adding them to the mapview.
+    
     18Jul14/SA: Simplified the way we do the HelpMe and WatchMe alerts.  Converted the button
     for HelpMe to a Switch.
+    
+    Checking the signing profile to make sure that PNs are working.
 
 * ver 1.6 build 78
     17Jul14/SA: Purged the Parse database, added checks to ensure that if an event is turned OFF
