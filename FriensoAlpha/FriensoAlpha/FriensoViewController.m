@@ -443,7 +443,9 @@ enum PinAnnotationTypeTag {
         // Allows access to location info to userBubble
         PFGeoPoint *geoNDIN = [PFGeoPoint geoPointWithLatitude:41.702652
                                                      longitude:-86.239450];// notre dame, in
-        [self.friendsLocationArray insertObject:([parseUser valueForKey:@"currentLocation"] == NULL)  ? geoNDIN : [parseUser valueForKey:@"currentLocation"]  atIndex:btnNbr];
+        NSLog(@"[0] tag#:%ld",btnNbr);
+//        [self.friendsLocationArray insertObject:([parseUser valueForKey:@"currentLocation"] == NULL)  ? geoNDIN : [parseUser valueForKey:@"currentLocation"]  atIndex:btnNbr];
+        [self.friendsLocationArray addObject:([parseUser valueForKey:@"currentLocation"] == NULL)  ? geoNDIN : [parseUser valueForKey:@"currentLocation"]];
         btnNbr++;
     }
     
@@ -718,7 +720,7 @@ enum PinAnnotationTypeTag {
         
     }
 }
--(void) addPendingRequest:(PFUser *)parseFriend withTag:(NSInteger)tagNbr reqtype:(NSString *) type{
+-(void) addPendingRequest:(PFUser *)parseFriend withTag:(NSInteger)tagNbr reqtype:(NSString *)type{
     if ([type isEqualToString:@"helpNow"]) {
         [self addPndngRqstButton:[UIColor redColor] withFriensoUser:parseFriend withTag:tagNbr ofType:type];
     } else {
@@ -726,7 +728,9 @@ enum PinAnnotationTypeTag {
         
         PFGeoPoint *geoNDIN = [PFGeoPoint geoPointWithLatitude:41.702652
                                                       longitude:-86.239450];// notre dame, in
-        [self.friendsLocationArray insertObject:([parseFriend valueForKey:@"currentLocation"] == NULL)  ? geoNDIN  : [parseFriend valueForKey:@"currentLocation"]  atIndex:tagNbr];
+        NSLog(@"[1] tag#:%ld", tagNbr);
+//        [self.friendsLocationArray insertObject:([parseFriend valueForKey:@"currentLocation"] == NULL)  ? geoNDIN  : [parseFriend valueForKey:@"currentLocation"]  atIndex:tagNbr];
+        [self.friendsLocationArray addObject:([parseFriend valueForKey:@"currentLocation"] == NULL)  ? geoNDIN  : [parseFriend valueForKey:@"currentLocation"]];
     }
 }
 
