@@ -61,6 +61,7 @@ enum PinAnnotationTypeTag {
 @property (nonatomic,retain) NSMutableArray *pendingRqstsArray; // pending requests array
 @property (nonatomic,retain) NSMutableArray *watchingCoFrArray; // watching coreFriends array
 @property (nonatomic,strong) CLLocation     *location;
+@property (nonatomic, assign) CLLocationDistance radius;
 @property (nonatomic,strong) UITableView    *tableView;
 @property (nonatomic,strong) UIButton       *selectedBubbleBtn;
 @property (nonatomic,strong) UIButton       *fullScreenBtn;
@@ -70,6 +71,7 @@ enum PinAnnotationTypeTag {
 @property (nonatomic)        CGFloat scrollViewY;
 @property (nonatomic)        CGRect normTableViewRect;
 @property (nonatomic) const CGFloat mapViewHeight;
+
 
 -(void)actionPanicEvent:(UIButton *)theButton;
 -(void)viewMenuOptions: (UIButton *)theButton;
@@ -443,7 +445,7 @@ enum PinAnnotationTypeTag {
         // Allows access to location info to userBubble
         PFGeoPoint *geoNDIN = [PFGeoPoint geoPointWithLatitude:41.702652
                                                      longitude:-86.239450];// notre dame, in
-        NSLog(@"[0] tag#:%ld",btnNbr);
+        //NSLog(@"[0] tag#:%ld",btnNbr);
 //        [self.friendsLocationArray insertObject:([parseUser valueForKey:@"currentLocation"] == NULL)  ? geoNDIN : [parseUser valueForKey:@"currentLocation"]  atIndex:btnNbr];
         [self.friendsLocationArray addObject:([parseUser valueForKey:@"currentLocation"] == NULL)  ? geoNDIN : [parseUser valueForKey:@"currentLocation"]];
         btnNbr++;
@@ -465,7 +467,7 @@ enum PinAnnotationTypeTag {
     
     NSError  *error;
     NSArray *items = [[self managedObjectContext] executeFetchRequest:request error:&error];
-    if (!DBG) NSLog(@"items: %ld", items.count);
+    if (!DBG) NSLog(@"items: %ld", (unsigned long)items.count);
     //        if (items != nil) {
     //            for (NSManagedObject *mObject in items) {
     //                if (DBG) NSLog(@"  %@,%@,%@,%@",[mObject valueForKey:@"eventTitle"],[mObject valueForKey:@"eventObjId"],
@@ -704,7 +706,7 @@ enum PinAnnotationTypeTag {
 }
 -(void) addPendingRequest:(NSArray*)userRequestArray {
 
-    if (!DBG) DLog(@"-- addPendingRequest:(NSArray*)userRequestArray --");
+    if (DBG) DLog(@"-- addPendingRequest:(NSArray*)userRequestArray --");
     [self.scrollView setPendingRequests:self.pendingRqstsArray];
     NSInteger arrayIndex = 0;
     for (PFObject *eventObject in userRequestArray)
@@ -723,6 +725,11 @@ enum PinAnnotationTypeTag {
 -(void) addPendingRequest:(PFUser *)parseFriend withTag:(NSInteger)tagNbr reqtype:(NSString *)type{
     if ([type isEqualToString:@"helpNow"]) {
         [self addPndngRqstButton:[UIColor redColor] withFriensoUser:parseFriend withTag:tagNbr ofType:type];
+    } else if ([type isEqualToString:@"coreFriendRequest"]) {
+        [self addPndngRqstButton:[UIColor greenColor]
+                 withFriensoUser:parseFriend
+                         withTag:tagNbr
+                          ofType:type];
     } else {
         [self addPndngRqstButton:[UIColor whiteColor] withFriensoUser:parseFriend withTag:tagNbr ofType:type];
         
@@ -1272,9 +1279,10 @@ enum PinAnnotationTypeTag {
     {
         [self performSelector:@selector(segueToWelcomeVC) withObject:self afterDelay:1];
         if (DBG) NSLog(@"{ Presenting Welcome View}");
-    } else if ([[NSUserDefaults standardUserDefaults] boolForKey:@"getStartedFlag"] &&
+    }
+    else if ([[NSUserDefaults standardUserDefaults] boolForKey:@"getStartedFlag"] &&
                [[NSUserDefaults standardUserDefaults] objectForKey:@"adminID"] != NULL){
-        iLog(@"{ viewDidLoad } getstarted flag ok, adminID not null");
+        if (DBG) iLog(@"{ viewDidLoad } getstarted flag ok, adminID not null");
         
         [self loginCurrentUserToCloudStore]; // login to cloud store
         
@@ -1327,18 +1335,18 @@ enum PinAnnotationTypeTag {
     if (installStepNum == NULL &&
         [[NSUserDefaults standardUserDefaults] boolForKey:@"getStartedFlag"])
     {
-        if (DBG) NSLog(@"LoginView");
+        if (!DBG) NSLog(@"LoginView");
         // Presenting loginView
         [self performSelector:@selector(segueToLoginVC) withObject:self afterDelay:1];
+        /*
         
-        [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithInteger:0] forKey:@"installationStep"];
-        [[NSUserDefaults standardUserDefaults] synchronize];
+        */
         
     }
     else if ([installStepNum isEqualToNumber:[NSNumber numberWithInteger:0]] &&
                [[NSUserDefaults standardUserDefaults] objectForKey:@"adminID"] != NULL ) {
     
-        if (DBG) NSLog(@"{First install}");
+        if (!DBG) NSLog(@"{First install}");
         
         // At first install, cache univesity/college emergency contacts
         [[[CloudEntityContacts alloc] initWithCampusDomain:@"nd.edu"] fetchEmergencyContacts:@"inst,contact"];
@@ -1976,6 +1984,7 @@ calloutAccessoryControlTapped:(UIControl *)control
  */
     
     self.location = aLocation;
+    self.radius = 1000;
     [PFGeoPoint geoPointForCurrentLocationInBackground:^(PFGeoPoint *geoPoint, NSError *error) {
         if (!error) {
             
@@ -2000,8 +2009,17 @@ calloutAccessoryControlTapped:(UIControl *)control
  * - check if others have active events
  *
  ** */
+    if (self.location) {
+        [self.mapView removeAnnotations:self.mapView.annotations];
+        [self.mapView removeOverlays:self.mapView.overlays];
+        
+        GeoQueryAnnotation *annotation = [[GeoQueryAnnotation alloc] initWithCoordinate:self.location.coordinate radius:self.radius];
+        [self.mapView addAnnotation:annotation];
+        
+        
+    }
     
-    if (DBG) NSLog(@"configureOverlay method");
+    if (!DBG) NSLog(@"configureOverlay method");
     
     // Check for friends with active alerts
     PFQuery *query = [PFQuery queryWithClassName:@"UserEvent"];

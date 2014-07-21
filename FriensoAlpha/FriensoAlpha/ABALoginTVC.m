@@ -17,7 +17,7 @@
  | + 11Dec13SA: Defaulting the 'keep me logged in switch to ON'
  | 15Jan14/SA: Need to handle the main user's phone #
  | 19Jun14/SA: Remove the need to enter ph when doing Login
- 
+ | 20Jul14/SA: Fixing problems with scrolling and loosing entered txt
  
  *  http://stackoverflow.com/questions/3276504/how-to-set-a-gradient-uitableviewcell-background
  *  https://parse.com/tutorials/geolocations
@@ -95,8 +95,8 @@ static NSString * contactingServersForUpdate = @"Trying to get latest status fro
     if (DBG) NSLog(@"[ ABALoginTVC ]");
 
     // Initialization
-    loginSections = [[NSArray alloc] initWithObjects:@"FRIENSO", @"Log In",@"Options",@"Footer", nil];
-    loginFields   = [[NSArray alloc] initWithObjects:@"Email", @"Password", @"(312) 555 0123",@"Location", nil];
+    loginSections = [[NSArray alloc] initWithObjects:@"FRIENSO", @"Log In",@"Options",nil];
+    loginFields   = [[NSArray alloc] initWithObjects:@"Email", @"Password", @"Phone Number", nil];
     loginBtnLabel = [[NSMutableArray alloc] initWithObjects:@"Sign In", @"Register", nil];
     
     [self.navigationController.navigationBar setHidden:YES];
@@ -104,8 +104,9 @@ static NSString * contactingServersForUpdate = @"Trying to get latest status fro
     self.coreCircleRequestStatus= [[NSMutableArray alloc] init ]; //stores status of the requests
     self.coreCircleContacts     = [[NSMutableArray alloc] init]; //stores phone #s
     self.coreCircleOfFriends    = [[NSMutableArray alloc] init];
-    //[self getDeviceLocationInfo];
     
+    [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithInteger:0] forKey:@"installationStep"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
     
 }
 
@@ -134,21 +135,24 @@ static NSString * contactingServersForUpdate = @"Trying to get latest status fro
     // Return the number of rows in the section.
     if (section == 0)
         return [loginFields count];
-    else if (section == 1 || section == 3)
-        return 1;
+    else if (section == 2)
+        return 2;
     else
-        return 3;
+        return 1;
+    
 }
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
-    //if (DBG) NSLog(@"%f",[tableView rowHeight]);
-    if (indexPath.section == 3)
-        return [tableView rowHeight]*2.0f;
+    if (indexPath.section == 2 ) {
+        if ( indexPath.row == 1)
+            return [tableView rowHeight]*1.2f;
+        else return [tableView rowHeight];
+    }
     else return [tableView rowHeight];
 }
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
     if (section == 0 ){
-        return 85;
+        return 65;
     } else
         return 0;
 }
@@ -158,7 +162,6 @@ static NSString * contactingServersForUpdate = @"Trying to get latest status fro
     static NSString *CellIdentifier = @"Cell";
     UITableViewCell *cell =[tableView dequeueReusableCellWithIdentifier:CellIdentifier
                                                            forIndexPath:indexPath];
-    
     
     
     if ( indexPath.section == 0) {
@@ -174,17 +177,8 @@ static NSString * contactingServersForUpdate = @"Trying to get latest status fro
             [username setAutocapitalizationType:UITextAutocapitalizationTypeNone];
             username.delegate  = self;
             cell.accessoryView = username;
+            username .placeholder = myString;
             
-            // Set either a placeholder or the retrieved email address; username = email
-            NSUserDefaults *storedUserDefaults = [NSUserDefaults standardUserDefaults];
-            NSString *emailString = [storedUserDefaults objectForKey:@"adminID"];
-
-            if (emailString == NULL){
-                username .placeholder = myString;
-            } else {
-                [username setText:[storedUserDefaults objectForKey:@"adminID"]];
-                [username setTextColor:[UIColor darkGrayColor]];
-            }
         } else if (indexPath.row == 1) {
             password = [[UITextField alloc] initWithFrame:CGRectMake(5, 0, 280, 21)];
             NSString *myString = [loginFields objectAtIndex:1];
@@ -197,27 +191,13 @@ static NSString * contactingServersForUpdate = @"Trying to get latest status fro
             
         } else if (indexPath.row == 2) {
             phoneNumber = [[UITextField alloc] initWithFrame:CGRectMake(5, 0, 280, 21)];
-            //NSString *myString = [loginFields objectAtIndex:2];
-            phoneNumber.placeholder = @"555 123 4567";
+            NSString *myString = [loginFields objectAtIndex:2];
+            phoneNumber.placeholder = myString;
             phoneNumber.secureTextEntry = NO;
-            //phoneNumber.autocorrectionType = UITextAutocorrectionTypeNo;
             phoneNumber.keyboardType = UIKeyboardTypePhonePad;
             [phoneNumber setClearButtonMode:UITextFieldViewModeWhileEditing];
             //password.delegate = self;
             cell.accessoryView = phoneNumber;
-        } else if (indexPath.row == 3) {
-            NSString *myString = @"Turn on Location";
-            cell.textLabel.text = myString;
-            cell.textLabel.textAlignment = NSTextAlignmentCenter;
-            UIFont *myFont = [ UIFont fontWithName: @"HelveticaNeue-Light" size: 16.0 ];
-            cell.textLabel.font  = myFont;
-            cell.textLabel.textColor = [UIColor colorWithRed:0 green:0 blue:0.6 alpha:1];
-            cell.selectionStyle = UITableViewCellSelectionStyleNone;
-            self.locationSwitch = [[UISwitch alloc] initWithFrame:CGRectZero];
-            [self.locationSwitch setOn:NO animated:YES];
-            self.locationSwitch.tag = 10;
-            [self.locationSwitch addTarget:self action:@selector(switchChanged:) forControlEvents:UIControlEventValueChanged];
-            cell.accessoryView = self.locationSwitch;
         }
     } else if (indexPath.section == 1) {
         if (indexPath.row == 0) {
@@ -237,14 +217,13 @@ static NSString * contactingServersForUpdate = @"Trying to get latest status fro
             cell.textLabel.textColor = [UIColor colorWithRed:0 green:0 blue:0.6 alpha:1];
             cell.selectionStyle = UITableViewCellSelectionStyleNone;
             self.locationSwitch = [[UISwitch alloc] initWithFrame:CGRectZero];
-            [self.locationSwitch setOn:NO animated:YES];
+            [self.locationSwitch setOn:YES animated:YES];
             self.locationSwitch.tag = 10;
             [self.locationSwitch addTarget:self action:@selector(switchChanged:) forControlEvents:UIControlEventValueChanged];
             cell.accessoryView = self.locationSwitch;
-            //[self switchChanged:self.locationSwitch];
+            [self switchChanged:self.locationSwitch];
             
-        }else*/
-        if (indexPath.row == 0)
+        }else if (indexPath.row == 1)
         {
             NSString *myString = @"Stayed Logged In";
             cell.textLabel.text = myString;
@@ -261,7 +240,8 @@ static NSString * contactingServersForUpdate = @"Trying to get latest status fro
             
             [self switchChanged:switchView];
             
-        } else if (indexPath.row == 1) {
+        } else */
+        if (indexPath.row == 0) {
             UIFont *myFont = [ UIFont fontWithName: @"HelveticaNeue-Light" size: 14.0 ];
             cell.textLabel.font  = myFont;
             NSString *myString = @"Forgot your password?";
@@ -269,61 +249,38 @@ static NSString * contactingServersForUpdate = @"Trying to get latest status fro
             cell.textLabel.textColor = [UIColor colorWithRed:0 green:0 blue:0.6 alpha:1];
             cell.textLabel.textAlignment = NSTextAlignmentCenter;
 //            cell.backgroundColor = [UIColor colorWithRed:1.0 green:1.0 blue:1.0 alpha:0.3];
+        } else {
+            NSString *myString = @"By creating a Frienso Account you acknowledge that "
+            "you have read, understood, and agreed to the Frienso "
+            "App Use Waiver http://frienso.tumblr.com";
+            UITextView *cellTV = [[UITextView alloc] initWithFrame:CGRectMake(0, 0,
+                                                                              tableView.bounds.size.width,
+                                                                              cell.frame.size.height*2.0f)];
+            cellTV.text =myString;
+            cellTV.textAlignment = NSTextAlignmentCenter;
+            cellTV.dataDetectorTypes = UIDataDetectorTypeLink;
+            cellTV.backgroundColor = [UIColor clearColor];
+            cellTV.editable = NO;
+            [cell addSubview:cellTV];
         }
     } else {
 //        UIFont *myFont = [ UIFont fontWithName: @"HelveticaNeue-Light" size: 14.0 ];
 //        cell.textLabel.font  = myFont;
-        NSString *myString = @"By creating a Frienso Account you acknowledge that "
-        "you have read, understood, and agreed to the Frienso "
-        "App Use Waiver http://frienso.tumblr.com";
-//        cell.textLabel.text = myString;
-//        cell.textLabel.numberOfLines = 4;
-//        cell.textLabel.textColor = [UIColor whiteColor];
-//        cell.textLabel.textAlignment = NSTextAlignmentCenter;
-//        [cell setFrame:CGRectMake(0, 0, tableView.bounds.size.width,
-//                                  cell.frame.size.height*2.0f)];
-//        cell.backgroundColor = [UIColor clearColor];
-        
-        UITextView *cellTV = [[UITextView alloc] initWithFrame:CGRectMake(0, 0,
-                                                                          tableView.bounds.size.width,
-                                                                          cell.frame.size.height*2.0f)];
-        cellTV.text =myString;
-        cellTV.dataDetectorTypes = UIDataDetectorTypeLink;
-        cellTV.backgroundColor = [UIColor clearColor];
-        cellTV.editable = NO;
-        [cell addSubview:cellTV];
+
     }
-    CAGradientLayer *gradient = [CAGradientLayer layer];
-    gradient.frame       = self.view.bounds;
-    UIColor *startColour = [UIColor colorWithHue:.580555 saturation:0.31 brightness:0.90 alpha:1.0];
-    UIColor *endColour   = [UIColor colorWithHue:.58333 saturation:0.50 brightness:0.62 alpha:1.0];
-    gradient.colors = [NSArray arrayWithObjects:(id)[startColour CGColor],(id)[endColour CGColor], nil];
-//    [self.tableView.layer insertSublayer:gradient atIndex:0];
-    // Override point for customization after application launch.
-//    UIImage *aSplashImage = [UIImage imageNamed:@"Splash.jpeg"];
-//    UIImageView *aSplashImageView = [[UIImageView alloc] initWithFrame:self.view.frame];
-//    aSplashImageView.image = aSplashImage;
-//    
-//    UIView *aSplashView = [[UIView alloc]initWithFrame:self.view.frame];
-//    [aSplashView addSubview:aSplashImageView];
-//    
-//    [self.window addSubview:aSplashView];
-    [self.tableView.backgroundView.layer addSublayer:gradient];
-    
-    
     return cell;
 }
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
     if (section == 0){
-        UILabel *lbl = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 30)];
+        UILabel *lbl = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 40)];
         lbl.textAlignment = NSTextAlignmentCenter;
         NSString *myString = [loginSections objectAtIndex:0];
         
         [lbl setFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:18.0f]];
         //lbl.font = [UIFont systemFontOfSize:16];
-        lbl.text = myString;//@"Welcome\nAdmin Sign In";
+        lbl.text = myString;//stringByAppendingString:@"Enter your email, password, and phone number"];
         lbl.numberOfLines = 2;
         lbl.backgroundColor = [UIColor clearColor];
         return lbl;
@@ -412,7 +369,10 @@ static NSString * contactingServersForUpdate = @"Trying to get latest status fro
     return YES;
 }
 */
-
+//- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
+//{
+//    tableView.keyboardDismissMode = UIScrollViewKeyboardDismissModeOnDrag;
+//}
 #pragma mark - TextField delegate
 -(BOOL)textFieldShouldReturn:(UITextField *)textField
 {
@@ -830,7 +790,7 @@ static NSString * contactingServersForUpdate = @"Trying to get latest status fro
                 [self saveNewUserLocallyWithEmail:username.text plusPassword:password.text];
                 NSString *message = @"You are logged in as: ";
                 [self actionAddFriensoEvent:[message stringByAppendingString:username.text]
-                               withSubtitle:@"Welcome to Frienso."]; // FriensoEvent
+                               withSubtitle:@"Welcome back to Frienso."]; // FriensoEvent
                 
                 // sync core circle from Parse | skip to the Frienso Dashboard
                 if (DBG) NSLog(@"--- Returning to Home View");
@@ -840,6 +800,9 @@ static NSString * contactingServersForUpdate = @"Trying to get latest status fro
                 if (DBG) NSLog(@"[ Register new user ]");
                 [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"newUserFlag"];
                 [[NSUserDefaults standardUserDefaults] synchronize];
+                NSString *msgStr = @"Thank you for joining Frienso.";
+                [self actionAddFriensoEvent:[msgStr stringByAppendingString:username.text]
+                               withSubtitle:@"Welcome!!"]; // FriensoEvent
                 
                 [self saveNewUserLocallyWithEmail:username.text plusPassword:password.text];
                 

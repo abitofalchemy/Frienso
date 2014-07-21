@@ -394,7 +394,6 @@ static NSString *coreFriendsCell = @"coreFriendsCell";
             NSLog(@"Cancel");
             break;
         case 1:{
-#warning something totally off here!!
             NSString *phoneNumber = [NSString stringWithFormat:@"tel://%@",[self.friendToContactDic allValues][0]];
             @try {
             [[UIApplication sharedApplication] openURL:[NSURL URLWithString:phoneNumber]];

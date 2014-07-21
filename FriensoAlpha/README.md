@@ -6,9 +6,13 @@ Frienso iOS Alpha
 Version History
 ---------------
 
-* ver 1.6 build 80
+
+* ver 1.6 build 81
+    21Jul14/SA: Optiming the login-view to avoid problems where txt is lost if one scrolls up;
+    - added my current location pin to the map
+    
     20Jul14/SA: Fixed accessing the pending requests and adding them to the mapview.
-    - Handle ther status if the user touches the pending bubbles
+    - Handle request status if the user touches the pending bubbles
     - Problem arose with: "[self.friendsLocationArray insertObject:..." changed it to addObject
 
 * ver 1.6 build 79+
@@ -260,6 +264,13 @@ Tasks Done / Project Log:
 * { Done } Fix Edit button in Profile
 * { Done } Fix database duplicates
 * { Done } Verify to call the right password
+
+Notes on Distributing App Ad-Hoc
+--------------------------------
+* Provisioning Profile
+  ** Debug friensopushdev
+  ** Release  ios team provisioning: com.abitofalchemy.friensopush
+  
 
 Referenced Work
 ----------------
