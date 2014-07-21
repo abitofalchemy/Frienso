@@ -10,7 +10,10 @@ Version History
 * ver 1.6 build 81
     21Jul14/SA: Optiming the login-view to avoid problems where txt is lost if one scrolls up;
     - added my current location pin to the map
-    
+    - After HelpMeNow is triggered, the map selfupdates to show your CF bubbles.
+    - Added formatting to login-view text input for Phone #, need to add a check to make sure
+    the user is entering a #.
+
     20Jul14/SA: Fixed accessing the pending requests and adding them to the mapview.
     - Handle request status if the user touches the pending bubbles
     - Problem arose with: "[self.friendsLocationArray insertObject:..." changed it to addObject

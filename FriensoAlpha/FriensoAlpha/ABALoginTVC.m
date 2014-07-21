@@ -53,6 +53,7 @@
 @property (nonatomic, strong) NSMutableArray *coreCircleContacts;
 @property (nonatomic,retain) UISwitch *locationSwitch;
 @property (nonatomic,strong) CLLocation *location;
+@property (nonatomic, retain) NSMutableString *storedValue;
 
 
 @end
@@ -96,9 +97,9 @@ static NSString * contactingServersForUpdate = @"Trying to get latest status fro
 
     // Initialization
     loginSections = [[NSArray alloc] initWithObjects:@"FRIENSO", @"Log In",@"Options",nil];
-    loginFields   = [[NSArray alloc] initWithObjects:@"Email", @"Password", @"Phone Number", nil];
+    loginFields   = [[NSArray alloc] initWithObjects:@"Email", @"Password", @"(###) ###-####", nil];
     loginBtnLabel = [[NSMutableArray alloc] initWithObjects:@"Sign In", @"Register", nil];
-    
+//    myTextFieldSemaphore = 0;   // init semaphore
     [self.navigationController.navigationBar setHidden:YES];
     
     self.coreCircleRequestStatus= [[NSMutableArray alloc] init ]; //stores status of the requests
@@ -196,7 +197,18 @@ static NSString * contactingServersForUpdate = @"Trying to get latest status fro
             phoneNumber.secureTextEntry = NO;
             phoneNumber.keyboardType = UIKeyboardTypePhonePad;
             [phoneNumber setClearButtonMode:UITextFieldViewModeWhileEditing];
-            //password.delegate = self;
+//            [phoneNumber addTarget:self
+//             
+//                            action:@selector(autoFormatTextField:)
+//             
+//                  forControlEvents:UIControlEventEditingChanged
+//             
+//             ];
+//            NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
+//            [formatter setNumberStyle: NSNumberFormatterDecimalStyle];
+//            phoneNumber.text = [formatter stringFromNumber: [formatter numberFromString:phoneNumber.text]];
+            phoneNumber.delegate = self;
+            phoneNumber.tag = 199;
             cell.accessoryView = phoneNumber;
         }
     } else if (indexPath.section == 1) {
@@ -395,6 +407,66 @@ static NSString * contactingServersForUpdate = @"Trying to get latest status fro
         //if (DBG) NSLog(@"[ Register Email]");
     }
 }
+
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
+{
+    if (textField == phoneNumber) {
+        NSCharacterSet *numSet = [NSCharacterSet characterSetWithCharactersInString:@"0123456789-() "];
+        NSString *newString = [textField.text stringByReplacingCharactersInRange:range withString:string];
+        unsigned long charCount = [newString length];
+        if ([newString rangeOfCharacterFromSet:[numSet invertedSet]].location != NSNotFound
+            || [string rangeOfString:@")"].location != NSNotFound
+            || [string rangeOfString:@"("].location != NSNotFound
+            || [string rangeOfString:@"-"].location != NSNotFound
+            || charCount > 14) {
+            return NO;
+        }
+        if (![string isEqualToString:@""])
+        {
+            if (charCount == 1)
+            {
+                newString = [NSString stringWithFormat:@"(%@", newString];
+            }
+            else if(charCount == 4)
+            {
+                newString = [newString stringByAppendingString:@") "];
+            }
+            else if(charCount == 5)
+            {
+                newString = [NSString stringWithFormat:@"%@) %@", [newString substringToIndex:4], [newString substringFromIndex:4]];
+            }
+            else if(charCount == 6)
+            {
+                newString = [NSString stringWithFormat:@"%@ %@", [newString substringToIndex:5], [newString substringFromIndex:5]];
+            }
+            
+            else if (charCount == 9)
+            {
+                newString = [newString stringByAppendingString:@"-"];
+            }
+            else if(charCount == 10)
+            {
+                newString = [NSString stringWithFormat:@"%@-%@", [newString substringToIndex:9], [newString substringFromIndex:9]];
+            }
+        }
+        textField.text = newString;
+        return NO;
+    }
+    return YES;
+}
+//// handle events
+//int myTextFieldSemaphore;
+//- (void)autoFormatTextField:(id)sender {
+//    
+//    if(myTextFieldSemaphore) return;
+//    
+//    myTextFieldSemaphore = 1;
+//    NSNumberFormatter *phoneNumberFormatter = [[NSNumberFormatter alloc] init];
+//    [phoneNumberFormatter setNumberStyle: NSNumberFormatterDecimalStyle];
+//    phoneNumber.text = [phoneNumberFormatter stringFromNumber: [phoneNumberFormatter numberFromString:phoneNumber.text]];
+//    myTextFieldSemaphore = 0;
+//    
+//}
 
 - (BOOL) isUserInNSUserDefaults: (NSString *)user havingPassword: (NSString *)pass
 {

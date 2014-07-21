@@ -1393,8 +1393,9 @@ enum PinAnnotationTypeTag {
     else if ([[NSUserDefaults standardUserDefaults] boolForKey:@"getStartedFlag"] &&
                        [[NSUserDefaults standardUserDefaults] objectForKey:@"adminID"] != NULL)
     {
-        if (DBG) NSLog(@"- viewDidLoad, getstarted flag ok, adminID not null");
+        if (!DBG) NSLog(@"- viewDidLoad - run normal mode ui");
         [self runNormalModeUI];
+        [self configureOverlay];
     }
 }
 - (void) setupUI
