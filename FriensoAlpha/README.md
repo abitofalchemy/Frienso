@@ -281,6 +281,7 @@ Referenced Work
 * Github
   ** https://help.github.com/articles/syncing-a-fork
 * Fonts
+  ** http://stackoverflow.com/questions/18070130/shifting-the-text-of-uinavigationbar-title-left-or-right
 * Images
   # http://wpwide.com/paris-france-birds-eye-view-sunshine-wide-hd-wallpaper/
   # http://dudye.com/futuristic-aerial-metro-station-in-miami

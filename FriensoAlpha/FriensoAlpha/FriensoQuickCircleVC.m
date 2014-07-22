@@ -15,6 +15,8 @@
 #import <Parse/Parse.h>
 #import "FRStringImage.h"
 #import "FRSyncFriendConnections.h"
+#import "NewCoreCircleTVC.h"
+
 
 static NSString *coreFriendsCell = @"coreFriendsCell";
 
@@ -23,6 +25,8 @@ static NSString *coreFriendsCell = @"coreFriendsCell";
 @property (nonatomic,strong) UITableView *tableView;
 @property (nonatomic,strong) NSFetchedResultsController *frc;
 @property (nonatomic,strong) NSDictionary *friendToContactDic;
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *editFriensoContacts;
+- (IBAction)editFriensoContactsAction:(id)sender;
 
 @end
 
@@ -39,6 +43,7 @@ static NSString *coreFriendsCell = @"coreFriendsCell";
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         // Custom initialization
+        
     }
     return self;
 }
@@ -48,10 +53,9 @@ static NSString *coreFriendsCell = @"coreFriendsCell";
     [super viewDidLoad];
     
     [[UINavigationBar appearance] setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:[UIColor blackColor], NSForegroundColorAttributeName, [UIFont fontWithName:@"AppleSDGothicNeo-Light" size:16.0], NSFontAttributeName,nil]];
-    self.navigationItem.title = @"Friends & Contacts";
+    self.navigationItem.title = @"Contacts";
     
     [self.navigationController setToolbarHidden:YES];
-    
     
     //  Add new table view
     self.tableView = [[UITableView alloc] init];
@@ -146,6 +150,12 @@ static NSString *coreFriendsCell = @"coreFriendsCell";
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
+//- (void)viewDidLayoutSubviews
+//{
+//    CGFloat tabBarHeight = 60.0f;
+//    CGRect frame = self.view.frame;
+//    self.navigationController.navigationBar.frame = CGRectMake(0, 0, frame.size.width, tabBarHeight);
+//}
 #pragma mark - NSFetchedResultsController delege methods
 - (void)controllerDidChangeContent:(NSFetchedResultsController *)controller {
     printf("refreshing frc\n");
@@ -456,7 +466,74 @@ static NSString *coreFriendsCell = @"coreFriendsCell";
     //    return  [dirtyContactName stringByTrimmingCharactersInSet: [NSCharacterSet characterSetWithCharactersInString:@"-()"]];
     return cleanedString;
 }
+- (void) coreFriendsAction:(id) sender {
+    
+    UIStoryboard *mainStoryboard = [UIStoryboard storyboardWithName:@"Main"  bundle:nil];
+    NewCoreCircleTVC  *coreCircleController = (NewCoreCircleTVC*)[mainStoryboard instantiateViewControllerWithIdentifier: @"coreCircleView"];
+    [self.navigationController pushViewController:coreCircleController animated:YES];
+    
+}
+- (void) editRightBarButtonAction:(UIBarButtonItem *)sender{
+    if (sender.tag == 2) {
+        NSLog(@"Right bar button item: edit");
+        [self coreFriendsAction:nil];
+    }
+    else
+        NSLog(@"Right bar button item: add Contacts");
+    
+}
+- (IBAction)editFriensoContactsAction:(id)sender {
+    [self performSelector:@selector(coreFriendsAction:) withObject:self afterDelay:0.0f];
+/**
+ [UIView animateWithDuration:1.0
+                     animations:^{
+                         UIBarButtonItem *editBtn = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemEdit target:self action:@selector(editRightBarButtonAction:)];
+                         editBtn.tag = 2;
+                         UIBarButtonItem *addBtn = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(editRightBarButtonAction:)];
+                         addBtn.tag = 3;
+                         self.navigationItem.rightBarButtonItems = [NSArray arrayWithObjects:editBtn, addBtn,nil];
+//                         self.navigationItem.rightBarButtonItem = nil;
+//                         self.navigationItem.rightBarButtonItem = nil;
+//                         UIButton *backButton = [[UIButton ;
+//                         UIImage *backImage = [[UIImage imageNamed:@"back_button_normal.png"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 12.0f, 0, 12.0f)];
+//                         [backButton setBackgroundImage:backImage  forState:UIControlStateNormal];
+//                         [backButton setTitle:@"Back" forState:UIControlStateNormal];
+//                         [backButton addTarget:self action:@selector(popBack) forControlEvents:UIControlEventTouchUpInside];
+//                         UIBarButtonItem *backButtonItem = [[UIBarButtonItem alloc] initWithCustomView:backButton];
+//                         self.navigationItem.rightBarButtonItem =
+//                           
+//                           
+//                           //
+//                           UILabel *label = [[UILabel alloc] initWithFrame:CGRectZero];
+//                         label.backgroundColor = [UIColor clearColor];
+//                         label.font = [UIFont boldSystemFontOfSize:10.0];
+//                         label.shadowColor = [UIColor colorWithWhite:0.0 alpha:0.5];
+//                         label.textAlignment = NSTextAlignmentLeft;
+//                         //    ^-Use UITextAlignmentCenter for older SDKs.
+//                         label.textColor = [UIColor yellowColor]; // change this color
+//                         self.navigationItem.titleView = label;
+//                         label.text = NSLocalizedString(@"Contacts", @"");
+//                         [label sizeToFit];
+                         //self.navigationController.navigationBar.titleTextAttributes tit= nil;
+//                         UILabel *lblTitle = [[UILabel alloc] initWithFrame:CGRectMake(50, 50, 150, 20)];
+//                         lblTitle.backgroundColor = [UIColor clearColor];
+//                         lblTitle.textColor = [UIColor blackColor];
+//                         lblTitle.textAlignment = NSTextAlignmentLeft;
+//                         [lblTitle setText:@"Contacts"];
+//                         [self.navigationController.navigationItem.titleView addSubview:lblTitle];
+                         //[self.view addSubview:lblTitle];
+                         //UIBarButtonItem *typeField = [[UIBarButtonItem alloc] initWithCustomView:lblTitle];
+                         //toolBar.items = [NSArray arrayWithArray:[NSArray arrayWithObjects:backButton,spaceBar,lblTitle, nil]];
+                         //self.navigationItem.titleView = label;
+                         // [self.navigationController.navigationItem
+//        CGFloat tabBarHeight = 80.0f;
+//        CGRect frame = self.view.frame;
+//        self.navigationController.navigationBar.frame = CGRectMake(0, 0, frame.size.width, tabBarHeight);
+                         if (!DBG) NSLog(@"Edit Contacts");
 
+                         } completion:nil];
+ ***/
+}
 @end
 /** References:
     http://stackoverflow.com/questions/7175412/calculate-distance-between-two-place-using-latitude-longitude-in-gmap-for-iphone

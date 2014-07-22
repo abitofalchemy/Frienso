@@ -451,7 +451,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1660"
             endingLineNumber = "1660"
-            landmarkName = "-tableView:didSelectRowAtIndexPath:"
+            landmarkName = "-syncExistingCoreFriendsFromParseForUser:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -467,7 +467,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1674"
             endingLineNumber = "1674"
-            landmarkName = "-tableView:didSelectRowAtIndexPath:"
+            landmarkName = "-syncExistingCoreFriendsFromParseForUser:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

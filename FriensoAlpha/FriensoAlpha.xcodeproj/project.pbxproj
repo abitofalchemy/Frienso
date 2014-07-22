@@ -96,6 +96,7 @@
 		3E9F89401903E17700DA190C /* frienso-ic-2x40.png in Resources */ = {isa = PBXBuildFile; fileRef = 3E9F893D1903E17700DA190C /* frienso-ic-2x40.png */; };
 		3E9F89411903E17700DA190C /* frienso-ic-2x60.png in Resources */ = {isa = PBXBuildFile; fileRef = 3E9F893E1903E17700DA190C /* frienso-ic-2x60.png */; };
 		3EB5C447191A5EE5006557DE /* FRUserGenContentButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 3EB5C446191A5EE5006557DE /* FRUserGenContentButton.m */; };
+		3EBE31E3197EA4D200E78CF6 /* addeditfriends.png in Resources */ = {isa = PBXBuildFile; fileRef = 3EBE31E2197EA4D100E78CF6 /* addeditfriends.png */; };
 		3ECD3998192416F000A61B83 /* FRSyncFriendConnections.m in Sources */ = {isa = PBXBuildFile; fileRef = 3ECD3997192416F000A61B83 /* FRSyncFriendConnections.m */; };
 		3ED075F81959AB6C0074E8CB /* PendingRequestButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 3ED075F71959AB6C0074E8CB /* PendingRequestButton.m */; };
 		3ED77E6F193C86DD00E0BB87 /* CloudUsrEvnts.m in Sources */ = {isa = PBXBuildFile; fileRef = 3ED77E6E193C86DD00E0BB87 /* CloudUsrEvnts.m */; };
@@ -240,6 +241,7 @@
 		3E9F893E1903E17700DA190C /* frienso-ic-2x60.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "frienso-ic-2x60.png"; sourceTree = "<group>"; };
 		3EB5C445191A5EE5006557DE /* FRUserGenContentButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FRUserGenContentButton.h; sourceTree = "<group>"; };
 		3EB5C446191A5EE5006557DE /* FRUserGenContentButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FRUserGenContentButton.m; sourceTree = "<group>"; };
+		3EBE31E2197EA4D100E78CF6 /* addeditfriends.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = addeditfriends.png; sourceTree = "<group>"; };
 		3ECD3996192416F000A61B83 /* FRSyncFriendConnections.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FRSyncFriendConnections.h; sourceTree = "<group>"; };
 		3ECD3997192416F000A61B83 /* FRSyncFriendConnections.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FRSyncFriendConnections.m; sourceTree = "<group>"; };
 		3ED075F61959AB6C0074E8CB /* PendingRequestButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PendingRequestButton.h; sourceTree = "<group>"; };
@@ -434,6 +436,7 @@
 		1827933918BE07A70056C849 /* Media */ = {
 			isa = PBXGroup;
 			children = (
+				3EBE31E2197EA4D100E78CF6 /* addeditfriends.png */,
 				3E4579E2197962E8008499B7 /* help-switch-bg.png */,
 				3E0EDD651976F7830024124B /* frienso-0.png */,
 				3E3FC2E419618A2F008EDC00 /* frienso-2.png */,
@@ -645,6 +648,7 @@
 				3E185480192544B80059817D /* cell-phone-ic32.png in Resources */,
 				3E3FC2E819618A2F008EDC00 /* frienso-2.png in Resources */,
 				3E5EA0B5190D0A4A004A710C /* cal-ic-40.png in Resources */,
+				3EBE31E3197EA4D200E78CF6 /* addeditfriends.png in Resources */,
 				1827933C18BE07BD0056C849 /* alert-ring-bg.png in Resources */,
 				3E4120FD18E306630058012B /* frienso-info-1.png in Resources */,
 				180E882718BF2AB5009A570F /* first-view-cover-3.png in Resources */,

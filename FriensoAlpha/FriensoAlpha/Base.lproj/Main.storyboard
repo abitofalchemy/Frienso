@@ -49,7 +49,16 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
                     <extendedEdge key="edgesForExtendedLayout" bottom="YES"/>
-                    <navigationItem key="navigationItem" id="yr5-UU-892"/>
+                    <navigationItem key="navigationItem" id="yr5-UU-892">
+                        <barButtonItem key="rightBarButtonItem" image="addeditfriends.png" id="Xon-sB-z0Z">
+                            <connections>
+                                <action selector="editFriensoContactsAction:" destination="CWf-g8-ITg" id="PeI-uu-bUD"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="editFriensoContacts" destination="Xon-sB-z0Z" id="mlF-1a-UQO"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="T3R-go-2GS" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -386,12 +395,15 @@
             <point key="canvasLocation" x="698" y="171"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="addeditfriends.png" width="25" height="20"/>
+    </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>
         <simulatedOrientationMetrics key="orientation"/>
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="HKj-DF-MrE"/>
+        <segue reference="ixB-WG-BG7"/>
     </inferredMetricsTieBreakers>
 </document>

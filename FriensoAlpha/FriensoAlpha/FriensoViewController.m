@@ -1270,8 +1270,8 @@ enum PinAnnotationTypeTag {
     
     [self setupUI];
     
-    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"getStartedFlag"];
-    [[NSUserDefaults standardUserDefaults] synchronize];
+//    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"getStartedFlag"];
+//    [[NSUserDefaults standardUserDefaults] synchronize];
     
     if (![[NSUserDefaults standardUserDefaults] boolForKey:@"getStartedFlag"])
     {
