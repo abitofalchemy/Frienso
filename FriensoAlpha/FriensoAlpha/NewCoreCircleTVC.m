@@ -49,6 +49,7 @@
 static NSString * coreFriendAcceptMessage = @"Request accepted. User added to core circle";
 static NSString * coreFriendRejectMessage = @"Request rejected. Click to select someone else";
 static NSString * coreFriendRequestSendMessage = @"Request send. Awaiting response";
+static NSString * coreFriendRequestErrorMessage = @"Error! Click to select someone else";
 static NSString * coreFriendNotOnFriensoMessage = @"User not on Frienso";
 static NSString * contactingServersForUpdate = @"Trying to get latest status from the servers";
 static int MAX_CORE_FRIENDS = 3;
@@ -280,23 +281,36 @@ int activeCoreFriends = 0;
                         break;
                     }
                     PFObject * pfobject = object;
-                    PFUser * sender = [pfobject objectForKey:@"recipient"];
-                    NSString *senderPhoneNumber = sender[@"phoneNumber"];
+                    PFUser * recipient = [pfobject objectForKey:@"recipient"];
+                    NSString *recipientPhoneNumber = recipient[@"phoneNumber"];
                     NSString *response = [pfobject objectForKey:@"status"];
-                    NSString *senderName = [pfobject objectForKey:@"recipientName"];
-                    [self.coreCircleRequestStatus replaceObjectAtIndex:i withObject:coreFriendRequestSendMessage];
-                    [self.coreCircleContacts replaceObjectAtIndex:i withObject:senderPhoneNumber];
-                    [self.coreCircleOfFriends replaceObjectAtIndex:i withObject:senderName];
+                    NSString *recipientName = [pfobject objectForKey:@"recipientName"];
 
-                    if([response isEqualToString:@"send"]) {
+                    if(recipient){
                         [self.coreCircleRequestStatus replaceObjectAtIndex:i withObject:coreFriendRequestSendMessage];
-                    } else if ([response isEqualToString:@"reject"]) {
-                        [self.coreCircleRequestStatus replaceObjectAtIndex:i withObject:coreFriendRejectMessage];
-                    } else  if([response isEqualToString:@"accept"]) {
-                        [self.coreCircleRequestStatus replaceObjectAtIndex:i withObject:coreFriendAcceptMessage];
+                        [self.coreCircleContacts replaceObjectAtIndex:i withObject:recipientPhoneNumber];
+                        [self.coreCircleOfFriends replaceObjectAtIndex:i withObject:recipientName];
+
+                        if([response isEqualToString:@"send"]) {
+                            [self.coreCircleRequestStatus replaceObjectAtIndex:i withObject:coreFriendRequestSendMessage];
+                        } else if ([response isEqualToString:@"reject"]) {
+                            [self.coreCircleRequestStatus replaceObjectAtIndex:i withObject:coreFriendRejectMessage];
+                        } else  if([response isEqualToString:@"accept"]) {
+                            [self.coreCircleRequestStatus replaceObjectAtIndex:i withObject:coreFriendAcceptMessage];
+                        } else {
+                            [self.coreCircleRequestStatus replaceObjectAtIndex:i withObject:response];
+                        }
                     } else {
-                        [self.coreCircleRequestStatus replaceObjectAtIndex:i withObject:response];
+                        if (DBG) NSLog(@"Recepient Object is null");
+
+                        [self.coreCircleRequestStatus replaceObjectAtIndex:i withObject:coreFriendRequestErrorMessage];
+                        [self.coreCircleContacts replaceObjectAtIndex:i withObject:@"Error"];
+                        [self.coreCircleOfFriends replaceObjectAtIndex:i withObject:@"Contact Not Found"];
+                        [object deleteInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+                            if (DBG) NSLog(@"Deleting zombie contact is :%hhd",succeeded);
+                        }];
                     }
+
                     i++;
                     activeCoreFriends++;
 
@@ -322,10 +336,10 @@ int activeCoreFriends = 0;
                                     break;
                                 }
 
-                                NSString *senderPhoneNumber = (NSString *)object[@"recipientPhoneNumber"];
-                                NSString *senderName = [object objectForKey:@"recipientName"];
-                                [self.coreCircleContacts replaceObjectAtIndex:i withObject:senderPhoneNumber];
-                                [self.coreCircleOfFriends replaceObjectAtIndex:i withObject:senderName];
+                                NSString *recipientPhoneNumber = (NSString *)object[@"recipientPhoneNumber"];
+                                NSString *recipientName = [object objectForKey:@"recipientName"];
+                                [self.coreCircleContacts replaceObjectAtIndex:i withObject:recipientPhoneNumber];
+                                [self.coreCircleOfFriends replaceObjectAtIndex:i withObject:recipientName];
                                 [self.coreCircleRequestStatus replaceObjectAtIndex:i withObject:coreFriendNotOnFriensoMessage];
                                 i++;
                                 activeCoreFriends++;
