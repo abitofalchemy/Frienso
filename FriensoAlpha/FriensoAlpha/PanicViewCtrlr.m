@@ -17,12 +17,15 @@
 #import <AudioToolbox/AudioToolbox.h>
 #import "CloudUsrEvnts.h"
 #import "FRStringImage.h"
+#import <MessageUI/MessageUI.h>
+#import <AddressBook/AddressBook.h>
+
 
 
 #define UIColorFromRGB(rgbValue) [UIColor colorWithRed:((float)((rgbValue & 0xFF0000) >> 16))/255.0 green:((float)((rgbValue & 0xFF00) >> 8))/255.0 blue:((float)(rgbValue & 0xFF))/255.0 alpha:0.8]
 
 static NSString *contactCell          = @"contactCell";
-
+static NSString *helpLocation         = @"";
 
 @interface PanicViewCtrlr ()
 {
@@ -41,6 +44,7 @@ static NSString *contactCell          = @"contactCell";
 @property (nonatomic, strong) NSFetchedResultsController *frc;
 @property (nonatomic, strong) UITableView     *contactsTableView;
 @property (nonatomic, strong) NSMutableArray  *helpMeNowContactsArr;
+
 @end
 
 @implementation PanicViewCtrlr
@@ -52,8 +56,48 @@ static NSString *contactCell          = @"contactCell";
 {
     [super viewDidLoad];
 	NSLog(@"HelpMeNow (PanicViewCtrlr)");
+   
+    /*REVERSE GEOCODE LATITUDE AND LONGITUDE IN THIS VIEW TO GET AN ACTUAL ADDRESS TO BE SENT WITH PNS AND TEXT MESSAGES */
+    CLGeocoder *geocoder = [[CLGeocoder alloc] init];
+    PFGeoPoint *myLocation = [[PFUser currentUser] objectForKey:@"currentLocation"];
     
-    /* [self.navigationController.navigationBar setBarTintColor:UIColorFromRGB(0xbdc3c7)];
+    CLLocation *newLocation = [[CLLocation alloc]initWithLatitude:myLocation.latitude
+                                                        longitude:myLocation.longitude];
+    
+    [geocoder reverseGeocodeLocation:newLocation
+                   completionHandler:^(NSArray *placemarks, NSError *error) {
+                       
+                       if (error) {
+                           NSLog(@"Geocode failed with error: %@", error);
+                           return;
+                       }
+                       
+                       if (placemarks && placemarks.count > 0)
+                       {
+                           CLPlacemark *placemark = placemarks[0];
+                           
+                           NSDictionary *addressDictionary =
+                           placemark.addressDictionary;
+                           
+                           NSLog(@"%@ ", addressDictionary);
+                           NSString *address = [addressDictionary
+                                                objectForKey:(NSString *)kABPersonAddressStreetKey];
+                           NSString *city = [addressDictionary
+                                             objectForKey:(NSString *)kABPersonAddressCityKey];
+                           NSString *state = [addressDictionary
+                                              objectForKey:(NSString *)kABPersonAddressStateKey];
+                           NSString *zip = [addressDictionary
+                                            objectForKey:(NSString *)kABPersonAddressZIPKey];
+                           
+                           helpLocation = [NSString stringWithFormat:@"%@ %@ %@ %@", address,city, state, zip];
+                        
+                       }
+                       
+                   }];
+    
+    /**************************END REVERSE GEOCODING**************************************************/
+
+        /* [self.navigationController.navigationBar setBarTintColor:UIColorFromRGB(0xbdc3c7)];
     [self.view setBackgroundColor:UIColorFromRGB(0xecf0f1)];
     */
     
@@ -418,6 +462,57 @@ static NSString *contactCell          = @"contactCell";
                                delegate: nil
                       cancelButtonTitle:@"OK"
                       otherButtonTitles:nil] show];
+    
+    /*****START GROUP SMS SENDING BUT LOOK AT IF FRIENDS ARE >0 to SET RECIPIENTS*********/
+    NSError *error;
+    NSMutableArray *coreSMSArray = [[NSMutableArray alloc] init];
+    int friendCount = 0;
+    //int i = 0;
+    for (id key in myCoreFriendsDic) {
+        //NSLog(@"Phone Number for this friend is: %@", object[@"recipient"][@"phoneNumber"]);
+        //NSLog(@"reading contact %@",[myCoreFriendsDic objectForKey:key]);
+        NSString *coreFriendPh = [self stripStringOfUnwantedChars:[myCoreFriendsDic objectForKey:key]];
+        [coreSMSArray addObject:coreFriendPh];
+        friendCount++;
+    }
+    //Only send SMS if you actually have someone in your core friends list
+    if (friendCount > 0) {
+        MFMessageComposeViewController *controller = [[MFMessageComposeViewController alloc] init];
+        PFGeoPoint *myLocation = [[PFUser currentUser] objectForKey:@"currentLocation"];
+        NSLog(@"YOUR LOCATION CURRENTLY IS: %f,%f", myLocation.latitude, myLocation.longitude);
+        NSString *HelpMeLatitude = [NSString stringWithFormat: @"%f", myLocation.latitude];
+        NSString *HelpMeLongitude = [NSString stringWithFormat: @"%f", myLocation.longitude];
+
+        
+        if([MFMessageComposeViewController canSendText])
+        {
+            NSLog(@"This View Controller can send SMS messages!!");
+            NSLog(@"You have %d friends", friendCount);
+            NSString *mainMessage = @"Urgent: Help Me Now!! I am at: http://maps.google.com/";
+           // NSLog(@"YOUR ADDRESS NIKHIL IS: %@", helpLocation);
+
+            NSString *fullMessage = [NSString stringWithFormat:@"%@?q=%@,%@ My exact address is: %@. To find out more, go to http://www.frienso.com", mainMessage, HelpMeLatitude, HelpMeLongitude, helpLocation];
+            controller.body = fullMessage;
+            
+            if(friendCount == 1)
+                controller.recipients = [NSArray arrayWithObjects:coreSMSArray[0], nil];
+            if(friendCount == 2)
+                controller.recipients = [NSArray arrayWithObjects:coreSMSArray[0], coreSMSArray[1], nil];
+            if(friendCount == 3)
+                controller.recipients = [NSArray arrayWithObjects:coreSMSArray[0], coreSMSArray[1], coreSMSArray[2], nil];
+            
+            controller.messageComposeDelegate = self;
+            [self presentModalViewController:controller animated:YES];
+        }
+        
+        
+        
+        else {
+        // Log details of the failure
+        NSLog(@"Error: %@ %@", error, [error userInfo]);
+        }
+    }
+    
 }
 #pragma mark - Helper methods
 - (NSString *) stripStringOfUnwantedChars:(NSString *)phoneNumber {
@@ -503,6 +598,25 @@ static NSString *contactCell          = @"contactCell";
             NSLog(@"Call: %@",[NSString stringWithFormat:@"tel://%@",[coreFriendsDic objectForKey:[helpMeNowContactsArr objectAtIndex:indexPath.row]]]);}
     }
 }
+
+-(void)messageComposeViewController:(MFMessageComposeViewController *)controller didFinishWithResult:(MessageComposeResult)result{
+    
+    switch (result){
+        case MessageComposeResultCancelled:
+            NSLog(@"SMS Cancelled");
+            break;
+            //if sent show the alert sent
+        case MessageComposeResultSent:
+            NSLog(@"SMS Sent");
+            break;
+        default:
+            NSLog(@"SMS Failed");
+            break;
+    }
+    [self dismissModalViewControllerAnimated:YES];
+    
+}
+
 
 /*
  // Override to support conditional editing of the table view.

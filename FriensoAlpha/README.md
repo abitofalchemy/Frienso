@@ -6,6 +6,8 @@ Frienso iOS Alpha
 Version History
 ---------------
 
+* ver 1.6 build 84
+    21Jul14/NY: - Group SMS sending with location and reverse geocoded address on pressing Help Me Now and Watch Me Switches implemented.
 
 * ver 1.6 build 83
     21Jul14/SA: Optiming the login-view to avoid problems where txt is lost if one scrolls up;
