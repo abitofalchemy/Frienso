@@ -99,7 +99,6 @@ static NSString * contactingServersForUpdate = @"Trying to get latest status fro
     loginSections = [[NSArray alloc] initWithObjects:@"FRIENSO", @"Log In",@"Options",nil];
     loginFields   = [[NSArray alloc] initWithObjects:@"Email", @"Password", @"(###) ###-####", nil];
     loginBtnLabel = [[NSMutableArray alloc] initWithObjects:@"Sign In", @"Register", nil];
-//    myTextFieldSemaphore = 0;   // init semaphore
     [self.navigationController.navigationBar setHidden:YES];
     
     self.coreCircleRequestStatus= [[NSMutableArray alloc] init ]; //stores status of the requests
@@ -841,7 +840,19 @@ static NSString * contactingServersForUpdate = @"Trying to get latest status fro
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (indexPath.section == 1){
-        
+        if (![self checkAppropriatePhoneNumberInput])
+        {
+            [UIView animateWithDuration:1.5 animations:^{
+                [phoneNumber setTextColor:[UIColor darkGrayColor]];
+                [phoneNumber setAlpha:0.5];
+                [phoneNumber setTextAlignment:NSTextAlignmentRight];
+                [phoneNumber setTextColor:[UIColor blueColor]];
+                [phoneNumber setTextAlignment:NSTextAlignmentLeft];
+                [phoneNumber setAlpha:1.0];
+            }];
+             
+            return; // do nothing and go back if not a complete phone #
+        }
         if ( [self validUsername:username.text andPassword:password.text]) // Is input valid?
         {
             if (DBG) NSLog(@"** valid input **");
@@ -869,7 +880,7 @@ static NSString * contactingServersForUpdate = @"Trying to get latest status fro
                 [self popDashboardVC];
                 
             } else {
-                if (DBG) NSLog(@"[ Register new user ]");
+                if (!DBG) NSLog(@"[ Registering a new user ]");
                 [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"newUserFlag"];
                 [[NSUserDefaults standardUserDefaults] synchronize];
                 NSString *msgStr = @"Thank you for joining Frienso.";
@@ -879,7 +890,8 @@ static NSString * contactingServersForUpdate = @"Trying to get latest status fro
                 [self saveNewUserLocallyWithEmail:username.text plusPassword:password.text];
                 
                 [self registerNewUserToParseWithEmail:username.text
-                                         plusPassword:password.text withPhoneNumber:phoneNumber.text];
+                                         plusPassword:password.text
+                                      withPhoneNumber:[self stripStringOfUnwantedChars:phoneNumber.text]];
             
                 [self popCoreCircleSetupVC]; // go to the core circle first setup
             }
@@ -906,7 +918,15 @@ static NSString * contactingServersForUpdate = @"Trying to get latest status fro
     }
 
 }
-
+- (BOOL) checkAppropriatePhoneNumberInput {
+    NSLog(@"entered phone number %@", phoneNumber.text);
+    //    (###) ###-####
+    if (phoneNumber.text.length <14) {
+        [[[UIAlertView alloc] initWithTitle:@"Enter your complete phone#" message:@"(###) ###-####, your phone # will be used to connect you with your Core Friends and to send push notifications." delegate:self cancelButtonTitle:@"Okay" otherButtonTitles:nil] show];
+        return NO;
+    } else
+        return YES;
+}
 - (void) reloadSection:(NSInteger)section withRowAnimation:(UITableViewRowAnimation)rowAnimation {
     //if (DBG) NSLog(@"login btn label %@", loginBtnLabel);
     NSRange range = NSMakeRange(section, 1);
@@ -1708,4 +1728,10 @@ gradient.colors = [NSArray arrayWithObjects:(id)[startColour CGColor],(id)[endCo
     }];
 
 }
+#pragma mark - Helper methods
+- (NSString *) stripStringOfUnwantedChars:(NSString *)phoneNumberString {
+     NSString *cleanedString = [[phoneNumberString componentsSeparatedByCharactersInSet:[[NSCharacterSet characterSetWithCharactersInString:@"0123456789"] invertedSet]] componentsJoinedByString:@""];
+     return cleanedString;
+ }
+                 
 @end

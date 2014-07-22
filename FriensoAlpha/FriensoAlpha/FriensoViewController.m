@@ -1263,17 +1263,15 @@ enum PinAnnotationTypeTag {
     [super viewDidLoad];
     
     printf("[ Home View: FriensoVC ]\n");
-    
-    
-    
+
     self.friendsLocationArray = [[NSMutableArray alloc] init]; // friends location cache
     self.pendingRqstsArray    = [[NSMutableArray alloc] init]; // Init pending requests holding array
     self.watchingCoFrArray    = [[NSMutableArray alloc] init];
     
     [self setupUI];
     
-//    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"getStartedFlag"];
-//    [[NSUserDefaults standardUserDefaults] synchronize];
+    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"getStartedFlag"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
     
     if (![[NSUserDefaults standardUserDefaults] boolForKey:@"getStartedFlag"])
     {
@@ -1414,8 +1412,7 @@ enum PinAnnotationTypeTag {
     [self.view addSubview:self.loadingView];
     [self.loadingView setCenter:CGPointMake(self.view.center.x, self.view.bounds.size.height*0.2)];
     [self.loadingView startAnimating];
-    
-    
+
 }
 - (void) runNormalModeUI {
     if (DBG) NSLog(@"Normal mode");
