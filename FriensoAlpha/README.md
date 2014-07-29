@@ -7,8 +7,10 @@ Version History
 ---------------
 
 * ver 1.6 build 86
-    22Jul14/SA:
-    - Working on adding avatars & accessing the profile info much easier
+    29Jul14/SA: Merged changes with Nikhils
+    22Jul14/SA: Working on adding avatars & accessing the profile info much easier
+    TODO: Need to fix 'back button' after HelpMeNow is triggered, needs to cance the alarm.
+    
 * ver 1.6 build 84
     21Jul14/NY: - Group SMS sending with location and reverse geocoded address on pressing Help Me Now and Watch Me Switches implemented.
 

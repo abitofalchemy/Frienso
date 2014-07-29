@@ -350,11 +350,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "FriensoAlpha/FriensoViewController.m"
-            timestampString = "428324254.122273"
+            timestampString = "428327401.022358"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1809"
-            endingLineNumber = "1809"
+            startingLineNumber = "1803"
+            endingLineNumber = "1803"
             landmarkName = "-amiWatchingUserEvent:"
             landmarkType = "5">
          </BreakpointContent>
@@ -414,11 +414,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "FriensoAlpha/FriensoViewController.m"
-            timestampString = "428324254.122273"
+            timestampString = "428327401.022358"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2416"
-            endingLineNumber = "2416"
+            startingLineNumber = "2410"
+            endingLineNumber = "2410"
             landmarkName = "-coreFriendOnMapInteraction:"
             landmarkType = "5">
          </BreakpointContent>
@@ -478,11 +478,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "FriensoAlpha/FriensoViewController.m"
-            timestampString = "428322450.666396"
+            timestampString = "428327401.022358"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "344"
-            endingLineNumber = "344"
+            startingLineNumber = "341"
+            endingLineNumber = "341"
             landmarkName = "-helpMeNowSwitchAction:"
             landmarkType = "5">
          </BreakpointContent>
@@ -510,11 +510,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "FriensoAlpha/FriensoViewController.m"
-            timestampString = "428322450.666396"
+            timestampString = "428327401.022358"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "601"
-            endingLineNumber = "601"
+            startingLineNumber = "598"
+            endingLineNumber = "598"
             landmarkName = "-pendingRqstAction:"
             landmarkType = "5">
          </BreakpointContent>
