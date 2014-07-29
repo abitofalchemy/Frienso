@@ -6,8 +6,11 @@ Frienso iOS Alpha
 Version History
 ---------------
 
-    22Jul14/SA 
+* ver 1.6 build 86
+    22Jul14/SA:
     - Working on adding avatars & accessing the profile info much easier
+* ver 1.6 build 84
+    21Jul14/NY: - Group SMS sending with location and reverse geocoded address on pressing Help Me Now and Watch Me Switches implemented.
 
 * ver 1.6 build 83
     21Jul14/SA: Optiming the login-view to avoid problems where txt is lost if one scrolls up;

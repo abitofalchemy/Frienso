@@ -32,6 +32,7 @@
 #import "FriensoQuickCircleVC.h"
 #import "ProfileSneakPeekView.h"
 #import "UserProfileViewController.h"
+#import <AddressBook/AddressBook.h>
 
 
 #define MAPVIEW_DEFAULT_BOUNDS  CGRectMake(0,0,self.view.bounds.size.width,self.view.bounds.size.height * 0.5)
@@ -42,6 +43,7 @@
 static NSString *eventCell          = @"eventCell";
 static NSString *trackRequest       = @"trackRequest";
 static NSString *coreFriendRequest  = @"coreFriendRequest";
+static NSString *watchLocation      = @"";
 
 enum PinAnnotationTypeTag {
     PinAnnotationTypeTagGeoPoint = 0,
@@ -917,6 +919,57 @@ enum PinAnnotationTypeTag {
     /**************END OF PUSH NOTIFICATIONS: WATCH ME!!!! *****************/
     }
     
+    /*****START GROUP SMS SENDING BUT LOOK AT IF FRIENDS ARE >0 to SET RECIPIENTS*********/
+    NSDictionary *myCoreFriendsDic = [[NSUserDefaults standardUserDefaults] dictionaryForKey:@"CoreFriendsContactInfoDicKey"];
+    NSError *error;
+    NSMutableArray *coreSMSArray = [[NSMutableArray alloc] init];
+    int friendCount = 0;
+    //int i = 0;
+    for (id key in myCoreFriendsDic) {
+        //NSLog(@"Phone Number for this friend is: %@", object[@"recipient"][@"phoneNumber"]);
+        //NSLog(@"reading contact %@",[myCoreFriendsDic objectForKey:key]);
+        NSString *coreFriendPh = [self stripStringOfUnwantedChars:[myCoreFriendsDic objectForKey:key]];
+        [coreSMSArray addObject:coreFriendPh];
+        friendCount++;
+    }
+    //Only send SMS if you actually have someone in your core friends list
+    if (friendCount > 0) {
+        MFMessageComposeViewController *controller = [[MFMessageComposeViewController alloc] init];
+        PFGeoPoint *myLocation = [[PFUser currentUser] objectForKey:@"currentLocation"];
+        NSLog(@"YOUR LOCATION CURRENTLY IS: %f,%f", myLocation.latitude, myLocation.longitude);
+        NSString *HelpMeLatitude = [NSString stringWithFormat: @"%f", myLocation.latitude];
+        NSString *HelpMeLongitude = [NSString stringWithFormat: @"%f", myLocation.longitude];
+        
+        
+        if([MFMessageComposeViewController canSendText])
+        {
+            NSLog(@"This View Controller can send SMS messages!!");
+            NSLog(@"You have %d friends", friendCount);
+            NSString *mainMessage = @"Please watch over me!! I am at: http://maps.google.com/";
+            
+            NSString *fullMessage = [NSString stringWithFormat:@"%@?q=%@,%@ My exact address is: %@. To find out more, go to http://www.frienso.com", mainMessage, HelpMeLatitude, HelpMeLongitude, watchLocation];
+            controller.body = fullMessage;
+            
+            if(friendCount == 1)
+                controller.recipients = [NSArray arrayWithObjects:coreSMSArray[0], nil];
+            if(friendCount == 2)
+                controller.recipients = [NSArray arrayWithObjects:coreSMSArray[0], coreSMSArray[1], nil];
+            if(friendCount == 3)
+                controller.recipients = [NSArray arrayWithObjects:coreSMSArray[0], coreSMSArray[1], coreSMSArray[2], nil];
+            
+            controller.messageComposeDelegate = self;
+            [self presentModalViewController:controller animated:YES];
+        }
+        
+        
+        
+        else {
+            // Log details of the failure
+            NSLog(@"Error: %@ %@", error, [error userInfo]);
+        }
+    }
+
+    
     // Watch Me event tracking
     CloudUsrEvnts *watchMeEvent = [[CloudUsrEvnts alloc] initWithAlertType:@"watchMe"
                                                         eventStartDateTime:[NSDate date] ];
@@ -1301,6 +1354,50 @@ enum PinAnnotationTypeTag {
                [[NSUserDefaults standardUserDefaults] objectForKey:@"adminID"] != NULL){
         if (DBG) iLog(@"{ viewDidLoad } getstarted flag ok, adminID not null");
         [self loginCurrentUserToCloudStore]; // login to cloud store
+        
+        /*REVERSE GEOCODE LATITUDE AND LONGITUDE IN THIS VIEW TO GET AN ACTUAL ADDRESS TO BE SENT WITH PNS AND TEXT MESSAGES */
+        CLGeocoder *geocoder = [[CLGeocoder alloc] init];
+        PFGeoPoint *myLocation = [[PFUser currentUser] objectForKey:@"currentLocation"];
+        
+        CLLocation *newLocation = [[CLLocation alloc]initWithLatitude:myLocation.latitude
+                                                            longitude:myLocation.longitude];
+        
+        [geocoder reverseGeocodeLocation:newLocation
+                       completionHandler:^(NSArray *placemarks, NSError *error) {
+                           
+                           if (error) {
+                               NSLog(@"Geocode failed with error: %@", error);
+                               return;
+                           }
+                           
+                           if (placemarks && placemarks.count > 0)
+                           {
+                               CLPlacemark *placemark = placemarks[0];
+                               
+                               NSDictionary *addressDictionary =
+                               placemark.addressDictionary;
+                               
+                               NSLog(@"%@ ", addressDictionary);
+                               NSString *address = [addressDictionary
+                                                    objectForKey:(NSString *)kABPersonAddressStreetKey];
+                               NSString *city = [addressDictionary
+                                                 objectForKey:(NSString *)kABPersonAddressCityKey];
+                               NSString *state = [addressDictionary
+                                                  objectForKey:(NSString *)kABPersonAddressStateKey];
+                               NSString *zip = [addressDictionary
+                                                objectForKey:(NSString *)kABPersonAddressZIPKey];
+                               
+                               watchLocation = [NSString stringWithFormat:@"%@ %@ %@ %@", address,city, state, zip];
+                               
+                           }
+                           
+                       }];
+        
+        /**************************END REVERSE GEOCODING**************************************************/
+        
+        
+        
+        //[self setupUI];
    
     }
     

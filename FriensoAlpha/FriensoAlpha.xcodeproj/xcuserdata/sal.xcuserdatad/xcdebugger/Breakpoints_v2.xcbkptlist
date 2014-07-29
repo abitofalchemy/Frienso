@@ -355,7 +355,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1809"
             endingLineNumber = "1809"
-            landmarkName = "-actionAddFriensoUserLocation:forUser:"
+            landmarkName = "-amiWatchingUserEvent:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -419,7 +419,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "2416"
             endingLineNumber = "2416"
-            landmarkName = "-addCoreFriendBubblesToMap:"
+            landmarkName = "-coreFriendOnMapInteraction:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
