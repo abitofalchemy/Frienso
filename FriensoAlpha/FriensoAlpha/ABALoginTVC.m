@@ -494,7 +494,17 @@ static NSString * contactingServersForUpdate = @"Trying to get latest status fro
     }
     return returnVal;
 }
-
+- (NSString*) formatPlainPhoneString:(NSString*)phone_str_arg {
+    NSString* formattedString = nil;
+    if (phone_str_arg.length <10 )
+        return nil;
+    NSRange range = NSMakeRange(3, 3);
+    formattedString = [NSString stringWithFormat:@"(%@) %@-%@",
+                       [phone_str_arg substringToIndex:3],
+                       [phone_str_arg substringWithRange:range],
+                       [phone_str_arg substringFromIndex:6]];
+    return formattedString;
+}
 - (BOOL) isUsernameNew: (NSString *)userStr
 {   // is username (admin) text entered a new user?
     retVal = NO;
@@ -518,7 +528,8 @@ static NSString * contactingServersForUpdate = @"Trying to get latest status fro
                 
                 [loginBtnLabel replaceObjectAtIndex:0 withObject:@"Sign In"];
                 PFUser *friensoUser = [objects objectAtIndex:0];
-                [phoneNumber setText:[friensoUser objectForKey:@"phoneNumber"]];
+                NSString *cloudPhnNbr = [friensoUser objectForKey:@"phoneNumber"];
+                [phoneNumber setText:[self formatPlainPhoneString:[self stripStringOfUnwantedChars:cloudPhnNbr]]];
                 [self reloadSection:1 withRowAnimation:UITableViewRowAnimationNone];
                 /**
                 [self.locationSwitch setOn:YES animated:YES];  // Existing user->force location tracking
@@ -869,7 +880,7 @@ static NSString * contactingServersForUpdate = @"Trying to get latest status fro
         } else {
             if ([self userInParse]){
                 // login this user to parse
-                [self loginThisUserToParse:username.text withPassword:password.text];         // already set?
+                [self loginThisUserToParse:username.text withPassword:password.text andPhoneNumber:phoneNumber.text];         // already set?
                 [self saveNewUserLocallyWithEmail:username.text plusPassword:password.text];
                 NSString *message = @"You are logged in as: ";
                 [self actionAddFriensoEvent:[message stringByAppendingString:username.text]
@@ -934,12 +945,18 @@ static NSString * contactingServersForUpdate = @"Trying to get latest status fro
     [self.tableView reloadSections:sectionToReload withRowAnimation:rowAnimation];
 }
 
-- (void) loginThisUserToParse:(NSString *)userName withPassword:(NSString *)userPass {
+- (void) loginThisUserToParse:(NSString *)userName
+                 withPassword:(NSString *)userPass
+               andPhoneNumber:(NSString*)phoneNbr
+{
     [PFUser logInWithUsernameInBackground:userName password:userPass
                                     block:^(PFUser *user, NSError *error) {
                                         if (user) {
-                                            if (DBG) NSLog(@"[ Parse successful login ]"); // Do stuff after successful login.
+                                            if (DBG) NSLog(@"[ Parse successful login ]"); // Do stuff
+                                            [user setObject:phoneNbr forKey:@"phoneNumber"];
+                                            [user saveInBackground];
                                             [self insertCurrentLocation:user];
+                                            
                                             if (DBG) NSLog(@"[ Stored this user's current loc ]");
                                             [PFGeoPoint geoPointForCurrentLocationInBackground:^(PFGeoPoint *geoPoint, NSError *error) {
                                                 if (!error) {
@@ -1055,7 +1072,7 @@ static NSString * contactingServersForUpdate = @"Trying to get latest status fro
         [userInLocal setObject:newUserEmail forKey:@"userEmail"];
         [userInLocal setObject:newUserPassword forKey:@"adminPass"];
         [userInLocal setObject:@"0" forKey:@"adminInParse"];
-        [userInLocal setObject:phoneNumber.text forKey:@"userPhone"];
+        [userInLocal setObject:[self stripStringOfUnwantedChars:phoneNumber.text] forKey:@"userPhone"];
         [userInLocal synchronize];
         if (DBG) NSLog(@"[New user saved locally]");
     }
@@ -1068,7 +1085,8 @@ static NSString * contactingServersForUpdate = @"Trying to get latest status fro
     user.username  = newUserEmail;
     user.password  = newUserPassword;
     //remove dashes
-    userPhoneNumber = [userPhoneNumber stringByReplacingOccurrencesOfString:@"-" withString:@""];
+    userPhoneNumber = [self stripStringOfUnwantedChars:userPhoneNumber];
+    //[userPhoneNumber stringByReplacingOccurrencesOfString:@"-" withString:@""];
     user[@"phoneNumber"] = userPhoneNumber;
     
     

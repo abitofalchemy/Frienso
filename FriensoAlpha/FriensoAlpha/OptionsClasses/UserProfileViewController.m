@@ -223,7 +223,7 @@
 //#warning Find a way to fetch a picture from an assets url
         case 0:
         {
-            cell.imageView.image = [UIImage imageNamed:@"Profile-256.png"];
+            cell.imageView.image = [UIImage imageNamed:@"avatar.png"];
             cell.textLabel.text = @"Picture";
             self.profileImageCell = cell;
             
@@ -241,7 +241,7 @@
                         cell.imageView.image = thumbImg;
                     });
             } failureBlock:^(NSError *err) {
-                cell.imageView.image = [UIImage imageNamed:@"Profile-256.png"];
+                cell.imageView.image = [UIImage imageNamed:@"avatar.png"];
                 NSLog(@"Error: %@",[err localizedDescription]);
             }];
             break;
@@ -371,7 +371,7 @@
 -(void) setProfileViewContent {
     // Profile photo
     UIImageView __block  *profilePhoto = [[UIImageView alloc] initWithFrame:CGRectZero];
-    [profilePhoto setImage:[UIImage imageNamed:@"profile-landscape-1.png"]];
+    [profilePhoto setImage:[UIImage imageNamed:@"avatar.png"]];
     [profilePhoto setFrame:CGRectMake(0,0,self.view.bounds.size.width/3,self.view.bounds.size.width/3)];
     [profilePhoto setCenter:CGPointMake(self.view.center.x, self.view.center.x * 0.4)];
     profilePhoto.layer.borderColor  = [UIColor whiteColor].CGColor;
@@ -399,7 +399,7 @@
                               [profilePhoto setImage:thumbImg];
                       });
                   } failureBlock:^(NSError *err) {
-                      //profilePhoto =[[UIImageView alloc] initWithImage:[UIImage imageNamed::@"Profile-256.png"];
+                      //profilePhoto =[[UIImageView alloc] initWithImage:[UIImage imageNamed::@"avatar.png"];
                       NSLog(@"Error: %@",[err localizedDescription]);
                   }];
     

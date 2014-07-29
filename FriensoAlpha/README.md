@@ -6,6 +6,8 @@ Frienso iOS Alpha
 Version History
 ---------------
 
+    22Jul14/SA 
+    - Working on adding avatars & accessing the profile info much easier
 
 * ver 1.6 build 83
     21Jul14/SA: Optiming the login-view to avoid problems where txt is lost if one scrolls up;
@@ -29,7 +31,7 @@ Version History
     17Jul14/SA: Purged the Parse database, added checks to ensure that if an event is turned OFF
     locally, but its state on the cloud doesn't get flipped correctly, it retries and takes
     as ground truth the state on the phone of the user that triggers it.
-    
+
     Looking at friend requests crashes.
     
 * ver 1.6 build 77

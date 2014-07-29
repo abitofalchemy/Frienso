@@ -30,6 +30,9 @@
 #import "UserResponseScrollView.h"
 #import "PendingRequestButton.h"
 #import "FriensoQuickCircleVC.h"
+#import "ProfileSneakPeekView.h"
+#import "UserProfileViewController.h"
+
 
 #define MAPVIEW_DEFAULT_BOUNDS  CGRectMake(0,0,self.view.bounds.size.width,self.view.bounds.size.height * 0.5)
 #define ARC4RANDOM_MAX  0x100000000
@@ -50,7 +53,7 @@ enum PinAnnotationTypeTag {
 {
     NSMutableArray *coreFriendsArray;
     UISwitch       *trackMeOnOff;
-
+    UIGestureRecognizer *navGestures;
 }
 
 @property (nonatomic,strong) NSFetchedResultsController *frc;
@@ -65,7 +68,7 @@ enum PinAnnotationTypeTag {
 @property (nonatomic,strong) UITableView    *tableView;
 @property (nonatomic,strong) UIButton       *selectedBubbleBtn;
 @property (nonatomic,strong) UIButton       *fullScreenBtn;
-
+@property (nonatomic,strong) ProfileSneakPeekView *profileView;
 @property (nonatomic,strong) UISwitch       *trackMeOnOff;
 @property (nonatomic,strong) UILabel        *drawerLabel;
 @property (nonatomic)        CGFloat scrollViewY;
@@ -77,7 +80,7 @@ enum PinAnnotationTypeTag {
 -(void)viewMenuOptions: (UIButton *)theButton;
 -(void)viewCoreCircle:  (UIButton *)theButton;
 -(void)makeFriensoEvent:(UIButton *)theButton;
-
+-(void)navigationCtrlrSingleTap;
 
 @end
 
@@ -90,7 +93,13 @@ enum PinAnnotationTypeTag {
  ** CGRect fullScreenRect=[[UIScreen mainScreen] applicationFrame];
  ** **/
 
+-(void)navigationCtrlrSingleTap {
+    NSLog(@"Tapped: %.2f", self.navigationController.navigationBar.frame.size.height);
+    self.profileView = [[ProfileSneakPeekView alloc] initWithFrame:self.navigationController.navigationBar.frame];
+    [self.profileView setUserEmailString:@"saguinag" withPhoneNumber:@"5743394087"];
+    [self.view addSubview:self.profileView];
 
+}
 -(void)actionPanicEvent:(UIButton *)theButton {
 //    [self animateThisButton:theButton];
 //    [theButton setHidden:YES];
@@ -155,6 +164,7 @@ enum PinAnnotationTypeTag {
     return appDelegate.managedObjectContext;
     
 }
+
 #pragma mark - UITableViewDataSource Methods
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
@@ -414,13 +424,13 @@ enum PinAnnotationTypeTag {
             [subview removeFromSuperview];
         }
     }
+    
+    
     if (!DBG) NSLog(@"Friends I currently track:");
-    
-    
     NSInteger btnNbr = 0;
     for (PFUser *parseUser  in trackingFriendsArray)
     {
-        if (!DBG) NSLog(@"\t %@", parseUser.username);
+        if (!DBG) NSLog(@"  %@", parseUser.username);
         TrackingFriendButton *mLocBtn = [[TrackingFriendButton alloc] initWithFrame:CGRectMake(0, 0, 44, 44)];
         UIImage *img =[[FRStringImage alloc] imageTextBubbleOfSize:mLocBtn.frame.size];
         [mLocBtn setBackgroundImage:img forState:UIControlStateNormal];
@@ -438,15 +448,10 @@ enum PinAnnotationTypeTag {
         //[mLocBtn setCenter:CGPointMake(btnCenterX, self.mapView.frame.size.height - mLocBtn.center.y)];
         [mLocBtn setCenter:CGPointMake(btnCenterX, self.mapView.frame.size.height - mLocBtn.center.y*2)];
         
-        //[self findInFriensoEvents:parseUser];
-        
-        
-        
         // Allows access to location info to userBubble
         PFGeoPoint *geoNDIN = [PFGeoPoint geoPointWithLatitude:41.702652
                                                      longitude:-86.239450];// notre dame, in
-        //NSLog(@"[0] tag#:%ld",btnNbr);
-//        [self.friendsLocationArray insertObject:([parseUser valueForKey:@"currentLocation"] == NULL)  ? geoNDIN : [parseUser valueForKey:@"currentLocation"]  atIndex:btnNbr];
+
         [self.friendsLocationArray addObject:([parseUser valueForKey:@"currentLocation"] == NULL)  ? geoNDIN : [parseUser valueForKey:@"currentLocation"]];
         btnNbr++;
     }
@@ -919,6 +924,12 @@ enum PinAnnotationTypeTag {
     [watchMeEvent sendToCloud];
     
 }
+- (void) presentProfileSettingsView:(id) sender
+{
+    NSLog(@"PROFILE SETTINGS");
+    [self.profileView.closeProfileBtn sendActionsForControlEvents: UIControlEventTouchUpInside];
+    [self performSegueWithIdentifier:@"userProfileSegue" sender:self];
+}
 
 #pragma mark - Interaction with NSUserDefaults
 -(BOOL) inYourCoreUserWithPhNumber:(NSString *)phNumberOnWatch  {
@@ -1181,22 +1192,21 @@ enum PinAnnotationTypeTag {
     // Colors
     //  0x3498db peter river
     //  0xecf0f1 clouds
-    
     //[self.navigationController.navigationBar setBarTintColor:UIColorFromRGB(0x3498db)];//[UIColor colorWithHue:.580555 saturation:0.31 brightness:0.90 alpha:0.5]
+
     [self.navigationController.navigationBar setBarTintColor:[UIColor colorWithHue:.580555 saturation:0.31 brightness:0.90 alpha:0.5]];
     
-    NSShadow *shadow = [[NSShadow alloc] init];
-    shadow.shadowColor = [UIColor colorWithRed:1.0 green:1.0 blue:1.0 alpha:0.8];
-    shadow.shadowOffset = CGSizeMake(0, 1);
-    [self.navigationController.navigationBar setTranslucent:YES];
-    [self.navigationController.navigationBar setTitleTextAttributes: [NSDictionary dictionaryWithObjectsAndKeys:
-                                                                      [UIColor whiteColor], NSForegroundColorAttributeName,
-                                                                      shadow, NSShadowAttributeName,
-                                                                      [UIFont fontWithName:@"AppleSDGothicNeo-Light" size:21.0], NSFontAttributeName, nil]];
-    self.navigationItem.title = @"FRIENSO";
-    
-    //[self.navigationController.navigationBar setTitleTextAttributes: [NSDictionary dictionaryWithObjectsAndKeys:[UIColor blackColor], NSForegroundColorAttributeName, [UIFont fontWithName:@"AppleSDGothicNeo-Light" size:16.0], NSFontAttributeName,nil]];
-    
+//    NSShadow *shadow = [[NSShadow alloc] init];
+//    shadow.shadowColor = [UIColor colorWithRed:1.0 green:1.0 blue:1.0 alpha:0.8];
+//    shadow.shadowOffset = CGSizeMake(0, 1);
+//    [self.navigationController.navigationBar setTranslucent:YES];
+//    [self.navigationController.navigationBar setTitleTextAttributes: [NSDictionary dictionaryWithObjectsAndKeys:
+//                                                                      [UIColor whiteColor], NSForegroundColorAttributeName,
+//                                                                      shadow, NSShadowAttributeName,
+//                                                                      [UIFont fontWithName:@"AppleSDGothicNeo-Light" size:21.0], NSFontAttributeName, nil]];
+//    self.navigationItem.title = @"FRIENSO";
+
+
     
     // Right Options Button
     trackMeOnOff = [[UISwitch alloc] init];
@@ -1258,16 +1268,25 @@ enum PinAnnotationTypeTag {
 
 
 #pragma mark - FriensoViewController
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+{
+    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+    if (self) {
+        // Custom initialization
+        self.friendsLocationArray = [[NSMutableArray alloc] init]; // friends location cache
+        self.pendingRqstsArray    = [[NSMutableArray alloc] init]; // Init pending requests holding array
+        self.watchingCoFrArray    = [[NSMutableArray alloc] init];
+        
+    }
+    return self;
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     
     printf("[ Home View: FriensoVC ]\n");
-
-    self.friendsLocationArray = [[NSMutableArray alloc] init]; // friends location cache
-    self.pendingRqstsArray    = [[NSMutableArray alloc] init]; // Init pending requests holding array
-    self.watchingCoFrArray    = [[NSMutableArray alloc] init];
-    
+    [self setupNavigationBar];
     [self setupUI];
     
 //    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"getStartedFlag"];
@@ -1281,12 +1300,7 @@ enum PinAnnotationTypeTag {
     else if ([[NSUserDefaults standardUserDefaults] boolForKey:@"getStartedFlag"] &&
                [[NSUserDefaults standardUserDefaults] objectForKey:@"adminID"] != NULL){
         if (DBG) iLog(@"{ viewDidLoad } getstarted flag ok, adminID not null");
-        
         [self loginCurrentUserToCloudStore]; // login to cloud store
-        
-        
-        
-        //[self setupUI];
    
     }
     
@@ -1301,7 +1315,8 @@ enum PinAnnotationTypeTag {
 -(void) viewDidAppear:(BOOL)animated{
     [super viewDidAppear:animated];
     if (DBG) NSLog(@"!viewDidAppear");
-
+    [navGestures setEnabled:YES];
+    
     // Hide the Options Menu when navigating to Options, otherwise show
     for (id subview in [self.navigationController.toolbar subviews]){
         if ( [subview isKindOfClass:[FriensoOptionsButton class]] )
@@ -1324,10 +1339,10 @@ enum PinAnnotationTypeTag {
     {   /* if a parse objectId exist locally and helpMeNowSwitch was NOT setup *
          * otherwise, leave the switch along */
         [helpMeNowSwitch setOn:YES];
-        if (DBG) NSLog(@"    We have an active helpMeNow event");
-    } else
+        if (!DBG) NSLog(@"    We have an active helpMeNow event");
+    } /*else
         NSLog(@"    NO active helpMeNow event");
-
+       */
 
     NSNumber *installStepNum = [[NSUserDefaults standardUserDefaults] valueForKey:@"installationStep"];
     if (installStepNum == NULL &&
@@ -1346,8 +1361,6 @@ enum PinAnnotationTypeTag {
     
         if (!DBG) NSLog(@"{First install}");
         
-        // At first install, cache univesity/college emergency contacts
-        [[[CloudEntityContacts alloc] initWithCampusDomain:@"nd.edu"] fetchEmergencyContacts:@"inst,contact"];
         
         // Login to Parse
         NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
@@ -1386,6 +1399,10 @@ enum PinAnnotationTypeTag {
         if (DBG) NSLog(@"  After First install");
         [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithInteger:2] forKey:@"installationStep"];
         [[NSUserDefaults standardUserDefaults] synchronize];
+
+        // After first install, cache univesity/college emergency contacts
+        [[[CloudEntityContacts alloc] initWithCampusDomain:@"nd.edu"] fetchEmergencyContacts:@"inst,contact"];
+
         [self runNormalModeUI];
     }
     else if ([[NSUserDefaults standardUserDefaults] boolForKey:@"getStartedFlag"] &&
@@ -1396,6 +1413,52 @@ enum PinAnnotationTypeTag {
         [self configureOverlay];
     }
 }
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
+{
+    // Return YES for supported orientations
+    return  NO; //(interfaceOrientation != UIInterfaceOrientationPortraitUpsideDown);
+}
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    NSLog(@"Prapre for segue");
+    [navGestures setEnabled:NO];
+    // Get the new view controller using [segue destinationViewController].
+    // Pass the selected object to the new view controller.
+//    if([[segue identifier] isEqualToString:@"addToCartSegue"]){
+//        
+//    }
+    
+}
+- (void) setupNavigationBar
+{
+    [self.navigationController.navigationBar setBarTintColor:[UIColor colorWithHue:.580555 saturation:0.31 brightness:0.90 alpha:0.5]];
+    
+    
+    //[UIView animateWithDuration:0.5 animations:^{
+    UIView *newTitleView = [[UIView alloc] initWithFrame:self.navigationItem.titleView.frame];
+    navGestures = [[UIGestureRecognizer alloc] initWithTarget:self
+                                                                            action:@selector(navigationCtrlrSingleTap:)];
+    [navGestures setDelegate:self];
+    
+    UIImage *image = [UIImage imageNamed:@"avatar.png"];
+    UIImage *scaledimage = [[[FRStringImage alloc] init] scaleImage:image toSize:CGSizeMake(38.0, 38.0)];
+    UIImageView *imgView = [self newImageViewWithImage:scaledimage
+                                           showInFrame:CGRectMake(0, 0, 38.0f, 38.0f)];
+    imgView.contentMode  = UIViewContentModeScaleAspectFill;
+    imgView.layer.cornerRadius = imgView.frame.size.height/2.0f;
+    imgView.layer.borderWidth  = 1.0;
+    imgView.layer.borderColor  = [UIColor whiteColor].CGColor;
+    imgView.layer.masksToBounds = YES;
+    [imgView setImage:image];
+    [imgView setCenter:self.navigationItem.titleView.center];
+    [newTitleView addSubview:imgView];
+    //isolate tap to only the navigation bar
+    [self.navigationController.navigationBar addGestureRecognizer:navGestures];
+    self.navigationItem.titleView  = newTitleView;
+    //}];
+    
+}
+
 - (void) setupUI
 {
     // Seting up the UI
@@ -1518,6 +1581,43 @@ enum PinAnnotationTypeTag {
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+-(void)navigationCtrlrSingleTap:(id) sender {
+    
+    //    if (sender isEnabled)
+    
+    NSLog(@"Tapped: %.2f", self.navigationController.navigationBar.frame.size.height);
+    self.profileView = [[ProfileSneakPeekView alloc] initWithFrame:self.navigationController.navigationBar.frame];
+    [self.profileView setUserEmailString:[[NSUserDefaults standardUserDefaults] objectForKey:@"adminID"]
+                         withPhoneNumber:[[NSUserDefaults standardUserDefaults] objectForKey:@"userPhone"]
+     ];
+    [self.profileView.settingsGearBtn addTarget:self
+                                         action:@selector(presentProfileSettingsView:)
+                               forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:self.profileView];
+    
+}
+
+#pragma mark - Gesture Methods
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
+       shouldReceiveTouch:(UITouch *)touch {
+    NSLog(@"TOUCH self.tapCounter: %ld", (long)self.profileView.tapCounter);
+    // Disallow recognition of tap gestures when a navigation Item is tapped
+    if (touch.view == self.navigationController.navigationBar)
+    {//your back button/left button/whatever buttons you have
+        if (!self.profileView.tapCounter)
+        {
+            
+            [self navigationCtrlrSingleTap:touch];
+            NSLog(@"TITLEVIEW BACK TO NORMAL");
+            self.profileView.tapCounter = YES;
+        }
+        
+        return YES;
+        
+    }
+    return NO;
 }
 - (void) loginCurrentUserToCloudStore {
     // Check if self is currentUser (Parse)
@@ -1750,6 +1850,7 @@ enum PinAnnotationTypeTag {
 }
 
 #pragma mark - core graphics
+
 //- (UIImage *) createBackgroundImageWithColor:(UIColor *)color andSize:(CGSize)size {
 //    
 //    UIGraphicsBeginImageContext(size); // create a new context to draw in
@@ -2626,6 +2727,12 @@ calloutAccessoryControlTapped:(UIControl *)control
 }
 
 #pragma mark - Helper Methods
+-(UIImageView *) newImageViewWithImage:(UIImage *)image showInFrame:(CGRect)paramFrame{
+    UIImageView *result = [[UIImageView alloc] initWithFrame:paramFrame];
+    result.contentMode  = UIViewContentModeScaleAspectFit;
+    result.image        = image;
+    return result;
+}
 - (NSString *) stripStringOfUnwantedChars:(NSString *)phoneNumber {
     NSString *cleanedString = [[phoneNumber componentsSeparatedByCharactersInSet:[[NSCharacterSet characterSetWithCharactersInString:@"0123456789"] invertedSet]] componentsJoinedByString:@""];
     return cleanedString;

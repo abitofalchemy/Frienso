@@ -16,7 +16,7 @@
 #import "FRStringImage.h"
 #import "FRSyncFriendConnections.h"
 #import "NewCoreCircleTVC.h"
-
+#import "CloudEntityContacts.h"
 
 static NSString *coreFriendsCell = @"coreFriendsCell";
 
@@ -57,6 +57,13 @@ static NSString *coreFriendsCell = @"coreFriendsCell";
     
     [self.navigationController setToolbarHidden:YES];
     
+    // [[[FRSyncFriendConnections alloc] init] listWatchCoreFriends]; // List those uWatch
+    [[[FRSyncFriendConnections alloc] init] syncUWatchToCoreFriends]; // Sync those uWatch
+    
+    // At first install, cache univesity/college emergency contacts
+    [[[CloudEntityContacts alloc] initWithCampusDomain:@"nd.edu"] updateEmergencyContacts:@"inst,contact"];
+    
+    
     //  Add new table view
     self.tableView = [[UITableView alloc] init];
     [self.tableView setFrame:CGRectMake(0,0,self.view.frame.size.width, self.view.frame.size.height*0.90)];
@@ -95,50 +102,12 @@ static NSString *coreFriendsCell = @"coreFriendsCell";
     //[frCDPObject updateThisUserLocation];
     //[frCDPObject updateCoreFriendsLocation];
     
-    NSDictionary *coreFriendsDic = [[NSUserDefaults standardUserDefaults] dictionaryForKey:@"CoreFriendsContactInfoDicKey"];
-    NSLog(@"%@", [coreFriendsDic allKeys]);
-    NSLog(@"%@", [coreFriendsDic allValues]);
+    //NSDictionary *coreFriendsDic = [[NSUserDefaults standardUserDefaults] dictionaryForKey:@"CoreFriendsContactInfoDicKey"];
+    //NSLog(@"%@", [coreFriendsDic allKeys]);
+    //NSLog(@"%@", [coreFriendsDic allValues]);
 	
-    // [[[FRSyncFriendConnections alloc] init] listWatchCoreFriends]; // List those uWatch
-    [[[FRSyncFriendConnections alloc] init] syncUWatchToCoreFriends]; // Sync those uWatch
     
     
-    // sync coreCircle of friends
-    // NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-    
-    //NSLog(@"%@", [self.frc sections] ob);
-    
-    
-//    if ([userDefaults objectForKey:@"coreCircleStatus"] == NULL )
-//    {
-//        NSDictionary *coreFriendsDic = [userDefaults dictionaryForKey:@"CoreFriendsContactInfoDicKey"];
-//        if ( coreFriendsDic != NULL) {
-//            for (NSString *name in [coreFriendsDic allKeys]){
-//                CoreFriends *cFriends = [NSEntityDescription insertNewObjectForEntityForName:@"CoreFriends"
-//                                                                      inManagedObjectContext:[self managedObjectContext]];                NSLog(@"%@ : %@", name, [coreFriendsDic objectForKey:name]);
-//                
-//                if (cFriends != nil){
-//                    cFriends.coreFirstName = name;
-//                    cFriends.corePhone     = [coreFriendsDic objectForKey:name];
-//                    cFriends.coreCreated   = [NSDate date];
-//                    cFriends.coreModified  = [NSDate date];
-//                    cFriends.coreType      = @"iCore Friends";
-//                    //NSLog(@"%@",[coreCircle objectAtIndex:i] );
-//                    NSError *savingError = nil;
-//                    
-//                    if ([[self managedObjectContext] save:&savingError]){
-//                        NSLog(@"Successfully saved contacts to CoreCircle.");
-//                    } else {
-//                        NSLog(@"Failed to save the managed object context.");
-//                    }
-//                } else {
-//                    NSLog(@"Failed to create the new person object.");
-//                }
-//            }
-//        }
-//        [userDefaults setObject:@"set" forKey:@"coreCircleStatus"];
-//        [userDefaults synchronize];
-//    }
 }
 - (void) viewWillDisappear:(BOOL)animated
 {
@@ -171,6 +140,7 @@ static NSString *coreFriendsCell = @"coreFriendsCell";
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     id <NSFetchedResultsSectionInfo> sectionInfo = self.frc.sections[section];
+    NSLog(@"%ld", (long) sectionInfo.numberOfObjects);
     return sectionInfo.numberOfObjects;
 }
 // handling the sections for these data

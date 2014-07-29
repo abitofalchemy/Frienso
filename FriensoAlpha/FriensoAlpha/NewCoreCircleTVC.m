@@ -307,7 +307,7 @@ int activeCoreFriends = 0;
                         [self.coreCircleContacts replaceObjectAtIndex:i withObject:@"Error"];
                         [self.coreCircleOfFriends replaceObjectAtIndex:i withObject:@"Contact Not Found"];
                         [object deleteInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-                            if (DBG) NSLog(@"Deleting zombie contact is :%hhd",succeeded);
+                            if (DBG) NSLog(@"Deleting zombie contact is :%d",succeeded);
                         }];
                     }
 

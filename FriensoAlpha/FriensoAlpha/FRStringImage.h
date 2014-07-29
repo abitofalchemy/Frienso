@@ -19,5 +19,6 @@
                         font:(UIFont *)font     // The font we'd like it in.
                         size:(CGSize)size;
 - (UIImage *)calendarDrawRectImage:(CGSize)size;
+- (UIImage*) scaleImage:(UIImage*)image toSize:(CGSize)newSize;
 
 @end

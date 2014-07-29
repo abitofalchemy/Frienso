@@ -14,5 +14,6 @@
 
 - (id)initWithCampusDomain:(NSString*)eduDomain;
 - (void) fetchEmergencyContacts:(NSString*)contactType;
+- (void) updateEmergencyContacts:(NSString*)contactType;
 
 @end

@@ -17,8 +17,7 @@
 #import "CloudEntityContacts.h"
 
 
-@interface FriensoViewController : UIViewController <NSFetchedResultsControllerDelegate,
-UITableViewDelegate,UITableViewDataSource,MKMapViewDelegate,CLLocationManagerDelegate,UIAlertViewDelegate,UIScrollViewDelegate,MFMessageComposeViewControllerDelegate>
+@interface FriensoViewController : UIViewController <NSFetchedResultsControllerDelegate, UIGestureRecognizerDelegate,UITableViewDelegate,UITableViewDataSource,MKMapViewDelegate,CLLocationManagerDelegate,UIAlertViewDelegate,UIScrollViewDelegate,MFMessageComposeViewControllerDelegate>
 {
     UISwitch       *helpMeNowSwitch;
 }

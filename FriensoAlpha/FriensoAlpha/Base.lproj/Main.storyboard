@@ -13,11 +13,10 @@
                         <viewControllerLayoutGuide type="bottom" id="HaJ-eh-hdt"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="kh9-bI-dsS">
-                        <rect key="frame" x="0.0" y="64" width="320" height="504"/>
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
-                    <extendedEdge key="edgesForExtendedLayout" bottom="YES"/>
                     <navigationItem key="navigationItem" id="jAx-9T-pHH"/>
                     <connections>
                         <segue destination="36T-Um-eAF" kind="push" identifier="showMenuOptions" id="zYu-MN-4wW"/>
@@ -29,6 +28,7 @@
                         <segue destination="CWx-7e-tGl" kind="modal" identifier="welcomeView" id="85X-Sg-fyF"/>
                         <segue destination="qAg-ru-ZcY" kind="modal" identifier="loginView" id="EUB-wM-2II"/>
                         <segue destination="Ep9-nV-7ZB" kind="push" identifier="newCoreCircle" id="19Y-EC-EtC"/>
+                        <segue destination="STg-X3-r45" kind="push" identifier="userProfileSegue" id="IuN-mP-HCn"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
@@ -317,6 +317,25 @@
             </objects>
             <point key="canvasLocation" x="-537" y="-262"/>
         </scene>
+        <!--User Profile View Controller-->
+        <scene sceneID="AMf-Vd-PbZ">
+            <objects>
+                <viewController id="STg-X3-r45" customClass="UserProfileViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="NUX-0y-ZQu"/>
+                        <viewControllerLayoutGuide type="bottom" id="3e6-ar-hJv"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="sUl-MJ-I7s">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="bHK-ed-ZN3"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="idi-ly-xdR" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="239" y="-653"/>
+        </scene>
         <!--Alarm Timer TriggersTVC - Alarms-->
         <scene sceneID="cAS-GO-ONe">
             <objects>
@@ -404,6 +423,6 @@
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="ixB-WG-BG7"/>
+        <segue reference="HKj-DF-MrE"/>
     </inferredMetricsTieBreakers>
 </document>
