@@ -13,7 +13,7 @@
 #import "tstWatchingViewController.h"
 #import "FriensoResourcesTVC.h"
 #import "AboutFriensoViewController.h"
-#import "SearchViewController.h"
+//#import "SearchViewController.h"
 #import "FRStringImage.h"
 #import "FriensoOptionsButton.h"
 
@@ -110,10 +110,10 @@
             case 3:
                 cell.imageView.image = [UIImage imageNamed:@"about-24.png"];
                 break;
-            case 4:
+            /*case 4:
                 cell.imageView.image = [self imageWithString:@"🌐" font:[UIFont systemFontOfSize:[UIFont systemFontSize]] size:CGSizeMake(24, 24)];
                 break;
-            /*case 5:
+            case 5:
                 cell.imageView.image = [[FRStringImage alloc] calendarDrawRectImage:CGSizeMake(24,24)];
                 break;*/
             default:
@@ -170,9 +170,9 @@
                                                  animated:YES];
             break;
         }
-        case 4: 
+        /*case 4:
             [self performSegueWithIdentifier:@"friensoMap" sender:self];
-            break;
+            break;*/
         default:
             break;
     }

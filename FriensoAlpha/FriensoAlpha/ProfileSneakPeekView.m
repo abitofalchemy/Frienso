@@ -17,7 +17,7 @@
 {
     self = [super initWithFrame:frame];
     if (self) {
-        [self setFrame:CGRectMake(0, 0, frame.size.width, frame.size.height * 3.0)];
+        [self setFrame:CGRectMake(0, 0, frame.size.width, frame.size.height * 2.0)];
         
         // Initialization code
         title = [[UILabel alloc] initWithFrame:CGRectZero];

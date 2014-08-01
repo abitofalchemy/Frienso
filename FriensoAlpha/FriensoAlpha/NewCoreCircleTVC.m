@@ -63,10 +63,8 @@ int activeCoreFriends = 0;
     
     
     self.navigationController.navigationBarHidden = NO;
-    self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Done"
-                                                                             style:UIBarButtonItemStyleBordered
-                                                                            target:nil
-                                                                            action:nil];
+    [self.navigationController setToolbarHidden:YES animated:YES];
+    
     self.navigationItem.title = @"Core Circle";
     
     

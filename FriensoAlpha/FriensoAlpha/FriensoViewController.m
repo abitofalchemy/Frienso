@@ -58,6 +58,7 @@ enum PinAnnotationTypeTag {
     UIGestureRecognizer *navGestures;
 }
 
+@property (nonatomic,strong) UIButton *coreCircleBtn;
 @property (nonatomic,strong) NSFetchedResultsController *frc;
 @property (nonatomic,strong) UIActivityIndicatorView    *loadingView;
 @property (nonatomic,strong) UserResponseScrollView     *scrollView;
@@ -66,7 +67,7 @@ enum PinAnnotationTypeTag {
 @property (nonatomic,retain) NSMutableArray *pendingRqstsArray; // pending requests array
 @property (nonatomic,retain) NSMutableArray *watchingCoFrArray; // watching coreFriends array
 @property (nonatomic,strong) CLLocation     *location;
-@property (nonatomic, assign) CLLocationDistance radius;
+@property (nonatomic,assign) CLLocationDistance radius;
 @property (nonatomic,strong) UITableView    *tableView;
 @property (nonatomic,strong) UIButton       *selectedBubbleBtn;
 @property (nonatomic,strong) UIButton       *fullScreenBtn;
@@ -153,6 +154,7 @@ enum PinAnnotationTypeTag {
 -(void)viewCoreCircle:(UIButton *)theButton {
     [self animateThisButton:theButton];
     [self performSegueWithIdentifier:@"showMyCircle" sender:self];
+    [theButton setEnabled:NO];
     self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@""
                                                                              style:self.navigationItem.backBarButtonItem.style
                                                                             target:nil
@@ -1074,8 +1076,8 @@ enum PinAnnotationTypeTag {
     //    self.fullScreenBtn.layer.borderWidth = 0.5f;
     //    self.fullScreenBtn.layer.cornerRadius = self.fullScreenBtn.frame.size.height*.20;
     //    self.fullScreenBtn.layer.borderColor = [UIColor blackColor].CGColor;
-    [refreshMavpViewBtn setCenter:CGPointMake(refreshMavpViewBtn.center.x * 2.0,
-                                              refreshMavpViewBtn.center.y *1.2 ) ];
+    [refreshMavpViewBtn setCenter:CGPointMake(refreshMavpViewBtn.center.x *1.3,
+                                              refreshMavpViewBtn.center.y *1.3) ];
     [self.mapView addSubview:refreshMavpViewBtn];
     
     // Adding fullscreen mode button to the mapview
@@ -1198,20 +1200,17 @@ enum PinAnnotationTypeTag {
 -(void) setupToolBarIcons{
     self.navigationController.toolbarHidden = NO;
     [self.navigationController.toolbar setBarTintColor:[UIColor colorWithHue:.580555 saturation:0.31 brightness:0.90 alpha:0.5]];
-
-    //UIColor *violetTulip = [UIColor colorWithRed:155.0/255.0 green:144.0/255.0 blue:182.0/255.0 alpha:1.0];
-    // Left CoreCircle button
-//    FriensoCircleButton *coreCircleBtn = [[FriensoCircleButton alloc]
-//                                          initWithFrame:CGRectMake(0, 0, 27, 27)];
-    UIButton *coreCircleBtn = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 27, 27)];
-    [coreCircleBtn setTitle:@"👥" forState:(UIControlStateNormal)];
-    if (![coreCircleBtn isEnabled])
-        [coreCircleBtn setEnabled:YES];
-    [coreCircleBtn addTarget:self action:@selector(viewCoreCircle:)
+    
+    // left button coreFriends bar button
+    self.coreCircleBtn = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 27, 27)];
+    [self.coreCircleBtn setTitle:@"👥" forState:(UIControlStateNormal)];
+    if (![self.coreCircleBtn isEnabled])
+        [self.coreCircleBtn setEnabled:YES];
+    [self.coreCircleBtn addTarget:self action:@selector(viewCoreCircle:)
             forControlEvents:UIControlEventTouchUpInside];
     UIBarButtonItem *barLeftButton=[[UIBarButtonItem alloc] init];
-    [barLeftButton setCustomView:coreCircleBtn];
-    [coreCircleBtn setCenter:CGPointMake(44.0f,22)];
+    [barLeftButton setCustomView:self.coreCircleBtn];
+    [self.coreCircleBtn setCenter:CGPointMake(44.0f,22)];
     
     // Right tool bar btn
     FriensoOptionsButton *button = [[FriensoOptionsButton alloc] initWithFrame:CGRectMake(0, 0, 27, 27)];
@@ -1236,7 +1235,7 @@ enum PinAnnotationTypeTag {
 //    [self.helpMeNowBtn setCenter:CGPointMake(self.navigationController.toolbar.center.x, 22)];
     [self setupHelpMeNowSwitch];
     
-    [self.navigationController.toolbar addSubview:coreCircleBtn]; // left
+    [self.navigationController.toolbar addSubview:self.coreCircleBtn]; // left
     [self.navigationController.toolbar addSubview:button]; // right
 //    [self.navigationController.toolbar addSubview:self.helpMeNowBtn]; // center
 
@@ -1412,7 +1411,10 @@ enum PinAnnotationTypeTag {
 -(void) viewDidAppear:(BOOL)animated{
     [super viewDidAppear:animated];
     if (DBG) NSLog(@"!viewDidAppear");
+    
+    // Restore touch interaction on the following widgets
     [navGestures setEnabled:YES];
+    [self.coreCircleBtn setEnabled:YES];
     
     // Hide the Options Menu when navigating to Options, otherwise show
     for (id subview in [self.navigationController.toolbar subviews]){

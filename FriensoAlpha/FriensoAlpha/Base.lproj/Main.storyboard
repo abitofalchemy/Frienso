@@ -13,10 +13,11 @@
                         <viewControllerLayoutGuide type="bottom" id="HaJ-eh-hdt"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="kh9-bI-dsS">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <rect key="frame" x="0.0" y="64" width="320" height="504"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
+                    <extendedEdge key="edgesForExtendedLayout" bottom="YES"/>
                     <navigationItem key="navigationItem" id="jAx-9T-pHH"/>
                     <connections>
                         <segue destination="36T-Um-eAF" kind="push" identifier="showMenuOptions" id="zYu-MN-4wW"/>
@@ -53,6 +54,7 @@
                         <barButtonItem key="rightBarButtonItem" image="addeditfriends.png" id="Xon-sB-z0Z">
                             <connections>
                                 <action selector="editFriensoContactsAction:" destination="CWf-g8-ITg" id="PeI-uu-bUD"/>
+                                <segue destination="Ep9-nV-7ZB" kind="push" identifier="segueToCoreFriends" id="EYk-db-0di"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -312,10 +314,11 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
                     <navigationItem key="navigationItem" id="a1C-1k-QMc"/>
+                    <nil key="simulatedBottomBarMetrics"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="kYw-v5-41H" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-537" y="-262"/>
+            <point key="canvasLocation" x="151" y="2096"/>
         </scene>
         <!--User Profile View Controller-->
         <scene sceneID="AMf-Vd-PbZ">
@@ -424,5 +427,6 @@
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
         <segue reference="HKj-DF-MrE"/>
+        <segue reference="EYk-db-0di"/>
     </inferredMetricsTieBreakers>
 </document>

@@ -92,9 +92,9 @@ static NSString *coreFriendsCell = @"coreFriendsCell";
     self.frc.delegate      = self;
     NSError *fetchingError = nil;
     if ([self.frc performFetch:&fetchingError]){
-        NSLog(@"CoreCircle fetched with nbr of categories:%lu",(unsigned long)[[self.frc sections] count]);
+        if (DBG) NSLog(@"CoreCircle fetched with nbr of categories:%lu",(unsigned long)[[self.frc sections] count]);
     } else {
-        NSLog(@"Failed to fetch.");
+        if (DBG) NSLog(@"Failed to fetch.");
     }
     
     // Update this user's current location
@@ -125,6 +125,17 @@ static NSString *coreFriendsCell = @"coreFriendsCell";
 //    CGRect frame = self.view.frame;
 //    self.navigationController.navigationBar.frame = CGRectMake(0, 0, frame.size.width, tabBarHeight);
 //}
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    if (DBG) NSLog(@"Prapre for segue");
+    // Get the new view controller using [segue destinationViewController].
+    // Pass the selected object to the new view controller.
+    if([[segue identifier] isEqualToString:@"segueToCoreFriends"]){
+
+    }
+    
+}
+
 #pragma mark - NSFetchedResultsController delege methods
 - (void)controllerDidChangeContent:(NSFetchedResultsController *)controller {
     printf("refreshing frc\n");
@@ -140,7 +151,7 @@ static NSString *coreFriendsCell = @"coreFriendsCell";
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     id <NSFetchedResultsSectionInfo> sectionInfo = self.frc.sections[section];
-    NSLog(@"%ld", (long) sectionInfo.numberOfObjects);
+    if (DBG) NSLog(@"%ld", (long) sectionInfo.numberOfObjects);
     return sectionInfo.numberOfObjects;
 }
 // handling the sections for these data
@@ -235,7 +246,7 @@ static NSString *coreFriendsCell = @"coreFriendsCell";
     [phoneBtn addTarget:self
                  action:@selector(performSMS:)
        forControlEvents:UIControlEventTouchUpInside];
-    NSLog(@"%f,%f", cell.accessoryView.frame.origin.x,cell.accessoryView.frame.origin.y );
+    if (DBG) NSLog(@"%f,%f", cell.accessoryView.frame.origin.x,cell.accessoryView.frame.origin.y );
     
     [phoneBtn setFrame:CGRectMake(cell.frame.size.width-smsBtn.frame.size.width*4.0 ,0,44.0, 44.0)];
     [phoneBtn setCenter:CGPointMake(phoneBtn.center.x, cell.center.y)];
@@ -360,18 +371,18 @@ static NSString *coreFriendsCell = @"coreFriendsCell";
     picker.body = @"Are you Okay?";
     /* picker.recipients = @[@"Phone number here"]; */
     picker.recipients = @[[NSString stringWithFormat:@"%@",[self.friendToContactDic allValues]]];
-    NSLog(@"calling: %@", [NSString stringWithFormat:@"%@",[self.friendToContactDic allValues]]);
+    if (DBG) NSLog(@"calling: %@", [NSString stringWithFormat:@"%@",[self.friendToContactDic allValues]]);
     
 	[self presentViewController:picker animated:YES completion:NULL];
 }
 #pragma mark - UIAlert delegate methods
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
     NSString *title = [alertView buttonTitleAtIndex:buttonIndex];
-    NSLog(@"button index: %ld, %@", (long)buttonIndex, title );
+    if (DBG) NSLog(@"button index: %ld, %@", (long)buttonIndex, title );
     
     switch (buttonIndex) {
         case 0:
-            NSLog(@"Cancel");
+            if (DBG) NSLog(@"Cancel");
             break;
         case 1:{
             NSString *phoneNumber = [NSString stringWithFormat:@"tel://%@",[self.friendToContactDic allValues][0]];
@@ -379,23 +390,23 @@ static NSString *coreFriendsCell = @"coreFriendsCell";
             [[UIApplication sharedApplication] openURL:[NSURL URLWithString:phoneNumber]];
             }
             @catch (NSException *exception) {
-                NSLog(@"%@", exception.reason); }
+                if (DBG) NSLog(@"%@", exception.reason); }
             @finally {
-                NSLog(@"Call: %@",[NSString stringWithFormat:@"tel://%@",[self.friendToContactDic allValues][0]]);}
+                if (DBG) NSLog(@"Call: %@",[NSString stringWithFormat:@"tel://%@",[self.friendToContactDic allValues][0]]);}
             
             /*@try {
                 NSString *phoneNumber = [@"tel://" stringByAppendingString:[NSString stringWithFormat:@"%@",[self.friendToContactDic allValues]]];
                 [[UIApplication sharedApplication] openURL:[NSURL URLWithString:phoneNumber]];
             }
             @catch (NSException *exception) {
-                NSLog(@"%@", exception.reason); }
+                if (DBG) NSLog(@"%@", exception.reason); }
             @finally {
-                NSLog(@"Call: %@",[@"tel://" stringByAppendingString:[NSString stringWithFormat:@"%@",[self.friendToContactDic allValues]]]);}
+                if (DBG) NSLog(@"Call: %@",[@"tel://" stringByAppendingString:[NSString stringWithFormat:@"%@",[self.friendToContactDic allValues]]]);}
             */
             break;
         }
         case 2:
-            NSLog(@"Message");
+            if (DBG) NSLog(@"Message");
             [self showSMSPicker:alertView];
             break;
         default:
@@ -425,7 +436,7 @@ static NSString *coreFriendsCell = @"coreFriendsCell";
     {
         //        self.feedbackMsg.hidden = NO;
         //		self.feedbackMsg.text = @"Device not configured to send SMS.";
-        NSLog(@"Device not configured to send SMS.");
+        if (DBG) NSLog(@"Device not configured to send SMS.");
     }
 }
 
@@ -438,23 +449,32 @@ static NSString *coreFriendsCell = @"coreFriendsCell";
 }
 - (void) coreFriendsAction:(id) sender {
     
+    self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Done"
+                                                                             style:UIBarButtonItemStyleBordered
+                                                                            target:nil
+                                                                            action:nil];
+    
+    /*
     UIStoryboard *mainStoryboard = [UIStoryboard storyboardWithName:@"Main"  bundle:nil];
     NewCoreCircleTVC  *coreCircleController = (NewCoreCircleTVC*)[mainStoryboard instantiateViewControllerWithIdentifier: @"coreCircleView"];
     [self.navigationController pushViewController:coreCircleController animated:YES];
+    */
+    [self performSegueWithIdentifier:@"segueToCoreFriends" sender:self];
     
 }
 - (void) editRightBarButtonAction:(UIBarButtonItem *)sender{
     if (sender.tag == 2) {
-        NSLog(@"Right bar button item: edit");
+        if (DBG) NSLog(@"Right bar button item: edit");
         [self coreFriendsAction:nil];
     }
     else
-        NSLog(@"Right bar button item: add Contacts");
+        if (DBG) NSLog(@"Right bar button item: add Contacts");
     
 }
 - (IBAction)editFriensoContactsAction:(id)sender {
     [self performSelector:@selector(coreFriendsAction:) withObject:self afterDelay:0.0f];
-/**
+    
+    /**
  [UIView animateWithDuration:1.0
                      animations:^{
                          UIBarButtonItem *editBtn = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemEdit target:self action:@selector(editRightBarButtonAction:)];

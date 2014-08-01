@@ -5,6 +5,11 @@ Frienso iOS Alpha
 
 Version History
 ---------------
+    
+    01Aug14/SA: Fixed the issue issue of the friends btn being pressed when in the CoreCircle edit; could not easily hide the toolbar (weird) but it's disabled now except for when in on the homeview
+    30Jul14/SA: fix hide the friends btn when in friends vc. 
+
+
 
 * ver 1.6 build 86
     29Jul14/SA: Merged changes with Nikhils
