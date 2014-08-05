@@ -17,7 +17,7 @@
 {
     self = [super initWithFrame:frame];
     if (self) {
-        [self setFrame:CGRectMake(0, 0, frame.size.width, frame.size.height * 2.0)];
+        [self setFrame:CGRectMake(0, 0, frame.size.width, frame.size.height * 1.5)];
         
         // Initialization code
         title = [[UILabel alloc] initWithFrame:CGRectZero];
@@ -44,7 +44,7 @@
     [title sizeToFit];
     [UIView animateWithDuration:0.5 animations:^{
         [self addSubview:title];
-        [title setCenter:CGPointMake(self.center.x, self.frame.size.height/2.0 + title.center.y)];
+        [title setCenter:CGPointMake(self.center.x, self.frame.size.height/2.0 )];
     }];
 }
 - (void) initViewObjects {
@@ -83,9 +83,9 @@
     
     
     [UIView animateWithDuration:0.5 animations:^{
-        [self.closeProfileBtn setCenter:CGPointMake(self.frame.size.width - self.closeProfileBtn.frame.size.width * 1.5, self.frame.size.height*0.75)];
+        [self.closeProfileBtn setCenter:CGPointMake(self.frame.size.width - self.closeProfileBtn.frame.size.width * 1.5, self.frame.size.height*0.5)];
         [self.settingsGearBtn setCenter:CGPointMake(15.0f + self.settingsGearBtn.center.x,
-                                                    self.frame.size.height*0.75)];
+                                                    self.frame.size.height*0.5)];
     }];
 }
 

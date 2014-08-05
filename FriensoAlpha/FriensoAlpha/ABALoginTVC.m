@@ -953,7 +953,7 @@ static NSString * contactingServersForUpdate = @"Trying to get latest status fro
                                     block:^(PFUser *user, NSError *error) {
                                         if (user) {
                                             if (DBG) NSLog(@"[ Parse successful login ]"); // Do stuff
-                                            [user setObject:phoneNbr forKey:@"phoneNumber"];
+                                            [user setObject:[self stripStringOfUnwantedChars:phoneNbr] forKey:@"phoneNumber"];
                                             [user saveInBackground];
                                             [self insertCurrentLocation:user];
                                             

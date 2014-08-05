@@ -43,12 +43,12 @@
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken
 {
     
-    NSLog(@"My token is: %@", deviceToken);
+    //NSLog(@"My token is: %@", deviceToken);
     NSString *dToken = [[deviceToken description] stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"<>"]];
     dToken = [dToken stringByReplacingOccurrencesOfString:@" " withString:@""];
     
     
-    NSLog(@"STR%@",dToken);
+    //NSLog(@"STR%@",dToken);
     
     
     //Create subscription channels for the user: this includes channels for Frienso updates
@@ -60,8 +60,8 @@
     //The globals channel will be used for all Frienso related alerts and messages
     PFUser *currentUser = [PFUser currentUser];
     if (currentUser){
-        NSString* userPhoneNumber = [[PFUser currentUser] objectForKey:@"phoneNumber"];
-        
+        NSString* userPhoneNumber = [[NSUserDefaults standardUserDefaults] objectForKey:@"userPhone"];/*[[PFUser currentUser] objectForKey:@"phoneNumber"]*/
+        NSLog(@"%@",userPhoneNumber);
         //Channels have to start with a string, we will use "Ph" here
         NSString *myString = @"Ph";
         NSString *personalizedChannelNumber = [myString stringByAppendingString:userPhoneNumber];
