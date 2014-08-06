@@ -8,6 +8,8 @@ Version History
 
 * ver 1.6 build 94
     06Aug15/SA: Fixed the issue of computing current distance from me to coreFriend
+    But add a location icon to the profile sneak peek to actually access it.
+
 
 * ver 1.6 build 93
     05Aug14/SA: Fixed the problem of using and changing the avatar

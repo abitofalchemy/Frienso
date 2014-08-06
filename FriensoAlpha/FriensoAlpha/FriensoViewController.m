@@ -1564,11 +1564,13 @@ enum PinAnnotationTypeTag {
     UIImage *image = nil;
     UIImageView __block *imgView = nil;
     if ( [[NSUserDefaults standardUserDefaults] URLForKey:@"profileImageUrl"] == NULL) {
+        NSLog(@"  avatar.png...");
         image = [UIImage imageNamed:@"avatar.png"];
         UIImage *scaledimage = [[[FRStringImage alloc] init] scaleImage:image toSize:CGSizeMake(38.0, 38.0)];
         imgView = [self newImageViewWithImage:scaledimage
                                                showInFrame:CGRectMake(0, 0, 38.0f, 38.0f)];
     } else {
+        NSLog(@"  profileImageUrl...");
         imgView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 38.0f, 38.0f)];
 
         NSURL *assetURL = [[NSUserDefaults standardUserDefaults] URLForKey:@"profileImageUrl"];
