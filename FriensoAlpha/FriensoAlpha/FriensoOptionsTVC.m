@@ -45,7 +45,7 @@
         }
     }
     
-    self.optionsArray = [[NSMutableArray alloc] initWithArray:@[@"Profile",/*@"Watching",*/ @"Resources",@"Settings",@"About",@"Map"/*,@"Event"*/]];
+    self.optionsArray = [[NSMutableArray alloc] initWithArray:@[@"Profile",/*@"Watching",*/ @"Resources",@"Settings",@"About"/*,@"Map",@"Event"*/]];
     // Uncomment the following line to preserve selection between presentations.
     // self.clearsSelectionOnViewWillAppear = NO;
  

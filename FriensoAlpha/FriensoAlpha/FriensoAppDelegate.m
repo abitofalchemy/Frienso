@@ -61,7 +61,7 @@
     PFUser *currentUser = [PFUser currentUser];
     if (currentUser){
         NSString* userPhoneNumber = [[NSUserDefaults standardUserDefaults] objectForKey:@"userPhone"];/*[[PFUser currentUser] objectForKey:@"phoneNumber"]*/
-        NSLog(@"%@",userPhoneNumber);
+        //NSLog(@"%@",userPhoneNumber);
         //Channels have to start with a string, we will use "Ph" here
         NSString *myString = @"Ph";
         NSString *personalizedChannelNumber = [myString stringByAppendingString:userPhoneNumber];

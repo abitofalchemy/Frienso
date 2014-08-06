@@ -62,8 +62,6 @@
 #pragma mark - CoreData Methods
 -(void) cacheEmergencyContact2CDCoreFriends:(PFObject *)contactInfo
 {
-    NSLog(@"caching: %@",contactInfo.objectId);
-
     FriensoAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
     NSManagedObjectContext *managedObjectContext = appDelegate.managedObjectContext;
     // First check to see if the objectId already exists

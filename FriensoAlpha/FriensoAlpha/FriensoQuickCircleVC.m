@@ -57,12 +57,10 @@ static NSString *coreFriendsCell = @"coreFriendsCell";
     
     [self.navigationController setToolbarHidden:YES];
     
-    // [[[FRSyncFriendConnections alloc] init] listWatchCoreFriends]; // List those uWatch
     [[[FRSyncFriendConnections alloc] init] syncUWatchToCoreFriends]; // Sync those uWatch
     
     // At first install, cache univesity/college emergency contacts
     [[[CloudEntityContacts alloc] initWithCampusDomain:@"nd.edu"] updateEmergencyContacts:@"inst,contact"];
-    
     
     //  Add new table view
     self.tableView = [[UITableView alloc] init];
@@ -97,10 +95,12 @@ static NSString *coreFriendsCell = @"coreFriendsCell";
         if (DBG) NSLog(@"Failed to fetch.");
     }
     
-    // Update this user's current location
-    //FRCoreDataParse *frCDPObject = [[FRCoreDataParse alloc] init];
+    /***
+     //Update this user's current location
+    FRCoreDataParse *updateLocation = [[FRCoreDataParse alloc] init];
     //[frCDPObject updateThisUserLocation];
-    //[frCDPObject updateCoreFriendsLocation];
+    [updateLocation updateCoreFriendsLocation];
+    **/
     
     //NSDictionary *coreFriendsDic = [[NSUserDefaults standardUserDefaults] dictionaryForKey:@"CoreFriendsContactInfoDicKey"];
     //NSLog(@"%@", [coreFriendsDic allKeys]);
@@ -188,7 +188,51 @@ static NSString *coreFriendsCell = @"coreFriendsCell";
     if ([friend.coreType isEqualToString:@"iCore Friends"]){
         cell.textLabel.text = (friend.coreNickName == NULL) ? friend.coreFirstName : friend.coreNickName;
         cell.imageView.image = [UIImage imageNamed:@"Profile-256.png"];
-        cell.detailTextLabel.text = [NSString stringWithFormat:@"%@",(friend.coreLocation == NULL) ? @"..." : friend.coreLocation];
+        
+        /*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+         *-*- computing location distance -*-*
+         *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
+        if ( friend.coreLocation != nil)
+            cell.detailTextLabel.text = friend.coreLocation;
+        else
+            cell.detailTextLabel.text = @"";
+        
+        PFQuery *query = [PFUser query];
+        NSString* phoneNumberStr =[self stripStringOfUnwantedChars:friend.corePhone];
+        [query whereKey:@"phoneNumber" containsString:phoneNumberStr];
+        [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+            if (!error && objects.count > 0)
+            {
+                for (PFUser* parseUser in objects) {
+                    PFGeoPoint* fGeoPoint = [parseUser objectForKey:@"currentLocation"];
+                    CLLocation *locA = [[CLLocation alloc] initWithLatitude:fGeoPoint.latitude
+                                                                  longitude:fGeoPoint.longitude];
+                    PFGeoPoint *myPointLoc = [[PFUser currentUser] objectForKey:@"currentLocation"];
+                    CLLocation *locB = [[CLLocation alloc] initWithLatitude:myPointLoc.latitude
+                                                                  longitude:myPointLoc.longitude];
+                    
+                    CLLocationDistance distance = [locA distanceFromLocation:locB] * 0.000621371; // convert to miles
+                    //NSLog(@"  %.5f,%.5f",myPointLoc.latitude, myPointLoc.longitude);
+                    //NSLog(@"  location: %.2f",distance);
+                    
+                    cell.detailTextLabel.text = [NSString stringWithFormat:@"%.1f mi",distance];
+                    
+                    /** Adding currentLocation to coreData causes Parse error code 154 on the console
+                     ** we need to look into some how
+                     **
+                    friend.coreLocation = [NSString stringWithFormat:@"%.1f mi",distance];
+                    NSError *savingError = nil;
+                    if (![[self managedObjectContext] save:&savingError])
+                        NSLog(@"Failed to save the managed object context.");
+                     */
+                    
+                }
+            }
+            else
+                NSLog(@"  no objects ... %@", error.localizedDescription);
+        }];
+        
+        
     }
     else if ( [friend.coreType isEqualToString:@"oCore Friends"]){
         cell.textLabel.text = friend.coreNickName == NULL ? friend.coreFirstName : friend.coreNickName;
@@ -453,12 +497,7 @@ static NSString *coreFriendsCell = @"coreFriendsCell";
                                                                              style:UIBarButtonItemStyleBordered
                                                                             target:nil
                                                                             action:nil];
-    
-    /*
-    UIStoryboard *mainStoryboard = [UIStoryboard storyboardWithName:@"Main"  bundle:nil];
-    NewCoreCircleTVC  *coreCircleController = (NewCoreCircleTVC*)[mainStoryboard instantiateViewControllerWithIdentifier: @"coreCircleView"];
-    [self.navigationController pushViewController:coreCircleController animated:YES];
-    */
+
     [self performSegueWithIdentifier:@"segueToCoreFriends" sender:self];
     
 }

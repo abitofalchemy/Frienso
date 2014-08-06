@@ -102,6 +102,7 @@ int activeCoreFriends = 0;
     
     if ([self.navigationController.viewControllers indexOfObject:self]==NSNotFound) {
         [self copyCoreCircleToCoreFriendsEntity]; // enables user to interact with contacts immediately
+        [self.navigationController setToolbarHidden:NO animated:YES];
         
     }
 }
@@ -450,43 +451,62 @@ int activeCoreFriends = 0;
     {
         CoreFriends *cFriends = nil;
         NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
-        
-        NSEntityDescription *entity = [NSEntityDescription entityForName:@"CoreFriends"
-                                                  inManagedObjectContext:managedObjectContext];
-        
+        NSEntityDescription *entity  = [NSEntityDescription entityForName:@"CoreFriends"
+                                                   inManagedObjectContext:managedObjectContext];
         [fetchRequest setEntity:entity];
+        
         NSError *error;
         NSArray *fetchedObjects = [managedObjectContext executeFetchRequest:fetchRequest error:&error];
         if (fetchedObjects == nil) {
             // Handle the error.
-        }
-
-        cFriends = [fetchedObjects objectAtIndex:i];
-        if (cFriends != nil){
-            cFriends.coreFirstName = coreFriend;
-            cFriends.corePhone     = [self.coreCircleContacts  objectAtIndex:i];
-            cFriends.coreCreated   = [NSDate date];
-            cFriends.coreModified  = [NSDate date];
-            cFriends.coreType      = @"iCore Friends";
-            //if (DBG) NSLog(@"%@",[coreCircle objectAtIndex:i] );
-            
-            NSError *savingError = nil;
-            
-            if ([managedObjectContext save:&savingError]){
-                if (DBG) NSLog(@"Successfully saved contacts to CoreCircle.");
+            NSLog(@"copyCoreCircleToCoreFriendsEntity encountered errors: %@",error.localizedDescription);
+            return;
+        } else if ((int)fetchedObjects.count >= 3) {
+            cFriends = [fetchedObjects objectAtIndex:i];
+            if (cFriends != nil){
+                cFriends.coreFirstName = coreFriend;
+                cFriends.corePhone     = [self.coreCircleContacts  objectAtIndex:i];
+                cFriends.coreCreated   = [NSDate date];
+                cFriends.coreModified  = [NSDate date];
+                cFriends.coreType      = @"iCore Friends";
+                //if (DBG) NSLog(@"%@",[coreCircle objectAtIndex:i] );
+                
+                NSError *savingError = nil;
+                
+                if ([managedObjectContext save:&savingError]){
+                    if (DBG) NSLog(@"Successfully saved contacts to CoreCircle.");
+                } else {
+                    if (DBG) NSLog(@"Failed to save the managed object context.");
+                }
             } else {
-                if (DBG) NSLog(@"Failed to save the managed object context.");
+                if (DBG) NSLog(@"Failed to create the new person object.");
             }
+                
+            i += 1; // increment index
         } else {
-            if (DBG) NSLog(@"Failed to create the new person object.");
+            cFriends = [NSEntityDescription insertNewObjectForEntityForName:@"CoreFriends"
+                                                                  inManagedObjectContext:managedObjectContext];
+            if (cFriends != nil) {
+                cFriends.coreFirstName = coreFriend;
+                cFriends.corePhone     = [self.coreCircleContacts  objectAtIndex:i];
+                cFriends.coreCreated   = [NSDate date];
+                cFriends.coreModified  = [NSDate date];
+                cFriends.coreType      = @"iCore Friends";
+                
+                NSError *savingError = nil;
+                
+                if ([managedObjectContext save:&savingError]){
+                    if (DBG) NSLog(@"Successfully saved contacts to CoreCircle.");
+                } else {
+                    if (DBG) NSLog(@"Failed to save the managed object context.");
+                }
+            } else {
+                if (DBG) NSLog(@"Failed to create the new person object.");
+            }
+            i += 1; // increment index
         }
-            
-        i += 1; // increment index
     } // ends for loop
 
-}
--(void) checkCloudForCircle {
-    
 }
 
 

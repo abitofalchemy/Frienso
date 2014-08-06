@@ -71,7 +71,8 @@
     // change back button [self.navigationItem.backBarButtonItem setTitle:@"Cancel"];
     
     
-    miniTableView = [[UITableView alloc] initWithFrame:[UIScreen mainScreen].bounds style:UITableViewStyleGrouped];
+    miniTableView = [[UITableView alloc] initWithFrame:[UIScreen mainScreen].bounds
+                                                 style:UITableViewStyleGrouped];
     miniTableView.delegate = self;
     miniTableView.dataSource = self;
     [miniTableView setBackgroundColor:[UIColor whiteColor]];
@@ -444,11 +445,10 @@
 }
 #pragma mark - UIImagePicker Methods
 -(void)imagePickerController:
-(UIImagePickerController *)picker
-didFinishPickingMediaWithInfo:(NSDictionary *)info
+(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
 {
     // Code here to work with media
-    NSLog(@"%@", info);
+    NSLog(@"  didFinishPickingMediaWithInfo : %@", info);
     self.profileImageCell.imageView.image = [info objectForKey:@"UIImagePickerControllerEditedImage"];
     [[NSUserDefaults standardUserDefaults] setURL:[info objectForKey:@"UIImagePickerControllerReferenceURL"]
                                                forKey:@"profileImageUrl"];
@@ -457,8 +457,7 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
--(void)imagePickerControllerDidCancel:
-(UIImagePickerController *)picker
+-(void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
 {
     [self dismissViewControllerAnimated:YES completion:nil];
 }

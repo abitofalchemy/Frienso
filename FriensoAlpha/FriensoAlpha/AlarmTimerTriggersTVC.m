@@ -203,7 +203,10 @@
 {
     static NSString *CellIdentifier = @"eventCell";
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
-    
+    if (cell == nil) {
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle
+                                      reuseIdentifier:CellIdentifier];
+    }
     // Get the event at the row selected and display its title
     cell.textLabel.text = [[self.eventsList objectAtIndex:indexPath.row] title];
     

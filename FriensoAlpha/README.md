@@ -5,10 +5,17 @@ Frienso iOS Alpha
 
 Version History
 ---------------
-    
+
+* ver 1.6 build 94
+    06Aug15/SA: Fixed the issue of computing current distance from me to coreFriend
+
+* ver 1.6 build 93
+    05Aug14/SA: Fixed the problem of using and changing the avatar
+                Fix friends subtitle to show distance 
+                
     04Aug14/SA: Fixing problem with updates of friends [X]
                 Check that when registering the phone # is stripped when sent to cloud [X]
-                Check that registering new user works ok []
+                Check that registering new user works ok [X]
 
 * ver 1.6 build 91
     01Aug14/SA: Fixed the issue issue of the friends btn being pressed when in the CoreCircle edit; could not easily hide the toolbar (weird) but it's disabled now except for when in on the homeview
@@ -196,6 +203,7 @@ Version History
 
 Working On
 ----------
+* SA: subtitle location
 * SA: WatchMe switch triggers (internal alarms) and push notifications
       - Remind the user that this event is active (bring attention to an active state)
 
@@ -234,7 +242,7 @@ ToDo
 
 * Handle Parse time-outs
     Trap parse calls to the network - network outage
-* Input validation for user profile editing
+* Input validation for user profile editing; and login (needs to be full proof)
 * Document the project's app development
 
 Tasks Done / Project Log:

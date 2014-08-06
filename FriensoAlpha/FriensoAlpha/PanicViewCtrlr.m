@@ -502,7 +502,7 @@ static NSString *helpLocation         = @"";
                 controller.recipients = [NSArray arrayWithObjects:coreSMSArray[0], coreSMSArray[1], coreSMSArray[2], nil];
             
             controller.messageComposeDelegate = self;
-            [self presentModalViewController:controller animated:YES];
+            [self presentViewController:controller animated:YES completion:nil];
         }
         
         
@@ -613,7 +613,7 @@ static NSString *helpLocation         = @"";
             NSLog(@"SMS Failed");
             break;
     }
-    [self dismissModalViewControllerAnimated:YES];
+    [self dismissViewControllerAnimated:YES completion:nil];
     
 }
 

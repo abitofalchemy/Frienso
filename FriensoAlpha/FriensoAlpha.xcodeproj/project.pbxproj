@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		1808553518C3B9810047A8BE /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 1808553418C3B9810047A8BE /* README.md */; };
-		1808553918C4EEFF0047A8BE /* ProfileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1808553818C4EEFF0047A8BE /* ProfileViewController.m */; };
 		180E87F918BE0B05009A570F /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 180E87F718BE0B05009A570F /* AddressBook.framework */; };
 		180E87FA18BE0B05009A570F /* AddressBookUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 180E87F818BE0B05009A570F /* AddressBookUI.framework */; };
 		180E880318BE0B34009A570F /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 180E87FB18BE0B34009A570F /* AudioToolbox.framework */; };
@@ -80,7 +79,6 @@
 		3E4120FE18E306630058012B /* frienso-info-2.png in Resources */ = {isa = PBXBuildFile; fileRef = 3E4120FB18E306630058012B /* frienso-info-2.png */; };
 		3E4579E3197962E8008499B7 /* help-switch-bg.png in Resources */ = {isa = PBXBuildFile; fileRef = 3E4579E2197962E8008499B7 /* help-switch-bg.png */; };
 		3E56D3D5194F96D90092CF63 /* CloudEntityContacts.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E56D3D4194F96D90092CF63 /* CloudEntityContacts.m */; };
-		3E570171190A665C0056EFD7 /* AlarmTimerTriggersTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E570170190A665C0056EFD7 /* AlarmTimerTriggersTVC.m */; };
 		3E5EA0B5190D0A4A004A710C /* cal-ic-40.png in Resources */ = {isa = PBXBuildFile; fileRef = 3E5EA0B4190D0A4A004A710C /* cal-ic-40.png */; };
 		3E5EA0B7190D0CDA004A710C /* cal-ic-24.png in Resources */ = {isa = PBXBuildFile; fileRef = 3E5EA0B6190D0CDA004A710C /* cal-ic-24.png */; };
 		3E68DF5C190666FF00DF3992 /* map-btn-1.png in Resources */ = {isa = PBXBuildFile; fileRef = 3E68DF5B190666FF00DF3992 /* map-btn-1.png */; };
@@ -95,6 +93,7 @@
 		3E9F893F1903E17700DA190C /* frienso-ic-2x29.png in Resources */ = {isa = PBXBuildFile; fileRef = 3E9F893C1903E17700DA190C /* frienso-ic-2x29.png */; };
 		3E9F89401903E17700DA190C /* frienso-ic-2x40.png in Resources */ = {isa = PBXBuildFile; fileRef = 3E9F893D1903E17700DA190C /* frienso-ic-2x40.png */; };
 		3E9F89411903E17700DA190C /* frienso-ic-2x60.png in Resources */ = {isa = PBXBuildFile; fileRef = 3E9F893E1903E17700DA190C /* frienso-ic-2x60.png */; };
+		3EA4E58B1991538400D5F12B /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3EA4E58A1991538300D5F12B /* AssetsLibrary.framework */; };
 		3EB5C447191A5EE5006557DE /* FRUserGenContentButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 3EB5C446191A5EE5006557DE /* FRUserGenContentButton.m */; };
 		3EBE31E3197EA4D200E78CF6 /* addeditfriends.png in Resources */ = {isa = PBXBuildFile; fileRef = 3EBE31E2197EA4D100E78CF6 /* addeditfriends.png */; };
 		3ECD3998192416F000A61B83 /* FRSyncFriendConnections.m in Sources */ = {isa = PBXBuildFile; fileRef = 3ECD3997192416F000A61B83 /* FRSyncFriendConnections.m */; };
@@ -125,8 +124,6 @@
 
 /* Begin PBXFileReference section */
 		1808553418C3B9810047A8BE /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
-		1808553718C4EEFF0047A8BE /* ProfileViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProfileViewController.h; sourceTree = "<group>"; };
-		1808553818C4EEFF0047A8BE /* ProfileViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProfileViewController.m; sourceTree = "<group>"; };
 		180E87F718BE0B05009A570F /* AddressBook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBook.framework; path = System/Library/Frameworks/AddressBook.framework; sourceTree = SDKROOT; };
 		180E87F818BE0B05009A570F /* AddressBookUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBookUI.framework; path = System/Library/Frameworks/AddressBookUI.framework; sourceTree = SDKROOT; };
 		180E87FB18BE0B34009A570F /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
@@ -221,8 +218,6 @@
 		3E4579E2197962E8008499B7 /* help-switch-bg.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "help-switch-bg.png"; sourceTree = "<group>"; };
 		3E56D3D3194F96D90092CF63 /* CloudEntityContacts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CloudEntityContacts.h; sourceTree = "<group>"; };
 		3E56D3D4194F96D90092CF63 /* CloudEntityContacts.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CloudEntityContacts.m; sourceTree = "<group>"; };
-		3E57016F190A665C0056EFD7 /* AlarmTimerTriggersTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AlarmTimerTriggersTVC.h; path = ../AlarmTimerTriggersTVC.h; sourceTree = "<group>"; };
-		3E570170190A665C0056EFD7 /* AlarmTimerTriggersTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AlarmTimerTriggersTVC.m; path = ../AlarmTimerTriggersTVC.m; sourceTree = "<group>"; };
 		3E5EA0B4190D0A4A004A710C /* cal-ic-40.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "cal-ic-40.png"; sourceTree = "<group>"; };
 		3E5EA0B6190D0CDA004A710C /* cal-ic-24.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "cal-ic-24.png"; sourceTree = "<group>"; };
 		3E68DF5B190666FF00DF3992 /* map-btn-1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "map-btn-1.png"; sourceTree = "<group>"; };
@@ -243,6 +238,7 @@
 		3E9F893C1903E17700DA190C /* frienso-ic-2x29.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "frienso-ic-2x29.png"; sourceTree = "<group>"; };
 		3E9F893D1903E17700DA190C /* frienso-ic-2x40.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "frienso-ic-2x40.png"; sourceTree = "<group>"; };
 		3E9F893E1903E17700DA190C /* frienso-ic-2x60.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "frienso-ic-2x60.png"; sourceTree = "<group>"; };
+		3EA4E58A1991538300D5F12B /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
 		3EB5C445191A5EE5006557DE /* FRUserGenContentButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FRUserGenContentButton.h; sourceTree = "<group>"; };
 		3EB5C446191A5EE5006557DE /* FRUserGenContentButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FRUserGenContentButton.m; sourceTree = "<group>"; };
 		3EBE31E2197EA4D100E78CF6 /* addeditfriends.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = addeditfriends.png; sourceTree = "<group>"; };
@@ -275,6 +271,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3EA4E58B1991538400D5F12B /* AssetsLibrary.framework in Frameworks */,
 				3E1FBD281958424A00AC7197 /* Parse.framework in Frameworks */,
 				D2B4C533194F90D000094B98 /* Crashlytics.framework in Frameworks */,
 				3EEA2280191F7DFC00DC8C54 /* MessageUI.framework in Frameworks */,
@@ -313,8 +310,6 @@
 		1808553618C4EEC30047A8BE /* OptionsClasses */ = {
 			isa = PBXGroup;
 			children = (
-				3E57016F190A665C0056EFD7 /* AlarmTimerTriggersTVC.h */,
-				3E570170190A665C0056EFD7 /* AlarmTimerTriggersTVC.m */,
 				1879B59918C786DB00AEA55F /* FriensoResourcesTVC.h */,
 				1879B59A18C786DB00AEA55F /* FriensoResourcesTVC.m */,
 				3E4120F618E3005E0058012B /* aBoAViewController.h */,
@@ -323,8 +318,6 @@
 				1879B59E18C888BB00AEA55F /* tstWatchingViewController.m */,
 				1879B58E18C6CD9400AEA55F /* SettingsViewController.h */,
 				1879B58F18C6CD9400AEA55F /* SettingsViewController.m */,
-				1808553718C4EEFF0047A8BE /* ProfileViewController.h */,
-				1808553818C4EEFF0047A8BE /* ProfileViewController.m */,
 				18CD00E618CCA020007BAC85 /* UserProfileViewController.h */,
 				18CD00E718CCA020007BAC85 /* UserProfileViewController.m */,
 				3E2F8C3D18D83D8300FD2A99 /* AboutFriensoViewController.h */,
@@ -356,6 +349,7 @@
 		1827930318BE06740056C849 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				3EA4E58A1991538300D5F12B /* AssetsLibrary.framework */,
 				3E1FBD271958424A00AC7197 /* Parse.framework */,
 				D2B4C532194F90D000094B98 /* Crashlytics.framework */,
 				3EEA227F191F7DFC00DC8C54 /* MessageUI.framework */,
@@ -727,7 +721,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				3E2F8C3718D4C74600FD2A99 /* FriensoQuickCircleVC.m in Sources */,
-				1808553918C4EEFF0047A8BE /* ProfileViewController.m in Sources */,
 				1853403918C220680094AC5A /* FriensoAlphaCoreDataModel.xcdatamodeld in Sources */,
 				3ED075F81959AB6C0074E8CB /* PendingRequestButton.m in Sources */,
 				3EFEC30A19152633002A709D /* FriensoEvent.m in Sources */,
@@ -748,7 +741,6 @@
 				1879B59018C6CD9400AEA55F /* SettingsViewController.m in Sources */,
 				3EF1D0D91907FA1200FC8544 /* FRCoreDataParse.m in Sources */,
 				3E9F893118FE99E700DA190C /* GeoQueryAnnotation.m in Sources */,
-				3E570171190A665C0056EFD7 /* AlarmTimerTriggersTVC.m in Sources */,
 				3EE2B2B319872835007BB216 /* RootViewController.m in Sources */,
 				3EFEC30F19180276002A709D /* CoreFriends.m in Sources */,
 				3E9F893218FE99E700DA190C /* CircleOverlay.m in Sources */,
@@ -902,7 +894,7 @@
 				INFOPLIST_FILE = "FriensoAlpha/FriensoAlpha-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "9E99B625-BE55-42F9-A8D5-68B7E593CD94";
+				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
 			};
@@ -914,7 +906,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				"CODE_SIGN_ENTITLEMENTS[sdk=*]" = "";
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Salvador Aguinaga (WDLW7K2HT3)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Salvador Aguinaga (WDLW7K2HT3)";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -925,7 +917,7 @@
 				INFOPLIST_FILE = "FriensoAlpha/FriensoAlpha-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "9E99B625-BE55-42F9-A8D5-68B7E593CD94";
+				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
 			};

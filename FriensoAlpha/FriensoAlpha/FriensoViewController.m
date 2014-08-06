@@ -33,7 +33,7 @@
 #import "ProfileSneakPeekView.h"
 #import "UserProfileViewController.h"
 #import <AddressBook/AddressBook.h>
-
+#import <AssetsLibrary/AssetsLibrary.h>
 
 #define MAPVIEW_DEFAULT_BOUNDS  CGRectMake(0,0,self.view.bounds.size.width,self.view.bounds.size.height * 0.5)
 #define ARC4RANDOM_MAX  0x100000000
@@ -431,6 +431,8 @@ enum PinAnnotationTypeTag {
     
     
     if (!DBG) NSLog(@"Friends I currently track:");
+    NSLog(@"%ld", (long) trackingFriendsArray.count);
+    
     NSInteger btnNbr = 0;
     for (PFUser *parseUser  in trackingFriendsArray)
     {
@@ -447,9 +449,9 @@ enum PinAnnotationTypeTag {
         NSString *bubbleLabel = [[parseUser.username substringToIndex:2] uppercaseString];
         [mLocBtn setTitle:bubbleLabel forState:UIControlStateNormal];
         [mLocBtn setTag:btnNbr];
+        
         CGFloat marginOffset = 5.0;
         CGFloat btnCenterX   = mLocBtn.center.x + mLocBtn.center.x*2*btnNbr + marginOffset;
-        //[mLocBtn setCenter:CGPointMake(btnCenterX, self.mapView.frame.size.height - mLocBtn.center.y)];
         [mLocBtn setCenter:CGPointMake(btnCenterX, self.mapView.frame.size.height - mLocBtn.center.y*2)];
         
         // Allows access to location info to userBubble
@@ -715,7 +717,7 @@ enum PinAnnotationTypeTag {
 }
 -(void) addPendingRequest:(NSArray*)userRequestArray {
 
-    if (!DBG) NSLog(@"-- addPendingRequest: userRequestArray count: %d--", [userRequestArray count]);
+    if (!DBG) NSLog(@"addPendingRequest: userRequestArray count: %ld--", (long)[userRequestArray count]);
     [self.scrollView setPendingRequests:self.pendingRqstsArray];
     NSInteger arrayIndex = 0;
     for (PFObject *eventObject in userRequestArray)
@@ -744,7 +746,7 @@ enum PinAnnotationTypeTag {
         
         PFGeoPoint *geoNDIN = [PFGeoPoint geoPointWithLatitude:41.702652
                                                       longitude:-86.239450];// notre dame, in
-        NSLog(@"[1] tag#:%ld", tagNbr);
+        //NSLog(@"[1] tag#:%ld", tagNbr);
 //        [self.friendsLocationArray insertObject:([parseFriend valueForKey:@"currentLocation"] == NULL)  ? geoNDIN  : [parseFriend valueForKey:@"currentLocation"]  atIndex:tagNbr];
         [self.friendsLocationArray addObject:([parseFriend valueForKey:@"currentLocation"] == NULL)  ? geoNDIN  : [parseFriend valueForKey:@"currentLocation"]];
     }
@@ -1245,8 +1247,6 @@ enum PinAnnotationTypeTag {
     
     [self.navigationController.toolbar addSubview:self.coreCircleBtn]; // left
     [self.navigationController.toolbar addSubview:button]; // right
-//    [self.navigationController.toolbar addSubview:self.helpMeNowBtn]; // center
-
 }
 -(void) setupNavigationBarImage{
     // Colors
@@ -1342,7 +1342,7 @@ enum PinAnnotationTypeTag {
 {
     [super viewDidLoad];
     
-    printf("[ Home View: FriensoVC ]\n");
+    NSLog(@"-*- Home View: FriensoVC -*-\n");
     
     // Initialize arrays
     self.friendsLocationArray = [[NSMutableArray alloc] init]; // friends location cache
@@ -1353,21 +1353,19 @@ enum PinAnnotationTypeTag {
     [self setupNavigationBar];
     [self setupUI];
     [self initializeMapView];
-    if (!DBG) NSLog(@"--------- ");
-    
+        
 //    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"getStartedFlag"];
 //    [[NSUserDefaults standardUserDefaults] synchronize];
     
     if (![[NSUserDefaults standardUserDefaults] boolForKey:@"getStartedFlag"])
     {
+        if (!DBG) NSLog(@"_1_ Presenting Welcome View}");
         [self performSelector:@selector(segueToWelcomeVC) withObject:self afterDelay:1];
-        if (DBG) NSLog(@"{ Presenting Welcome View}");
-    }
+        }
     /* 
      else if ([[NSUserDefaults standardUserDefaults] boolForKey:@"getStartedFlag"] &&
      [[NSUserDefaults standardUserDefaults] objectForKey:@"adminID"] != NULL)
      {
-     if (!DBG) NSLog(@"--------- run normal mode ui");
      [self runNormalModeUI];
      [self configureOverlay];
      }
@@ -1376,6 +1374,10 @@ enum PinAnnotationTypeTag {
                [[NSUserDefaults standardUserDefaults] objectForKey:@"adminID"] != NULL){
         if (!DBG) iLog(@"{ viewDidLoad } getstarted flag ok, adminID not null");
         [self runNormalModeUI];
+        
+        FRCoreDataParse* cdParseHandler = [[FRCoreDataParse alloc] init];
+        [cdParseHandler updateCoreFriendsLocation];
+        
         
         /*REVERSE GEOCODE LATITUDE AND LONGITUDE IN THIS VIEW TO GET AN ACTUAL ADDRESS TO BE SENT WITH PNS AND TEXT MESSAGES */
         CLGeocoder *geocoder = [[CLGeocoder alloc] init];
@@ -1432,7 +1434,7 @@ enum PinAnnotationTypeTag {
 
 -(void) viewDidAppear:(BOOL)animated{
     [super viewDidAppear:animated];
-    if (!DBG) NSLog(@"** viewDidAppear ... ");
+    if (!DBG) NSLog(@"  -*- viewDidAppear ... ");
     
     // Restore touch interaction on the following widgets
     [navGestures setEnabled:YES];
@@ -1467,7 +1469,7 @@ enum PinAnnotationTypeTag {
     if (installStepNum == NULL &&
         [[NSUserDefaults standardUserDefaults] boolForKey:@"getStartedFlag"])
     {
-        if (!DBG) NSLog(@"LoginView");
+        if (!DBG) NSLog(@"_2_ LoginView");
         // Presenting loginView
         [self performSelector:@selector(segueToLoginVC) withObject:self afterDelay:1];
         /*
@@ -1479,8 +1481,7 @@ enum PinAnnotationTypeTag {
                [[NSUserDefaults standardUserDefaults] objectForKey:@"adminID"] != NULL )
     {
     
-        if (!DBG) NSLog(@"{First install}");
-        
+        if (!DBG) NSLog(@"  After login/register -*- First install}");
         
         // Login to Parse
         NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
@@ -1489,15 +1490,17 @@ enum PinAnnotationTypeTag {
                                          password:[userDefaults objectForKey:@"adminPass"]
                                             block:^(PFUser *user, NSError *error) {
                                                 if (!user) {
-                                                    iLog(@"Login to Parse failed with this error: %@",error);
+                                                    iLog(@"  Parse login failed w/this error: %@",error);
                                                 } else {
-                                                    NSLog(@"Login to Parse: SUCCESS");
+                                                    NSLog(@"  Login to Parse: SUCCESS");
                                                     [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithInteger:1] forKey:@"installationStep"];
                                                     [[NSUserDefaults standardUserDefaults] synchronize];
                                                     
-                                                    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"newUserFlag"]){
-                                                        [self performSegueWithIdentifier:@"newCoreCircle" sender:self];
-                                                        //if (DBG) NSLog(@"{Presenting newCoreCircle}");
+                                                    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"newUserFlag"])
+                                                    {
+                                                        if (!DBG) NSLog(@"_3_ Presenting newCoreCircle ");
+                                                        [self performSegueWithIdentifier:@"newCoreCircle"
+                                                                                  sender:self];
                                                     }
                                                         
                                                     //[self runNormalModeUI];
@@ -1512,7 +1515,7 @@ enum PinAnnotationTypeTag {
              */
             [self runNormalModeUI];
         }  else {
-             NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+            NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
             NSLog(@"%@", [userDefaults objectForKey:@"adminID"]);
         }
         
@@ -1520,13 +1523,13 @@ enum PinAnnotationTypeTag {
         
         
     } else if ([installStepNum isEqualToNumber:[NSNumber numberWithInteger:1]])     {
-        if (DBG) NSLog(@"  After First install");
+        if (!DBG) NSLog(@"  -*- returned from new core circle -*- After First install");
         [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithInteger:2] forKey:@"installationStep"];
         [[NSUserDefaults standardUserDefaults] synchronize];
 
         // After first install, cache univesity/college emergency contacts
         [[[CloudEntityContacts alloc] initWithCampusDomain:@"nd.edu"] fetchEmergencyContacts:@"inst,contact"];
-
+        
         [self runNormalModeUI];
     }
     
@@ -1557,10 +1560,35 @@ enum PinAnnotationTypeTag {
                                                                             action:@selector(navigationCtrlrSingleTap:)];
     [navGestures setDelegate:self];
     
-    UIImage *image = [UIImage imageNamed:@"avatar.png"];
-    UIImage *scaledimage = [[[FRStringImage alloc] init] scaleImage:image toSize:CGSizeMake(38.0, 38.0)];
-    UIImageView *imgView = [self newImageViewWithImage:scaledimage
-                                           showInFrame:CGRectMake(0, 0, 38.0f, 38.0f)];
+    // The Avatar
+    UIImage *image = nil;
+    UIImageView __block *imgView = nil;
+    if ( [[NSUserDefaults standardUserDefaults] URLForKey:@"profileImageUrl"] == NULL) {
+        image = [UIImage imageNamed:@"avatar.png"];
+        UIImage *scaledimage = [[[FRStringImage alloc] init] scaleImage:image toSize:CGSizeMake(38.0, 38.0)];
+        imgView = [self newImageViewWithImage:scaledimage
+                                               showInFrame:CGRectMake(0, 0, 38.0f, 38.0f)];
+    } else {
+        imgView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 38.0f, 38.0f)];
+
+        NSURL *assetURL = [[NSUserDefaults standardUserDefaults] URLForKey:@"profileImageUrl"];
+        ALAssetsLibrary *assetLibrary=[[ALAssetsLibrary alloc] init];
+        [assetLibrary assetForURL:assetURL
+                      resultBlock:^(ALAsset *asset) {
+                          UIImage *thumbImg = [UIImage imageWithCGImage:[[asset defaultRepresentation] fullScreenImage]
+                                                                  scale:0.5
+                                                            orientation:UIImageOrientationUp];
+                          //                cell.backgroundView = [[UIImageView alloc] initWithImage:copyOfOriginalImage];
+                          dispatch_async(dispatch_get_main_queue(), ^{
+                              if (thumbImg != NULL)
+                                  [imgView setImage:thumbImg];
+                          });
+                      } failureBlock:^(NSError *err) {
+                          //profilePhoto =[[UIImageView alloc] initWithImage:[UIImage imageNamed::@"avatar.png"];
+                          NSLog(@"Error: %@",[err localizedDescription]);
+                      }];
+    }
+    
     imgView.contentMode  = UIViewContentModeScaleAspectFill;
     imgView.layer.cornerRadius = imgView.frame.size.height/2.0f;
     imgView.layer.borderWidth  = 1.0;
@@ -1579,7 +1607,7 @@ enum PinAnnotationTypeTag {
 - (void) setupUI
 {
     // Seting up the UI
-    if (!DBG) NSLog(@"Setup UI");
+    if (!DBG) NSLog(@"  Setup UI");
     [self setupMapView];
     [self setupRequestScrollView];
     [self setupEventsTableView];
@@ -1595,7 +1623,7 @@ enum PinAnnotationTypeTag {
 
 }
 - (void) runNormalModeUI {
-    if (!DBG) NSLog(@"Normal mode");
+    if (!DBG) NSLog(@"  >Ready. Run Normal mode");
     
     //Initialize mapView
     [self initializeMapView];
@@ -1681,9 +1709,9 @@ enum PinAnnotationTypeTag {
 
 -(void)navigationCtrlrSingleTap:(id) sender {
     
-    //    if (sender isEnabled)
+    [self initializeMapView];
     
-    NSLog(@"Tapped: %.2f", self.navigationController.navigationBar.frame.size.height);
+    //NSLog(@"Tapped: %.2f", self.navigationController.navigationBar.frame.size.height);
     self.profileView = [[ProfileSneakPeekView alloc] initWithFrame:self.navigationController.navigationBar.frame];
     [self.profileView setUserEmailString:[[NSUserDefaults standardUserDefaults] objectForKey:@"adminID"]
                          withPhoneNumber:[[NSUserDefaults standardUserDefaults] objectForKey:@"userPhone"]
@@ -1719,7 +1747,7 @@ enum PinAnnotationTypeTag {
     // Check if self is currentUser (Parse)
     PFUser *currentUser = [PFUser currentUser];
     if (currentUser) {
-        iLog(@"Successful login to Parse:%@",currentUser.email);
+        iLog(@"  Successful login to Parse:%@",currentUser.email);
         [self configureOverlay];
 
     } else {
@@ -2229,7 +2257,7 @@ calloutAccessoryControlTapped:(UIControl *)control
         if (!error) {
             for (PFObject *object in objects)
             {
-                if(!DBG) NSLog(@">> %@", [object objectForKey:@"eventType"]);
+                if(DBG) NSLog(@">> %@", [object objectForKey:@"eventType"]);
                 PFUser *friensoUser = [object objectForKey:@"friensoUser"];
                 if ([friensoUser.username isEqualToString:[PFUser currentUser].username] &&
                     [[object objectForKey:@"eventType"] isEqualToString:@"watchMe"])
@@ -2712,7 +2740,7 @@ calloutAccessoryControlTapped:(UIControl *)control
                         
                     }   // ends if
                 }       // ends for
-                NSLog(@"pending requests: %ld",self.pendingRqstsArray.count);
+                NSLog(@"pending requests: %ld",(long)self.pendingRqstsArray.count);
                 [self updateMapViewWithUserBubbles: self.watchingCoFrArray];
                 for (id subview in [self.scrollView subviews]){
                     if ( [subview isKindOfClass:[PendingRequestButton class]] ) {

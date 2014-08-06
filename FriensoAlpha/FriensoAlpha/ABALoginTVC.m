@@ -887,11 +887,11 @@ static NSString * contactingServersForUpdate = @"Trying to get latest status fro
                                withSubtitle:@"Welcome back to Frienso."]; // FriensoEvent
                 
                 // sync core circle from Parse | skip to the Frienso Dashboard
-                if (DBG) NSLog(@"--- Returning to Home View");
+                if (DBG) NSLog(@"  --- Returning to Home View");
                 [self popDashboardVC];
                 
             } else {
-                if (!DBG) NSLog(@"[ Registering a new user ]");
+                if (!DBG) NSLog(@"  [ Registering a new user ]");
                 [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"newUserFlag"];
                 [[NSUserDefaults standardUserDefaults] synchronize];
                 NSString *msgStr = @"Thank you for joining Frienso.";
@@ -930,7 +930,7 @@ static NSString * contactingServersForUpdate = @"Trying to get latest status fro
 
 }
 - (BOOL) checkAppropriatePhoneNumberInput {
-    NSLog(@"entered phone number %@", phoneNumber.text);
+    //NSLog(@"    entered phone number %@", phoneNumber.text);
     //    (###) ###-####
     if (phoneNumber.text.length <14) {
         [[[UIAlertView alloc] initWithTitle:@"Enter your complete phone#" message:@"(###) ###-####, your phone # will be used to connect you with your Core Friends and to send push notifications." delegate:self cancelButtonTitle:@"Okay" otherButtonTitles:nil] show];
