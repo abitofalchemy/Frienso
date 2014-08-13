@@ -17,7 +17,7 @@
  | + 11Dec13SA: Defaulting the 'keep me logged in switch to ON'
  | 15Jan14/SA: Need to handle the main user's phone #
  | 19Jun14/SA: Remove the need to enter ph when doing Login
- 
+ | 20Jul14/SA: Fixing problems with scrolling and loosing entered txt
  
  *  http://stackoverflow.com/questions/3276504/how-to-set-a-gradient-uitableviewcell-background
  *  https://parse.com/tutorials/geolocations
@@ -48,9 +48,12 @@
 @property (nonatomic) CLLocationCoordinate2D coordinate;
 @property (nonatomic, strong) PFGeoPoint *geoPoint;
 @property (nonatomic,strong) UIView *welcomeView;
-@property (nonatomic,retain) NSMutableArray *coreFriendsArray;
+@property (nonatomic, retain) NSMutableArray *coreFriendsArray;
+@property (nonatomic, strong) NSMutableArray *coreCircleOfFriends;
+@property (nonatomic, strong) NSMutableArray *coreCircleContacts;
 @property (nonatomic,retain) UISwitch *locationSwitch;
 @property (nonatomic,strong) CLLocation *location;
+@property (nonatomic, retain) NSMutableString *storedValue;
 
 
 @end
@@ -67,6 +70,14 @@
 @synthesize keepMeLoggedin = _keepMeLoggedin;
 @synthesize welcomeView = _welcomeView;
 
+//int activeCoreFriends = 0;
+static int MAX_CORE_FRIENDS = 3;
+static NSString * coreFriendAcceptMessage = @"Request accepted. User added to core circle";
+static NSString * coreFriendRejectMessage = @"Request rejected. Click to select someone else";
+static NSString * coreFriendRequestSendMessage = @"Request send. Awaiting response";
+static NSString * coreFriendNotOnFriensoMessage = @"User not on Frienso";
+static NSString * contactingServersForUpdate = @"Trying to get latest status from the servers";
+
 
 - (id)initWithStyle:(UITableViewStyle)style
 {
@@ -82,17 +93,20 @@
 {
     [super viewDidLoad];
     
-    NSLog(@"[ ABALoginTVC ]");
+    if (DBG) NSLog(@"[ ABALoginTVC ]");
 
     // Initialization
-    loginSections = [[NSArray alloc] initWithObjects:@"FRIENSO", @"Log In",@"Options",@"Footer", nil];
-    loginFields   = [[NSArray alloc] initWithObjects:@"Email", @"Password", @"(312) 555 0123",@"Location", nil];
+    loginSections = [[NSArray alloc] initWithObjects:@"FRIENSO", @"Log In",@"Options",nil];
+    loginFields   = [[NSArray alloc] initWithObjects:@"Email", @"Password", @"(###) ###-####", nil];
     loginBtnLabel = [[NSMutableArray alloc] initWithObjects:@"Sign In", @"Register", nil];
-    
     [self.navigationController.navigationBar setHidden:YES];
     
-    //[self getDeviceLocationInfo];
+    self.coreCircleRequestStatus= [[NSMutableArray alloc] init ]; //stores status of the requests
+    self.coreCircleContacts     = [[NSMutableArray alloc] init]; //stores phone #s
+    self.coreCircleOfFriends    = [[NSMutableArray alloc] init];
     
+    [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithInteger:0] forKey:@"installationStep"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
     
 }
 
@@ -121,21 +135,24 @@
     // Return the number of rows in the section.
     if (section == 0)
         return [loginFields count];
-    else if (section == 1 || section == 3)
-        return 1;
+    else if (section == 2)
+        return 2;
     else
-        return 3;
+        return 1;
+    
 }
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
-    //NSLog(@"%f",[tableView rowHeight]);
-    if (indexPath.section == 3)
-        return [tableView rowHeight]*2.0f;
+    if (indexPath.section == 2 ) {
+        if ( indexPath.row == 1)
+            return [tableView rowHeight]*1.2f;
+        else return [tableView rowHeight];
+    }
     else return [tableView rowHeight];
 }
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
     if (section == 0 ){
-        return 85;
+        return 65;
     } else
         return 0;
 }
@@ -145,7 +162,6 @@
     static NSString *CellIdentifier = @"Cell";
     UITableViewCell *cell =[tableView dequeueReusableCellWithIdentifier:CellIdentifier
                                                            forIndexPath:indexPath];
-    
     
     
     if ( indexPath.section == 0) {
@@ -161,17 +177,8 @@
             [username setAutocapitalizationType:UITextAutocapitalizationTypeNone];
             username.delegate  = self;
             cell.accessoryView = username;
+            username .placeholder = myString;
             
-            // Set either a placeholder or the retrieved email address; username = email
-            NSUserDefaults *storedUserDefaults = [NSUserDefaults standardUserDefaults];
-            NSString *emailString = [storedUserDefaults objectForKey:@"adminID"];
-
-            if (emailString == NULL){
-                username .placeholder = myString;
-            } else {
-                [username setText:[storedUserDefaults objectForKey:@"adminID"]];
-                [username setTextColor:[UIColor darkGrayColor]];
-            }
         } else if (indexPath.row == 1) {
             password = [[UITextField alloc] initWithFrame:CGRectMake(5, 0, 280, 21)];
             NSString *myString = [loginFields objectAtIndex:1];
@@ -184,27 +191,24 @@
             
         } else if (indexPath.row == 2) {
             phoneNumber = [[UITextField alloc] initWithFrame:CGRectMake(5, 0, 280, 21)];
-            //NSString *myString = [loginFields objectAtIndex:2];
-            phoneNumber.placeholder = @"555 123 4567";
+            NSString *myString = [loginFields objectAtIndex:2];
+            phoneNumber.placeholder = myString;
             phoneNumber.secureTextEntry = NO;
-            //phoneNumber.autocorrectionType = UITextAutocorrectionTypeNo;
             phoneNumber.keyboardType = UIKeyboardTypePhonePad;
             [phoneNumber setClearButtonMode:UITextFieldViewModeWhileEditing];
-            //password.delegate = self;
+//            [phoneNumber addTarget:self
+//             
+//                            action:@selector(autoFormatTextField:)
+//             
+//                  forControlEvents:UIControlEventEditingChanged
+//             
+//             ];
+//            NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
+//            [formatter setNumberStyle: NSNumberFormatterDecimalStyle];
+//            phoneNumber.text = [formatter stringFromNumber: [formatter numberFromString:phoneNumber.text]];
+            phoneNumber.delegate = self;
+            phoneNumber.tag = 199;
             cell.accessoryView = phoneNumber;
-        } else if (indexPath.row == 3) {
-            NSString *myString = @"Turn on Location";
-            cell.textLabel.text = myString;
-            cell.textLabel.textAlignment = NSTextAlignmentCenter;
-            UIFont *myFont = [ UIFont fontWithName: @"HelveticaNeue-Light" size: 16.0 ];
-            cell.textLabel.font  = myFont;
-            cell.textLabel.textColor = [UIColor colorWithRed:0 green:0 blue:0.6 alpha:1];
-            cell.selectionStyle = UITableViewCellSelectionStyleNone;
-            self.locationSwitch = [[UISwitch alloc] initWithFrame:CGRectZero];
-            [self.locationSwitch setOn:NO animated:YES];
-            self.locationSwitch.tag = 10;
-            [self.locationSwitch addTarget:self action:@selector(switchChanged:) forControlEvents:UIControlEventValueChanged];
-            cell.accessoryView = self.locationSwitch;
         }
     } else if (indexPath.section == 1) {
         if (indexPath.row == 0) {
@@ -224,14 +228,13 @@
             cell.textLabel.textColor = [UIColor colorWithRed:0 green:0 blue:0.6 alpha:1];
             cell.selectionStyle = UITableViewCellSelectionStyleNone;
             self.locationSwitch = [[UISwitch alloc] initWithFrame:CGRectZero];
-            [self.locationSwitch setOn:NO animated:YES];
+            [self.locationSwitch setOn:YES animated:YES];
             self.locationSwitch.tag = 10;
             [self.locationSwitch addTarget:self action:@selector(switchChanged:) forControlEvents:UIControlEventValueChanged];
             cell.accessoryView = self.locationSwitch;
-            //[self switchChanged:self.locationSwitch];
+            [self switchChanged:self.locationSwitch];
             
-        }else*/
-        if (indexPath.row == 0)
+        }else if (indexPath.row == 1)
         {
             NSString *myString = @"Stayed Logged In";
             cell.textLabel.text = myString;
@@ -248,7 +251,8 @@
             
             [self switchChanged:switchView];
             
-        } else if (indexPath.row == 1) {
+        } else */
+        if (indexPath.row == 0) {
             UIFont *myFont = [ UIFont fontWithName: @"HelveticaNeue-Light" size: 14.0 ];
             cell.textLabel.font  = myFont;
             NSString *myString = @"Forgot your password?";
@@ -256,61 +260,38 @@
             cell.textLabel.textColor = [UIColor colorWithRed:0 green:0 blue:0.6 alpha:1];
             cell.textLabel.textAlignment = NSTextAlignmentCenter;
 //            cell.backgroundColor = [UIColor colorWithRed:1.0 green:1.0 blue:1.0 alpha:0.3];
+        } else {
+            NSString *myString = @"By creating a Frienso Account you acknowledge that "
+            "you have read, understood, and agreed to the Frienso "
+            "App Use Waiver http://frienso.tumblr.com";
+            UITextView *cellTV = [[UITextView alloc] initWithFrame:CGRectMake(0, 0,
+                                                                              tableView.bounds.size.width,
+                                                                              cell.frame.size.height*2.0f)];
+            cellTV.text =myString;
+            cellTV.textAlignment = NSTextAlignmentCenter;
+            cellTV.dataDetectorTypes = UIDataDetectorTypeLink;
+            cellTV.backgroundColor = [UIColor clearColor];
+            cellTV.editable = NO;
+            [cell addSubview:cellTV];
         }
     } else {
 //        UIFont *myFont = [ UIFont fontWithName: @"HelveticaNeue-Light" size: 14.0 ];
 //        cell.textLabel.font  = myFont;
-        NSString *myString = @"By creating a Frienso Account you acknowledge that "
-        "you have read, understood, and agreed to the Frienso "
-        "App Use Waiver http://frienso.tumblr.com";
-//        cell.textLabel.text = myString;
-//        cell.textLabel.numberOfLines = 4;
-//        cell.textLabel.textColor = [UIColor whiteColor];
-//        cell.textLabel.textAlignment = NSTextAlignmentCenter;
-//        [cell setFrame:CGRectMake(0, 0, tableView.bounds.size.width,
-//                                  cell.frame.size.height*2.0f)];
-//        cell.backgroundColor = [UIColor clearColor];
-        
-        UITextView *cellTV = [[UITextView alloc] initWithFrame:CGRectMake(0, 0,
-                                                                          tableView.bounds.size.width,
-                                                                          cell.frame.size.height*2.0f)];
-        cellTV.text =myString;
-        cellTV.dataDetectorTypes = UIDataDetectorTypeLink;
-        cellTV.backgroundColor = [UIColor clearColor];
-        cellTV.editable = NO;
-        [cell addSubview:cellTV];
+
     }
-    CAGradientLayer *gradient = [CAGradientLayer layer];
-    gradient.frame       = self.view.bounds;
-    UIColor *startColour = [UIColor colorWithHue:.580555 saturation:0.31 brightness:0.90 alpha:1.0];
-    UIColor *endColour   = [UIColor colorWithHue:.58333 saturation:0.50 brightness:0.62 alpha:1.0];
-    gradient.colors = [NSArray arrayWithObjects:(id)[startColour CGColor],(id)[endColour CGColor], nil];
-//    [self.tableView.layer insertSublayer:gradient atIndex:0];
-    // Override point for customization after application launch.
-//    UIImage *aSplashImage = [UIImage imageNamed:@"Splash.jpeg"];
-//    UIImageView *aSplashImageView = [[UIImageView alloc] initWithFrame:self.view.frame];
-//    aSplashImageView.image = aSplashImage;
-//    
-//    UIView *aSplashView = [[UIView alloc]initWithFrame:self.view.frame];
-//    [aSplashView addSubview:aSplashImageView];
-//    
-//    [self.window addSubview:aSplashView];
-    [self.tableView.backgroundView.layer addSublayer:gradient];
-    
-    
     return cell;
 }
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
     if (section == 0){
-        UILabel *lbl = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 30)];
+        UILabel *lbl = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 40)];
         lbl.textAlignment = NSTextAlignmentCenter;
         NSString *myString = [loginSections objectAtIndex:0];
         
         [lbl setFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:18.0f]];
         //lbl.font = [UIFont systemFontOfSize:16];
-        lbl.text = myString;//@"Welcome\nAdmin Sign In";
+        lbl.text = myString;//stringByAppendingString:@"Enter your email, password, and phone number"];
         lbl.numberOfLines = 2;
         lbl.backgroundColor = [UIColor clearColor];
         return lbl;
@@ -399,7 +380,10 @@
     return YES;
 }
 */
-
+//- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
+//{
+//    tableView.keyboardDismissMode = UIScrollViewKeyboardDismissModeOnDrag;
+//}
 #pragma mark - TextField delegate
 -(BOOL)textFieldShouldReturn:(UITextField *)textField
 {
@@ -419,15 +403,75 @@
         //[self.tableView reloadData];
         //self.tableView set[username setText:nameTextField];
         [self reloadSection:1 withRowAnimation:UITableViewRowAnimationNone];
-        //NSLog(@"[ Register Email]");
+        //if (DBG) NSLog(@"[ Register Email]");
     }
 }
+
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
+{
+    if (textField == phoneNumber) {
+        NSCharacterSet *numSet = [NSCharacterSet characterSetWithCharactersInString:@"0123456789-() "];
+        NSString *newString = [textField.text stringByReplacingCharactersInRange:range withString:string];
+        unsigned long charCount = [newString length];
+        if ([newString rangeOfCharacterFromSet:[numSet invertedSet]].location != NSNotFound
+            || [string rangeOfString:@")"].location != NSNotFound
+            || [string rangeOfString:@"("].location != NSNotFound
+            || [string rangeOfString:@"-"].location != NSNotFound
+            || charCount > 14) {
+            return NO;
+        }
+        if (![string isEqualToString:@""])
+        {
+            if (charCount == 1)
+            {
+                newString = [NSString stringWithFormat:@"(%@", newString];
+            }
+            else if(charCount == 4)
+            {
+                newString = [newString stringByAppendingString:@") "];
+            }
+            else if(charCount == 5)
+            {
+                newString = [NSString stringWithFormat:@"%@) %@", [newString substringToIndex:4], [newString substringFromIndex:4]];
+            }
+            else if(charCount == 6)
+            {
+                newString = [NSString stringWithFormat:@"%@ %@", [newString substringToIndex:5], [newString substringFromIndex:5]];
+            }
+            
+            else if (charCount == 9)
+            {
+                newString = [newString stringByAppendingString:@"-"];
+            }
+            else if(charCount == 10)
+            {
+                newString = [NSString stringWithFormat:@"%@-%@", [newString substringToIndex:9], [newString substringFromIndex:9]];
+            }
+        }
+        textField.text = newString;
+        return NO;
+    }
+    return YES;
+}
+//// handle events
+//int myTextFieldSemaphore;
+//- (void)autoFormatTextField:(id)sender {
+//    
+//    if(myTextFieldSemaphore) return;
+//    
+//    myTextFieldSemaphore = 1;
+//    NSNumberFormatter *phoneNumberFormatter = [[NSNumberFormatter alloc] init];
+//    [phoneNumberFormatter setNumberStyle: NSNumberFormatterDecimalStyle];
+//    phoneNumber.text = [phoneNumberFormatter stringFromNumber: [phoneNumberFormatter numberFromString:phoneNumber.text]];
+//    myTextFieldSemaphore = 0;
+//    
+//}
 
 - (BOOL) isUserInNSUserDefaults: (NSString *)user havingPassword: (NSString *)pass
 {
     BOOL returnVal = NO;
     // look for the saved search location in NSUserDefaults
-    //NSLog(@"isUserInNSUserDefuaults");
+    //if (DBG) NSLog(@"isUserInNSUserDefuaults");
     NSUserDefaults *userInLocal = [NSUserDefaults standardUserDefaults];
     NSString *adminKey = [userInLocal objectForKey:@"adminID"];
     NSString *passwKey = [userInLocal objectForKey:@"adminPass"];
@@ -443,14 +487,24 @@
         } else {
             
             //if ([adminKey isEqualToString:user] && [passwKey isEqualToString:pass]) {
-            NSLog(@"*** in NSUserDefaults and a match ***");
+            if (DBG) NSLog(@"*** in NSUserDefaults and a match ***");
             returnVal = YES;
         }
         
     }
     return returnVal;
 }
-
+- (NSString*) formatPlainPhoneString:(NSString*)phone_str_arg {
+    NSString* formattedString = nil;
+    if (phone_str_arg.length <10 )
+        return nil;
+    NSRange range = NSMakeRange(3, 3);
+    formattedString = [NSString stringWithFormat:@"(%@) %@-%@",
+                       [phone_str_arg substringToIndex:3],
+                       [phone_str_arg substringWithRange:range],
+                       [phone_str_arg substringFromIndex:6]];
+    return formattedString;
+}
 - (BOOL) isUsernameNew: (NSString *)userStr
 {   // is username (admin) text entered a new user?
     retVal = NO;
@@ -474,7 +528,8 @@
                 
                 [loginBtnLabel replaceObjectAtIndex:0 withObject:@"Sign In"];
                 PFUser *friensoUser = [objects objectAtIndex:0];
-                [phoneNumber setText:[friensoUser objectForKey:@"phoneNumber"]];
+                NSString *cloudPhnNbr = [friensoUser objectForKey:@"phoneNumber"];
+                [phoneNumber setText:[self formatPlainPhoneString:[self stripStringOfUnwantedChars:cloudPhnNbr]]];
                 [self reloadSection:1 withRowAnimation:UITableViewRowAnimationNone];
                 /**
                 [self.locationSwitch setOn:YES animated:YES];  // Existing user->force location tracking
@@ -482,7 +537,7 @@
                 **/
                 
                 
-                //  NSLog(@"existingUser set");
+                //  if (DBG) NSLog(@"existingUser set");
                 //  Sign In and skip coreCircle View Controller
                 [userInLocal setObject:@"1" forKey:@"existingUser"];
                 [userInLocal synchronize];
@@ -504,7 +559,7 @@
 //     * http://www.theappcodeblog.com/2011/05/16/nsnotificationcenter-tutorial-using-the-notification-center-in-your-iphone-app/
 //     * */
 //{
-//    NSLog(@"*** registerAdminUser ***");
+//    if (DBG) NSLog(@"*** registerAdminUser ***");
 //    _retVal = NO;
 //    
 //    if ([self validUsername:email andPassword:passWrd]){
@@ -537,7 +592,7 @@
 //                                                   NSData *data, NSError *error) {
 //                                               if ([data length] >0 && error == nil){
 //                                                   NSString *html = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-//                                                   NSLog(@"HTML = %@", html);
+//                                                   if (DBG) NSLog(@"HTML = %@", html);
 //                                                   UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Response from server"
 //                                                                                                       message:html
 //                                                                                                      delegate:nil
@@ -551,18 +606,18 @@
 //                                                   
 //                                               }
 //                                               else if ([data length] == 0 && error == nil){
-//                                                   NSLog(@"Nothing was downloaded.");
+//                                                   if (DBG) NSLog(@"Nothing was downloaded.");
 //                                                   
 //                                               }
 //                                               else if (error != nil){
-//                                                   NSLog(@"Error happened = %@", error);
+//                                                   if (DBG) NSLog(@"Error happened = %@", error);
 //                                                   
 //                                               }
 //                                           }];
 //        
 //        /*   or can we use :
 //         NSString *str = [self stringFromDict:dict];
-//         NSLog(@"from: writeDictionary:%@",str);
+//         if (DBG) NSLog(@"from: writeDictionary:%@",str);
 //         NSData *myRequestData = [str dataUsingEncoding:NSASCIIStringEncoding allowLossyConversion:NO];
 //         
 //        [[NSNotification ]removeObserver:self];
@@ -570,7 +625,7 @@
 //        
 //        [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:@"RegisterUserWithUserAccountDictNotification" object:self userInfo:newUserDict]];
 //        [[NSNotification defaultCenter]removeObserver:self];
-//        NSLog(@"Notification with dict: %@", newUserDict);
+//        if (DBG) NSLog(@"Notification with dict: %@", newUserDict);
 //         */
 //        
 //        return _retVal = YES;
@@ -605,7 +660,7 @@
 
 //-(void)registerUserWithUserAccountDictNotification:(NSNotification *)notification{
 //    
-//    NSLog(@"notification: %@", notification);
+//    if (DBG) NSLog(@"notification: %@", notification);
 //    
 //    NSMutableDictionary *accountDict = [notification object];
 //    NSString *emailStr = [accountDict objectForKey:@"user_email"];
@@ -664,7 +719,7 @@
     
     
     NSString *str = [self stringFromDict:dict];
-    NSLog(@"from: writeDictionary:%@",str);
+    if (DBG) NSLog(@"from: writeDictionary:%@",str);
     NSData *myRequestData = [str dataUsingEncoding:NSASCIIStringEncoding allowLossyConversion:NO];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
     [request setHTTPMethod: @"POST"];
@@ -677,13 +732,13 @@
     
     NSString *responseStr = [[NSString alloc] initWithData:responseData encoding:NSASCIIStringEncoding] ;
     
-    NSLog(@"Response string from writedict... is : %@",responseStr);
+    if (DBG) NSLog(@"Response string from writedict... is : %@",responseStr);
     return responseStr;
     
 }
 
 -(NSString *)stringFromDict:(NSDictionary *)dict{
-    //NSLog(@"stringFromDict %d", dict.count);
+    //if (DBG) NSLog(@"stringFromDict %d", dict.count);
     NSArray * myA = [dict allKeys];
     NSString *key;
     NSString *val;
@@ -796,39 +851,58 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (indexPath.section == 1){
-        
+        if (![self checkAppropriatePhoneNumberInput])
+        {
+            [UIView animateWithDuration:1.5 animations:^{
+                [phoneNumber setTextColor:[UIColor darkGrayColor]];
+                [phoneNumber setAlpha:0.5];
+                [phoneNumber setTextAlignment:NSTextAlignmentRight];
+                [phoneNumber setTextColor:[UIColor blueColor]];
+                [phoneNumber setTextAlignment:NSTextAlignmentLeft];
+                [phoneNumber setAlpha:1.0];
+            }];
+             
+            return; // do nothing and go back if not a complete phone #
+        }
         if ( [self validUsername:username.text andPassword:password.text]) // Is input valid?
         {
-            NSLog(@"** valid input **");
+            if (DBG) NSLog(@"** valid input **");
         } else {
             return ;
         }
         
         if ( [self isUserInNSUserDefaults: username.text havingPassword:password.text]){
             // Case might occur when user created an account but did not complete coreCircle
-            NSLog(@"Already Stored Locally, check cloud if a circle exists");
+            if (DBG) NSLog(@"Already Stored Locally, check cloud if a circle exists");
             [self presentCoreCircleSetupAndCheckCloudVC];
             //add logic to handle if the user is already in Parse!
                 
         } else {
             if ([self userInParse]){
                 // login this user to parse
-                [self loginThisUserToParse:username.text withPassword:password.text];         // already set?
+                [self loginThisUserToParse:username.text withPassword:password.text andPhoneNumber:phoneNumber.text];         // already set?
                 [self saveNewUserLocallyWithEmail:username.text plusPassword:password.text];
                 NSString *message = @"You are logged in as: ";
                 [self actionAddFriensoEvent:[message stringByAppendingString:username.text]
-                               withSubtitle:@"Welcome to Frienso."]; // FriensoEvent
+                               withSubtitle:@"Welcome back to Frienso."]; // FriensoEvent
                 
                 // sync core circle from Parse | skip to the Frienso Dashboard
-                NSLog(@"--- Returning to Home View");
+                if (DBG) NSLog(@"  --- Returning to Home View");
                 [self popDashboardVC];
                 
             } else {
-                NSLog(@"[ Register new user ]");
+                if (!DBG) NSLog(@"  [ Registering a new user ]");
+                [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"newUserFlag"];
+                [[NSUserDefaults standardUserDefaults] synchronize];
+                NSString *msgStr = @"Thank you for joining Frienso.";
+                [self actionAddFriensoEvent:[msgStr stringByAppendingString:username.text]
+                               withSubtitle:@"Welcome!!"]; // FriensoEvent
+                
                 [self saveNewUserLocallyWithEmail:username.text plusPassword:password.text];
                 
                 [self registerNewUserToParseWithEmail:username.text
-                                         plusPassword:password.text withPhoneNumber:phoneNumber.text];
+                                         plusPassword:password.text
+                                      withPhoneNumber:[self stripStringOfUnwantedChars:phoneNumber.text]];
             
                 [self popCoreCircleSetupVC]; // go to the core circle first setup
             }
@@ -836,7 +910,7 @@
         }
         
     } else if (indexPath.section == 2){
-        //NSLog(@"section 2: %d",tableView.indexPathForSelectedRow.row);
+        //if (DBG) NSLog(@"section 2: %d",tableView.indexPathForSelectedRow.row);
         NSString *alertTitleStr = [tableView cellForRowAtIndexPath:indexPath].textLabel.text;
         UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:alertTitleStr
                                                             message:@"Enter your institution email"
@@ -855,24 +929,38 @@
     }
 
 }
-
+- (BOOL) checkAppropriatePhoneNumberInput {
+    //NSLog(@"    entered phone number %@", phoneNumber.text);
+    //    (###) ###-####
+    if (phoneNumber.text.length <14) {
+        [[[UIAlertView alloc] initWithTitle:@"Enter your complete phone#" message:@"(###) ###-####, your phone # will be used to connect you with your Core Friends and to send push notifications." delegate:self cancelButtonTitle:@"Okay" otherButtonTitles:nil] show];
+        return NO;
+    } else
+        return YES;
+}
 - (void) reloadSection:(NSInteger)section withRowAnimation:(UITableViewRowAnimation)rowAnimation {
-    //NSLog(@"login btn label %@", loginBtnLabel);
+    //if (DBG) NSLog(@"login btn label %@", loginBtnLabel);
     NSRange range = NSMakeRange(section, 1);
     NSIndexSet *sectionToReload = [NSIndexSet indexSetWithIndexesInRange:range];
     [self.tableView reloadSections:sectionToReload withRowAnimation:rowAnimation];
 }
 
-- (void) loginThisUserToParse:(NSString *)userName withPassword:(NSString *)userPass {
+- (void) loginThisUserToParse:(NSString *)userName
+                 withPassword:(NSString *)userPass
+               andPhoneNumber:(NSString*)phoneNbr
+{
     [PFUser logInWithUsernameInBackground:userName password:userPass
                                     block:^(PFUser *user, NSError *error) {
                                         if (user) {
-                                            NSLog(@"[ Parse successful login ]"); // Do stuff after successful login.
+                                            if (DBG) NSLog(@"[ Parse successful login ]"); // Do stuff
+                                            [user setObject:[self stripStringOfUnwantedChars:phoneNbr] forKey:@"phoneNumber"];
+                                            [user saveInBackground];
                                             [self insertCurrentLocation:user];
-                                            NSLog(@"[ Stored this user's current loc ]");
+                                            
+                                            if (DBG) NSLog(@"[ Stored this user's current loc ]");
                                             [PFGeoPoint geoPointForCurrentLocationInBackground:^(PFGeoPoint *geoPoint, NSError *error) {
                                                 if (!error) {
-                                                    NSLog(@"User is currently at %f, %f", geoPoint.latitude, geoPoint.longitude);
+                                                    if (DBG) NSLog(@"User is currently at %f, %f", geoPoint.latitude, geoPoint.longitude);
                                                     
                                                     [[PFUser currentUser] setObject:geoPoint forKey:@"currentLocation"];
                                                     [[PFUser currentUser] saveInBackground];
@@ -886,24 +974,24 @@
                                              {
                                                  if (!error) {
                                                      // The find succeeded.
-                                                     NSLog(@"Successfully retrieved %d scores.", (int)objects.count);
+                                                     if (DBG) NSLog(@"Successfully retrieved %d scores.", (int)objects.count);
                                                      // Do something with the found objects
                                                      for (PFObject *object in objects) {
-                                                         NSLog(@"%@", object.objectId);
+                                                         if (DBG) NSLog(@"%@", object.objectId);
                                                      }
                                                  } else {
                                                      // Log details of the failure
-                                                     NSLog(@"Error: %@ %@", error, [error userInfo]);
+                                                     if (DBG) NSLog(@"Error: %@ %@", error, [error userInfo]);
                                                  }
                                              }];
                                             
-                                            NSLog(@" setting existingUser ");
+                                            if (DBG) NSLog(@" setting existingUser ");
                                             //ToDo: set existsingUser to 2 = synchronized (downloaded info)
                                             NSUserDefaults *userInLocal = [NSUserDefaults standardUserDefaults];
                                             [userInLocal setObject:@"2" forKey:@"existingUser"];
                                             [userInLocal synchronize];
                                         } else {
-                                            NSLog(@"[ ERROR: Login failed | %@",error);// The login failed. Check error to see why.
+                                            if (DBG) NSLog(@"[ ERROR: Login failed | %@",error);// The login failed. Check error to see why.
                                         }
                                     }];
 }
@@ -912,7 +1000,7 @@
     if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"CoreFriendsContactInfoDicKey"] count] == 0)
         [self syncFromParse]; /// how well is this working ???
     else
-        NSLog(@"all loaded already");
+        if (DBG) NSLog(@"all loaded already");
     
     [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithInteger:2]
                                               forKey:@"afterFirstInstall"];
@@ -926,8 +1014,8 @@
 
 - (void) popCoreCircleSetupVC
 {
-    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"newUserFlag"];
-    [[NSUserDefaults standardUserDefaults] synchronize];
+//    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"newUserFlag"];
+//    [[NSUserDefaults standardUserDefaults] synchronize];
     
 //    UIStoryboard *mainStoryboard = [UIStoryboard storyboardWithName:@"Main"  bundle:nil];
 //    NewCoreCircleTVC  *coreCircleController = (NewCoreCircleTVC*)[mainStoryboard instantiateViewControllerWithIdentifier: @"coreCircleView"];
@@ -950,7 +1038,7 @@
 
 #pragma mark - CoreData helper methods
 - (void) actionAddFriensoEvent:(NSString *) message withSubtitle:(NSString *)subtitle{
-    NSLog(@"[ actionAddFriensoEvent ]");
+    if (DBG) NSLog(@"[ actionAddFriensoEvent ]");
     FriensoAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
     
     NSManagedObjectContext *managedObjectContext =
@@ -970,10 +1058,10 @@
         
         NSError *savingError = nil;
         if([managedObjectContext save:&savingError]) {
-            NSLog(@"Successfully saved the context");
-        } else { NSLog(@"Failed to save the context. Error = %@", savingError); }
+            if (DBG) NSLog(@"Successfully saved the context");
+        } else { if (DBG) NSLog(@"Failed to save the context. Error = %@", savingError); }
     } else {
-        NSLog(@"Failed to create a new event.");
+        if (DBG) NSLog(@"Failed to create a new event.");
     }
 }
 - (void)saveNewUserLocallyWithEmail:(NSString *)newUserEmail plusPassword:(NSString *)newUserPassword
@@ -984,9 +1072,9 @@
         [userInLocal setObject:newUserEmail forKey:@"userEmail"];
         [userInLocal setObject:newUserPassword forKey:@"adminPass"];
         [userInLocal setObject:@"0" forKey:@"adminInParse"];
-        [userInLocal setObject:phoneNumber.text forKey:@"userPhone"];
+        [userInLocal setObject:[self stripStringOfUnwantedChars:phoneNumber.text] forKey:@"userPhone"];
         [userInLocal synchronize];
-        NSLog(@"[New user saved locally]");
+        if (DBG) NSLog(@"[New user saved locally]");
     }
 
 // register or sign-up
@@ -997,7 +1085,8 @@
     user.username  = newUserEmail;
     user.password  = newUserPassword;
     //remove dashes
-    userPhoneNumber = [userPhoneNumber stringByReplacingOccurrencesOfString:@"-" withString:@""];
+    userPhoneNumber = [self stripStringOfUnwantedChars:userPhoneNumber];
+    //[userPhoneNumber stringByReplacingOccurrencesOfString:@"-" withString:@""];
     user[@"phoneNumber"] = userPhoneNumber;
     
     
@@ -1007,8 +1096,8 @@
         if (!error) {
             [[PFUser currentUser] setObject:geoPoint forKey:@"currentLocation"];
             [[PFUser currentUser] saveInBackground];
-            //NSLog(@"User is currently at %f, %f", geoPoint.latitude, geoPoint.longitude);
-            NSLog(@"Saved your location to cloud-store");
+            //if (DBG) NSLog(@"User is currently at %f, %f", geoPoint.latitude, geoPoint.longitude);
+            if (DBG) NSLog(@"Saved your location to cloud-store");
         }
     }];
     // other fields can be set just like with PFObject
@@ -1024,12 +1113,12 @@
             [userInLocal setObject:@"1" forKey:@"adminInParse"];
             [userInLocal setBool:YES forKey:@"isUserNew"];
             [userInLocal synchronize];
-            NSLog(@"[NSUserDefaults/Parse sync confirmed]");
+            if (DBG) NSLog(@"[NSUserDefaults/Parse sync confirmed]");
             
         } else {
             NSString *errorString = [[error userInfo] objectForKey:@"error"];
             // Show the errorString somewhere and let the user try again.
-            NSLog(@"Error: %@",errorString);
+            if (DBG) NSLog(@"Error: %@",errorString);
         }
     }];
 }
@@ -1039,7 +1128,7 @@
     
     if (switchControl.tag == 10)
     {
-        NSLog(@"loc switch activated");
+        if (DBG) NSLog(@"loc switch activated");
         [self.locationManager startUpdatingLocation];
         [self setInitialLocation:self.locationManager.location];
 
@@ -1053,7 +1142,7 @@
         NSUserDefaults *userInLocal = [NSUserDefaults standardUserDefaults];
         [userInLocal setBool:keepLoggedIn forKey:@"keepUserLoggedIn"];
         [userInLocal synchronize];
-        NSLog( @"The switch is %@", switchControl.on ? @"ON" : @"OFF" );
+        //if (DBG) NSLog( @"The switch is %@", switchControl.on ? @"ON" : @"OFF" );
     }
 }
 - (BOOL) userInParse{
@@ -1070,10 +1159,10 @@
 - (void)setInitialLocation:(CLLocation *)aLocation {
     self.location = aLocation;
     //self.radius = 1000;
-    //NSLog(@"%.2f,%.2f",self.location.coordinate.latitude, self.location.coordinate.longitude);
+    //if (DBG) NSLog(@"%.2f,%.2f",self.location.coordinate.latitude, self.location.coordinate.longitude);
     [PFGeoPoint geoPointForCurrentLocationInBackground:^(PFGeoPoint *geoPoint, NSError *error) {
         if (!error) {
-            NSLog(@"My geo-location: %f, %f", geoPoint.latitude, geoPoint.longitude);
+            if (DBG) NSLog(@"My geo-location: %f, %f", geoPoint.latitude, geoPoint.longitude);
             NSNumber *lat = [NSNumber numberWithDouble:geoPoint.latitude];
             NSNumber *lon = [NSNumber numberWithDouble:geoPoint.longitude];
             NSDictionary *userLocation=@{@"lat":lat,@"long":lon};
@@ -1095,13 +1184,13 @@
                                         if (user) {
                                             PFUser *currentUser = [PFUser currentUser];
                                             if (currentUser) {
-                                                NSLog(@"%@, login successful",currentUser.email);
+                                                if (DBG) NSLog(@"%@, login successful",currentUser.email);
                                             } else {
                                                 // show the signup or login screen
-                                                NSLog(@"no current user");
+                                                if (DBG) NSLog(@"no current user");
                                             }
                                         } else {
-                                            NSLog(@"The login failed. Check error to see why. %@",error);
+                                            if (DBG) NSLog(@"The login failed. Check error to see why. %@",error);
                                         }
                                     }];
     */
@@ -1114,16 +1203,16 @@
     userCoreFriends.ACL = ACL;// [PFACL ACLWithUser:[PFUser currentUser]];
     
     PFUser *user = [PFUser currentUser];
-    NSLog(@"%@",user.email);
+    if (DBG) NSLog(@"%@",user.email);
     [userCoreFriends setObject:user forKey:@"user"];
     [userCoreFriends saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
         if (!error) {
             //[self refresh:nil];
-            NSLog(@"[ CoreFriends Dictionary for User upload attempted. ]");
+            if (DBG) NSLog(@"[ CoreFriends Dictionary for User upload attempted. ]");
         }
         else{
             // Log details of the failure
-            NSLog(@"Error: %@ %@", error, [error userInfo]);
+            if (DBG) NSLog(@"Error: %@ %@", error, [error userInfo]);
         }
     }];
     
@@ -1146,7 +1235,7 @@
                                                       cancelButtonTitle:@"Okay" otherButtonTitles:nil, nil];
             [alertView show];
         }else {
-            NSLog(@"Bad input!");
+            if (DBG) NSLog(@"Bad input!");
             UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Incorrect Email Format"
                                                                 message:@"Please try again"
                                                                delegate:nil
@@ -1166,12 +1255,12 @@
     
     CLLocation *lastLocation = [locations lastObject];
     CLLocationAccuracy accuracy = [lastLocation horizontalAccuracy];
-	NSLog(@"Received location %@ with accuracy %f", lastLocation, accuracy);
+	if (DBG) NSLog(@"Received location %@ with accuracy %f", lastLocation, accuracy);
     CLLocation *location = manager.location;
 
 	if(accuracy <= 50.0) {
 		//4
-//        NSLog(@"latitude and longitude: %ld, %@", [locations count], locations );
+//        if (DBG) NSLog(@"latitude and longitude: %ld, %@", [locations count], locations );
         self.coordinate = [location coordinate];
         
         self.geoPoint = [PFGeoPoint geoPointWithLatitude:self.coordinate.latitude
@@ -1185,7 +1274,7 @@
 }
 - (void) locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error
 {
-    NSLog(@"Failed to receive location information, see error: %@", error);
+    if (DBG) NSLog(@"Failed to receive location information, see error: %@", error);
 }
 
 -(void) getDeviceLocationInfo {
@@ -1196,13 +1285,13 @@
         self.myLocationManager.delegate = self;
         [self.myLocationManager startUpdatingLocation];
     } else
-        NSLog(@"Location services are not enabled");
+        if (DBG) NSLog(@"Location services are not enabled");
         
         
 }
 
 - (void) insertCurrentLocation:(PFUser *)pfUser {
-    NSLog(@"-- insertCurrentLocation --");
+    if (DBG) NSLog(@"-- insertCurrentLocation --");
     [self getDeviceLocationInfo];
     
 	// If it's not possible to get a location, then return.
@@ -1211,6 +1300,8 @@
 		return;
 	}
     
+    /*  NO LONGER NEEDED, location is now tracked via User object 
+     *
 	// Configure the new event with information from the location.
 	CLLocationCoordinate2D coordinate = [location coordinate];
     PFGeoPoint *geoPoint = [PFGeoPoint geoPointWithLatitude:coordinate.latitude longitude:coordinate.longitude];
@@ -1221,11 +1312,12 @@
     [object saveEventually:^(BOOL succeeded, NSError *error) {
         if (succeeded) {
             // Reload the PFQueryTableViewController
-            NSLog(@"...location saved to cloud");//[self loadObjects];
+            if (DBG) NSLog(@"...location saved to cloud");//[self loadObjects];
             [self actionAddFriensoEvent:@"Location Saved"
                            withSubtitle:[NSString stringWithFormat:@"%4.f, %4.f",coordinate.latitude, coordinate.longitude]];
         }
     }];
+     */
 }
 #pragma mark - Configure UIView
 -(void) setupTopLabel{
@@ -1309,7 +1401,7 @@
 //    
 //    // Create and configure a fetch request with the Book entity.
 //    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
-//    NSLog(@"[1]");
+//    if (DBG) NSLog(@"[1]");
 //    NSEntityDescription *entity = [NSEntityDescription entityForName:@"FriensoEvent" inManagedObjectContext:self.managedObjectContext];
 //    [fetchRequest setEntity:entity];
 //    
@@ -1391,9 +1483,9 @@ gradient.colors = [NSArray arrayWithObjects:(id)[startColour CGColor],(id)[endCo
 }
 #pragma mark - Sync from Parse Methods
 - (void) syncFromParse {
-    NSLog(@"syncFromParse -- getting the coreFriends");     // sync from parse!
+    if (DBG) NSLog(@"syncFromParse -- getting the coreFriends");     // sync from parse!
     
-    NSLog(@"Current user: %@", [PFUser currentUser].username);
+    //if (DBG) NSLog(@"Current user: %@", [PFUser currentUser].username);
     
     NSMutableDictionary *udCoreCircleDictionary = [[NSUserDefaults standardUserDefaults] objectForKey:@"CoreFriendsContactInfoDicKey"];
     if ([udCoreCircleDictionary count] == 0 || udCoreCircleDictionary == NULL)
@@ -1401,9 +1493,61 @@ gradient.colors = [NSArray arrayWithObjects:(id)[startColour CGColor],(id)[endCo
         [PFUser logInWithUsernameInBackground:[[NSUserDefaults standardUserDefaults] objectForKey:@"adminID"]
                                      password:[[NSUserDefaults standardUserDefaults] objectForKey:@"adminPass"]
                                         block:^(PFUser *user, NSError *error) {
+                                            
                                             if (user) {
-                                                NSLog(@"[ Parse successful login ]"); // Do stuff after successful login.
+                                                if (DBG) NSLog(@"[ Parse successful login ]"); // Do stuff after successful login.
                                                 // sync from parse!
+                                                //[self syncExistingCoreFriendsFromParseForUser:user];
+                                                PFQuery * pfquery = [PFQuery queryWithClassName:@"CoreFriendRequest"];
+                                                [pfquery whereKey:  @"sender" equalTo:user];
+                                                [pfquery includeKey:@"recipient"];
+                                                [pfquery findObjectsInBackgroundWithBlock:^(NSArray *objects,
+                                                                                            NSError *error)
+                                                {
+                                                    if (!error) {
+                                                        //if (DBG) NSLog(@"number of sent requests: %ld",objects.count);
+                                                        //if (DBG) NSLog(@"%@",objects);
+                                                        for (PFObject *object in objects) {
+                                                            if (DBG) NSLog(@"of: %@", [object objectForKey:@"recipientName"]);
+                                                            [self.coreCircleOfFriends addObject:[object objectForKey:@"recipientName"]];
+                                                            PFUser *pUser = [object objectForKey:@"recipient"];
+                                                            [self.coreCircleContacts  addObject:[pUser objectForKey:@"phoneNumber"]];
+                                                            if (self.coreCircleContacts.count ==3){
+                                                                [self coreFriendsListToPersistentStorage];
+                                                                break;
+                                                            }
+                                                        }
+                                                        
+                                                    }
+                                                }];
+                                                PFQuery *query = [PFQuery queryWithClassName:@"CoreFriendNotOnFriensoYet"];
+                                                [query whereKey:  @"sender" equalTo:user];
+                                                [query includeKey:@"recipient"];
+                                                [query findObjectsInBackgroundWithBlock:^(NSArray *objects,
+                                                                                            NSError *error)
+                                                 {
+                                                     if (!error) {
+                                                         //if (DBG) NSLog(@"number of sent requests to users not on frienso: %ld",objects.count);
+                                                         //if (DBG) NSLog(@"%@",objects);
+                                                         for (PFObject *object in objects) {
+                                                             if (DBG) NSLog(@"nof: %@", [object objectForKey:@"recipientName"]);
+                                                             [self.coreCircleOfFriends addObject:[object objectForKey:@"recipientName"]];
+                                                             //PFUser *pUser = [object objectForKey:@"recipient"];
+                                                             [self.coreCircleContacts  addObject:[object objectForKey:@"recipientPhoneNumber"]];
+                                                             if (self.coreCircleContacts.count ==3)
+                                                             {
+                                                                 if (DBG) NSLog(@"Save coreFriends to NSUserDefs and to CoreFriends");
+                                                                 [self coreFriendsListToPersistentStorage];
+                                                                 break;
+                                                             }
+                                                         }
+                                                     }
+                                                 }];
+                                                // Notify that records were fetched from Parse
+                                                [self  actionAddFriensoEvent:@"Your Core Friends fetched and restored."
+                                                                withSubtitle:@"Select the Friends icon to review the list"];
+                                                
+                                                /********************************************
                                                 PFQuery *query = [PFQuery queryWithClassName:@"UserCoreFriends"];
                                                 [query whereKey:@"user" equalTo:user];
                                                 [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error)
@@ -1419,71 +1563,77 @@ gradient.colors = [NSArray arrayWithObjects:(id)[startColour CGColor],(id)[endCo
                                                              [self saveCFDictionaryToNSUserDefaults:parseCoreFriendsDic];
                                                              self.coreFriendsArray = [[NSMutableArray alloc] initWithArray:[parseCoreFriendsDic allKeys]];
                                                              
-                                                             /* cache those uWatch
-                                                             [[[FRSyncFriendConnections alloc] init] syncUWatchToCoreFriends]; // Sync those uWatch
-                                                              */
+                                                             // cache those uWatch
+                                                             //[[[FRSyncFriendConnections alloc] init] syncUWatchToCoreFriends]; // Sync those uWatch
+                                                 
                                                          }
                                                          // Notify that records were fetched from Parse
                                                          [self  actionAddFriensoEvent:@"Contacts successfully fetched and restored."];
                                                      } else {
                                                          // Log details of the failure
-                                                         NSLog(@"!Error: %@ %@", error, [error userInfo]);
+                                                         if (DBG) NSLog(@"!Error: %@ %@", error, [error userInfo]);
                                                      }
                                                  }];
-                                                
+                                                ********************************************/
                                                 
                                             } else {
-                                                NSLog(@"[ ERROR: Login failed | %@",error);// The login failed. Check error to see why.
+                                                if (DBG) NSLog(@"[ ERROR: Login failed | %@",error);// The login failed. Check error to see why.
                                             }
                                         }];
     }// testing if core circle dic is in nsuserdefaults
-    else        NSLog(@"not nil");
+    else        if (DBG) NSLog(@"not nil");
+}
+- (void) coreFriendsListToPersistentStorage {
+    
+    if(DBG) NSLog(@"%@", self.coreCircleOfFriends);
+    if(DBG) NSLog(@"%@", self.coreCircleContacts);
+    
+    NSDictionary *dic = [[NSDictionary alloc] initWithObjects:self.coreCircleContacts forKeys:self.coreCircleOfFriends];
+    if(DBG) NSLog(@"%@", dic);
+    
+    [self saveCFDictionaryToNSUserDefaults:dic];
 }
 -(void) saveCFDictionaryToNSUserDefaults:(NSDictionary *)friendsDic {
     // From Parse
-    NSLog(@"[ saveCFDictionaryToNSUserDefaults ]");
+    if(DBG) NSLog(@"[ saveCFDictionaryToNSUserDefaults ]");
     
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
     [userDefaults setObject:friendsDic forKey:@"CoreFriendsContactInfoDicKey"];
-    [userDefaults setBool:YES forKey:@"coreFriendsSet"];
     [userDefaults synchronize];
     
     // Save dictionary to CoreFriends Entity (CoreData)
-    NSEnumerator    *enumerator = [friendsDic keyEnumerator];
-    NSMutableArray  *coreCircle = [[NSMutableArray alloc] initWithArray:[enumerator allObjects]];
-    NSArray *valueArray         = [friendsDic allValues]; // holds phone numbers
+    NSArray *coreCircle = [friendsDic allKeys];   // holds names
+    NSArray *valueArray = [friendsDic allValues]; // holds phone numbers
+
     
     // Access to CoreData
     for (int i=0; i<[coreCircle count]; i++) {
-        CoreFriends *cFriends = [NSEntityDescription insertNewObjectForEntityForName:@"CoreFriends"
-                                                              inManagedObjectContext:[self managedObjectContext]];
+       CoreFriends *cFriends = [NSEntityDescription insertNewObjectForEntityForName:@"CoreFriends"
+                                                             inManagedObjectContext:[self managedObjectContext]];
         if (cFriends != nil){
             cFriends.coreFirstName = [coreCircle objectAtIndex:i];
-            cFriends.coreLastName  = @"";
             cFriends.corePhone     = [valueArray objectAtIndex:i];
             cFriends.coreCreated   =  [NSDate date];
             cFriends.coreModified  = [NSDate date];
             cFriends.coreType      = @"iCore Friends";
-            //NSLog(@"%@",[coreCircle objectAtIndex:i] );
-            NSError *savingError = nil;
             
+            NSError *savingError = nil;
             if ([[self managedObjectContext] save:&savingError]){
-                NSLog(@"Successfully saved contacts to CoreCircle.");
+                if (DBG) if (DBG) NSLog(@"Successfully saved contacts to CoreCircle.");
             } else {
-                NSLog(@"Failed to save the managed object context.");
+                if (DBG) NSLog(@"Failed to save the managed object context.");
             }
         } else {
-            NSLog(@"Failed to create the new person object.");
+            if (DBG) NSLog(@"Failed to create the new person object.");
         }
     }
     
 }
 - (void) actionAddFriensoEvent:(NSString *) message {
-    NSLog(@"[ actionAddFriensoEvent ]");
+    if (DBG) NSLog(@"[ actionAddFriensoEvent ]");
     FriensoAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
     
-    NSManagedObjectContext *managedObjectContext =
-    appDelegate.managedObjectContext;
+    NSManagedObjectContext *managedObjectContext = appDelegate.managedObjectContext;
     
     FriensoEvent *firstFriensoEvent = [NSEntityDescription insertNewObjectForEntityForName:@"FriensoEvent"
                                                                     inManagedObjectContext:managedObjectContext];
@@ -1499,12 +1649,107 @@ gradient.colors = [NSArray arrayWithObjects:(id)[startColour CGColor],(id)[endCo
         
         NSError *savingError = nil;
         if([managedObjectContext save:&savingError]) {
-            NSLog(@"Successfully saved the context");
-        } else { NSLog(@"Failed to save the context. Error = %@", savingError); }
+            if (DBG) NSLog(@"Successfully saved the context");
+        } else { if (DBG) NSLog(@"Failed to save the context. Error = %@", savingError); }
     } else {
-        NSLog(@"Failed to create a new event.");
+        if (DBG) NSLog(@"Failed to create a new event.");
     }
-    //[self configureOverlay]; NSLog(@"calling configureOverlay");
+    //[self configureOverlay]; if (DBG) NSLog(@"calling configureOverlay");
     
 }
+- (void) syncExistingCoreFriendsFromParseForUser:(PFUser*)thisUser
+{
+    
+    ///update status from Parse:
+    PFQuery * pfquery = [PFQuery queryWithClassName:@"CoreFriendRequest"];
+    [pfquery includeKey:@"recipient"];
+    [pfquery whereKey:  @"sender" equalTo:[PFUser currentUser]];
+    [pfquery findObjectsInBackgroundWithBlock:^(NSArray *objects,
+                                                NSError *error) {
+        NSInteger i = 0;
+        int activeCoreFriends = 0;
+        if(!error) {
+            if([objects count] >0) {//if atleast one record is found, then only we want to
+                //reload the table view
+                //if (DBG) NSLog(@"no of core friend req's: %ld",objects.count);
+                for (id object in objects) {
+                    if (DBG) NSLog(@"Number of active friends %d",activeCoreFriends);
+                    if(activeCoreFriends >= MAX_CORE_FRIENDS) {
+                        if (DBG) NSLog(@"Atleast %d  core friends found in frienso",MAX_CORE_FRIENDS);
+                        break;
+                    }
+                    //PFObject * pfobject = object;
+                    PFUser * sender = [object objectForKey:@"recipient"];
+                    NSString *senderPhoneNumber = sender[@"phoneNumber"];
+                    NSString *response = [object objectForKey:@"status"];
+                    NSString *senderName = [object objectForKey:@"recipientName"];
+                    [self.coreCircleRequestStatus replaceObjectAtIndex:i withObject:coreFriendRequestSendMessage];
+                    [self.coreCircleContacts replaceObjectAtIndex:i withObject:senderPhoneNumber];
+                    [self.coreCircleOfFriends replaceObjectAtIndex:i withObject:senderName];
+                    
+                    //if (DBG) NSLog(@"> %@,%@,%@,%@",sender, senderName,response, senderPhoneNumber);
+                    
+                    if([response isEqualToString:@"send"]) {
+                        [self.coreCircleRequestStatus replaceObjectAtIndex:i withObject:coreFriendRequestSendMessage];
+                    } else if ([response isEqualToString:@"reject"]) {
+                        [self.coreCircleRequestStatus replaceObjectAtIndex:i withObject:coreFriendRejectMessage];
+                    } else  if([response isEqualToString:@"accept"]) {
+                        [self.coreCircleRequestStatus replaceObjectAtIndex:i withObject:coreFriendAcceptMessage];
+                    } else {
+                        [self.coreCircleRequestStatus replaceObjectAtIndex:i withObject:response];
+                    }
+                    i++;
+                    activeCoreFriends++;
+                    
+                }
+            }
+            
+            //only if max are not found.
+//            if(activeCoreFriends < MAX_CORE_FRIENDS) {
+//                
+//                // check if the contact is pending list, then show that information
+//                PFQuery * pfquery = [PFQuery queryWithClassName:@"CoreFriendNotOnFriensoYet"];
+//                [pfquery whereKey:@"sender" equalTo:[PFUser currentUser]];
+//                // [pfquery whereKey:@"recipientPhoneNumber" containedIn:self.coreCircleContacts];
+//                [pfquery findObjectsInBackgroundWithBlock:^(NSArray *objects,
+//                                                            NSError *error) {
+//                    if(!error) {
+//                        int i = activeCoreFriends;
+//                        if([objects count] >0) {//if atleast one record is found, then only we want to
+//                            //reload the table view
+//                            for (id object in objects) {
+//                                if(activeCoreFriends >= MAX_CORE_FRIENDS) {
+//                                    if (DBG) NSLog(@"Atleast %d  core friends found",MAX_CORE_FRIENDS);
+//                                    break;
+//                                }
+//                                
+//                                NSString *senderPhoneNumber = (NSString *)object[@"recipientPhoneNumber"];
+//                                NSString *senderName = [object objectForKey:@"recipientName"];
+//                                [self.coreCircleContacts replaceObjectAtIndex:i withObject:senderPhoneNumber];
+//                                [self.coreCircleOfFriends replaceObjectAtIndex:i withObject:senderName];
+//                                [self.coreCircleRequestStatus replaceObjectAtIndex:i withObject:coreFriendNotOnFriensoMessage];
+//                                i++;
+//                                activeCoreFriends++;
+//                            }
+//                        }
+//                    }else {
+//                        if (DBG) NSLog(@"%@",error);
+//                    }
+//                    //[self refresh];
+//                }];
+//            } else {
+//                //[self refresh];
+//            }
+        } else {
+            if (DBG) NSLog(@"%@",error);
+        }
+    }];
+
+}
+#pragma mark - Helper methods
+- (NSString *) stripStringOfUnwantedChars:(NSString *)phoneNumberString {
+     NSString *cleanedString = [[phoneNumberString componentsSeparatedByCharactersInSet:[[NSCharacterSet characterSetWithCharactersInString:@"0123456789"] invertedSet]] componentsJoinedByString:@""];
+     return cleanedString;
+ }
+                 
 @end

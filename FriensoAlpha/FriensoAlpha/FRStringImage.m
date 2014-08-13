@@ -91,6 +91,28 @@
     UIGraphicsEndImageContext();
     return retImage;
 }
+- (UIImage*) scaleImage:(UIImage*)image toSize:(CGSize)newSize {
+    CGSize scaledSize = newSize;
+    float scaleFactor = 1.0;
+    if( image.size.width < image.size.height ) {
+        scaleFactor = image.size.width / image.size.height;
+        scaledSize.width = newSize.width;
+        scaledSize.height = newSize.height / scaleFactor;
+    }
+    else {
+        scaleFactor = image.size.height / image.size.width;
+        scaledSize.height = newSize.height;
+        scaledSize.width = newSize.width / scaleFactor;
+    }
+    
+    UIGraphicsBeginImageContextWithOptions( scaledSize, NO, 0.0 );
+    CGRect scaledImageRect = CGRectMake( 0.0, 0.0, scaledSize.width, scaledSize.height );
+    [image drawInRect:scaledImageRect];
+    UIImage* scaledImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    return scaledImage;
+}
 //- (void)drawRect:(CGRect)rect {
 //    // Make sure the UIView's background is set to clear either in code or in a storyboard/nib
 //    

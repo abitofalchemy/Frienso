@@ -23,11 +23,8 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     // Frienso Parse account
-   
-    
     [Parse setApplicationId:@"ocxutehzKxd4EvmeODaNDl8AwJPYajzTK06QYkzZ"
                   clientKey:@"G70qPOHHCFiUFUwBqbUJvqb2Fel8BrxcjBjntQEc"];
-    
     [Crashlytics startWithAPIKey:@"a6e275099418fb75d38d9f45e6bb9819bc259bf5"];
     
     [[UIApplication sharedApplication] registerForRemoteNotificationTypes:
@@ -46,12 +43,12 @@
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken
 {
     
-    NSLog(@"My token is: %@", deviceToken);
+    //NSLog(@"My token is: %@", deviceToken);
     NSString *dToken = [[deviceToken description] stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"<>"]];
     dToken = [dToken stringByReplacingOccurrencesOfString:@" " withString:@""];
     
     
-    NSLog(@"STR%@",dToken);
+    //NSLog(@"STR%@",dToken);
     
     
     //Create subscription channels for the user: this includes channels for Frienso updates
@@ -63,12 +60,12 @@
     //The globals channel will be used for all Frienso related alerts and messages
     PFUser *currentUser = [PFUser currentUser];
     if (currentUser){
-        NSString* userPhoneNumber = [[PFUser currentUser] objectForKey:@"phoneNumber"];
-        
+        NSString* userPhoneNumber = [[NSUserDefaults standardUserDefaults] objectForKey:@"userPhone"];/*[[PFUser currentUser] objectForKey:@"phoneNumber"]*/
+        //NSLog(@"%@",userPhoneNumber);
         //Channels have to start with a string, we will use "Ph" here
         NSString *myString = @"Ph";
         NSString *personalizedChannelNumber = [myString stringByAppendingString:userPhoneNumber];
-        NSLog(@"channel Name for this user is %@", personalizedChannelNumber);
+        //NSLog(@"channel Name for this user is %@", personalizedChannelNumber);
         PFInstallation *currentInstallation = [PFInstallation currentInstallation];
         [currentInstallation setDeviceTokenFromData:deviceToken];
         currentInstallation.channels = @[@"global", @"ndDOTedu", personalizedChannelNumber];
@@ -94,7 +91,7 @@
     NSLog(@"Received a JSON object from Parse"); /*********** TAKE ACTION ****/
     if([userInfo objectForKey:@"group"]!=NULL) {
         NSString *myMessage = [NSString stringWithFormat:@"From %@", [userInfo objectForKey:@"group"]];
-        NSLog(@"Group Sending Message %@",[userInfo objectForKey:@"group"]);
+        //NSLog(@"Group Sending Message %@",[userInfo objectForKey:@"group"]);
         
         /*
          UINavigationController *navigationController = (UINavigationController*)_window.rootViewController;

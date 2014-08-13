@@ -67,7 +67,7 @@
 
     //set the content size of the scroll view, we keep the height same so it will only
     //scroll horizontally
-    self.myScrollView.contentSize = CGSizeMake(self.view.frame.size.width * 5,
+    self.myScrollView.contentSize = CGSizeMake(self.view.frame.size.width * 4,
                                                self.view.frame.size.height*0.8);
 
     //we set the origin to the 3rd page
@@ -78,7 +78,7 @@
     // Page Control
     pageControl = [[UIPageControl alloc] initWithFrame:CGRectMake(0,0,50.0,30.0)];
     pageControl.center = CGPointMake(self.view.center.x, self.view.frame.size.height * 0.9);
-    pageControl.numberOfPages = 5;
+    pageControl.numberOfPages = 4;
     pageControl.currentPage = 0;
     pageControl.currentPageIndicatorTintColor = [UIColor blueColor];
     pageControl.pageIndicatorTintColor = [UIColor grayColor];
@@ -137,7 +137,7 @@
 -(void) animateWarningLabel:(UILabel *) label {
     //[self.myScrollView addSubview:self.warningLabel];
     
-    [UIView animateWithDuration:2.0
+    [UIView animateWithDuration:1.0
                      animations:^{
                          [self.titleLabel setCenter:self.view.center];
                          [self.titleLabel setCenter:CGPointMake(self.view.center.x, self.view.frame.size.height*0.125)];
@@ -154,7 +154,7 @@
     [self.myScrollView setAlpha:1.0f];
     NSInteger pageNbr =(long)(myScrollView.contentOffset.x/self.view.bounds.size.width);
     
-    NSLog(@"%f", myScrollView.contentOffset.x);
+    if (DBG) NSLog(@"%f", myScrollView.contentOffset.x);
     switch (pageNbr) {
         case 0:
             pageControl.currentPage = 0;
@@ -171,12 +171,14 @@
         case 3:
             pageControl.currentPage = 3;
             [self updatePageImage:3];
-            break;
-        case 4:
-            pageControl.currentPage = 4;
-            [self updatePageImage:4];
             [self addGetStartedButtonToView];
             break;
+        /*case 4:
+            pageControl.currentPage = 4;
+            [self updatePageImage:4];
+         
+            break;
+            */
         default:
             pageControl.currentPage = 0;
             [self updatePageImage:0];
@@ -187,34 +189,34 @@
 -(void) updatePageImage:(NSUInteger)currentPage
 {
     pageControl.currentPage = currentPage;
-    
+    if (DBG) NSLog(@"updatePageImage: %lu",(unsigned long)currentPage);
     
     switch (currentPage) {
+//        case 0:
+//            self.originalImage =  [UIImage imageNamed:@"frienso-0.png"];
+//            [self.subTitleLabel setText:@""];
+//            break;
         case 0:
-            self.originalImage =  [UIImage imageNamed:@"frienso-0.png"];
-            [self.subTitleLabel setText:@""];
-            break;
-        case 1:
         {
             [self animateWarningLabel:self.titleLabel];
             [self.subTitleLabel setText:@"Your uSocial Safety Network for College Campus. Join the movement to help those closest to you be safe, informed, & engaged."];
             // Be part of one or more trusted circle of friends and use it for yourself and to help others.
-            self.originalImage =  [UIImage imageNamed:@"frienso-1.png"];
+            self.originalImage =  [UIImage imageNamed:@"frienso-0.png"];
             [imageView setCenter:CGPointMake(self.view.center.x + self.myScrollView.contentOffset.x
                                              ,self.view.bounds.size.height/2)];
             break;
         }
-        case 2:
+        case 1:
         {
-            self.originalImage =  [UIImage imageNamed:@"frienso-2.png"];
+            self.originalImage =  [UIImage imageNamed:@"frienso-1.png"];
             [self.subTitleLabel setText:@"Enable WatchMe when walking anywhere late at night. Frienso alerts your trusted circle of friends to be on standby."];
             [imageView setFrame:CGRectMake(imageView.frame.origin.x, self.titleLabel.frame.size.height * 1.2, imageView.frame.size.width, imageView.frame.size.height)];
             [imageView setCenter:CGPointMake(self.view.center.x + self.myScrollView.contentOffset.x
                                              ,imageView.center.y + self.titleLabel.frame.size.height * 1.1)];
             break;
         }
-        case 3:
-            self.originalImage =  [UIImage imageNamed:@"frienso-3.png"];
+        case 2:
+            self.originalImage =  [UIImage imageNamed:@"frienso-2.png"];
             [self.subTitleLabel setText:@"Enable HelpMeNow when you need help immediately.  Frienso notifies & sends a group SMS to your trusted circle with your location."];
             //  You may then choose to quickly dial any of your trusted friends, campus police, or 911."
             self.subTitleLabel.numberOfLines = 4;
@@ -222,8 +224,8 @@
             [imageView setCenter:CGPointMake(self.view.center.x + self.myScrollView.contentOffset.x
                                              ,imageView.center.y + self.titleLabel.frame.size.height * 1.1)];
             break;
-        case 4:
-            self.originalImage =  [UIImage imageNamed:@"frienso-4.png"];
+        case 3:
+            self.originalImage =  [UIImage imageNamed:@"frienso-3.png"];
             [self.subTitleLabel setText:@"Location based emergency contacts load when you travel from one campus to another automatically!"];
             //  You may then choose to quickly dial any of your trusted friends, campus police, or 911."
             self.subTitleLabel.numberOfLines = 4;
@@ -262,7 +264,7 @@
     // animate the button - pop out
     CABasicAnimation *anim = [CABasicAnimation animationWithKeyPath:@"transform"];
     anim.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
-    anim.duration = 0.225;
+    anim.duration = 0.125;
     anim.repeatCount = 1;
     anim.autoreverses = YES;
     anim.removedOnCompletion = YES;
@@ -279,7 +281,7 @@
     bottomButton.titleLabel.layer.shadowOffset = CGSizeZero;
     bottomButton.titleLabel.layer.masksToBounds = NO;
     bottomButton.backgroundColor = [UIColor grayColor];
-    NSLog(@"Dismiss this view");
+    if (DBG) NSLog(@"Dismiss this view");
     
     [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"getStartedFlag"];
     [[NSUserDefaults standardUserDefaults] synchronize];

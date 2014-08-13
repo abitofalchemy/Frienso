@@ -71,7 +71,8 @@
     // change back button [self.navigationItem.backBarButtonItem setTitle:@"Cancel"];
     
     
-    miniTableView = [[UITableView alloc] initWithFrame:[UIScreen mainScreen].bounds style:UITableViewStyleGrouped];
+    miniTableView = [[UITableView alloc] initWithFrame:[UIScreen mainScreen].bounds
+                                                 style:UITableViewStyleGrouped];
     miniTableView.delegate = self;
     miniTableView.dataSource = self;
     [miniTableView setBackgroundColor:[UIColor whiteColor]];
@@ -223,7 +224,7 @@
 //#warning Find a way to fetch a picture from an assets url
         case 0:
         {
-            cell.imageView.image = [UIImage imageNamed:@"Profile-256.png"];
+            cell.imageView.image = [UIImage imageNamed:@"avatar.png"];
             cell.textLabel.text = @"Picture";
             self.profileImageCell = cell;
             
@@ -241,7 +242,7 @@
                         cell.imageView.image = thumbImg;
                     });
             } failureBlock:^(NSError *err) {
-                cell.imageView.image = [UIImage imageNamed:@"Profile-256.png"];
+                cell.imageView.image = [UIImage imageNamed:@"avatar.png"];
                 NSLog(@"Error: %@",[err localizedDescription]);
             }];
             break;
@@ -371,7 +372,7 @@
 -(void) setProfileViewContent {
     // Profile photo
     UIImageView __block  *profilePhoto = [[UIImageView alloc] initWithFrame:CGRectZero];
-    [profilePhoto setImage:[UIImage imageNamed:@"profile-landscape-1.png"]];
+    [profilePhoto setImage:[UIImage imageNamed:@"avatar.png"]];
     [profilePhoto setFrame:CGRectMake(0,0,self.view.bounds.size.width/3,self.view.bounds.size.width/3)];
     [profilePhoto setCenter:CGPointMake(self.view.center.x, self.view.center.x * 0.4)];
     profilePhoto.layer.borderColor  = [UIColor whiteColor].CGColor;
@@ -399,7 +400,7 @@
                               [profilePhoto setImage:thumbImg];
                       });
                   } failureBlock:^(NSError *err) {
-                      //profilePhoto =[[UIImageView alloc] initWithImage:[UIImage imageNamed::@"Profile-256.png"];
+                      //profilePhoto =[[UIImageView alloc] initWithImage:[UIImage imageNamed::@"avatar.png"];
                       NSLog(@"Error: %@",[err localizedDescription]);
                   }];
     
@@ -444,11 +445,10 @@
 }
 #pragma mark - UIImagePicker Methods
 -(void)imagePickerController:
-(UIImagePickerController *)picker
-didFinishPickingMediaWithInfo:(NSDictionary *)info
+(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
 {
     // Code here to work with media
-    NSLog(@"%@", info);
+    NSLog(@"  didFinishPickingMediaWithInfo : %@", info);
     self.profileImageCell.imageView.image = [info objectForKey:@"UIImagePickerControllerEditedImage"];
     [[NSUserDefaults standardUserDefaults] setURL:[info objectForKey:@"UIImagePickerControllerReferenceURL"]
                                                forKey:@"profileImageUrl"];
@@ -457,8 +457,7 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
--(void)imagePickerControllerDidCancel:
-(UIImagePickerController *)picker
+-(void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
 {
     [self dismissViewControllerAnimated:YES completion:nil];
 }

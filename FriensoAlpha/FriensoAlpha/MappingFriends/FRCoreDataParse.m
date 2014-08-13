@@ -59,37 +59,36 @@
 }
 - (void) updateCoreFriendsLocation
 {
-    NSDictionary *retrievedCoreFriendsDictionary = [[NSUserDefaults standardUserDefaults] objectForKey:@"CoreFriendsContactInfoDicKey"];
+    NSLog(@"  Updating coreFriends location ...");
+    NSDictionary *coreFriendsDic = [[NSUserDefaults standardUserDefaults] objectForKey:@"CoreFriendsContactInfoDicKey"];
     
-    if ( [retrievedCoreFriendsDictionary count] > 0) {
-        NSArray *connectionKeyArray =  [[NSArray alloc]
-                                        initWithArray:[retrievedCoreFriendsDictionary allValues]];
-        
-        for (NSString *pNumber in connectionKeyArray) {
-            //NSLog(@"%@",pNumber);
-            PFQuery *query = [PFQuery queryWithClassName:@"UserConnection"];
-            NSRange substrRange = NSMakeRange(pNumber.length-10, 10);
-            [query whereKey:@"userNumber" containsString:[pNumber substringWithRange:substrRange]];
-            [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error)
-            {
-                if (!error) { // The find succeeded.
-                     for (PFObject *object in objects) { // Do something w/ found objects
-                         //NSLog(@"%@", object);
-                         //NSLog(@"%@", [[object valueForKey:@"user"] objectId]);
-                         [self fetchCurrentLocationForUser:[[object valueForKey:@"user"] objectId] includePhone:[pNumber substringWithRange:substrRange]];
-                     }
-                } else
-                    NSLog(@"Error: %@ %@", error, [error userInfo]); // Log details of the failure
-                
-            }];
-            
-            
-            
-            
-            
-        }
-    }
+    if ( [coreFriendsDic count] > 0) {
+       for (NSString *pNumber in [coreFriendsDic allValues])
+       {
+           //NSLog(@" cf phn %@", pNumber);
+           
+           PFQuery *query = [PFUser query];
+           [query   whereKey:@"phoneNumber" containsString:[self stripStringOfUnwantedChars:pNumber]];
+           [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error)
+           {
+               if ( !error && objects.count > 0) {
+                   for (PFUser* friensoUser in objects) {
+                      [self fetchCurrentLocationForUser:friensoUser.objectId
+                                            includePhone:[self stripStringOfUnwantedChars:pNumber]];
+                   }
+               } else
+                   NSLog(@"%@", error ? error.localizedDescription : @"  ... No objects?");
+               
+           }];
+           
+       } // ends for
+    } // ends if
 }
+- (void) updateCoreDataFriendsLocationFor:(NSString*)friendPhoneNbr withDistance:(CLLocationDistance)distance
+{
+    
+}
+
 - (void) updateCoreFriendsCurrentLocation:(NSString *)corePhone {
     PFQuery *query = [PFQuery queryWithClassName:@"UserConnection"];
     NSRange substrRange = NSMakeRange(corePhone.length-10, 10);
@@ -140,15 +139,16 @@
                  //NSLog(@"from coredata: %@",fetchedObjects);
                  for (NSManagedObject *mObject in fetchedObjects) {
                      
-//                     CLLocation *locA = [[CLLocation alloc] initWithLatitude:friendLocation.latitude longitude:friendLocation.longitude];
-//                     NSDictionary *userLocDic = [[NSUserDefaults standardUserDefaults] objectForKey:@"userLocation"];
-//                     CLLocation *locB = [[CLLocation alloc] initWithLatitude:(CLLocationDegrees)[[userLocDic objectForKey:@"lat"] doubleValue]
-//                                                                   longitude:(CLLocationDegrees)[[userLocDic objectForKey:@"long"] doubleValue]];
-//                     
-//                     CLLocationDistance distance = [locA distanceFromLocation:locB];
+                     CLLocation *locA = [[CLLocation alloc] initWithLatitude:friendLocation.latitude longitude:friendLocation.longitude];
+                     NSDictionary *userLocDic = [[NSUserDefaults standardUserDefaults] objectForKey:@"userLocation"];
+                     CLLocation *locB = [[CLLocation alloc] initWithLatitude:(CLLocationDegrees)[[userLocDic objectForKey:@"lat"] doubleValue]
+                                                                   longitude:(CLLocationDegrees)[[userLocDic objectForKey:@"long"] doubleValue]];
+                     
+                     CLLocationDistance distance = [locA distanceFromLocation:locB] * 0.000621371;
                      //NSLog(@"%@", [NSString stringWithFormat:@"%.2f meters away from you", distance]);
                      //[mObject setValue:[NSString stringWithFormat:@"%.2f meters away from you", distance] forKey:@"coreLocation"];
-                     [mObject setValue:[NSString stringWithFormat:@"%.6f,%.6f", friendLocation.latitude,friendLocation.longitude] forKey:@"coreLocation"];
+                     [mObject setValue:[NSString stringWithFormat:@"%.1f",distance]
+                                forKey:@"coreLocation"];
                      
                      NSError *savingError = nil;
                      
@@ -163,7 +163,13 @@
              NSLog(@"Error: %@ %@", error, [error userInfo]); // Log details of the failure
      }];
 }
-
+#pragma mark - Helper Methods
+-(NSString *) stripStringOfUnwantedChars:(NSString *)phoneNumber {
+    NSString *cleanedString = [[phoneNumber componentsSeparatedByCharactersInSet:[[NSCharacterSet characterSetWithCharactersInString:@"0123456789"] invertedSet]] componentsJoinedByString:@""];
+    
+    //    return  [dirtyContactName stringByTrimmingCharactersInSet: [NSCharacterSet characterSetWithCharactersInString:@"-()"]];
+    return cleanedString;
+}
 
 
 @end

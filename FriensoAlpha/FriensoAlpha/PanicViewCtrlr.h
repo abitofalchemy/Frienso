@@ -7,8 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <MessageUI/MessageUI.h>
 
-@interface PanicViewCtrlr : UIViewController<MFMessageComposeViewControllerDelegate>
+@interface PanicViewCtrlr : UIViewController <UITableViewDelegate,UITableViewDataSource>
 
 @end

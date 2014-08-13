@@ -83,8 +83,32 @@
 }
 - (void) syncUWatchToCoreFriends
 {
+    
     NSLog(@"**** syncUWatchToCoreFriends ****");
     
+    PFQuery *query = [PFQuery queryWithClassName:@"CoreFriendRequest"];
+    [query includeKey:@"recipient"];
+    [query includeKey:@"sender"];
+    [query orderByDescending:@"status"];
+    [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+        if (!error) {   // The find succeeded.
+            for (PFObject *object in objects){
+                NSString *senderEmailStr = [[object objectForKey:@"sender"] username];
+                if ([[[object objectForKey:@"recipient"] username] isEqualToString:[[PFUser currentUser] username]] && senderEmailStr != NULL )
+                {
+                    NSLog(@"incoming req from: %@", [[object objectForKey:@"sender"] username]);
+                    // Check if user user is unique in my Friends list
+                    if ([self isFriendUnique:[object objectForKey:@"sender"]]){
+                        NSLog(@"If not in my list, add to friends list: %@", [[object objectForKey:@"sender"] username]);
+                        //[self addFriendToCoreFriends:[object objectForKey:@"sender"]];
+                        [self addFriensoUserToCDCoreFriends:[object objectForKey:@"sender"]];
+                    }
+                }
+            }
+        }
+    }];
+    
+    /*
     PFQuery *query = [PFQuery queryWithClassName:@"UserCoreFriends"];
     [query includeKey:@"user"];
     [query orderByDescending:@"createdAt"];
@@ -124,6 +148,7 @@
         }
 
     }];
+    */
 }
 
 #pragma mark - Helper Methods

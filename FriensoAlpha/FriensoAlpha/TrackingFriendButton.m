@@ -15,7 +15,7 @@
     self = [super initWithFrame:frame];
     if (self) {
         self.opaque = NO;
-        self.backgroundColor = [UIColor lightGrayColor];
+        //self.backgroundColor = [UIColor lightGrayColor];
         _hue = 0.5;
         _saturation = 0.5;
         _brightness = 0.5;

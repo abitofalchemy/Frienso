@@ -13,7 +13,7 @@
 #import "tstWatchingViewController.h"
 #import "FriensoResourcesTVC.h"
 #import "AboutFriensoViewController.h"
-#import "SearchViewController.h"
+//#import "SearchViewController.h"
 #import "FRStringImage.h"
 #import "FriensoOptionsButton.h"
 
@@ -170,10 +170,9 @@
                                                  animated:YES];
             break;
         }
-        /*case 4: {
+        /*case 4:
             [self performSegueWithIdentifier:@"friensoMap" sender:self];
-            break;
-        }*/
+            break;*/
         default:
             break;
     }

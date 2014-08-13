@@ -98,7 +98,7 @@
     
 //    [[NSUserDefaults standardUserDefaults] setObject:dic forKey:@"watchObjId"];
 //    [[NSUserDefaults standardUserDefaults] synchronize];
-//    
+    
 }
 -(BOOL) activeAlertCheck {
     NSDictionary *dic = [[NSUserDefaults standardUserDefaults] objectForKey:@"alertDic"];
@@ -132,18 +132,29 @@
 }
 -(void) sendToCloud
 {
+    // If the following ACL settins are required: Set the proper ACLs
+    PFACL *pAcl = [PFACL ACLWithUser:[PFUser currentUser]];
+    [pAcl setPublicReadAccess:YES];
+    [PFACL setDefaultACL:pAcl withAccessForCurrentUser:YES];
+    
     PFObject *userEvent = [PFObject objectWithClassName:@"UserEvent" ];
-    [userEvent setObject:@"watch" forKey:@"eventType"];
+    [userEvent setObject:self.alertType forKey:@"eventType"];
     [userEvent setObject:[NSNumber numberWithBool:YES] forKey:@"eventActive"];
     [userEvent setObject:[PFUser currentUser] forKey:@"friensoUser"];
+    [userEvent setACL:pAcl];
     [userEvent saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
         if (!succeeded) {
             
             
             NSLog(@"! error adding userEvent to cloud-store: %@", error);
         } else {
-            NSLog(@"Success");
-            [[NSUserDefaults standardUserDefaults] setObject:userEvent.objectId forKey:@"watchObjId"];
+            NSLog(@"Event logged  on cloud-store");
+            if ([self.alertType isEqualToString:@"watchMe"])
+                [[NSUserDefaults standardUserDefaults] setObject:userEvent.objectId forKey:@"watchObjId"];
+            else {
+                [[NSUserDefaults standardUserDefaults] setObject:userEvent.objectId forKey:@"helpObjId"];
+                
+            }
             [[NSUserDefaults standardUserDefaults] synchronize];
         }
     }];
@@ -177,8 +188,12 @@
 }
 - (void) disableEvent
 {
+
     PFQuery *query = [PFQuery queryWithClassName:@"UserEvent"];
-    [query whereKey:@"objectId" equalTo:[[NSUserDefaults standardUserDefaults] objectForKey:@"watchObjId"]];
+    if ([self.alertType isEqualToString:@"watchMe"])
+        [query whereKey:@"objectId" equalTo:[[NSUserDefaults standardUserDefaults] objectForKey:@"watchObjId"]];
+    else
+        [query whereKey:@"objectId" equalTo:[[NSUserDefaults standardUserDefaults] objectForKey:@"helpObjId"]];
     [query getFirstObjectInBackgroundWithBlock:^(PFObject * userEvent, NSError *error) {
         if (!error) {
             // Found UserStats
@@ -196,7 +211,34 @@
     [comps setHour: [comps hour]+1]; // Here you may also need to check if it's the last hour of the day
     return [calendar dateFromComponents:comps];
 }
-#pragma mark
+- (void) logEventOnFriensoEvent:(NSString*)objId
+{
+    NSLog(@"--------- logEvent to FriensoEvent: %@", objId);
+    FriensoAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+    
+    NSManagedObjectContext *managedObjectContext = appDelegate.managedObjectContext;
+    
+    FriensoEvent *firstFriensoEvent = [NSEntityDescription insertNewObjectForEntityForName:@"FriensoEvent"
+                                                                    inManagedObjectContext:managedObjectContext];
+    /** What the right way to manage geolocation points between coredata and parse.com? **/
+    if (firstFriensoEvent != nil){
+        
+        firstFriensoEvent.eventTitle     = [NSString stringWithFormat:@"%@ event triggered!", self.alertType];
+        //firstFriensoEvent.eventLocation  = [NSString stringWithFormat:@"%f,%f", self.coordinate.latitude, self.coordinate.longitude];
+        firstFriensoEvent.eventContact   = [[NSUserDefaults standardUserDefaults] objectForKey:@"adminID"];
+        firstFriensoEvent.eventObjId     = objId;
+        firstFriensoEvent.eventCreated   = [NSDate date];
+        firstFriensoEvent.eventModified  = [NSDate date];
+        
+        NSError *savingError = nil;
+        if([managedObjectContext save:&savingError]) {
+            NSLog(@"%@ event stored locally",self.alertType);
+        } else { NSLog(@"Failed to save the context. Error = %@", savingError); }
+    } else {
+        NSLog(@"Failed to create a new event.");
+    }
+    
+}
 #pragma mark - Helper methods
 - (NSString *) stripStringOfUnwantedChars:(NSString *)phoneNumber {
    NSString *cleanedString = [[phoneNumber componentsSeparatedByCharactersInSet:[[NSCharacterSet characterSetWithCharactersInString:@"0123456789"] invertedSet]] componentsJoinedByString:@""];

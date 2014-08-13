@@ -5,34 +5,108 @@ Frienso iOS Alpha
 
 Version History
 ---------------
-* ver 1.5 build 6Y  07Jul14/NY: Group SMS Sending to core friends implemented from PanicViewController. Need to add a location to the SMS message. Calling NDSP Phone after SMS sending or before needs to be decided. 
+
+* ver 1.6 build 94
+    06Aug15/SA: Fixed the issue of computing current distance from me to coreFriend
+    But add a location icon to the profile sneak peek to actually access it.
 
 
-* ver 1.5 build 6X  25Jun14/SA: Minor tweaks to the Friens & Contacts list view, disclosure detail button
+* ver 1.6 build 93
+    05Aug14/SA: Fixed the problem of using and changing the avatar
+                Fix friends subtitle to show distance 
+                
+    04Aug14/SA: Fixing problem with updates of friends [X]
+                Check that when registering the phone # is stripped when sent to cloud [X]
+                Check that registering new user works ok [X]
+
+* ver 1.6 build 91
+    01Aug14/SA: Fixed the issue issue of the friends btn being pressed when in the CoreCircle edit; could not easily hide the toolbar (weird) but it's disabled now except for when in on the homeview
+    30Jul14/SA: fix hide the friends btn when in friends vc. 
+
+
+
+* ver 1.6 build 86
+    29Jul14/SA: Merged changes with Nikhils
+    22Jul14/SA: Working on adding avatars & accessing the profile info much easier
+    TODO: Need to fix 'back button' after HelpMeNow is triggered, needs to cance the alarm.
+    
+* ver 1.6 build 84
+    21Jul14/NY: - Group SMS sending with location and reverse geocoded address on pressing Help Me Now and Watch Me Switches implemented.
+
+* ver 1.6 build 83
+    21Jul14/SA: Optiming the login-view to avoid problems where txt is lost if one scrolls up;
+    - added my current location pin to the map
+    - After HelpMeNow is triggered, the map selfupdates to show your CF bubbles.
+    - Added formatting to login-view text input for Phone #, added a check to make sure
+    the user is entering a complete phone#.
+
+* ver 1.6 build 81
+    20Jul14/SA: Fixed accessing the pending requests and adding them to the mapview.
+    - Handle request status if the user touches the pending bubbles
+    - Problem arose with: "[self.friendsLocationArray insertObject:..." changed it to addObject
+
+* ver 1.6 build 79+
+    18Jul14/SA: Simplified the way we do the HelpMe and WatchMe alerts.  Converted the button
+    for HelpMe to a Switch.
+    
+    Checking the signing profile to make sure that PNs are working.
+
+* ver 1.6 build 78
+    17Jul14/SA: Purged the Parse database, added checks to ensure that if an event is turned OFF
+    locally, but its state on the cloud doesn't get flipped correctly, it retries and takes
+    as ground truth the state on the phone of the user that triggers it.
+
+    Looking at friend requests crashes.
+    
+* ver 1.6 build 77
+    Tweaks to the Welcome View and this is the most solid version of Frienso we have to date.
+
+
+* ver 1.5 build 76
+    16Jul14/SA: Fixed issues with login and registering a new account; fixed problems with 
+    synching an existing coreCircle; and made sure that the coreCircle is correctly updated/
+    copied to the CoreData Friends/Contacts List.
+    Tested behavior for WatchMe and HelpMe alerts!
+
+    15Jul14/SA: Fixing the sync from parse using Udayan's code in Profile/Core Friends
+    copyCoreCircleToCoreFriendsEntity is fixed to create and edit the core list more accurately
+
+* ver 1.5 build 74
+
+    14Jul14/SA New distribution build 
+
+    13Jul14/SA: Behavior when HelpMeNow is triggered is now working, this means triggering a helpMeNow
+    request shows a timer VC and after that can be canceled if needed, or if it times out PN are sent
+    to CoreFriends, then if the user goes back to the home view, the user can choose to contact friends
+    and or turn off the HelpMeNow alert/alarm.
+
+    13Jul14/SA: Fixed the problem of a null phone number when contacting your friends in the
+    FriensoQuickCircle VC.
+* ver 1.5 build 71
+
+    09Jul14/SA: Working redesign after HelpMeNow notifications are sent.
+    10Jul14/SA: Need to make sure group SMS is working on the Help now vc
+
+    25Jun14/SA: Minor tweaks to the Friens & Contacts list view, disclosure detail button
                     shows emergency contact ph#, tapping on the cell ask if you want to dial or SMS
-                    
-                    25Jun14/SA: Removed the text from the Drawer to show if there are pending requests, now
+                        
+    25Jun14/SA: Removed the text from the Drawer to show if there are pending requests, now
                     it's just a dot that changes blue if pending requests and grayed out if 0 (Chad's
                     suggestion, which I like and wanted to do for a while now any way).
 
 
-                    25Jun14/SA: When a new user registers the coreCircle isn't available on the Friends
+    25Jun14/SA: When a new user registers the coreCircle isn't available on the Friends
                     list, so I made sure that when the user hits to 'back' button to end the coreCircle
                     creation -- the friends are added to the CoreFriends entity in coredata.
 
-					30Jun14/SA: Modified the welcome view that provides a brief introduction to the app
-					when first installed.
-
-                    ToDo: When a user initiates a HelpMeNow event the user should see the location of his/her 
-                    friends.  While it goes agains't the request/accept/reject theme these requests require
-                    access one's network location to make the best decision/choices possible with all 
-                    possible information available.
+    30Jun14/SA: Modified the welcome view that provides a brief introduction to the app
+                    when first installed.
                     
-                    03Jun14/SA: Fixed the way the welcome view is integrated at installation time;
-                    - {working on} Adding more interaction to the mapview pins
+    03Jun14/SA: Fixed the way the welcome view is integrated at installation time;
+                    - {basic done} Adding more interaction to the mapview pins;
 					
 
-* ver 1.5 build 61 - Moved bubbles back to the mapView (but will only show one for a friend with an ongoing
+* ver 1.5 build 61  - Moved bubbles back to the mapView (but will only show one for a friend with an ongoing
                     alert/event)
                     - Added a fullscreen button to the mapView; button is toggling the mapview between default
                     and FS.
@@ -131,11 +205,13 @@ Version History
 
 Working On
 ----------
+* SA: subtitle location
 * SA: WatchMe switch triggers (internal alarms) and push notifications
       - Remind the user that this event is active (bring attention to an active state)
 
 * SA: Managing and maintaining 'Requests'; at install accepting more than 1 causes problems & crash
       - Test case: 
+* SA: QuickCircleVC fetch list of incoming Core Friend requests & add to Core Data
 
 * SA: Fix bugs
         (1) fix detecting if WatchMe events come from a user in you friends list
@@ -148,6 +224,10 @@ Working On
 
 ToDo
 ----
+* When a user initiates a HelpMeNow event the user should see the location of his/her
+                    friends.  While it goes agains't the request/accept/reject theme these requests require
+                    access one's network location to make the best decision/choices possible with all 
+                    possible information available.
 * {SA}{bug} 19Jun14/SA: Friends requests accept caused a crash
 * {NY} Finish panic view controller
 * Async update locations from cloud {??}
@@ -164,7 +244,7 @@ ToDo
 
 * Handle Parse time-outs
     Trap parse calls to the network - network outage
-* Input validation for user profile editing
+* Input validation for user profile editing; and login (needs to be full proof)
 * Document the project's app development
 
 Tasks Done / Project Log:
@@ -216,11 +296,19 @@ Tasks Done / Project Log:
 * { Done } Fix database duplicates
 * { Done } Verify to call the right password
 
+Notes on Distributing App Ad-Hoc
+--------------------------------
+* Provisioning Profile
+  ** Debug friensopushdev
+  ** Release  ios team provisioning: com.abitofalchemy.friensopush
+  
+
 Referenced Work
 ----------------
 * Github
   ** https://help.github.com/articles/syncing-a-fork
 * Fonts
+  ** http://stackoverflow.com/questions/18070130/shifting-the-text-of-uinavigationbar-title-left-or-right
 * Images
   # http://wpwide.com/paris-france-birds-eye-view-sunshine-wide-hd-wallpaper/
   # http://dudye.com/futuristic-aerial-metro-station-in-miami

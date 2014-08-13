@@ -34,6 +34,7 @@
 @property(nonatomic, assign) BOOL retVal;
 @property(nonatomic, retain) IBOutlet UISwitch *keepMeLoggedin;
 @property (nonatomic, retain) CLLocationManager *locationManager;
+@property (nonatomic, strong) NSMutableArray *coreCircleRequestStatus;
 
 
 - (void) reloadSection:(NSInteger)section withRowAnimation:(UITableViewRowAnimation)rowAnimation;
