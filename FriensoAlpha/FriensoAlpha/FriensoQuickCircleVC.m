@@ -211,11 +211,13 @@ static NSString *coreFriendsCell = @"coreFriendsCell";
                     CLLocation *locB = [[CLLocation alloc] initWithLatitude:myPointLoc.latitude
                                                                   longitude:myPointLoc.longitude];
                     
-                    CLLocationDistance distance = [locA distanceFromLocation:locB] * 0.000621371; // convert to miles
-                    //NSLog(@"  %.5f,%.5f",myPointLoc.latitude, myPointLoc.longitude);
-                    //NSLog(@"  location: %.2f",distance);
+                    CLLocationDistance distance = [locA distanceFromLocation:locB] * 0.000621371; //
+                    // Location last update
+                    NSString* dateTimeAgo = [self getTimestampForDate:parseUser.updatedAt];
                     
-                    cell.detailTextLabel.text = [NSString stringWithFormat:@"%.1f mi",distance];
+                    
+                    cell.detailTextLabel.text = [NSString stringWithFormat:@"%.1f mi (%@)",distance,
+                                                 dateTimeAgo];
                     
                     /** Adding currentLocation to coreData causes Parse error code 154 on the console
                      ** we need to look into some how
@@ -485,6 +487,33 @@ static NSString *coreFriendsCell = @"coreFriendsCell";
 }
 
 #pragma mark - Helper Methods
+//- (NSString *)relativeDateStringForDate:(NSDate *)date
+//{
+//    NSCalendarUnit units = NSDayCalendarUnit | NSWeekOfYearCalendarUnit |
+//    NSMonthCalendarUnit | NSYearCalendarUnit;
+//    
+//    // if `date` is before "now" (i.e. in the past) then the components will be positive
+//    NSDateComponents *components = [[NSCalendar currentCalendar] components:units
+//                                                                   fromDate:date
+//                                                                     toDate:[NSDate date]
+//                                                                    options:0];
+//    
+//    if (components.year > 0) {
+//        return [NSString stringWithFormat:@"%ld years ago", (long)components.year];
+//    } else if (components.month > 0) {
+//        return [NSString stringWithFormat:@"%ld months ago", (long)components.month];
+//    } else if (components.weekOfYear > 0) {
+//        return [NSString stringWithFormat:@"%ld weeks ago", (long)components.weekOfYear];
+//    } else if (components.day > 0) {
+//        if (components.day > 1) {
+//            return [NSString stringWithFormat:@"%ld days ago", (long)components.day];
+//        } else {
+//            return @"Yesterday";
+//        }
+//    } else {
+//        return @"Today";
+//    }
+//}
 -(NSString *) stripStringOfUnwantedChars:(NSString *)phoneNumber {
     NSString *cleanedString = [[phoneNumber componentsSeparatedByCharactersInSet:[[NSCharacterSet characterSetWithCharactersInString:@"0123456789"] invertedSet]] componentsJoinedByString:@""];
     
@@ -562,6 +591,54 @@ static NSString *coreFriendsCell = @"coreFriendsCell";
 
                          } completion:nil];
  ***/
+}
+- (NSString*) getTimestampForDate:(NSDate*)date{
+    
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setAMSymbol:@"am"];
+    [dateFormatter setPMSymbol:@"pm"];
+    
+    NSString* timestamp;
+    int timeIntervalInHours = (int)[[NSDate date] timeIntervalSinceDate:date] /3600;
+    
+    int timeIntervalInMinutes = [[NSDate date] timeIntervalSinceDate:date] /60;
+    
+    if (timeIntervalInMinutes <= 2){//less than 2 minutes old
+        
+        timestamp = @"Just Now";
+        
+    }else if(timeIntervalInMinutes < 15){//less than 15 minutes old
+        
+        timestamp = @"A few minutes ago";
+        
+    }else if(timeIntervalInHours < 24){//less than 1 day
+        
+        [dateFormatter setDateFormat:@"h:mm a"];
+        timestamp = [NSString stringWithFormat:@"Today at %@",[dateFormatter stringFromDate:date]];
+        
+    }else if (timeIntervalInHours < 48){//less than 2 days
+        
+        [dateFormatter setDateFormat:@"h:mm a"];
+        timestamp = [NSString stringWithFormat:@"Yesterday at %@",[dateFormatter stringFromDate:date]];
+        
+    }else if (timeIntervalInHours < 168){//less than  a week
+        
+        [dateFormatter setDateFormat:@"EEEE"];
+        timestamp = [NSString stringWithFormat:@"%@",[dateFormatter stringFromDate:date]];
+        
+    }else if (timeIntervalInHours < 8765){//less than a year
+        
+        [dateFormatter setDateFormat:@"d MMMM"];
+        timestamp = [NSString stringWithFormat:@"%@",[dateFormatter stringFromDate:date]];
+        
+    }else{//older than a year
+        
+        [dateFormatter setDateFormat:@"d MMMM yyyy"];
+        timestamp = [NSString stringWithFormat:@"%@",[dateFormatter stringFromDate:date]];
+        
+    }
+    
+    return timestamp;
 }
 @end
 /** References:

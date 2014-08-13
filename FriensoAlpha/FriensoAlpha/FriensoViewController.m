@@ -1066,6 +1066,24 @@ enum PinAnnotationTypeTag {
     self.mapView.delegate = self;
     [self.view addSubview:self.mapView];
     
+    // Adding a compass needle to find me
+    UIButton *compassNeedleBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [compassNeedleBtn addTarget:self action:@selector(initializeMapView)
+                 forControlEvents:UIControlEventTouchUpInside];
+    [compassNeedleBtn setTitle:@"➤"/*@""*/ forState:UIControlStateNormal];
+    [compassNeedleBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [compassNeedleBtn.titleLabel setFont:[UIFont fontWithName:@"AppleSDGothicNeo-Medium" size:18.0]];
+    compassNeedleBtn.titleLabel.textAlignment = NSTextAlignmentCenter;
+    compassNeedleBtn.layer.shadowColor   = [UIColor blackColor].CGColor;
+    compassNeedleBtn.layer.shadowOffset  = CGSizeMake(1.5f, 1.5f);
+    compassNeedleBtn.layer.shadowOpacity = 1.0;
+    compassNeedleBtn.layer.shadowRadius  = 4.0;
+    [compassNeedleBtn sizeToFit];
+    [compassNeedleBtn setCenter:CGPointMake(self.view.center.x*1.85,self.mapViewHeight*.80)];
+    [compassNeedleBtn setTransform:CGAffineTransformMakeRotation(-M_PI * 0.33)];
+    [self.mapView addSubview:compassNeedleBtn];
+    
+    
     // Adding a refresh mapview btn
     UIButton *refreshMavpViewBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     [refreshMavpViewBtn addTarget:self action:@selector(refreshMapViewAction:)
@@ -1078,10 +1096,6 @@ enum PinAnnotationTypeTag {
     refreshMavpViewBtn.layer.shadowOpacity = 1.0;
     refreshMavpViewBtn.layer.shadowRadius  = 4.0;
     [refreshMavpViewBtn sizeToFit];
-    //    [self.fullScreenBtn setBackgroundColor:[UIColor colorWithWhite:1.0 alpha:.5]];
-    //    self.fullScreenBtn.layer.borderWidth = 0.5f;
-    //    self.fullScreenBtn.layer.cornerRadius = self.fullScreenBtn.frame.size.height*.20;
-    //    self.fullScreenBtn.layer.borderColor = [UIColor blackColor].CGColor;
     [refreshMavpViewBtn setCenter:CGPointMake(refreshMavpViewBtn.center.x *1.3,
                                               refreshMavpViewBtn.center.y *1.3) ];
     [self.mapView addSubview:refreshMavpViewBtn];
@@ -1098,10 +1112,6 @@ enum PinAnnotationTypeTag {
     self.fullScreenBtn.layer.shadowOpacity = 1.0;
     self.fullScreenBtn.layer.shadowRadius  = 4.0;
     [self.fullScreenBtn sizeToFit];
-//    [self.fullScreenBtn setBackgroundColor:[UIColor colorWithWhite:1.0 alpha:.5]];
-//    self.fullScreenBtn.layer.borderWidth = 0.5f;
-//    self.fullScreenBtn.layer.cornerRadius = self.fullScreenBtn.frame.size.height*.20;
-//    self.fullScreenBtn.layer.borderColor = [UIColor blackColor].CGColor;
     [self.fullScreenBtn setCenter:CGPointMake(self.mapView.frame.size.width-_fullScreenBtn.center.x * 2.0,
                                          self.mapView.frame.size.height- _fullScreenBtn.center.y *1.2 ) ];
     [self.mapView addSubview:self.fullScreenBtn];
@@ -1710,9 +1720,6 @@ enum PinAnnotationTypeTag {
 }
 
 -(void)navigationCtrlrSingleTap:(id) sender {
-    
-    [self initializeMapView];
-    
     //NSLog(@"Tapped: %.2f", self.navigationController.navigationBar.frame.size.height);
     self.profileView = [[ProfileSneakPeekView alloc] initWithFrame:self.navigationController.navigationBar.frame];
     [self.profileView setUserEmailString:[[NSUserDefaults standardUserDefaults] objectForKey:@"adminID"]
@@ -2401,19 +2408,9 @@ calloutAccessoryControlTapped:(UIControl *)control
     /* friendLocInteraction:
     ** Is the action triggered when user touches the button overlay on the mapview.
     ** */
-    //if (DBG) NSLog(@"...friendLocInteraction");
-//    if (DBG) NSLog(@"[tag:%ld], %@", [sender tag],self.friendsLocationArray);// objectAtIndex:sender.tag]);
-//    if (DBG) NSLog(@"watchingCoFrArray:%ld", [self.watchingCoFrArray count]);
-//    if (DBG) NSLog(@"%@", self.watchingCoFrArray);
-    
-    //NSString *coordinateStr =[self.friendsLocationArray objectAtIndex:sender.tag];
+   
     PFGeoPoint *coordinatesPoint = [self.friendsLocationArray objectAtIndex:sender.tag];
-    
-    //CGFloat geoLatitude = [[coordinateStr componentsSeparatedByString:@","][0] doubleValue];
-    //CGFloat geoLongitude = [[coordinateStr componentsSeparatedByString:@","][1] doubleValue];
-
-    [self.mapView setRegion:MKCoordinateRegionMake(CLLocationCoordinate2DMake([coordinatesPoint latitude], [coordinatesPoint longitude]),
-                                                   MKCoordinateSpanMake(0.01, 0.01) )];
+    [self.mapView setRegion:MKCoordinateRegionMake(CLLocationCoordinate2DMake([coordinatesPoint latitude], [coordinatesPoint longitude]),MKCoordinateSpanMake(0.01, 0.01) )];
 //    NSArray *array = @[sender.titleLabel.text,                               // Initials
 //                       [coordinateStr componentsSeparatedByString:@","][0],  // latitude
 //                       [coordinateStr componentsSeparatedByString:@","][1]]; // longitude
@@ -2432,8 +2429,9 @@ calloutAccessoryControlTapped:(UIControl *)control
     GeoCDPointAnnotation *geoCDPointAnn = [[GeoCDPointAnnotation alloc] initWithObject:array];
     [self.mapView addAnnotation:geoCDPointAnn];
     
-#warning Insert an annotation using stored loc info fromCoreData, then update if network availability
-    
+    /*-*-
+    warning Insert an annotation using stored loc info fromCoreData, then update if network availability
+     *-*- */
     /** location for sender.tag **/
 
     
