@@ -355,8 +355,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1415"
             endingLineNumber = "1415"
-            landmarkName = "-actionAddFriensoEvent:"
-            landmarkType = "5">
+            landmarkName = "@implementation FriensoViewController"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -419,7 +419,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1865"
             endingLineNumber = "1865"
-            landmarkName = "-updateLocations"
+            landmarkName = "-friendLocInteraction:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -435,7 +435,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "957"
             endingLineNumber = "957"
-            landmarkName = "-viewDidLoad"
+            landmarkName = "-setupNavigationBarImage"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
