@@ -155,7 +155,7 @@
 		1827931418BE06750056C849 /* FriensoAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FriensoAppDelegate.m; sourceTree = "<group>"; };
 		1827931718BE06750056C849 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		1827931918BE06750056C849 /* FriensoViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FriensoViewController.h; sourceTree = "<group>"; };
-		1827931A18BE06750056C849 /* FriensoViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FriensoViewController.m; sourceTree = "<group>"; };
+		1827931A18BE06750056C849 /* FriensoViewController.m */ = {isa = PBXFileReference; indentWidth = 5; lastKnownFileType = sourcecode.c.objc; path = FriensoViewController.m; sourceTree = "<group>"; };
 		1827931C18BE06750056C849 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		1827932218BE06750056C849 /* FriensoAlphaTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FriensoAlphaTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		1827932318BE06750056C849 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };

@@ -691,27 +691,36 @@ enum PinAnnotationTypeTag {
 -(void) mapViewFSToggle:(UIButton *) sender {
     [self animateThisButton:sender];
     if (self.mapView.frame.size.height < self.view.bounds.size.height){
-        [self.mapView setFrame:self.view.bounds];
-        [self.fullScreenBtn setTitle:@"⇱"/*@""*/ forState:UIControlStateNormal];
-        [self.fullScreenBtn sizeToFit];
-        [self.fullScreenBtn.titleLabel setTextColor:[UIColor blackColor]];
-        [self.fullScreenBtn setCenter:CGPointMake(self.fullScreenBtn.center.x,40.0)];
-        [self.tableView setHidden:YES];
-        [self openCloseDrawer];
-        [self.scrollView setCenter:CGPointMake(self.view.center.x, self.navigationController.toolbar.frame.origin.y - self.scrollView.frame.size.height*1.5)];
+         [UIView animateWithDuration:0.5 animations:^{
+             [self.mapView setFrame:self.view.bounds];
+             [sender setTransform:CGAffineTransformMakeRotation(-M_PI * 0)];
+             [sender setTransform:CGAffineTransformMakeRotation(-M_PI * 0.33)];
+              [self.tableView setHidden:YES];
+              [self.scrollView setCenter:CGPointMake(self.view.center.x, self.navigationController.toolbar.frame.origin.y - self.scrollView.frame.size.height*1.5)];
+
+        }];
+//        [self.fullScreenBtn setTitle:@"⇱"/*@""*/ forState:UIControlStateNormal];
+//        [self.fullScreenBtn sizeToFit];
+//        [self.fullScreenBtn.titleLabel setTextColor:[UIColor blackColor]];
+//        [self.fullScreenBtn setCenter:CGPointMake(self.fullScreenBtn.center.x,40.0)];
+//        [self openCloseDrawer];
+        
     } else { // fullscreen
         //[self.mapView setFrame:MAPVIEW_DEFAULT_BOUNDS];
-        [self.mapView setFrame:CGRectMake(0,0,self.view.frame.size.width, self.mapViewHeight)];
         
-        [self.fullScreenBtn setTitle:@"⇲"/*@""*/ forState:UIControlStateNormal];
-        [self.fullScreenBtn sizeToFit];
-        [self.fullScreenBtn setCenter:CGPointMake(_fullScreenBtn.center.x,
-                                                  self.mapView.frame.size.height -_fullScreenBtn.frame.size.height/2 * 1.2) ];
-        [self.fullScreenBtn.titleLabel setTextColor:[UIColor blackColor]];
-        [self.tableView setHidden:NO];
-        [self openCloseDrawer];
-        CGRect fullScreenRect=[[UIScreen mainScreen] applicationFrame];
-        [self.scrollView setCenter:CGPointMake(fullScreenRect.size.width/2.0, self.scrollViewY)];
+        [UIView animateWithDuration:0.5 animations:^{
+          [self.mapView setFrame:CGRectMake(0,0,self.view.frame.size.width, self.mapViewHeight)];
+          [sender setTransform:CGAffineTransformMakeRotation(-M_PI * 0.33)];
+          [sender setTransform:CGAffineTransformMakeRotation(-M_PI * 0)];
+          [self.tableView setHidden:NO];
+          CGRect fullScreenRect=[[UIScreen mainScreen] applicationFrame];
+          [self.scrollView setCenter:CGPointMake(fullScreenRect.size.width/2.0, self.scrollViewY)];
+        }];
+         
+//        [self.fullScreenBtn setCenter:CGPointMake(_fullScreenBtn.center.x,
+//                                                  self.mapView.frame.size.height -_fullScreenBtn.frame.size.height/2 * 1.2) ];
+//        [self.fullScreenBtn.titleLabel setTextColor:[UIColor blackColor]];
+//        [self openCloseDrawer];
         
     }
 }
@@ -1068,18 +1077,18 @@ enum PinAnnotationTypeTag {
     
     // Adding a compass needle to find me
     UIButton *compassNeedleBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    [compassNeedleBtn addTarget:self action:@selector(initializeMapView)
+    [compassNeedleBtn addTarget:self action:@selector(goToCurrentLocation:)
                  forControlEvents:UIControlEventTouchUpInside];
     [compassNeedleBtn setTitle:@"➤"/*@""*/ forState:UIControlStateNormal];
-    [compassNeedleBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [compassNeedleBtn setTitleColor:UIColorFromRGB(0x006bb6) forState:UIControlStateNormal];
     [compassNeedleBtn.titleLabel setFont:[UIFont fontWithName:@"AppleSDGothicNeo-Medium" size:18.0]];
     compassNeedleBtn.titleLabel.textAlignment = NSTextAlignmentCenter;
-    compassNeedleBtn.layer.shadowColor   = [UIColor blackColor].CGColor;
+    compassNeedleBtn.layer.shadowColor   = [UIColor whiteColor].CGColor;
     compassNeedleBtn.layer.shadowOffset  = CGSizeMake(1.5f, 1.5f);
     compassNeedleBtn.layer.shadowOpacity = 1.0;
     compassNeedleBtn.layer.shadowRadius  = 4.0;
     [compassNeedleBtn sizeToFit];
-    [compassNeedleBtn setCenter:CGPointMake(self.view.center.x*1.85,self.mapViewHeight*.80)];
+    [compassNeedleBtn setCenter:CGPointMake(self.view.center.x*1.85,self.mapViewHeight*.90)];
     [compassNeedleBtn setTransform:CGAffineTransformMakeRotation(-M_PI * 0.33)];
     [self.mapView addSubview:compassNeedleBtn];
     
@@ -1089,7 +1098,7 @@ enum PinAnnotationTypeTag {
     [refreshMavpViewBtn addTarget:self action:@selector(refreshMapViewAction:)
                  forControlEvents:UIControlEventTouchUpInside];
     [refreshMavpViewBtn setTitle:@"↺"/*@""*/ forState:UIControlStateNormal];
-    [refreshMavpViewBtn setTitleColor:[UIColor blueColor] forState:UIControlStateNormal];
+    [refreshMavpViewBtn setTitleColor:UIColorFromRGB(0x006bb6) forState:UIControlStateNormal];
     [refreshMavpViewBtn.titleLabel setFont:[UIFont fontWithName:@"AppleSDGothicNeo-Bold" size:32.0]];
     refreshMavpViewBtn.titleLabel.textAlignment = NSTextAlignmentCenter;
     refreshMavpViewBtn.layer.shadowOffset  = CGSizeMake(1.5f, 1.5f);
@@ -1104,16 +1113,17 @@ enum PinAnnotationTypeTag {
     self.fullScreenBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     [self.fullScreenBtn addTarget:self action:@selector(mapViewFSToggle:)
                  forControlEvents:UIControlEventTouchUpInside];
-    [self.fullScreenBtn setTitle:@"⇲"/*@""*/ forState:UIControlStateNormal];
-    [self.fullScreenBtn setTitleColor:[UIColor blueColor] forState:UIControlStateNormal];
+    [self.fullScreenBtn setTitle:@""/*⧈▣"*/ forState:UIControlStateNormal];
+    [self.fullScreenBtn setTitleColor:UIColorFromRGB(0x006bb6) forState:UIControlStateNormal];
     [self.fullScreenBtn.titleLabel setFont:[UIFont fontWithName:@"AppleSDGothicNeo-Bold" size:24.0]];
     self.fullScreenBtn.titleLabel.textAlignment = NSTextAlignmentCenter;
+    self.fullScreenBtn.layer.shadowColor   = [UIColor whiteColor].CGColor;
     self.fullScreenBtn.layer.shadowOffset  = CGSizeMake(1.5f, 1.5f);
     self.fullScreenBtn.layer.shadowOpacity = 1.0;
     self.fullScreenBtn.layer.shadowRadius  = 4.0;
     [self.fullScreenBtn sizeToFit];
-    [self.fullScreenBtn setCenter:CGPointMake(self.mapView.frame.size.width-_fullScreenBtn.center.x * 2.0,
-                                         self.mapView.frame.size.height- _fullScreenBtn.center.y *1.2 ) ];
+    [self.fullScreenBtn setCenter:CGPointMake(self.mapView.frame.size.width-_fullScreenBtn.center.x * 1.5,
+                                         self.mapView.frame.size.height * 0.10)];
     [self.mapView addSubview:self.fullScreenBtn];
     
     
@@ -1123,6 +1133,21 @@ enum PinAnnotationTypeTag {
         [self loginCurrentUserToCloudStore]; // login to cloud store
     }
 
+}
+- (void) goToCurrentLocation:(id)sender
+{
+    if ([sender isKindOfClass:[UIButton class]]) {
+        UIButton* myButton = (UIButton*)sender;
+        [self animateThisButton:myButton];
+        [UIView animateWithDuration:0.75 animations:^{
+            [myButton setTransform:CGAffineTransformMakeRotation(-M_PI)];
+            [myButton setTransform:CGAffineTransformMakeRotation(-M_PI * 0)];
+            [myButton setTransform:CGAffineTransformMakeRotation(-M_PI * 0.33)];
+            [self.locationManager startUpdatingLocation];
+            [self setInitialLocation:self.locationManager.location];
+            self.mapView.region = MKCoordinateRegionMake(self.location.coordinate, MKCoordinateSpanMake(0.05f, 0.05f));
+        }];
+    }
 }
 - (void) initializeMapView {
     [self.locationManager startUpdatingLocation];
@@ -1288,9 +1313,9 @@ enum PinAnnotationTypeTag {
     trackMeOnOff.layer.borderWidth =  1.0;
     trackMeOnOff.layer.borderColor = [UIColor whiteColor].CGColor;
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectZero];
-    [label setText:@"\u2316"];
-    [label setTextColor:[UIColor colorWithHue:.580555 saturation:0.31 brightness:0.90 alpha:0.5]];
-    [label setFont:[UIFont fontWithName:@"AppleSDGothicNeo-Thin" size:24.0]];
+     [label setTextColor:[UIColor blackColor]];  //]colorWithHue:.580555 saturation:0.31 brightness:0.90 alpha:0.5]];
+    [label setFont:[UIFont fontWithName:@"AppleSDGothicNeo-Regular" size:24.0]];
+    [label setText:@"\u2316"];//
     [label sizeToFit];
     [label setTag:100];
     [label setCenter:CGPointMake(label.center.x+4.0f, label.center.y)];

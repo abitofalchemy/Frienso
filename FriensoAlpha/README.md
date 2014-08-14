@@ -5,6 +5,9 @@ Frienso iOS Alpha
 
 Version History
 ---------------
+* ver 1.6 build 9x:
+    14Aug14/SA: Added a needle to the map to bring you back to your location. Re position the icons for
+    fullscreen.  Added the timestamp to the location in the Contacts view.
 
 * ver 1.6 build 94
     06Aug15/SA: Fixed the issue of computing current distance from me to coreFriend

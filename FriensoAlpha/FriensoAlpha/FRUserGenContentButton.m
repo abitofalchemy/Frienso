@@ -44,8 +44,6 @@
      CGContextMoveToPoint(context, 4,18); //start at this point
      CGContextAddLineToPoint(context, 23, 18); //draw to this point
      
-     
-     
      // and now draw the Path!
      CGContextStrokePath(context);
  }
