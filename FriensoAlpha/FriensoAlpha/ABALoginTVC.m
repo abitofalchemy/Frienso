@@ -109,7 +109,17 @@ static NSString * contactingServersForUpdate = @"Trying to get latest status fro
     [[NSUserDefaults standardUserDefaults] synchronize];
     
 }
-
+- (void) viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    
+    NSLog(@"+++++++++++++++++++++++  VIEW DID APPEAR ABALOGIN");
+    BOOL toHomeViewFlag = ([[NSUserDefaults standardUserDefaults] objectForKey:@"adminID"] != NULL);
+    toHomeViewFlag = (toHomeViewFlag && ([[NSUserDefaults standardUserDefaults] dictionaryForKey:@"CoreFriendsContactInfoDicKey"] != NULL) );
+    if ( toHomeViewFlag )
+        [self performSegueWithIdentifier:@"homeViewSegue" sender:self];
+    
+}
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
@@ -880,15 +890,15 @@ static NSString * contactingServersForUpdate = @"Trying to get latest status fro
         } else {
             if ([self userInParse]){
                 // login this user to parse
-                [self loginThisUserToParse:username.text withPassword:password.text andPhoneNumber:phoneNumber.text];         // already set?
+                [self loginThisUserToParse:username.text
+                              withPassword:password.text
+                            andPhoneNumber:phoneNumber.text];         // already set?
                 [self saveNewUserLocallyWithEmail:username.text plusPassword:password.text];
                 NSString *message = @"You are logged in as: ";
                 [self actionAddFriensoEvent:[message stringByAppendingString:username.text]
                                withSubtitle:@"Welcome back to Frienso."]; // FriensoEvent
                 
-                // sync core circle from Parse | skip to the Frienso Dashboard
-                if (DBG) NSLog(@"  --- Returning to Home View");
-                [self popDashboardVC];
+                
                 
             } else {
                 if (!DBG) NSLog(@"  [ Registering a new user ]");
@@ -952,7 +962,7 @@ static NSString * contactingServersForUpdate = @"Trying to get latest status fro
     [PFUser logInWithUsernameInBackground:userName password:userPass
                                     block:^(PFUser *user, NSError *error) {
                                         if (user) {
-                                            if (DBG) NSLog(@"[ Parse successful login ]"); // Do stuff
+                                            if (!DBG) NSLog(@"[ Parse successful login ]"); // Do stuff
                                             [user setObject:[self stripStringOfUnwantedChars:phoneNbr] forKey:@"phoneNumber"];
                                             [user saveInBackground];
                                             [self insertCurrentLocation:user];
@@ -990,6 +1000,11 @@ static NSString * contactingServersForUpdate = @"Trying to get latest status fro
                                             NSUserDefaults *userInLocal = [NSUserDefaults standardUserDefaults];
                                             [userInLocal setObject:@"2" forKey:@"existingUser"];
                                             [userInLocal synchronize];
+                                            
+                                            // sync core circle from Parse | skip to the Frienso Dashboard
+                                            if (!DBG) NSLog(@"  --- login user and leave LoginView");
+                                            [self popDashboardVC];
+                                            
                                         } else {
                                             if (DBG) NSLog(@"[ ERROR: Login failed | %@",error);// The login failed. Check error to see why.
                                         }
@@ -1008,8 +1023,10 @@ static NSString * contactingServersForUpdate = @"Trying to get latest status fro
                                             forKey:@"getStartedFlag"];
     
     [[NSUserDefaults standardUserDefaults] synchronize];
-    
-    [self dismissViewControllerAnimated:YES completion:nil];
+    if (STORYBOARD_CONF_II)
+        [self presentCoreCircleSetupAndCheckCloudVC];
+    else
+        [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (void) popCoreCircleSetupVC
@@ -1027,15 +1044,27 @@ static NSString * contactingServersForUpdate = @"Trying to get latest status fro
 }
 - (void) presentCoreCircleSetupAndCheckCloudVC
 {
-    UIStoryboard *mainStoryboard = [UIStoryboard storyboardWithName:@"Main"  bundle:nil];
-    NewCoreCircleTVC  *coreCircleController = (NewCoreCircleTVC*)[mainStoryboard instantiateViewControllerWithIdentifier: @"coreCircleView"];
-    coreCircleController.checkCloud = YES;
-    [self.navigationController pushViewController:coreCircleController animated:YES];
-    
+    if (STORYBOARD_CONF_II)
+        [self performSegueWithIdentifier:@"loginCoreCircle" sender:self];
+    else  {
+        UIStoryboard *mainStoryboard = [UIStoryboard storyboardWithName:@"Main"  bundle:nil];
+        NewCoreCircleTVC  *coreCircleController = (NewCoreCircleTVC*)[mainStoryboard instantiateViewControllerWithIdentifier: @"coreCircleView"];
+        coreCircleController.checkCloud = YES;
+        [self.navigationController pushViewController:coreCircleController animated:YES];
+    }
     //    [self presentViewController:coreCircleController animated:YES completion:nil];
     //    [self performSegueWithIdentifier:@"coreFriendsView" sender:self];
 }
-
+- (void) prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    if([[segue identifier] isEqualToString:@"loginCoreCircle"]){
+        self.navigationItem.backBarButtonItem =
+        [[UIBarButtonItem alloc] initWithTitle:@"Done"
+                                         style:UIBarButtonItemStyleBordered
+                                        target:nil
+                                        action:nil];
+    }
+}
 #pragma mark - CoreData helper methods
 - (void) actionAddFriensoEvent:(NSString *) message withSubtitle:(NSString *)subtitle{
     if (DBG) NSLog(@"[ actionAddFriensoEvent ]");

@@ -18,3 +18,5 @@
 #define DLog(...) NSLog(__VA_ARGS__)
 #define iLog(...) NSLog(__VA_ARGS__)
 #define DBG NO
+#define STORYBOARD_CONF_II YES
+#define APP_SCREEN_FRAME [[UIScreen mainScreen] applicationFrame]

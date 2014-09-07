@@ -34,6 +34,7 @@ static NSString *coreFriendsCell = @"coreFriendsCell";
 - (NSManagedObjectContext *) managedObjectContext{
     
     FriensoAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+    
     return appDelegate.managedObjectContext;
     
 }
@@ -55,12 +56,15 @@ static NSString *coreFriendsCell = @"coreFriendsCell";
     [[UINavigationBar appearance] setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:[UIColor blackColor], NSForegroundColorAttributeName, [UIFont fontWithName:@"AppleSDGothicNeo-Light" size:16.0], NSFontAttributeName,nil]];
     self.navigationItem.title = @"Contacts";
     
-    [self.navigationController setToolbarHidden:YES];
+    [self.navigationController setToolbarHidden:NO];
     
-    [[[FRSyncFriendConnections alloc] init] syncUWatchToCoreFriends]; // Sync those uWatch
+    //[[[FRSyncFriendConnections alloc] init] syncUWatchToCoreFriends]; // Sync those uWatch
+    if ([[NSUserDefaults standardUserDefaults] objectForKey:@"amdinID"] == NULL )
+        [[[FRSyncFriendConnections alloc] init] addStaticEntriesToOptionsMenu];
     
     // At first install, cache univesity/college emergency contacts
-    [[[CloudEntityContacts alloc] initWithCampusDomain:@"nd.edu"] updateEmergencyContacts:@"inst,contact"];
+    if ([[NSUserDefaults standardUserDefaults] objectForKey:@"amdinID"] == NULL )
+        [[[CloudEntityContacts alloc] initWithCampusDomain:@"nd.edu"] updateEmergencyContacts:@"inst,contact"];
     
     //  Add new table view
     self.tableView = [[UITableView alloc] init];
@@ -90,7 +94,7 @@ static NSString *coreFriendsCell = @"coreFriendsCell";
     self.frc.delegate      = self;
     NSError *fetchingError = nil;
     if ([self.frc performFetch:&fetchingError]){
-        if (DBG) NSLog(@"CoreCircle fetched with nbr of categories:%lu",(unsigned long)[[self.frc sections] count]);
+        if (!DBG) NSLog(@"CoreCircle fetched with nbr of categories:%lu",(unsigned long)[[self.frc sections] count]);
     } else {
         if (DBG) NSLog(@"Failed to fetch.");
     }
@@ -146,6 +150,7 @@ static NSString *coreFriendsCell = @"coreFriendsCell";
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
     NSInteger sectionNbr = [[self.frc sections] count];
+    NSLog(@"Number of sections: %ld", (long)sectionNbr);
     return sectionNbr;
 }
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
@@ -157,15 +162,8 @@ static NSString *coreFriendsCell = @"coreFriendsCell";
 // handling the sections for these data
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
     id <NSFetchedResultsSectionInfo> sectionInfo = [[self.frc sections] objectAtIndex:section];
-    // Temporary fix
-    /*if ([[sectionInfo name] isEqualToString:@"iCore Friends"])
-        return @"Core Friends";
-    else if ([[sectionInfo name] isEqualToString:@"WatchCircle"])
-        return @"Friends";
-    else
-        return @"Emergency";
-    */
     return [sectionInfo name];
+
 }
 - (NSArray *)sectionIndexTitlesForTableView:(UITableView *)tableView {
     return [self.frc sectionIndexTitles];
@@ -246,15 +244,20 @@ static NSString *coreFriendsCell = @"coreFriendsCell";
         cell.imageView.image = [image imageWithString:@"☏"
                                                  font:[UIFont fontWithName:@"AppleSDGothicNeo-Thin" size:22.0]
                                                  size:CGSizeMake(34, 34)];
+    } else if ([friend.coreType isEqualToString:@"Profile"]) {
+        cell.textLabel.text = friend.coreFirstName;
+        FRStringImage *image = [[FRStringImage alloc] init];
+        cell.imageView.image = [image imageWithString:@"☏"
+                                                 font:[UIFont fontWithName:@"AppleSDGothicNeo-Thin" size:22.0]
+                                                 size:CGSizeMake(34, 34)];
+    
     } else
         cell.textLabel.text = friend.coreTitle;
     
     cell.textLabel.font = [UIFont fontWithName:@"AppleSDGothicNeo-Medium" size:14.0];
-    //    cell.detailTextLabel.text = [NSString stringWithFormat:@"%@",(friend.corePhone == NULL) ? @"..." : friend.corePhone];
     cell.backgroundColor = [UIColor clearColor];
     cell.textLabel.textColor = [UIColor blackColor];
     cell.detailTextLabel.textColor  = [UIColor blueColor];
-    
     
     UIButton *smsBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     [smsBtn setTintColor:[UIColor blueColor]];

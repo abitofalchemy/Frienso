@@ -16,6 +16,6 @@
 - (id) init;
 - (void) syncUWatchToCoreFriends;
 - (void) listWatchCoreFriends;
-//- (void) listWatchCoreFriendsForTableView:(UITableView *)table_view;
+- (void) addStaticEntriesToOptionsMenu;
 
 @end

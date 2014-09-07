@@ -68,11 +68,11 @@ int activeCoreFriends = 0;
     self.navigationItem.title = @"Core Circle";
     
     
-    self.coreCircleContacts = [[NSMutableArray alloc] init]; //stores phone #s
-    self.coreCircleRequestStatus = [[NSMutableArray alloc] init ]; //stores status of the requests
-    self.coreCircleOfFriends =[[NSMutableArray alloc] init]; //stores the name
-    editedCoreList = [[NSMutableArray alloc] init];
-    
+    self.coreCircleContacts     = [[NSMutableArray alloc] init]; //stores phone #s
+    self.coreCircleRequestStatus= [[NSMutableArray alloc] init ]; //stores status of the requests
+    self.coreCircleOfFriends    = [[NSMutableArray alloc] init]; //stores the name
+    editedCoreList              = [[NSMutableArray alloc] init];
+
     if ([[NSUserDefaults standardUserDefaults] boolForKey:@"newUserFlag"])
         [self setCoreCircleWithBlanks];
     else
@@ -103,7 +103,7 @@ int activeCoreFriends = 0;
     if ([self.navigationController.viewControllers indexOfObject:self]==NSNotFound) {
         [self copyCoreCircleToCoreFriendsEntity]; // enables user to interact with contacts immediately
         [self.navigationController setToolbarHidden:NO animated:YES];
-        
+        [self dismissViewControllerAnimated:YES completion:nil];
     }
 }
 
@@ -245,17 +245,19 @@ int activeCoreFriends = 0;
 }
 -(void) updateLocalArray
 {
-    //if (DBG) NSLog(@"--- updateLocalArray ");
-    //[self showCoreCircle];
+    /********************************************************************************
+    *** updateLocalArray asumes that we have successfully logged in user to parse ***
+    *********************************************************************************/
+    
+    if (!DBG) NSLog(@"... updateLocalArray ");
+
     activeCoreFriends = 0;
     for (int i = 0 ; i < MAX_CORE_FRIENDS; i++) {
         NSString * name = [NSString stringWithFormat:@"Core Friend %d",i+1];
         [self.coreCircleOfFriends addObject:name];
         [self.coreCircleContacts addObject:@""]; // we use this to check if the contact is valid to save.
         [self.coreCircleRequestStatus addObject:@"Click to select a core friend from contacts"];
-       // if (DBG) NSLog(@"Added to Array %d",i);
     }
-    
     
     //read from cache
     [self updateFromUserDefaults];
@@ -279,8 +281,8 @@ int activeCoreFriends = 0;
                         if (DBG) NSLog(@"Atleast %d  core friends found in frienso",MAX_CORE_FRIENDS);
                         break;
                     }
-                    PFObject * pfobject = object;
-                    PFUser * recipient = [pfobject objectForKey:@"recipient"];
+                    PFObject* pfobject = object;
+                    PFUser*  recipient = [pfobject objectForKey:@"recipient"];
                     NSString *recipientPhoneNumber = recipient[@"phoneNumber"];
                     NSString *response = [pfobject objectForKey:@"status"];
                     NSString *recipientName = [pfobject objectForKey:@"recipientName"];

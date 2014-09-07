@@ -386,6 +386,35 @@
     }
     return [NSArray arrayWithArray:retArray];
 }
+#pragma mark - Options to Options-menu
+-(void) addStaticEntriesToOptionsMenu
+{
+    FriensoAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+    NSManagedObjectContext *managedObjectContext = appDelegate.managedObjectContext;
+    CoreFriends  *cFriends = [NSEntityDescription insertNewObjectForEntityForName:@"CoreFriends"
+                                                           inManagedObjectContext:managedObjectContext];
+    
+    if (cFriends != nil){
+        NSArray* staticOptions = [[NSArray alloc] initWithObjects:@"Profile",@"School",@"Settings",@"About", nil];
+        for (NSString* staticOption in staticOptions) {
+        
+            cFriends.coreFirstName = staticOption;
+            cFriends.coreModified  = [NSDate date];
+            cFriends.coreTitle     = staticOption;
+            cFriends.coreType      = staticOption;
+            
+            NSError *savingError = nil;
+            if ([managedObjectContext save:&savingError]){
+                NSLog(@"Added %@", staticOption);
+            } else {
+                NSLog(@"Failed to save emergency contact.");
+            }
+        }
+    } else {
+        NSLog(@"Failed to create the new person object.");
+    }
+    
+}
 - (void) addFriendToCoreFriends:(PFUser*)friensoUser
 {
     FriensoAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];

@@ -4,10 +4,10 @@
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3733"/>
     </dependencies>
     <scenes>
-        <!--Frienso View Controller-->
+        <!--Home View Controller-->
         <scene sceneID="ufC-wZ-h7g">
             <objects>
-                <viewController storyboardIdentifier="dashboardVC" id="vXZ-lx-hvc" customClass="FriensoViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="dashboardVC" id="vXZ-lx-hvc" customClass="HomeViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="IwI-So-ZBx"/>
                         <viewControllerLayoutGuide type="bottom" id="HaJ-eh-hdt"/>
@@ -22,13 +22,8 @@
                     <connections>
                         <segue destination="36T-Um-eAF" kind="push" identifier="showMenuOptions" id="zYu-MN-4wW"/>
                         <segue destination="CWf-g8-ITg" kind="push" identifier="showMyCircle" id="BSs-oi-hx2"/>
-                        <segue destination="sRi-j8-7s4" kind="push" identifier="showFriesoMap" id="HKj-DF-MrE"/>
-                        <segue destination="6kB-Zb-JaQ" kind="push" identifier="panicEvent" id="n71-eB-Kl2"/>
                         <segue destination="3kY-1V-fX0" kind="push" identifier="instResources" id="Efz-ba-uWS"/>
-                        <segue destination="CWx-7e-tGl" kind="modal" identifier="welcomeView" id="85X-Sg-fyF"/>
-                        <segue destination="qAg-ru-ZcY" kind="modal" identifier="loginView" id="EUB-wM-2II"/>
-                        <segue destination="Ep9-nV-7ZB" kind="push" identifier="newCoreCircle" id="19Y-EC-EtC"/>
-                        <segue destination="STg-X3-r45" kind="push" identifier="userProfileSegue" id="IuN-mP-HCn"/>
+                        <segue destination="6kB-Zb-JaQ" kind="push" id="IPW-9e-cRc"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
@@ -63,7 +58,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="T3R-go-2GS" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-974" y="2096"/>
+            <point key="canvasLocation" x="-966" y="909"/>
         </scene>
         <!--Panic View Ctrlr-->
         <scene sceneID="rgz-kR-f24">
@@ -82,38 +77,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="gFv-so-a4W" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-294" y="754"/>
-        </scene>
-        <!--Search View Controller-->
-        <scene sceneID="sxn-B6-CNn">
-            <objects>
-                <viewController id="sRi-j8-7s4" customClass="SearchViewController" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="dOR-7E-bew"/>
-                        <viewControllerLayoutGuide type="bottom" id="Piz-2P-gXc"/>
-                    </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="g1n-Wl-MQn">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        <subviews>
-                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="QGl-5i-oH8">
-                                <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
-                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                <connections>
-                                    <outlet property="delegate" destination="sRi-j8-7s4" id="e66-PJ-Wea"/>
-                                </connections>
-                            </mapView>
-                        </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
-                    </view>
-                    <navigationItem key="navigationItem" id="SNC-N9-di2"/>
-                    <connections>
-                        <outlet property="mapView" destination="QGl-5i-oH8" id="dd0-pG-PoY"/>
-                    </connections>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="9Od-IB-ToZ" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="578" y="1413"/>
+            <point key="canvasLocation" x="-254" y="1466"/>
         </scene>
         <!--Frienso ResourcesTVC-->
         <scene sceneID="FUJ-QO-lgv">
@@ -142,12 +106,11 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dDy-si-0W9" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="266" y="754"/>
+            <point key="canvasLocation" x="330" y="2426"/>
         </scene>
         <!--A BoA View Controller-->
         <scene sceneID="FR0-Th-QOX">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="TcM-u6-eLp" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <viewController storyboardIdentifier="helpInfoVC" id="B7K-et-hKx" customClass="aBoAViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="37i-CY-IKG"/>
@@ -158,46 +121,11 @@
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
+                    <navigationItem key="navigationItem" id="NnG-CG-Afk"/>
                 </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="TcM-u6-eLp" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="906" y="2143"/>
-        </scene>
-        <!--Tst Watching View Controller-->
-        <scene sceneID="Gh7-pq-oZl">
-            <objects>
-                <tableViewController storyboardIdentifier="friensoWatching" id="B3l-Q8-2OI" customClass="tstWatchingViewController" sceneMemberID="viewController">
-                    <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="X8W-Cz-VKE">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                        <prototypes>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="Cell" textLabel="w2j-91-gNS" style="IBUITableViewCellStyleDefault" id="3pw-EU-hVs">
-                                <rect key="frame" x="0.0" y="22" width="320" height="44"/>
-                                <autoresizingMask key="autoresizingMask"/>
-                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="3pw-EU-hVs" id="Kfu-LB-2uH">
-                                    <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                    <subviews>
-                                        <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="Title" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="w2j-91-gNS">
-                                            <rect key="frame" x="15" y="0.0" width="290" height="43"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <fontDescription key="fontDescription" type="system" pointSize="18"/>
-                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
-                                    </subviews>
-                                </tableViewCellContentView>
-                            </tableViewCell>
-                        </prototypes>
-                        <connections>
-                            <outlet property="dataSource" destination="B3l-Q8-2OI" id="zCO-Xx-TZd"/>
-                            <outlet property="delegate" destination="B3l-Q8-2OI" id="Ga2-bd-GN9"/>
-                        </connections>
-                    </tableView>
-                </tableViewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="2tB-6i-jD6" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="1290" y="2143"/>
+            <point key="canvasLocation" x="330" y="3127"/>
         </scene>
         <!--Frienso OptionsTVC-->
         <scene sceneID="2q9-iq-0iH">
@@ -224,12 +152,14 @@
                     </tableView>
                     <navigationItem key="navigationItem" id="0S8-I2-NJF"/>
                     <connections>
-                        <segue destination="sRi-j8-7s4" kind="push" identifier="friensoMap" id="ixB-WG-BG7"/>
+                        <segue destination="3kY-1V-fX0" kind="push" id="TzX-WZ-vVh"/>
+                        <segue destination="B7K-et-hKx" kind="push" id="zB6-ob-eOn"/>
+                        <segue destination="STg-X3-r45" kind="push" id="dP1-oV-GoH"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="S0i-zL-VfE" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="18" y="1418"/>
+            <point key="canvasLocation" x="-286" y="2946"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="92e-QS-KMV">
@@ -243,12 +173,12 @@
                     </navigationBar>
                     <nil name="viewControllers"/>
                     <connections>
-                        <segue destination="vXZ-lx-hvc" kind="relationship" relationship="rootViewController" id="s5r-An-Ecx"/>
+                        <segue destination="CWx-7e-tGl" kind="relationship" relationship="rootViewController" id="yIr-Q5-ItK"/>
                     </connections>
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="1ee-ci-5CS" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-2254" y="914"/>
+            <point key="canvasLocation" x="-2198" y="-398"/>
         </scene>
         <!--Welcome View Ctrl-->
         <scene sceneID="T0h-JY-W6C">
@@ -264,10 +194,14 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
                     <navigationItem key="navigationItem" id="tQD-XR-lCL"/>
+                    <connections>
+                        <segue destination="qAg-ru-ZcY" kind="push" identifier="loginView" id="2ux-aR-Syp"/>
+                        <segue destination="vXZ-lx-hvc" kind="push" identifier="homeViewSegue" id="mvA-TS-DpA"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="0U3-U5-SW7" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1094" y="-494"/>
+            <point key="canvasLocation" x="-1622" y="-398"/>
         </scene>
         <!--LoginTVC-->
         <scene sceneID="pLe-NZ-bVp">
@@ -279,7 +213,7 @@
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <prototypes>
                             <tableViewCell contentMode="center" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="Cell" rowHeight="49" id="vMc-Zy-VmR">
-                                <rect key="frame" x="0.0" y="55" width="320" height="49"/>
+                                <rect key="frame" x="0.0" y="119" width="320" height="49"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="vMc-Zy-VmR" id="CTd-Oe-BEq">
                                     <rect key="frame" x="0.0" y="0.0" width="320" height="48"/>
@@ -294,10 +228,14 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" id="ou8-8h-NJy"/>
+                    <connections>
+                        <segue destination="Ep9-nV-7ZB" kind="push" identifier="loginCoreCircle" id="eOW-Ff-JeM"/>
+                        <segue destination="vXZ-lx-hvc" kind="push" identifier="homeViewSegue" id="ZCV-Ep-hRC"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="a5X-BM-YQz" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-294" y="-582"/>
+            <point key="canvasLocation" x="-1030" y="-398"/>
         </scene>
         <!--New Core CircleTVC-->
         <scene sceneID="biH-MZ-1Wi">
@@ -317,7 +255,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="kYw-v5-41H" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-294" y="2096"/>
+            <point key="canvasLocation" x="-398" y="-398"/>
         </scene>
         <!--User Profile View Controller-->
         <scene sceneID="AMf-Vd-PbZ">
@@ -336,7 +274,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="idi-ly-xdR" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-294" y="87"/>
+            <point key="canvasLocation" x="322" y="3818"/>
         </scene>
     </scenes>
     <resources>
@@ -348,7 +286,8 @@
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="HKj-DF-MrE"/>
+        <segue reference="ZCV-Ep-hRC"/>
+        <segue reference="Efz-ba-uWS"/>
         <segue reference="EYk-db-0di"/>
     </inferredMetricsTieBreakers>
 </document>

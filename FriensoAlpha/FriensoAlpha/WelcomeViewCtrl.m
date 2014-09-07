@@ -37,6 +37,15 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    BOOL toHomeViewFlag = [[NSUserDefaults standardUserDefaults] boolForKey:@"getStartedFlag"];
+    toHomeViewFlag = toHomeViewFlag && ([[NSUserDefaults standardUserDefaults] objectForKey:@"adminID"] != NULL);
+    if ( toHomeViewFlag )
+        [self performSegueWithIdentifier:@"homeViewSegue" sender:self];
+    else if ([[NSUserDefaults standardUserDefaults] boolForKey:@"getStartedFlag"])
+    {
+        [self dismissModalVC];
+    }
+    
     UIFont *srFont = [UIFont fontWithName:@"AppleGothic" size:16];
     //UIFont *srFont = [UIFont fontWithName:@"Avenir-Light" size:16];
     //self.navigationItem.title = @"Help/Info";
@@ -289,8 +298,10 @@
 }
 
 -(void) dismissModalVC{
-    
-    [self dismissViewControllerAnimated:YES completion:nil];
+    if (STORYBOARD_CONF_II)
+        [self performSegueWithIdentifier:@"loginView" sender:self];
+    else
+        [self dismissViewControllerAnimated:YES completion:nil];
 }
 #pragma mark - Image Actions
 - (UIImage*) scaleImage:(UIImage*)image toSize:(CGSize)newSize {

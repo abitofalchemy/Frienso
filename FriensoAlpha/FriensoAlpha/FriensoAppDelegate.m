@@ -11,6 +11,7 @@
 #import "FriensoAppDelegate.h"
 #import <Parse/Parse.h>
 #import "FriensoEvent.h"
+#import "CoreFriends.h"
 #import "FriensoViewController.h"
 #import <Crashlytics/Crashlytics.h>
 
@@ -32,8 +33,7 @@
     
     [PFAnalytics trackAppOpenedWithLaunchOptions:launchOptions];
     
-    
-    
+
     
     
     // Override point for customization after application launch.
@@ -226,7 +226,6 @@
     
     return _persistentStoreCoordinator;
 }
-
 #pragma mark - Application's Documents directory
 
 // Returns the URL to the application's Documents directory.

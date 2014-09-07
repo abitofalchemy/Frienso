@@ -5,6 +5,14 @@ Frienso iOS Alpha
 
 Version History
 ---------------
+* ver 1.7 build
+    Moved most features to the options button
+    
+    
+* ver 1.7 build 108:
+    Created a branch: frienso_beta_experimental
+    
+
 * ver 1.6 build 9x:
     14Aug14/SA: Added a needle to the map to bring you back to your location. Re position the icons for
     fullscreen.  Added the timestamp to the location in the Contacts view.

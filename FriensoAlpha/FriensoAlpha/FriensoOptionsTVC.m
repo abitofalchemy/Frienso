@@ -20,6 +20,9 @@
 
 @interface FriensoOptionsTVC ()
 @property (nonatomic,retain) NSMutableArray *optionsArray;
+@property (nonatomic,retain) NSMutableArray *sectionArray;
+@property (nonatomic,retain) NSMutableArray *friendsArray;
+@property (nonatomic,retain) NSMutableArray *emergencyArray;
 @end
 
 @implementation FriensoOptionsTVC
@@ -45,12 +48,22 @@
         }
     }
     
-    self.optionsArray = [[NSMutableArray alloc] initWithArray:@[@"Profile",/*@"Watching",*/ @"Resources",@"Settings",@"About"/*,@"Map",@"Event"*/]];
-    // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
- 
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
+    self.sectionArray = [[NSMutableArray alloc] initWithArray:@[@"Friends",
+                                                                @"Emergency Contacts",
+                                                                @"Options"]];
+    self.optionsArray = [[NSMutableArray alloc] initWithArray:@[@"School",/*@"Watching",*/
+                                                                @"Profile",
+                                                                @"Settings",
+                                                                @"About"]];
+    self.emergencyArray = [[NSMutableArray alloc] initWithArray:@[@"Campus Security Police",
+                                                                  @"911",
+                                                                  @"More"]];
+    self.friendsArray = [[NSMutableArray alloc] init];
+    NSDictionary *cfDic = [[NSUserDefaults standardUserDefaults] dictionaryForKey:@"CoreFriendsContactInfoDicKey"];
+    for (id key in cfDic) {
+        [self.friendsArray addObject:key];
+    }
+    
 }
 //- (void) viewWillDisappear:(BOOL)animated {
 //    [super viewWillDisappear:YES];
@@ -72,16 +85,21 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return 1;
+    return 3;
 }
-
+// handling the sections for these data
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
+    return [self.sectionArray objectAtIndex:section];
+}
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-//#warning Incomplete method implementation.
-    // Return the number of rows in the section.
-    return [self.optionsArray count];
+    if (section == 0)
+        return [self.friendsArray count];
+    else if (section == 1)
+        return [self.emergencyArray count];
+    else
+        return [self.optionsArray count];
 }
-
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     static NSString *CellIdentifier = @"Cell";
@@ -90,19 +108,21 @@
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle
                                       reuseIdentifier:CellIdentifier];
     }
-    
     if ( indexPath.section == 0) {
+        cell.textLabel.text = [self.friendsArray objectAtIndex:indexPath.row];
+    }
+    else if ( indexPath.section == 1) {
+        cell.textLabel.text = [self.emergencyArray objectAtIndex:indexPath.row];
+    }
+    else if ( indexPath.section == 2) {
         cell.textLabel.text = [self.optionsArray objectAtIndex:indexPath.row];
         cell.textLabel.font = [UIFont fontWithName:@"AppleSDGothicNeo-Light" size:18.0];
         switch (indexPath.row) {
             case 0:
-                cell.imageView.image = [UIImage imageNamed:@"profile-24.png"];
+                cell.imageView.image = [UIImage imageNamed:@"lighthouse-24.png"];
                 break;
             case 1:
-//                cell.imageView.image = [UIImage imageNamed:@"umbrella-24.png"];
-//                break;
-//            case 2:
-                cell.imageView.image = [UIImage imageNamed:@"lighthouse-24.png"];
+                cell.imageView.image = [UIImage imageNamed:@"profile-24.png"];
                 break;
             case 2:
                 cell.imageView.image = [UIImage imageNamed:@"settings-24.png"];
