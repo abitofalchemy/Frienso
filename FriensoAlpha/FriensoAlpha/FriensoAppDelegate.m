@@ -33,9 +33,6 @@
     
     [PFAnalytics trackAppOpenedWithLaunchOptions:launchOptions];
     
-
-    
-    
     // Override point for customization after application launch.
     return YES;
 }
@@ -47,21 +44,15 @@
     NSString *dToken = [[deviceToken description] stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"<>"]];
     dToken = [dToken stringByReplacingOccurrencesOfString:@" " withString:@""];
     
-    
-    //NSLog(@"STR%@",dToken);
-    
-    
     //Create subscription channels for the user: this includes channels for Frienso updates
-    
     // TBD: Only add the last 10 digits in the number - add this check
     // TBD: only add the channel if it exists, duplicate channel creation needs to be investigated
-    
     // Only subscribe to channels if the currentuser is not null
     //The globals channel will be used for all Frienso related alerts and messages
     PFUser *currentUser = [PFUser currentUser];
-    if (currentUser){
-        NSString* userPhoneNumber = [[NSUserDefaults standardUserDefaults] objectForKey:@"userPhone"];/*[[PFUser currentUser] objectForKey:@"phoneNumber"]*/
-        //NSLog(@"%@",userPhoneNumber);
+    if (currentUser)
+    {
+        NSString* userPhoneNumber = [[NSUserDefaults standardUserDefaults] objectForKey:@"userPhone"];
         //Channels have to start with a string, we will use "Ph" here
         NSString *myString = @"Ph";
         NSString *personalizedChannelNumber = [myString stringByAppendingString:userPhoneNumber];
@@ -71,8 +62,7 @@
         currentInstallation.channels = @[@"global", @"ndDOTedu", personalizedChannelNumber];
         [currentInstallation saveInBackground];
         
-    }
-    else
+    } else
         NSLog(@"No current User set for Push Notifications");
     
 }

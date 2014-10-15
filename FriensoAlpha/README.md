@@ -3,6 +3,11 @@ Frienso
 
 Frienso iOS Alpha
 
+git branch
+----------
+* frienso_beta_experimental
+
+
 Version History
 ---------------
 * ver 1.7 build
@@ -54,7 +59,7 @@ Version History
 * ver 1.6 build 81
     20Jul14/SA: Fixed accessing the pending requests and adding them to the mapview.
     - Handle request status if the user touches the pending bubbles
-    - Problem arose with: "[self.friendsLocationArray insertObject:..." changed it to addObject
+    - Problem arose with: 'self.friendsLocationArray insertObject:...' changed it to addObject
 
 * ver 1.6 build 79+
     18Jul14/SA: Simplified the way we do the HelpMe and WatchMe alerts.  Converted the button
