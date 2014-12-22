@@ -10,7 +10,12 @@ git branch
 
 Version History
 ---------------
-* ver 1.8 build : Update to be compatible with iOS 8.1
+* ver 1.8.1 build : Update to be compatible with iOS 8.1
+-- Sal: handle Contacts selection 
+-- Sal: Getting the locate me needle button to work
+-- Sal: Deprecated various features from the last working version
+-- Sal: Profile icon/Button working 
+
 
 * ver 1.7 build
     Moved most features to the options button

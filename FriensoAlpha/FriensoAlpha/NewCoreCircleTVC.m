@@ -534,7 +534,7 @@ int activeCoreFriends = 0;
     //if (DBG) NSLog(@"%@", phones);
     //[tmpStr appendString: (__bridge_transfer NSString *)(ABMultiValueCopyValueAtIndex(phones, 0));
     //if (DBG) NSLog(@"phone# %@",(__bridge_transfer NSString *)(ABMultiValueCopyValueAtIndex(phones, 0)));
-    #warning check for all potential phone numbers
+#warning check for all potential phone numbers
     NSString *contactPhoneNumber = (__bridge_transfer NSString *)(ABMultiValueCopyValueAtIndex(phones, 0));
     NSCharacterSet *toExclude = [NSCharacterSet characterSetWithCharactersInString:@"/.()-  "];
     contactPhoneNumber = [[contactPhoneNumber componentsSeparatedByCharactersInSet:toExclude] componentsJoinedByString:@""];

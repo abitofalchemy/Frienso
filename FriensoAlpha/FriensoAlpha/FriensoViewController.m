@@ -1592,7 +1592,7 @@ enum PinAnnotationTypeTag {
     //[UIView animateWithDuration:0.5 animations:^{
     UIView *newTitleView = [[UIView alloc] initWithFrame:self.navigationItem.titleView.frame];
     navGestures = [[UIGestureRecognizer alloc] initWithTarget:self
-                                                                            action:@selector(navigationCtrlrSingleTap:)];
+                                                       action:@selector(navigationCtrlrSingleTap:)];
     [navGestures setDelegate:self];
     
     // The Avatar

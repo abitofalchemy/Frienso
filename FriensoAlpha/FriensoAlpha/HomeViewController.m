@@ -60,7 +60,7 @@ enum PinAnnotationTypeTag {
 @property (nonatomic,strong) UIButton *txtChattingBtn;
 @property (nonatomic,strong) NSFetchedResultsController *frc;
 @property (nonatomic,strong) UIActivityIndicatorView    *loadingView;
-@property (nonatomic,strong) UserResponseScrollView     *scrollView;
+//@property (nonatomic,strong) UserResponseScrollView     *scrollView; // deprecated
 @property (nonatomic,retain) NSArray        *appFrameProperties;
 @property (nonatomic,retain) NSMutableArray *friendsLocationArray;
 @property (nonatomic,retain) NSMutableArray *pendingRqstsArray; // pending requests array
@@ -72,19 +72,18 @@ enum PinAnnotationTypeTag {
 @property (nonatomic,strong) ProfileSneakPeekView *profileView;
 @property (nonatomic,strong) UISwitch       *watchMeSwitch;
 @property (nonatomic,strong) UISwitch       *helpMeNowSwitch;
-@property (nonatomic,strong) UILabel        *drawerLabel;
-@property (nonatomic)        CGFloat scrollViewY;
+//@property (nonatomic,strong) UILabel        *drawerLabel; // deprecated
+//@property (nonatomic)        CGFloat scrollViewY;
 @property (nonatomic)        CGRect normTableViewRect;
 @property (nonatomic) const CGFloat mapViewHeight;
 
 
--(void)actionPanicEvent:(UIButton *)theButton;
+//-(void)actionPanicEvent:(UIButton *)theButton; // deprecated
 -(void)viewMenuOptions: (UIButton *)theButton;
 -(void)viewCoreCircle:  (UIButton *)theButton;
 -(void)makeFriensoEvent:(UIButton *)theButton;
 -(void)viewFriensoChatWindow:(UISwitch *)sender;
-
--(void)navigationCtrlrSingleTap;
+-(void)navigationCtrlrSingleTap:(id) sender;
 
 @end
 
@@ -111,18 +110,20 @@ enum PinAnnotationTypeTag {
     [self setupMapView];
     [self setupTopTableView];
     [self setupMapViewControls];
-    [self setupNavigationBar];
     //[self setupHelpMeSwitch];
     [self setupOptionsNavigation];
     //[self setupTxtFriensoChat];
     [self setupWatchMeSwitch];
+    [self setupNavigationBar];
+
     
 
 }
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-    
+	// Restore touch interaction on the following widgets
+	[navGestures setEnabled:YES]; 
     [UIView animateWithDuration:0.5 animations:^{
         [self.navigationController setNavigationBarHidden:YES];
     }];
@@ -368,135 +369,54 @@ enum PinAnnotationTypeTag {
 }
 - (void) setupNavigationBar
 {
-    if (STORYBOARD_CONF_II)
-    {
-        /******** LEFT HAND SIDE TITLE
-         **************************************/
-        /* [self.navigationController.navigationBar setBarTintColor:UIColorFromRGB(0xbdc3c7)];
-         [self.view setBackgroundColor:UIColorFromRGB(0xecf0f1)];
-         */
-        
-//        UILabel* friensoLabel = [[UILabel alloc] initWithFrame:CGRectZero];
-//        [friensoLabel setText:@"Frienso"];
-//        friensoLabel.layer.shadowColor  = UIColorFromRGB(0x8e44ad).CGColor;
-//        friensoLabel.layer.shadowOffset = CGSizeMake(0,0.5);
-//        friensoLabel.layer.shadowOpacity = 1.0;
-//        friensoLabel.layer.shadowRadius  = 2.0f;
-//        friensoLabel.layer.masksToBounds = NO;
-//        [friensoLabel setFont:[UIFont fontWithName:@"AppleSDGothicNeo-Regular" size:21.0]];
-//        [friensoLabel setTextColor:[UIColor whiteColor]];
-//        [friensoLabel sizeToFit];
-//        [self.view addSubview:friensoLabel];
-        
-        UIView *newTitleView = [[UIView alloc] initWithFrame:self.navigationItem.titleView.frame];
-        navGestures = [[UIGestureRecognizer alloc] initWithTarget:self
-                                                           action:@selector(navigationCtrlrSingleTap:)];
-        [navGestures setDelegate:self];
-        
-        // The Avatar
-        UIImage *image = nil;
-        UIImageView __block *imgView = nil;
-        if ( [[NSUserDefaults standardUserDefaults] URLForKey:@"profileImageUrl"] == NULL) {
-            //NSLog(@"  avatar.png...");
-            image = [UIImage imageNamed:@"avatar.png"];
-            UIImage *scaledimage = [[[FRStringImage alloc] init] scaleImage:image toSize:CGSizeMake(38.0, 38.0)];
-            imgView = [self newImageViewWithImage:scaledimage
-                                      showInFrame:CGRectMake(0, 0, 38.0f, 38.0f)];
-        } else {
-            NSLog(@"  profileImageUrl...");
-            imgView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 38.0f, 38.0f)];
-            
-            NSURL *assetURL = [[NSUserDefaults standardUserDefaults] URLForKey:@"profileImageUrl"];
-            ALAssetsLibrary *assetLibrary=[[ALAssetsLibrary alloc] init];
-            [assetLibrary assetForURL:assetURL
-                          resultBlock:^(ALAsset *asset) {
-                              UIImage *thumbImg = [UIImage imageWithCGImage:[[asset defaultRepresentation] fullScreenImage]
-                                                                      scale:0.5
-                                                                orientation:UIImageOrientationUp];
-                              //                cell.backgroundView = [[UIImageView alloc] initWithImage:copyOfOriginalImage];
-                              dispatch_async(dispatch_get_main_queue(), ^{
-                                  if (thumbImg != NULL)
-                                      [imgView setImage:thumbImg];
-                              });
-                          } failureBlock:^(NSError *err) {
-                              //profilePhoto =[[UIImageView alloc] initWithImage:[UIImage imageNamed::@"avatar.png"];
-                              NSLog(@"Error: %@",[err localizedDescription]);
-                          }];
-        }
-        
-        imgView.contentMode  = UIViewContentModeScaleAspectFill;
-        imgView.layer.cornerRadius = imgView.frame.size.height/2.0f;
-        imgView.layer.borderWidth  = 2.0;
-        imgView.layer.borderColor  = [UIColor whiteColor].CGColor;
-        imgView.layer.masksToBounds = YES;
-        [imgView setImage:image];
-        [imgView setCenter:self.navigationItem.titleView.center];
-        [newTitleView addSubview:imgView];
-        
-        // Isolate tap to only the navigation bar
-        [newTitleView addGestureRecognizer:navGestures];
-        [self.view addSubview:newTitleView];
-        [newTitleView setCenter:CGPointMake(self.view.center.x,APP_SCREEN_FRAME.origin.y + imgView.frame.size.height/2.0 + 6.0)];
-//        [friensoLabel setCenter:CGPointMake(10+friensoLabel.frame.size.width/2.0f,
-//                                            APP_SCREEN_FRAME.origin.y + imgView.frame.size.height/2.0 + 6.0)];
-
-    } else {
-    [self.navigationController.navigationBar setBarTintColor:[UIColor colorWithHue:0.580555
-                                                                        saturation:0.31
-                                                                        brightness:0.90
-                                                                             alpha:0.5]];
-    
-    
-    //[UIView animateWithDuration:0.5 animations:^{
-    UIView *newTitleView = [[UIView alloc] initWithFrame:self.navigationItem.titleView.frame];
-    navGestures = [[UIGestureRecognizer alloc] initWithTarget:self
-                                                       action:@selector(navigationCtrlrSingleTap:)];
-    [navGestures setDelegate:self];
-    
+    UIButton* homeProfileView = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 40, 40)];
+    [homeProfileView addTarget:self
+                        action:@selector(navigationCtrlrSingleTap:)
+              forControlEvents:UIControlEventTouchUpInside];
     // The Avatar
-    UIImage *image = nil;
-    UIImageView __block *imgView = nil;
-    if ( [[NSUserDefaults standardUserDefaults] URLForKey:@"profileImageUrl"] == NULL) {
-        //NSLog(@"  avatar.png...");
-        image = [UIImage imageNamed:@"avatar.png"];
-        UIImage *scaledimage = [[[FRStringImage alloc] init] scaleImage:image toSize:CGSizeMake(38.0, 38.0)];
-        imgView = [self newImageViewWithImage:scaledimage
-                                  showInFrame:CGRectMake(0, 0, 38.0f, 38.0f)];
-    } else {
-        NSLog(@"  profileImageUrl...");
-        imgView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 38.0f, 38.0f)];
-        
-        NSURL *assetURL = [[NSUserDefaults standardUserDefaults] URLForKey:@"profileImageUrl"];
-        ALAssetsLibrary *assetLibrary=[[ALAssetsLibrary alloc] init];
-        [assetLibrary assetForURL:assetURL
-                      resultBlock:^(ALAsset *asset) {
-                          UIImage *thumbImg = [UIImage imageWithCGImage:[[asset defaultRepresentation] fullScreenImage]
-                                                                  scale:0.5
-                                                            orientation:UIImageOrientationUp];
-                          //                cell.backgroundView = [[UIImageView alloc] initWithImage:copyOfOriginalImage];
-                          dispatch_async(dispatch_get_main_queue(), ^{
-                              if (thumbImg != NULL)
-                                  [imgView setImage:thumbImg];
-                          });
-                      } failureBlock:^(NSError *err) {
-                          //profilePhoto =[[UIImageView alloc] initWithImage:[UIImage imageNamed::@"avatar.png"];
-                          NSLog(@"Error: %@",[err localizedDescription]);
-                      }];
-    }
+    UIImage* image = [UIImage imageNamed:@"avatar.png"];
+    UIImage *scaledimage = [[[FRStringImage alloc] init] scaleImage:image
+                                                             toSize:CGSizeMake(40.0, 40.0)];
+    [homeProfileView setImage:scaledimage forState:UIControlStateNormal];
+    //self.view.center];
+    [self.mapView addSubview:homeProfileView];
+    homeProfileView.imageView.contentMode  = UIViewContentModeScaleAspectFill;
+    homeProfileView.imageView.layer.cornerRadius = homeProfileView.imageView.frame.size.height/2.0f;
+    homeProfileView.imageView.layer.borderWidth  = 2.0;
+    homeProfileView.imageView.layer.borderColor  = [UIColor whiteColor].CGColor;
+    homeProfileView.imageView.layer.masksToBounds = YES;
+    //[imgView setImage:image];
+//[homeProfileView setFrame:CGRectMake(0, 0, 58, 58)];
+    [homeProfileView setCenter:CGPointMake(APP_SCREEN_FRAME.size.width/2.0, 22.0)];//
+
+//    }
+//    else {
+////        NSLog(@"  profileImageUrl...");
+//        imgView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 38.0f, 38.0f)];
+//        
+//        NSURL *assetURL = [[NSUserDefaults standardUserDefaults] URLForKey:@"profileImageUrl"];
+//        ALAssetsLibrary *assetLibrary=[[ALAssetsLibrary alloc] init];
+//        [assetLibrary assetForURL:assetURL
+//                      resultBlock:^(ALAsset *asset) {
+//                          UIImage *thumbImg = [UIImage imageWithCGImage:[[asset defaultRepresentation] fullScreenImage]
+//                                                                  scale:0.5
+//                                                            orientation:UIImageOrientationUp];
+//                          //                cell.backgroundView = [[UIImageView alloc] initWithImage:copyOfOriginalImage];
+//                          dispatch_async(dispatch_get_main_queue(), ^{
+//                              if (thumbImg != NULL)
+//                                  [imgView setImage:thumbImg];
+//                          });
+//                      } failureBlock:^(NSError *err) {
+//                          //profilePhoto =[[UIImageView alloc] initWithImage:[UIImage imageNamed::@"avatar.png"];
+//                          NSLog(@"Error: %@",[err localizedDescription]);
+//                      }];
     
-    imgView.contentMode  = UIViewContentModeScaleAspectFill;
-    imgView.layer.cornerRadius = imgView.frame.size.height/2.0f;
-    imgView.layer.borderWidth  = 1.0;
-    imgView.layer.borderColor  = [UIColor whiteColor].CGColor;
-    imgView.layer.masksToBounds = YES;
-    [imgView setImage:image];
-    [imgView setCenter:self.navigationItem.titleView.center];
-    [newTitleView addSubview:imgView];
-    //isolate tap to only the navigation bar
-    [self.navigationController.navigationBar addGestureRecognizer:navGestures];
-    self.navigationItem.titleView  = newTitleView;
-    //}];
-        }
+    //}
+//
+//
+
+    
+    
 }
 
 
@@ -506,13 +426,14 @@ enum PinAnnotationTypeTag {
 // In a storyboard-based application, you will often want to do a little preparation before navigation
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
+    [navGestures setEnabled:NO];
     // Get the new view controller using [segue destinationViewController].
     // Pass the selected object to the new view controller.
 }
 
 #pragma mark - HomeView Methods
 -(void)navigationCtrlrSingleTap:(id) sender {
-
+    NSLog(@"navigationCtrlrSingleTap tapped");
     self.profileView = [[ProfileSneakPeekView alloc] initWithFrame:self.navigationController.navigationBar.frame];
     [self.profileView setUserEmailString:[[NSUserDefaults standardUserDefaults] objectForKey:@"adminID"]
                          withPhoneNumber:[[NSUserDefaults standardUserDefaults] objectForKey:@"userPhone"]
@@ -600,6 +521,12 @@ enum PinAnnotationTypeTag {
                                                                              style:self.navigationItem.backBarButtonItem.style
                                                                             target:nil
                                                                             action:nil];
+}
+- (void) presentProfileSettingsView:(id) sender
+{
+    NSLog(@"PROFILE SETTINGS");
+    [self.profileView.closeProfileBtn sendActionsForControlEvents: UIControlEventTouchUpInside];
+    [self performSegueWithIdentifier:@"userProfileSegue" sender:self];
 }
 
 #pragma mark - UITableViewDataSource Methods
@@ -715,20 +642,45 @@ enum PinAnnotationTypeTag {
 }
 
 #pragma mark - Location methods
+- (void)setInitialLocation:(CLLocation *)aLocation {
+    /* setInitialLocation
+     *   Here I update my User object (in parse) with my current Location when HomeView is on the foreground
+     *   PFUser currentUser should be me, but needs double checked
+     */
+    
+    self.location = aLocation;
+    self.radius = 1000;
+    [PFGeoPoint geoPointForCurrentLocationInBackground:^(PFGeoPoint *geoPoint, NSError *error) {
+        if (!error) {
+            
+            NSNumber *lat = [NSNumber numberWithDouble:geoPoint.latitude];
+            NSNumber *lon = [NSNumber numberWithDouble:geoPoint.longitude];
+            NSDictionary *userLocation=@{@"lat":lat,@"long":lon};
+            
+            [[NSUserDefaults standardUserDefaults] setObject:userLocation forKey:@"userLocation"];
+            [[NSUserDefaults standardUserDefaults] synchronize];
+            [[PFUser currentUser] setObject:geoPoint forKey:@"currentLocation"];
+            [[PFUser currentUser] saveInBackground];
+            
+            iLog(@"Your Current Location: %.4f, %.4f",geoPoint.latitude,geoPoint.longitude);
+        }
+    }];
+    
+}
 -(void) refreshMapViewAction:(UIButton*) sender
 {
     [self animateThisButton:sender];
     
     [self.pendingRqstsArray removeAllObjects];
     
-    // clean the drawer
+/*    // clean the drawer
     for (id subview in [self.scrollView subviews]){
         if ( [subview isKindOfClass:[PendingRequestButton class]] )
         {
             [subview removeFromSuperview];
         }
     }
-    
+*/
     
     // clean the mapview
     [self.watchingCoFrArray removeAllObjects];
@@ -759,6 +711,37 @@ enum PinAnnotationTypeTag {
 }
 
 #pragma mark - Local Actions
+-(void) helpMeNowSwitchAction:(UISwitch*)sender
+{
+    if ([sender isOn]) {
+        for (id subview in [sender subviews])
+        {
+            UILabel *label = subview;
+            if (label.tag > 99)
+                [label removeFromSuperview];
+        }
+        [self actionPanicEvent:nil];
+    } else  {
+        // log event on the cloud
+        CloudUsrEvnts *helpMeEvent = [[CloudUsrEvnts alloc] initWithAlertType:@"helpNow"];
+        [helpMeEvent disableEvent];
+        
+        [[NSUserDefaults standardUserDefaults] setObject:nil forKey:@"helpObjId"];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+        
+        // switch from ON to OFF
+        [helpMeNowSwitch setOn:NO animated:YES];
+        // Remove buttons and labels corresponding to coreFriends
+        for (id subview in [self.mapView subviews])
+        {
+            UILabel *label = subview;
+            if (label.tag > 99)
+                [label removeFromSuperview];
+        }
+    }
+}
+
+
 -(void) watchMeSwitchEnabled:(UISwitch*)sender
 {
     if (DBG) NSLog(@"********* trackMeswitchEnabled ****");
@@ -838,6 +821,26 @@ enum PinAnnotationTypeTag {
         [sender removeFromSuperview];
     }];
     
+}
+#pragma mark - Gesture Methods
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
+       shouldReceiveTouch:(UITouch *)touch {
+    NSLog(@"TOUCH self.tapCounter: %ld", (long)self.profileView.tapCounter);
+    // Disallow recognition of tap gestures when a navigation Item is tapped
+    if (touch.view == self.navigationController.navigationBar)
+    {//your back button/left button/whatever buttons you have
+        if (!self.profileView.tapCounter)
+        {
+            
+            [self navigationCtrlrSingleTap:touch];
+            NSLog(@"TITLEVIEW BACK TO NORMAL");
+            self.profileView.tapCounter = YES;
+        }
+        
+        return YES;
+        
+    }
+    return NO;
 }
 #pragma mark - Helper Methods
 - (UIImage*)imageWithBorderFromImage:(UIImage*)source
@@ -961,7 +964,7 @@ enum PinAnnotationTypeTag {
                     pfobject[@"awaitingResponseFrom"] = @"sender";
                     pfobject[@"status"] = response;
                     [pfobject saveInBackground];
-                    
+/* deprecated
                     //remove the button from the view
                     for (id subview in [self.scrollView subviews]){
                         if ( [subview isKindOfClass:[PendingRequestButton class]] ) {
@@ -974,6 +977,7 @@ enum PinAnnotationTypeTag {
                             }
                         }
                     }//
+*/
                 } //ends if
                 
             }];
@@ -982,7 +986,7 @@ enum PinAnnotationTypeTag {
             if (buttonIndex == 1) // accept
             {
                 //[self addUserBubbleToMap:friensoUser  withTag:tag_no]; // accepted to watch this user
-                if (!DBG) NSLog(@"number of subviews: %ld", (long)[self.scrollView subviews].count);
+/*                if (!DBG) NSLog(@"number of subviews: %ld", (long)[self.scrollView subviews].count);
                 // Remove pending request bubble from pendingDrawer
                 for (id subview in [self.scrollView subviews]){
                     
@@ -1006,21 +1010,22 @@ enum PinAnnotationTypeTag {
                             
                             // set FriensoEvent, make the watching your friend X sticky
                             //[[[WatchingCoreFriend alloc] init] trackUserEventLocally:friensoUser];
-                            /****** migrate this code to its own class ******/
+ 
                             [self trackUserEventLocally:userEventObject];
                         }
                         
                     }   // ends if
                 }       // ends for
+    */
                 NSLog(@"pending requests: %ld",(long)self.pendingRqstsArray.count);
 //                [self updateMapViewWithUserBubbles: self.watchingCoFrArray];
-                for (id subview in [self.scrollView subviews]){
+/* deprecated                for (id subview in [self.scrollView subviews]){
                     if ( [subview isKindOfClass:[PendingRequestButton class]] ) {
                         NSLog(@"A PENDING REQUEST FOUND IN SCROLLVIEW");
                         [self refreshMapViewAction:nil];
                     }
                     
-                }
+                }*/
                 
             } else if (buttonIndex == 2) // reject
             {
@@ -1028,7 +1033,7 @@ enum PinAnnotationTypeTag {
                 // log the reject to the cloud
                 // remove the request and update
                 
-                for (id subview in [self.scrollView subviews]){
+/*  deprecated              for (id subview in [self.scrollView subviews]){
                     if ( [subview isKindOfClass:[PendingRequestButton class]] ) {
                         if (tag_no ==  [(PendingRequestButton *)subview tag])
                         {
@@ -1046,6 +1051,7 @@ enum PinAnnotationTypeTag {
                     }
                     
                 }
+ */
             }else // dismiss
             {
                 if (DBG) NSLog(@"dismissed alertview");
