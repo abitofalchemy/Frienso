@@ -1,0 +1,55 @@
+% SVN info for this file
+%\svnidlong
+%{$HeadURL$}
+%{$LastChangedDate$}
+%{$LastChangedRevision$}
+%{$LastChangedBy$}
+%\section{
+%\chapter{Test Plan}
+%\labelChapter{test_chap}
+%
+%\begin{introduction}  
+%\end{introduction}
+%
+%\section{Definitions}
+%
+%\section{Account Creation and Login}
+%%\labelSection{unit_testing}
+%%%\lettrine{C}{urabitur a nisl} fermentum nisi mattis pretium id eget ante.
+%  
+%\section{CoreFriends Circle}
+%
+%\section{Home View}
+%
+%\section{Options View}
+%
+%
+%\section{
+
+\chapter{Specifications}
+\labelChapter{specs_chap}
+
+\begin{introduction}  
+\end{introduction}
+
+\section{Definitions}
+
+\section{The Backend}
+  The backend describes the cloud-store service that powers Frienso: Parse.  The classes 
+  defined and used in Frienso are described below.
+  
+  \begin{table}[ht!]%
+	\caption{Frienso cloud-store classes \label{tab:table_label}}
+	\begin{tabularx}{\linewidth}{ l X }
+	\textbf{Class Name} & \textbf{Description} \\\hline
+	\textbf{User} &  \\
+	\textbf{CoreFriendRequest} & \\
+	\textbf{UserCoreFriends} & \\
+	\textbf{UserEvent} & User triggered WatchMe or HelpMeNow events are first logged here and their status maintained.\\
+	\textbf{UserEventTracking} & Users receiving others' events will either accept or reject.  Either of these actions provides a feedback to the user. Action taken by uers receiving said events will be logged in this class.  Part of the purpose for this class is to keep a log or history of the action taken by users on their peers' events.  One other reason to maintain this class is to quickly access users' list of those they are actively on stand-by (keeping watch on) should the user need help.\\
+	\textbf{Resources} & \\
+	\end{tabularx}
+	\end{table}%
+  
+  
+

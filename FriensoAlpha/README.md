@@ -10,6 +10,8 @@ git branch
 
 Version History
 ---------------
+* ver 1.8 build : Update to be compatible with iOS 8.1
+
 * ver 1.7 build
     Moved most features to the options button
     
@@ -335,6 +337,7 @@ Referenced Work
     # https://developer.apple.com/library/ios/samplecode/MapCallouts/Introduction/Intro.html
     # http://www.highoncoding.com/Articles/804_Introduction_to_MapKit_Framework_for_iPhone_Development.aspx
 * icons
+    # http://icons8.com/icons/#!/for/ios7/user-female3
     # http://www.blog.montgomerie.net/iphone-images-from-character-glyphs
 * style
     # http://www.cs.uakron.edu/~collard/cs489iOS/notes/IOSUITextKit.md

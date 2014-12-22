@@ -1,0 +1,11 @@
+\boolfalse {citerequest}\boolfalse {citetracker}\boolfalse {pagetracker}\boolfalse {backtracker}\relax 
+\defcounter {refsection}{0}\relax 
+\select@language {english}
+\contentsline {chapter}{Contents}{ii}{section*.1}
+\contentsline {chapter}{\chapternumberline {1}Beta Minimum Features}{1}{chapter.1}
+\contentsline {section}{\numberline {1.1}21Dec14 Updates to the MVP}{1}{section.1.1}
+\contentsline {subsection}{\numberline {1.1.1}Issues due to iOS, and Mac OS updates}{1}{subsection.1.1.1}
+\contentsline {section}{\numberline {1.2}21Dec14 Action Items}{2}{section.1.2}
+\contentsline {subsection}{\numberline {1.2.1}iOS version}{2}{subsection.1.2.1}
+\contentsline {subsection}{\numberline {1.2.2}Android Version}{2}{subsection.1.2.2}
+\contentsline {section}{\numberline {1.3}24Jun14 Status of the MVP}{2}{section.1.3}

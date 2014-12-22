@@ -111,11 +111,12 @@ enum PinAnnotationTypeTag {
     [self setupMapView];
     [self setupTopTableView];
     [self setupMapViewControls];
-    [self setupWatchMeSwitch];
-    [self setupHelpMeSwitch];
-    [self setupOptionsNavigation];
-    [self setupTxtFriensoChat];
     [self setupNavigationBar];
+    //[self setupHelpMeSwitch];
+    [self setupOptionsNavigation];
+    //[self setupTxtFriensoChat];
+    [self setupWatchMeSwitch];
+    
 
 }
 - (void)viewDidAppear:(BOOL)animated
@@ -134,11 +135,10 @@ enum PinAnnotationTypeTag {
 #pragma mark - UI Setup
 -(void) setupTopTableView {
     self.tableView = [[UITableView alloc] init];
-    [self.tableView setFrame:CGRectMake(0,0,APP_SCREEN_FRAME.size.width * 0.9,APP_SCREEN_FRAME.size.height*0.250)];
+    [self.tableView setFrame:CGRectMake(0,0,APP_SCREEN_FRAME.size.width * 0.9,
+                                        APP_SCREEN_FRAME.size.height*0.150)];
     self.tableView.dataSource = self;
     self.tableView.delegate   = self;
-    //self.tableView.layer.borderWidth = 2.0f;
-    //self.tableView.layer.borderColor = [UIColor whiteColor].CGColor;// UIColorFromRGB(0x9B90C8).CGColor;
     [self.view addSubview:self.tableView];
     [self.tableView setScrollEnabled:YES];
     [self.tableView setScrollsToTop:YES];
@@ -146,8 +146,8 @@ enum PinAnnotationTypeTag {
     self.tableView.layer.shadowOffset  = CGSizeMake(0, 1.5f);
     self.tableView.layer.shadowOpacity = 1.0;
     self.tableView.layer.shadowRadius  = 4.0;
-    
-    [self.tableView setCenter:CGPointMake(APP_SCREEN_FRAME.size.width/2.0, self.view.bounds.size.height -self.tableView.frame.size.height/2.0f)];
+    [self.tableView setCenter:CGPointMake(APP_SCREEN_FRAME.size.width/2.0,
+                                          self.view.bounds.size.height - self.tableView.frame.size.height/2.0f)];
     
     tblViewFrame = self.tableView.frame;
     
@@ -155,9 +155,8 @@ enum PinAnnotationTypeTag {
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc]
                                     initWithEntityName:@"FriensoEvent"];
     
-    NSSortDescriptor *createdSort =
-    [[NSSortDescriptor alloc] initWithKey:@"eventCreated"
-                                ascending:NO];
+    NSSortDescriptor *createdSort = [[NSSortDescriptor alloc] initWithKey:@"eventCreated"
+                                                                ascending:NO];
     
     NSSortDescriptor *prioritySort = [[NSSortDescriptor alloc] initWithKey:@"eventPriority"
                                                                  ascending:NO];
@@ -263,74 +262,80 @@ enum PinAnnotationTypeTag {
 }
 -(void) setupWatchMeSwitch {
     watchMeSwitch = [[UISwitch alloc] init];
-    [watchMeSwitch addTarget:self action:@selector(trackMeSwitchEnabled:)
-           forControlEvents:UIControlEventValueChanged];
+    [watchMeSwitch addTarget:self
+                      action:@selector(watchMeSwitchEnabled:)
+            forControlEvents:UIControlEventValueChanged];
     watchMeSwitch.layer.cornerRadius = watchMeSwitch.frame.size.height/2.0;
     watchMeSwitch.layer.borderWidth =  1.0;
     watchMeSwitch.layer.borderColor = [UIColor whiteColor].CGColor;
     [watchMeSwitch sizeToFit];
+    [watchMeSwitch setCenter:CGPointMake(self.optionsButton.frame.origin.x - watchMeSwitch.frame.size.width, self.optionsButton.center.y)];
+    [watchMeSwitch setCenter:CGPointMake(10+watchMeSwitch.frame.size.width/2.0f,
+                                        APP_SCREEN_FRAME.origin.y + 6.0)];
+    [self.mapView addSubview:watchMeSwitch];
     
-    UIView* switchView1 = [[UIView alloc] initWithFrame:CGRectMake(0, 0,
-                                                                   watchMeSwitch.frame.size.width *1.5,
-                                                                   watchMeSwitch.frame.size.height*1.7)];
-    [switchView1 setBackgroundColor:[UIColor colorWithHue:.580555 saturation:0.31 brightness:0.90 alpha:0.5]];
-    switchView1.layer.cornerRadius = watchMeSwitch.frame.size.height/4.0;
-    switchView1.layer.masksToBounds = YES;
-    [switchView1 addSubview:watchMeSwitch];
-    [switchView1 setCenter:CGPointMake(/*self.view.frame.size.width  -*/ (switchView1.center.x * 1.2),
-                                       APP_SCREEN_FRAME.size.height*.55)];
     
-    [watchMeSwitch setCenter:CGPointMake(switchView1.frame.size.width/2.0,
-                                         watchMeSwitch.center.y)];
-    [self.mapView addSubview:switchView1];
+//    UIView* switchView1 = [[UIView alloc] initWithFrame:CGRectMake(0, 0,
+//                                                                   watchMeSwitch.frame.size.width *1.5,
+//                                                                   watchMeSwitch.frame.size.height*1.7)];
+//    [switchView1 setBackgroundColor:[UIColor colorWithHue:.580555 saturation:0.31 brightness:0.90 alpha:0.5]];
+//    switchView1.layer.cornerRadius = watchMeSwitch.frame.size.height/4.0;
+//    switchView1.layer.masksToBounds = YES;
+//    [switchView1 addSubview:watchMeSwitch];
+//    [switchView1 setCenter:CGPointMake(/*self.view.frame.size.width  -*/ (switchView1.center.x * 1.2),
+//                                       APP_SCREEN_FRAME.size.height*.55)];
+//    
+//    [watchMeSwitch setCenter:CGPointMake(switchView1.frame.size.width/2.0,
+//                                         watchMeSwitch.center.y)];
+//    [self.mapView addSubview:switchView1];
 
-    UILabel *label = [[UILabel alloc] initWithFrame:CGRectZero];
-    [label setTextColor:[UIColor blueColor]];  //]colorWithHue:.580555 saturation:0.31 brightness:0.90 alpha:0.5]];
-    [label setFont:[UIFont fontWithName:@"AppleSDGothicNeo-Regular" size:10.0]];
-    [label setText:@"WatchMe"];//
-    [label sizeToFit];
-    [label setCenter:CGPointMake(watchMeSwitch.center.x,watchMeSwitch.frame.size.height+label.center.y*1.75f)];
-    [switchView1 addSubview:label];
+//    UILabel *label = [[UILabel alloc] initWithFrame:CGRectZero];
+//    [label setTextColor:[UIColor blueColor]];  //]colorWithHue:.580555 saturation:0.31 brightness:0.90 alpha:0.5]];
+//    [label setFont:[UIFont fontWithName:@"AppleSDGothicNeo-Regular" size:10.0]];
+//    [label setText:@"WatchMe"];//
+//    [label sizeToFit];
+//    [label setCenter:CGPointMake(watchMeSwitch.center.x,watchMeSwitch.frame.size.height+label.center.y*1.75f)];
+//    [switchView1 addSubview:label];
     
 }
--(void) setupHelpMeSwitch
-{
-    helpMeNowSwitch = [[UISwitch alloc] init];
-    [helpMeNowSwitch addTarget:self
-                        action:@selector(helpMeNowSwitchAction:)
-              forControlEvents:UIControlEventValueChanged];
-    helpMeNowSwitch.layer.cornerRadius = helpMeNowSwitch.frame.size.height/2.0;
-    helpMeNowSwitch.layer.borderWidth =  1.0;
-    helpMeNowSwitch.layer.borderColor = [UIColor whiteColor].CGColor;
-    [helpMeNowSwitch setOn:NO animated:YES];
-    [helpMeNowSwitch setOnTintColor:[UIColor redColor]];
-    [helpMeNowSwitch setBackgroundColor:[UIColor clearColor]];
-    [self.navigationController.toolbar addSubview:helpMeNowSwitch];
-
-    UIView* switchView = [[UIView alloc] initWithFrame:CGRectMake(0, 0,
-                                                                   watchMeSwitch.frame.size.width *1.5,
-                                                                   watchMeSwitch.frame.size.height*1.7)];
-    [switchView setBackgroundColor:[UIColor colorWithHue:.580555 saturation:0.31 brightness:0.90 alpha:0.5]];
-    switchView.layer.cornerRadius = watchMeSwitch.frame.size.height/4.0;
-    switchView.layer.masksToBounds = YES;
-    [switchView addSubview:helpMeNowSwitch];
-    [switchView setCenter:CGPointMake(/*self.view.frame.size.width  - */(switchView.center.x * 1.2),
-                                      /*self.view.frame.size.height - switchView.frame.size.height/2.0*/
-                                      self.tableView.frame.origin.y - switchView.frame.size.height)];
-    
-    [helpMeNowSwitch setCenter:CGPointMake(switchView.frame.size.width/2.0,
-                                         watchMeSwitch.center.y)];
-    [self.mapView addSubview:switchView];
-    
-    UILabel *label = [[UILabel alloc] initWithFrame:CGRectZero];
-    [label setTextColor:[UIColor blueColor]];
-    [label setFont:[UIFont fontWithName:@"AppleSDGothicNeo-Regular" size:10.0]];
-    [label setText:@"HelpMe"];//
-    [label sizeToFit];
-    [label setCenter:CGPointMake(watchMeSwitch.center.x,watchMeSwitch.frame.size.height+label.center.y*1.75f)];
-    [switchView addSubview:label];
-    
-}
+//-(void) setupHelpMeSwitch
+//{
+//    helpMeNowSwitch = [[UISwitch alloc] init];
+//    [helpMeNowSwitch addTarget:self
+//                        action:@selector(helpMeNowSwitchAction:)
+//              forControlEvents:UIControlEventValueChanged];
+//    helpMeNowSwitch.layer.cornerRadius = helpMeNowSwitch.frame.size.height/2.0;
+//    helpMeNowSwitch.layer.borderWidth =  1.0;
+//    helpMeNowSwitch.layer.borderColor = [UIColor whiteColor].CGColor;
+//    [helpMeNowSwitch setOn:NO animated:YES];
+//    [helpMeNowSwitch setOnTintColor:[UIColor redColor]];
+//    [helpMeNowSwitch setBackgroundColor:[UIColor clearColor]];
+//    [self.navigationController.toolbar addSubview:helpMeNowSwitch];
+//
+//    UIView* switchView = [[UIView alloc] initWithFrame:CGRectMake(0, 0,
+//                                                                   watchMeSwitch.frame.size.width *1.5,
+//                                                                   watchMeSwitch.frame.size.height*1.7)];
+//    [switchView setBackgroundColor:[UIColor colorWithHue:.580555 saturation:0.31 brightness:0.90 alpha:0.5]];
+//    switchView.layer.cornerRadius = watchMeSwitch.frame.size.height/4.0;
+//    switchView.layer.masksToBounds = YES;
+//    [switchView addSubview:helpMeNowSwitch];
+//    [switchView setCenter:CGPointMake(/*self.view.frame.size.width  - */(switchView.center.x * 1.2),
+//                                      /*self.view.frame.size.height - switchView.frame.size.height/2.0*/
+//                                      self.tableView.frame.origin.y - switchView.frame.size.height)];
+//    
+//    [helpMeNowSwitch setCenter:CGPointMake(switchView.frame.size.width/2.0,
+//                                         watchMeSwitch.center.y)];
+//    [self.mapView addSubview:switchView];
+//    
+//    UILabel *label = [[UILabel alloc] initWithFrame:CGRectZero];
+//    [label setTextColor:[UIColor blueColor]];
+//    [label setFont:[UIFont fontWithName:@"AppleSDGothicNeo-Regular" size:10.0]];
+//    [label setText:@"HelpMe"];//
+//    [label sizeToFit];
+//    [label setCenter:CGPointMake(watchMeSwitch.center.x,watchMeSwitch.frame.size.height+label.center.y*1.75f)];
+//    [switchView addSubview:label];
+//    
+//}
 -(void) setupOptionsNavigation
 {
     self.optionsButton= [[UIButton alloc] initWithFrame:CGRectZero];
@@ -371,17 +376,17 @@ enum PinAnnotationTypeTag {
          [self.view setBackgroundColor:UIColorFromRGB(0xecf0f1)];
          */
         
-        UILabel* friensoLabel = [[UILabel alloc] initWithFrame:CGRectZero];
-        [friensoLabel setText:@"Frienso"];
-        friensoLabel.layer.shadowColor  = UIColorFromRGB(0x8e44ad).CGColor;
-        friensoLabel.layer.shadowOffset = CGSizeMake(0,0.5);
-        friensoLabel.layer.shadowOpacity = 1.0;
-        friensoLabel.layer.shadowRadius  = 2.0f;
-        friensoLabel.layer.masksToBounds = NO;
-        [friensoLabel setFont:[UIFont fontWithName:@"AppleSDGothicNeo-Regular" size:21.0]];
-        [friensoLabel setTextColor:[UIColor whiteColor]];
-        [friensoLabel sizeToFit];
-        [self.view addSubview:friensoLabel];
+//        UILabel* friensoLabel = [[UILabel alloc] initWithFrame:CGRectZero];
+//        [friensoLabel setText:@"Frienso"];
+//        friensoLabel.layer.shadowColor  = UIColorFromRGB(0x8e44ad).CGColor;
+//        friensoLabel.layer.shadowOffset = CGSizeMake(0,0.5);
+//        friensoLabel.layer.shadowOpacity = 1.0;
+//        friensoLabel.layer.shadowRadius  = 2.0f;
+//        friensoLabel.layer.masksToBounds = NO;
+//        [friensoLabel setFont:[UIFont fontWithName:@"AppleSDGothicNeo-Regular" size:21.0]];
+//        [friensoLabel setTextColor:[UIColor whiteColor]];
+//        [friensoLabel sizeToFit];
+//        [self.view addSubview:friensoLabel];
         
         UIView *newTitleView = [[UIView alloc] initWithFrame:self.navigationItem.titleView.frame];
         navGestures = [[UIGestureRecognizer alloc] initWithTarget:self
@@ -392,7 +397,7 @@ enum PinAnnotationTypeTag {
         UIImage *image = nil;
         UIImageView __block *imgView = nil;
         if ( [[NSUserDefaults standardUserDefaults] URLForKey:@"profileImageUrl"] == NULL) {
-            NSLog(@"  avatar.png...");
+            //NSLog(@"  avatar.png...");
             image = [UIImage imageNamed:@"avatar.png"];
             UIImage *scaledimage = [[[FRStringImage alloc] init] scaleImage:image toSize:CGSizeMake(38.0, 38.0)];
             imgView = [self newImageViewWithImage:scaledimage
@@ -432,11 +437,14 @@ enum PinAnnotationTypeTag {
         [newTitleView addGestureRecognizer:navGestures];
         [self.view addSubview:newTitleView];
         [newTitleView setCenter:CGPointMake(self.view.center.x,APP_SCREEN_FRAME.origin.y + imgView.frame.size.height/2.0 + 6.0)];
-        [friensoLabel setCenter:CGPointMake(10+friensoLabel.frame.size.width/2.0f,
-                                            APP_SCREEN_FRAME.origin.y + imgView.frame.size.height/2.0 + 6.0)];
+//        [friensoLabel setCenter:CGPointMake(10+friensoLabel.frame.size.width/2.0f,
+//                                            APP_SCREEN_FRAME.origin.y + imgView.frame.size.height/2.0 + 6.0)];
 
     } else {
-    [self.navigationController.navigationBar setBarTintColor:[UIColor colorWithHue:.580555 saturation:0.31 brightness:0.90 alpha:0.5]];
+    [self.navigationController.navigationBar setBarTintColor:[UIColor colorWithHue:0.580555
+                                                                        saturation:0.31
+                                                                        brightness:0.90
+                                                                             alpha:0.5]];
     
     
     //[UIView animateWithDuration:0.5 animations:^{
@@ -449,7 +457,7 @@ enum PinAnnotationTypeTag {
     UIImage *image = nil;
     UIImageView __block *imgView = nil;
     if ( [[NSUserDefaults standardUserDefaults] URLForKey:@"profileImageUrl"] == NULL) {
-        NSLog(@"  avatar.png...");
+        //NSLog(@"  avatar.png...");
         image = [UIImage imageNamed:@"avatar.png"];
         UIImage *scaledimage = [[[FRStringImage alloc] init] scaleImage:image toSize:CGSizeMake(38.0, 38.0)];
         imgView = [self newImageViewWithImage:scaledimage
@@ -751,7 +759,57 @@ enum PinAnnotationTypeTag {
 }
 
 #pragma mark - Local Actions
-
+-(void) watchMeSwitchEnabled:(UISwitch*)sender
+{
+    if (DBG) NSLog(@"********* trackMeswitchEnabled ****");
+    
+    if ([sender isOn]){
+        /*for (id subview in [sender subviews])
+        {
+            UILabel *label = subview;
+            if (label.tag > 99)
+                [label removeFromSuperview];
+        }*/
+        // Alert the user
+        [[[UIAlertView alloc] initWithTitle:@"WatchMe"
+                                    message:@"CoreCircle of friends will be notified and your location shared."
+                                   delegate:self
+                          cancelButtonTitle:@"Cancel"
+                          otherButtonTitles:@"Okay", nil] show];
+        
+        UILabel *trackMeLabel = [[UILabel alloc] initWithFrame:CGRectZero];
+        [trackMeLabel setText:@"Watch Me"];
+        [trackMeLabel setFont:[UIFont fontWithName:@"AppleSDGothicNeo-Light" size:12.0]];
+        [trackMeLabel setTextAlignment:NSTextAlignmentCenter];
+        [trackMeLabel setBounds:CGRectMake(0, 0, sender.bounds.size.width*1.2, sender.bounds.size.height)];
+        trackMeLabel.layer.cornerRadius = sender.frame.size.height/2.0;
+        trackMeLabel.layer.borderWidth =  1.0;
+        trackMeLabel.layer.borderColor = [UIColor whiteColor].CGColor;
+        trackMeLabel.layer.masksToBounds = YES;
+        [self.navigationController.navigationBar addSubview:trackMeLabel];
+        [trackMeLabel setBackgroundColor:[UIColor colorWithWhite:1.0 alpha:1.0]];
+        [trackMeLabel setCenter:sender.center];
+        
+        // animate help
+        [self animateHelpView:trackMeLabel];
+        [UIView animateWithDuration:3.0
+                         animations:^{trackMeLabel.alpha = 0.0;}
+                         completion:^(BOOL finished){ [trackMeLabel removeFromSuperview]; }];
+        
+        
+    } else {
+        if (DBG) NSLog(@"Stop the watchMe event");
+        [[[UIAlertView alloc] initWithTitle:@"WatchMe"
+                                    message:@"Your location sharing will stop"
+                                   delegate:self
+                          cancelButtonTitle:@"Okay"
+                          otherButtonTitles:nil] show];
+        CloudUsrEvnts *watchMeEvent = [[CloudUsrEvnts alloc] initWithAlertType:@"watchMe"];
+        [watchMeEvent disableEvent];
+        [[NSUserDefaults standardUserDefaults] setObject:nil forKey:@"watchObjId"];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+    }
+}
 -(void) animateHelpView:(UIView *)helpView {
     // animate the button
     CABasicAnimation *anim = [CABasicAnimation animationWithKeyPath:@"transform"];
@@ -807,5 +865,599 @@ enum PinAnnotationTypeTag {
 - (NSString *) stripStringOfUnwantedChars:(NSString *)phoneNumber {
     NSString *cleanedString = [[phoneNumber componentsSeparatedByCharactersInSet:[[NSCharacterSet characterSetWithCharactersInString:@"0123456789"] invertedSet]] componentsJoinedByString:@""];
     return cleanedString;
+}
+
+#pragma mark - AlertView Delegate
+- (BOOL)alertViewShouldEnableFirstOtherButton:(UIAlertView *)alertView
+{
+    return YES;
+}
+-(void)alertView:(UIAlertView *)alertView willDismissWithButtonIndex:(NSInteger)buttonIndex {
+    //if (DBG) NSLog(@"[ will dismiss ]");
+}
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
+    //if (DBG) NSLog(@"[ did dismiss ]");
+}
+-(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    // Read the title of the alert dialog box to learn the type of alert view
+    NSString *title = alertView.title;
+    NSInteger tag_no = alertView.tag;
+    
+    if ( [title isEqualToString:@"WatchMe"]) {
+        switch (buttonIndex) {
+            case 0: // dismiss, cancel, or okay
+                [watchMeSwitch setOn:NO animated:YES]; // Nothing happens -- no action
+                break;
+            case 1: // accept
+                //if (DBG) NSLog(@"Accept: 1:%ld", buttonIndex);
+                [self logAndNotifyCoreFriendsToWatchMe];
+                break;
+            default:
+                break;
+        }
+    }
+    else if (tag_no >= 100) {
+        if (DBG) NSLog(@"CONTACT FRIEND");
+        switch (buttonIndex) {
+            case 0: // dismiss, cancel, or okay
+                if (DBG) NSLog(@"cancel");
+                break;
+            case 1: // accept
+                if (DBG) NSLog(@"Dial");
+                [self contactByDialingFriendWithEmail:title];
+                break;
+            case 2: // SMS
+                if (DBG) NSLog(@"SMS");
+                [self contactBySMSingFriendWithEmail:title];
+            default:
+                break;
+        }
+        
+    } else {
+        //read the index in the title to get the position in the array **** not a good design!!! ****
+        //NSString *tagNbr= [title substringFromIndex:(title.length -2)];
+        //int btnTagNbr   = (int)[tagNbr integerValue];
+        PFObject *userEventObject =[self.pendingRqstsArray objectAtIndex:tag_no];
+        
+        // 23Jun14/SA
+        //        NSString *requestType = [userEventObject objectForKey:@"eventType"];
+        //        PFUser *friensoUser = [userEventObject objectForKey:@"friensoUser"];                   // 10Jun14:SA
+        NSString *requestType     = ([userEventObject valueForKey:@"eventType"]==NULL) ? coreFriendRequest : [userEventObject valueForKey:@"eventType"];
+        PFUser   *friensoUser = ([userEventObject objectForKey:@"friensoUser"] == NULL) ? [userEventObject objectForKey:@"sender"] : [userEventObject objectForKey:@"friensoUser"];
+        
+        if (DBG) NSLog(@"%@, %@, %@",friensoUser.username, requestType, userEventObject.objectId);
+        
+        if([requestType isEqualToString:coreFriendRequest])
+        {
+            
+            NSString * response;
+            
+            if (buttonIndex == 1) // accept
+            {
+                response = @"accept";
+                if (DBG) NSLog(@" corefriend request accepted");
+            } else if (buttonIndex == 2) { //reject
+                response = @"reject";
+                if (DBG) NSLog(@" corefriend request rejected");
+            } else { //dismiss
+                if (DBG) NSLog(@"dismissed alertview");
+                return;
+            }
+            
+            //update the db with the choices made by the user
+            PFQuery *pfquery = [PFQuery queryWithClassName:@"CoreFriendRequest"];
+            //[pfquery whereKey:@"sender" equalTo:friensoUser];
+            [pfquery whereKey:@"objectId" equalTo:userEventObject.objectId];
+            //            [pfquery whereKey:@"recipient" equalTo:[PFUser currentUser]];
+            //            [pfquery whereKey:@"awaitingResponseFrom" equalTo:@"recipient"];
+            //            [pfquery whereKey:@"status" equalTo:@"send"];
+            //            [pfquery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+            [pfquery getFirstObjectInBackgroundWithBlock:^(PFObject *pfobject, NSError *error) {
+                //                if(!error && ![objects isEqual:[NSNull null]]) {
+                //                    //TODO: check if first element is not null
+                //                    PFObject * pfobject =[objects firstObject];
+                if(pfobject != nil) {
+                    pfobject[@"awaitingResponseFrom"] = @"sender";
+                    pfobject[@"status"] = response;
+                    [pfobject saveInBackground];
+                    
+                    //remove the button from the view
+                    for (id subview in [self.scrollView subviews]){
+                        if ( [subview isKindOfClass:[PendingRequestButton class]] ) {
+                            if (tag_no ==  [(PendingRequestButton *)subview tag])
+                            {
+                                [subview removeFromSuperview];
+                                // Now update requests count
+                                [self.pendingRqstsArray removeObjectAtIndex:tag_no];
+                                [self.scrollView updatePendingRequests:self.pendingRqstsArray];
+                            }
+                        }
+                    }//
+                } //ends if
+                
+            }];
+        } else { // request is external of either watchMe or helpNow
+            
+            if (buttonIndex == 1) // accept
+            {
+                //[self addUserBubbleToMap:friensoUser  withTag:tag_no]; // accepted to watch this user
+                if (!DBG) NSLog(@"number of subviews: %ld", (long)[self.scrollView subviews].count);
+                // Remove pending request bubble from pendingDrawer
+                for (id subview in [self.scrollView subviews]){
+                    
+                    if ( [subview isKindOfClass:[PendingRequestButton class]] ) {
+                        if (!DBG) NSLog(@"self.pendingRqstsArray: %ld",(long)self.pendingRqstsArray.count);
+                        if (tag_no ==  [(PendingRequestButton *)subview tag] &&
+                            (self.pendingRqstsArray.count > 0))
+                        {
+                            //if (DBG) NSLog(@"[0]:tag=%ld, tag_no: %d", (long)[(UIButton *)subview tag], (int) tag_no );
+                            [subview removeFromSuperview];
+                            
+                            // UserEvent maintain request status (tracking)
+                            CloudUsrEvnts *userEvent = [[CloudUsrEvnts alloc] init];
+                            [userEvent trackingUserEvent:userEventObject withStatus:@"accepted"
+                                               trackedBy:[PFUser currentUser] ];
+                            
+                            // Now update requests count
+                            [self.pendingRqstsArray removeObjectAtIndex:tag_no];
+                            [self.scrollView updatePendingRequests:self.pendingRqstsArray];
+                            [self.watchingCoFrArray addObject:friensoUser];
+                            
+                            // set FriensoEvent, make the watching your friend X sticky
+                            //[[[WatchingCoreFriend alloc] init] trackUserEventLocally:friensoUser];
+                            /****** migrate this code to its own class ******/
+                            [self trackUserEventLocally:userEventObject];
+                        }
+                        
+                    }   // ends if
+                }       // ends for
+                NSLog(@"pending requests: %ld",(long)self.pendingRqstsArray.count);
+//                [self updateMapViewWithUserBubbles: self.watchingCoFrArray];
+                for (id subview in [self.scrollView subviews]){
+                    if ( [subview isKindOfClass:[PendingRequestButton class]] ) {
+                        NSLog(@"A PENDING REQUEST FOUND IN SCROLLVIEW");
+                        [self refreshMapViewAction:nil];
+                    }
+                    
+                }
+                
+            } else if (buttonIndex == 2) // reject
+            {
+                if (DBG) NSLog(@"'request' rejected ");
+                // log the reject to the cloud
+                // remove the request and update
+                
+                for (id subview in [self.scrollView subviews]){
+                    if ( [subview isKindOfClass:[PendingRequestButton class]] ) {
+                        if (tag_no ==  [(PendingRequestButton *)subview tag])
+                        {
+                            [subview removeFromSuperview];
+                            // Cloud track request
+                            [[[CloudUsrEvnts alloc] init] trackingUserEvent:userEventObject
+                                                                 withStatus:@"rejected"
+                                                                  trackedBy:[PFUser currentUser]
+                             ];
+                            // Now update requests count
+                            [self.pendingRqstsArray removeObjectAtIndex:tag_no];
+                            [self.scrollView        updatePendingRequests:self.pendingRqstsArray];
+                            // update Cloud-Store
+                        }
+                    }
+                    
+                }
+            }else // dismiss
+            {
+                if (DBG) NSLog(@"dismissed alertview");
+            }
+        } // ends the if/else for the requestType
+    }
+}
+
+
+
+#pragma mark - More Local functions
+
+#define BYPASSFRIENDREQUESTS 0
+-(void) logAndNotifyCoreFriendsToWatchMe {
+    if (DBG) NSLog(@"logAndNotifyCoreFriendsToWatchMe");
+    
+    /**************PUSH NOTIFICATIONS: WATCH ME NOW!!!! *****************/
+    if (BYPASSFRIENDREQUESTS) {
+        CloudUsrEvnts *watchMePushNots = [[CloudUsrEvnts alloc] initWithAlertType:@"watchMe"];
+        [watchMePushNots sendNotificationsToCoreCircle];
+        
+    } else {
+        NSDictionary *myCoreFriendsDic = [[NSUserDefaults standardUserDefaults] dictionaryForKey:@"CoreFriendsContactInfoDicKey"];
+        //int i = 0;
+        for (id key in myCoreFriendsDic) {
+            NSLog(@"reading contact %@",[myCoreFriendsDic objectForKey:key]);
+            NSString *coreFriendPh = [self stripStringOfUnwantedChars:[myCoreFriendsDic objectForKey:key]];
+            
+            NSString *myString = @"Ph";
+            NSString *personalizedChannelNumber = [myString stringByAppendingString:coreFriendPh];
+            NSLog(@"Phone Number for this friend is: %@", personalizedChannelNumber);
+            
+            PFPush *push = [[PFPush alloc] init];
+            
+            // Be sure to use the plural 'setChannels' if you are sending to more than one channel.
+            [push setChannel:personalizedChannelNumber];
+            NSString *coreRqstHeader = @"HELP NOW REQUEST FROM: ";
+            NSString *coreFrndMsg = [coreRqstHeader stringByAppendingString:[[PFUser currentUser] objectForKey:@"username"]];
+            
+            [push setMessage:coreFrndMsg];
+            [push sendPushInBackground];
+        }// ends for loop
+        /***
+         
+         //Query Parse to know who your "accepted" core friends are and send them each a notification
+         
+         PFQuery *query = [PFQuery queryWithClassName:@"CoreFriendRequest"];
+         [query whereKey:@"status" equalTo:@"accept"];
+         [query whereKey:@"sender" equalTo:[PFUser currentUser]];
+         [query includeKey:@"recipient"];
+         
+         [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+         if (!error) {
+         // The find succeeded.
+         if (DBG) NSLog(@"Successfully retrieved %ld scores.", (unsigned long)objects.count);
+         // Do something with the found objects
+         for (PFObject *object in objects) {
+         NSString *myString = @"Ph";
+         NSString *personalizedChannelNumber = [myString stringByAppendingString:object[@"recipient"][@"phoneNumber"]];
+         if (DBG) NSLog(@"Phone Number for this friend is: %@", personalizedChannelNumber);
+         
+         PFPush *push = [[PFPush alloc] init];
+         
+         // Be sure to use the plural 'setChannels' if you are sending to more than one channel.
+         [push setChannel:personalizedChannelNumber];
+         NSString *coreRqstHeader = @"WATCH REQUEST FROM: ";
+         NSString *coreFrndMsg = [coreRqstHeader stringByAppendingString:[[PFUser currentUser] objectForKey:@"username"]];
+         
+         [push setMessage:coreFrndMsg];
+         [push sendPushInBackground];
+         }
+         } else {
+         // Log details of the failure
+         if (DBG) NSLog(@"Error: %@ %@", error, [error userInfo]);
+         }
+         }];
+         ****/
+        /**************END OF PUSH NOTIFICATIONS: WATCH ME!!!! *****************/
+    }
+    
+    /*****START GROUP SMS SENDING BUT LOOK AT IF FRIENDS ARE >0 to SET RECIPIENTS*********/
+    NSDictionary *myCoreFriendsDic = [[NSUserDefaults standardUserDefaults] dictionaryForKey:@"CoreFriendsContactInfoDicKey"];
+    NSError *error;
+    NSMutableArray *coreSMSArray = [[NSMutableArray alloc] init];
+    int friendCount = 0;
+    //int i = 0;
+    for (id key in myCoreFriendsDic) {
+        //NSLog(@"Phone Number for this friend is: %@", object[@"recipient"][@"phoneNumber"]);
+        //NSLog(@"reading contact %@",[myCoreFriendsDic objectForKey:key]);
+        NSString *coreFriendPh = [self stripStringOfUnwantedChars:[myCoreFriendsDic objectForKey:key]];
+        [coreSMSArray addObject:coreFriendPh];
+        friendCount++;
+    }
+    //Only send SMS if you actually have someone in your core friends list
+    if (friendCount > 0) {
+        MFMessageComposeViewController *controller = [[MFMessageComposeViewController alloc] init];
+        PFGeoPoint *myLocation = [[PFUser currentUser] objectForKey:@"currentLocation"];
+        NSLog(@"YOUR LOCATION CURRENTLY IS: %f,%f", myLocation.latitude, myLocation.longitude);
+        NSString *HelpMeLatitude = [NSString stringWithFormat: @"%f", myLocation.latitude];
+        NSString *HelpMeLongitude = [NSString stringWithFormat: @"%f", myLocation.longitude];
+        
+        
+        if([MFMessageComposeViewController canSendText])
+        {
+            NSLog(@"This View Controller can send SMS messages!!");
+            NSLog(@"You have %d friends", friendCount);
+            NSString *mainMessage = @"Please watch over me!! I am at: http://maps.google.com/";
+            
+            NSString *fullMessage = [NSString stringWithFormat:@"%@?q=%@,%@ My exact address is: %@. To find out more, go to http://www.frienso.com", mainMessage, HelpMeLatitude, HelpMeLongitude, watchLocation];
+            controller.body = fullMessage;
+            
+            if(friendCount == 1)
+                controller.recipients = [NSArray arrayWithObjects:coreSMSArray[0], nil];
+            if(friendCount == 2)
+                controller.recipients = [NSArray arrayWithObjects:coreSMSArray[0], coreSMSArray[1], nil];
+            if(friendCount == 3)
+                controller.recipients = [NSArray arrayWithObjects:coreSMSArray[0], coreSMSArray[1], coreSMSArray[2], nil];
+            
+            controller.messageComposeDelegate = self;
+            //            [self presentModalViewController:controller animated:YES];
+            [self presentViewController:controller animated:YES completion:nil];
+        }
+        
+        
+        
+        else {
+            // Log details of the failure
+            NSLog(@"Error: %@ %@", error, [error userInfo]);
+        }
+    }
+    
+    
+    // Watch Me event tracking
+    CloudUsrEvnts *watchMeEvent = [[CloudUsrEvnts alloc] initWithAlertType:@"watchMe"
+                                                        eventStartDateTime:[NSDate date] ];
+    //[watchMeEvent setPersonalEvent];
+    [watchMeEvent sendToCloud];
+    
+}
+-(void) contactByDialingFriendWithEmail:(NSString *)friendEmail
+{
+    PFQuery *query= [PFUser query];
+    [query whereKey:@"username" equalTo:friendEmail];
+    [query getFirstObjectInBackgroundWithBlock:^(PFObject *object, NSError *error) {
+        if (!error)
+        {
+            //if (DBG) NSLog(@"%@", [object objectForKey:@"phoneNumber"]);
+            NSString *phoneNumber = [NSString stringWithFormat:@"tel://%@",[object objectForKey:@"phoneNumber"]];
+            @try {
+                [[UIApplication sharedApplication] openURL:[NSURL URLWithString:phoneNumber]];
+            }
+            @catch (NSException *exception){
+                if (DBG) NSLog(@"%@", exception.reason);
+            }
+            @finally {
+                if (DBG) NSLog(@"Calling: %@",friendEmail);
+            }
+            
+        }
+        
+    }];
+    
+}
+-(void) contactBySMSingFriendWithEmail:(NSString *)friendEmail
+{
+    /*  the query is not working
+     might want to consider querying coreData */
+    //if (DBG) NSLog(@"friend email: %@", friendEmail);
+    PFQuery *query= [PFUser query];
+    [query whereKey:@"username" equalTo:friendEmail];
+    [query getFirstObjectInBackgroundWithBlock:^(PFObject *object, NSError *error) {
+        if (!error)
+        {
+            //if (DBG) NSLog(@"%@", [object objectForKey:@"phoneNumber"]);
+            NSString *phoneNumber = [object objectForKey:@"phoneNumber"];
+            // You must check that the current device can send SMS messages before you
+            // attempt to create an instance of MFMessageComposeViewController.  If the
+            // device can not send SMS messages,
+            // [[MFMessageComposeViewController alloc] init] will return nil.  Your app
+            // will crash when it calls -presentViewController:animated:completion: with
+            // a nil view controller.
+            if ([MFMessageComposeViewController canSendText])
+            {   // The device can send SMS
+                MFMessageComposeViewController *picker = [[MFMessageComposeViewController alloc] init];
+                picker.messageComposeDelegate = self;
+                
+                // You can specify one or more preconfigured recipients.  The user has
+                // the option to remove or add recipients from the message composer view
+                // controller.
+                
+                // You can specify the initial message text that will appear in the message
+                // composer view controller.
+                // picker.body = @"Are you Okay?";
+                /* picker.recipients = @[@"Phone number here"]; */
+                picker.recipients = @[phoneNumber];
+                
+                [self presentViewController:picker animated:YES completion:NULL];
+            }
+            else
+                // The device can not send email.
+            {
+                //        self.feedbackMsg.hidden = NO;
+                //		self.feedbackMsg.text = @"Device not configured to send SMS.";
+                if (DBG) NSLog(@"Device not configured to send SMS.");
+            }
+            
+            
+        }
+        
+    }];
+    
+}
+#pragma mark - CoreData helper methods
+-(void) trackUserEventLocally:(PFObject *)userEventObject
+{
+    if (!DBG) NSLog(@"track userEvent locally");
+    FriensoEvent *frEvent = [NSEntityDescription insertNewObjectForEntityForName:@"FriensoEvent"
+                                                          inManagedObjectContext:[self managedObjectContext]];
+    
+    if (frEvent != nil){
+        PFUser *friensoUser = [userEventObject objectForKey:@"friensoUser"];
+        frEvent.eventTitle     = [NSString stringWithFormat:@"Watching over: %@",friensoUser.username ];
+        frEvent.eventSubtitle  = [userEventObject objectForKey:@"eventType"];
+        frEvent.eventPriority  = [NSNumber numberWithInteger:3];
+        frEvent.eventObjId     = userEventObject.objectId;
+        
+        NSError *savingError = nil;
+        if(![[self managedObjectContext] save:&savingError])
+            if (!DBG) NSLog(@"Failed to save the context. Error = %@", savingError);
+        
+    } else
+        if (!DBG) NSLog(@"Failed to create a new event.");
+    
+}
+-(void) updateCoreFriendEntity:(NSString *)friendEmail
+                  withLocation:(PFGeoPoint *)friendCurrentLoc
+{
+    // NOT WORKING!!
+    
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
+    
+    NSEntityDescription *entity  = [NSEntityDescription entityForName:@"CoreFriends"
+                                               inManagedObjectContext:[self managedObjectContext]];
+    
+    [fetchRequest setEntity:entity];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"coreEmail like %@",@"nd.edu"];
+    [fetchRequest setPredicate:predicate];
+    
+    NSError *error;
+    NSArray *fetchedObjects = [[self managedObjectContext] executeFetchRequest:fetchRequest
+                                                                         error:&error];
+    if (fetchedObjects == nil) {
+        // Handle the error.
+        if (DBG) NSLog(@"Handle the error: %@", error);
+    } else {
+        for (NSManagedObject *object in fetchedObjects) {
+            
+            if (DBG) NSLog(@"%@", object);
+            
+        }
+    }
+}
+-(BOOL) amiWatchingUserEvent:(NSString *)userEventObjId
+{
+    //if (DBG) NSLog(@"%@", userEventObjId);
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init]; // Create the fetch request
+    NSEntityDescription *entity  = [NSEntityDescription entityForName:@"FriensoEvent"
+                                               inManagedObjectContext:[self managedObjectContext]];
+    
+    [fetchRequest setEntity:entity];
+    //NSPredicate *predicateID = [NSPredicate predicateWithFormat:@"nameID == %d",-1];
+    [fetchRequest setPredicate:[NSPredicate predicateWithFormat:@"eventObjId like %@",userEventObjId]];
+    
+    NSSortDescriptor *dateSort =  [[NSSortDescriptor alloc] initWithKey:@"eventModified" ascending:NO];
+    fetchRequest.sortDescriptors = @[dateSort];
+    [fetchRequest setFetchLimit:1];
+    
+    NSError *error;
+    BOOL retBool = NO;
+    NSArray *fetchedObjects = [[self managedObjectContext] executeFetchRequest:fetchRequest error:&error];
+    if (fetchedObjects == nil) {
+        // Handle the error.
+        retBool = NO;
+    }  else {
+        if( [fetchedObjects count] > 0)
+            retBool = YES;
+        else
+            retBool = NO;
+        
+    }
+    return retBool;
+}
+-(BOOL) queryCDFriensoEvents4ActiveWatchEvent:(PFUser *)friensoUser
+{
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init]; // Create the fetch request
+    NSEntityDescription *entity  = [NSEntityDescription entityForName:@"FriensoEvent"
+                                               inManagedObjectContext:[self managedObjectContext]];
+    
+    [fetchRequest setEntity:entity];
+    //NSPredicate *predicateID = [NSPredicate predicateWithFormat:@"nameID == %d",-1];
+    [fetchRequest setPredicate:[NSPredicate predicateWithFormat:@"eventObjId like %@",friensoUser.objectId]];
+    
+    NSSortDescriptor *dateSort =  [[NSSortDescriptor alloc] initWithKey:@"eventModified" ascending:NO];
+    fetchRequest.sortDescriptors = @[dateSort];
+    [fetchRequest setFetchLimit:1];
+    
+    NSError *error;
+    BOOL retBool;
+    NSArray *fetchedObjects = [[self managedObjectContext] executeFetchRequest:fetchRequest error:&error];
+    if (fetchedObjects == nil) {
+        // Handle the error.
+        retBool = NO;
+    }  else {
+        for (NSManagedObject *mObject in fetchedObjects) {
+            if (DBG) NSLog(@"     %@,%@",[mObject valueForKey:@"eventTitle"],[mObject valueForKey:@"eventSubtitle"]);
+            if ([[mObject valueForKey:@"eventContact"] rangeOfString:friensoUser.username].location == NSNotFound)
+                retBool = NO;
+            else
+                retBool = YES;
+        }
+    }
+    return retBool;
+}
+-(void) setWatchingUserInCD:(PFUser *)friensoUser
+{
+    FriensoAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+    NSManagedObjectContext *managedObjectContext = appDelegate.managedObjectContext;
+    FriensoEvent *localEvent = [NSEntityDescription insertNewObjectForEntityForName:@"FriensoEvent"
+                                                             inManagedObjectContext:managedObjectContext];
+    
+    if (localEvent != nil){
+        localEvent.eventSubtitle  = @"watch";
+        NSString *eventStr = @"You are watching: ";
+        localEvent.eventTitle     = [eventStr stringByAppendingString:friensoUser.username];
+        localEvent.eventPriority  = [NSNumber numberWithInteger:2];
+        localEvent.eventCreated   = [NSDate date];
+        localEvent.eventModified  = [NSDate date];
+        
+        NSError *savingError = nil;
+        if([managedObjectContext save:&savingError]) {
+            if (DBG) NSLog(@"Successfully saved the context");
+        } else { if (DBG) NSLog(@"Failed to save the context. Error = %@", savingError); }
+    } else {
+        if (DBG) NSLog(@"Failed to create a new event.");
+    }
+}
+
+- (void) actionAddFriensoUserLocation:(PFGeoPoint *)geoPoint forUser:(NSString *)friend {
+    /* Method:      actionAddFriensoUserLocation
+     Objective:   Display the user's current location in the Frienso Activity list-view
+     
+     **/
+    FriensoAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+    NSManagedObjectContext *managedObjectContext = appDelegate.managedObjectContext;
+    FriensoEvent *userLocationEvent = [NSEntityDescription insertNewObjectForEntityForName:@"FriensoEvent"
+                                                                    inManagedObjectContext:managedObjectContext];
+    CLLocation *locA = [[CLLocation alloc] initWithLatitude:geoPoint.latitude longitude:geoPoint.longitude];
+    NSDictionary *userLocDic = [[NSUserDefaults standardUserDefaults] objectForKey:@"userLocation"];
+    CLLocation *locB = [[CLLocation alloc] initWithLatitude:(CLLocationDegrees)[[userLocDic objectForKey:@"lat"] doubleValue]
+                                                  longitude:(CLLocationDegrees)[[userLocDic objectForKey:@"long"] doubleValue]];
+    
+    CLLocationDistance distance = [locA distanceFromLocation:locB];
+    if (userLocationEvent != nil){
+        NSString *eventStr = @"";
+        userLocationEvent.eventTitle     = [eventStr stringByAppendingString:[friend componentsSeparatedByString:@"@"][0]];
+        userLocationEvent.eventSubtitle  = [NSString stringWithFormat:@"%.2f %@ away",distance,@"meters" ];
+        userLocationEvent.eventPriority  = [NSNumber numberWithInteger:3];
+        userLocationEvent.eventCreated   = [NSDate date];
+        userLocationEvent.eventModified  = [NSDate date];
+        
+        NSError *savingError = nil;
+        if([managedObjectContext save:&savingError]) {
+            if (DBG) NSLog(@"Successfully saved the context");
+        } else { if (DBG) NSLog(@"Failed to save the context. Error = %@", savingError); }
+    } else {
+        if (DBG) NSLog(@"Failed to create a new event.");
+    }
+}
+
+- (void) actionAddFriensoEvent:(NSString *) message {
+    if (DBG) NSLog(@"[ actionAddFriensoEvent ]");
+    FriensoAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+    
+    NSManagedObjectContext *managedObjectContext =
+    appDelegate.managedObjectContext;
+    
+    FriensoEvent *firstFriensoEvent = [NSEntityDescription insertNewObjectForEntityForName:@"FriensoEvent"
+                                                                    inManagedObjectContext:managedObjectContext];
+    
+    if (firstFriensoEvent != nil){
+        NSString *loginFriensoEvent = @"";
+        firstFriensoEvent.eventTitle     = [loginFriensoEvent stringByAppendingString:message];
+        firstFriensoEvent.eventSubtitle  = @"Review these data";
+        firstFriensoEvent.eventLocation  = @"Right here";
+        firstFriensoEvent.eventContact   = @"me";
+        firstFriensoEvent.eventCreated   = [NSDate date];
+        firstFriensoEvent.eventModified  = [NSDate date];
+        
+        NSError *savingError = nil;
+        if([managedObjectContext save:&savingError]) {
+            if (DBG) NSLog(@"Successfully saved the context");
+        } else { if (DBG) NSLog(@"Failed to save the context. Error = %@", savingError); }
+    } else {
+        if (DBG) NSLog(@"Failed to create a new event.");
+    }
+    
+}
+-(void) syncCoreFriendsLocation {
+    if (DBG) NSLog(@"--- syncCoreFriendsLocation  [ Sync friends' location to CoreData ]");
+    FRCoreDataParse *frCDPObject = [[FRCoreDataParse alloc] init];
+    [frCDPObject updateThisUserLocation];
+    //[frCDPObject updateCoreFriendsLocation];
+    [frCDPObject showCoreFriendsEntityData];
 }
 @end

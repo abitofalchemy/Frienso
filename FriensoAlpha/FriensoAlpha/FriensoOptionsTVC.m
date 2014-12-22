@@ -9,7 +9,6 @@
 #import "FriensoOptionsTVC.h"
 #import <QuartzCore/QuartzCore.h>
 #import "UserProfileViewController.h"
-#import "SettingsViewController.h"
 #import "tstWatchingViewController.h"
 #import "FriensoResourcesTVC.h"
 #import "AboutFriensoViewController.h"
@@ -39,7 +38,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    self.title = @"View Options";
+    self.title = @"Control Panel";
     
     for (id subview in [self.navigationController.toolbar subviews]){
         if ( [subview isKindOfClass:[FriensoOptionsButton class]] )
@@ -51,12 +50,11 @@
     self.sectionArray = [[NSMutableArray alloc] initWithArray:@[@"Friends",
                                                                 @"Emergency Contacts",
                                                                 @"Options"]];
-    self.optionsArray = [[NSMutableArray alloc] initWithArray:@[@"School",/*@"Watching",*/
+    self.optionsArray = [[NSMutableArray alloc] initWithArray:@[/*@"School",@"Watching",*/
                                                                 @"Profile",
-                                                                @"Settings",
-                                                                @"About"]];
-    self.emergencyArray = [[NSMutableArray alloc] initWithArray:@[@"Campus Security Police",
-                                                                  @"911",
+                                                                @"Settings"/*,
+                                                                @"About"*/]];
+    self.emergencyArray = [[NSMutableArray alloc] initWithArray:@[@"911",
                                                                   @"More"]];
     self.friendsArray = [[NSMutableArray alloc] init];
     NSDictionary *cfDic = [[NSUserDefaults standardUserDefaults] dictionaryForKey:@"CoreFriendsContactInfoDicKey"];
@@ -65,16 +63,7 @@
     }
     
 }
-//- (void) viewWillDisappear:(BOOL)animated {
-//    [super viewWillDisappear:YES];
-//    
-//    for (id subview in [self.navigationController.toolbar subviews]){
-//        if ( [subview isKindOfClass:[FriensoOptionsButton class]] )
-//        {
-//            [subview setHidden:NO];
-//        }
-//    }
-//}
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
@@ -110,32 +99,33 @@
     }
     if ( indexPath.section == 0) {
         cell.textLabel.text = [self.friendsArray objectAtIndex:indexPath.row];
+        cell.imageView.image = [UIImage imageNamed:@"talk-32.png"];
     }
     else if ( indexPath.section == 1) {
         cell.textLabel.text = [self.emergencyArray objectAtIndex:indexPath.row];
+        switch (indexPath.row) {
+            case 0:
+                cell.imageView.image = [UIImage imageNamed:@"police_badge-32.png"];
+                break;
+            case 1:
+                cell.imageView.image = [UIImage imageNamed:@"plus-32.png"];
+                break;
+            default:
+                break;
+        }
+        
     }
     else if ( indexPath.section == 2) {
         cell.textLabel.text = [self.optionsArray objectAtIndex:indexPath.row];
         cell.textLabel.font = [UIFont fontWithName:@"AppleSDGothicNeo-Light" size:18.0];
         switch (indexPath.row) {
             case 0:
-                cell.imageView.image = [UIImage imageNamed:@"lighthouse-24.png"];
-                break;
-            case 1:
                 cell.imageView.image = [UIImage imageNamed:@"profile-24.png"];
                 break;
-            case 2:
+            case 1:
                 cell.imageView.image = [UIImage imageNamed:@"settings-24.png"];
                 break;
-            case 3:
-                cell.imageView.image = [UIImage imageNamed:@"about-24.png"];
-                break;
-            /*case 4:
-                cell.imageView.image = [self imageWithString:@"🌐" font:[UIFont systemFontOfSize:[UIFont systemFontSize]] size:CGSizeMake(24, 24)];
-                break;
-            case 5:
-                cell.imageView.image = [[FRStringImage alloc] calendarDrawRectImage:CGSizeMake(24,24)];
-                break;*/
+
             default:
                 break;
         }
@@ -147,56 +137,42 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    switch (indexPath.row) {
-        case 0:{
-            NSLog(@"%@", [tableView cellForRowAtIndexPath:indexPath].textLabel.text);
-            UserProfileViewController *detailViewController = [[UserProfileViewController alloc] initWithNibName:nil bundle:nil];
-            
-            // Pass the selected object to the new view controller.
-            [detailViewController setText:[tableView cellForRowAtIndexPath:indexPath].textLabel.text];
-//            NSDictionary *dictTemp = [arrItems objectAtIndex:indexPath.row];
-//            detailViewController.strDesc = [dictTemp objectForKey:@"Desc"];
+    if ( indexPath.section == 0) {
         
-            // Push the view controller.
-            [self.navigationController pushViewController:detailViewController
-                                                 animated:YES];
-            break;
+    } else if( indexPath.section == 1) {
+        
+    } else if( indexPath.section == 2) {
+        switch (indexPath.row) {
+            case 0:{
+                NSLog(@"%@", [tableView cellForRowAtIndexPath:indexPath].textLabel.text);
+                UserProfileViewController *detailViewController = [[UserProfileViewController alloc] initWithNibName:nil bundle:nil];
+                [detailViewController setText:[tableView cellForRowAtIndexPath:indexPath].textLabel.text];
+                [self.navigationController pushViewController:detailViewController animated:YES];
+                break;}
+            case 1: {
+                SettingsViewController *detailVC = [[SettingsViewController alloc] initWithNibName:nil bundle:nil];
+                [detailVC setText:[tableView cellForRowAtIndexPath:indexPath].textLabel.text];
+                [self.navigationController pushViewController:detailVC animated:YES];
+                break;}
+            default:
+                break;
         }
-        /*case 1:{
-            //NSLog(@"%@", [tableView cellForRowAtIndexPath:indexPath].textLabel.text);
-            UIStoryboard *mainStoryboard = [UIStoryboard storyboardWithName:@"Main"  bundle:nil];
-            tstWatchingViewController  *wtvc = (tstWatchingViewController*)[mainStoryboard instantiateViewControllerWithIdentifier:@"friensoWatching"];
-            [wtvc setText:[tableView cellForRowAtIndexPath:indexPath].textLabel.text];
-            [self.navigationController pushViewController:wtvc animated:YES];
-            break;
-        }*/
-        case 1:     {
-            UIStoryboard *mainStoryboard = [UIStoryboard storyboardWithName:@"Main"  bundle:nil];
-            FriensoResourcesTVC  *rtvc = (FriensoResourcesTVC*)[mainStoryboard instantiateViewControllerWithIdentifier:@"friensoResources"];
-            [self.navigationController pushViewController:rtvc animated:YES];
-            break;  }
-        case 2:{
-            //NSLog(@"%@", [tableView cellForRowAtIndexPath:indexPath].textLabel.text);
-            SettingsViewController *detailViewController = [[SettingsViewController alloc] initWithNibName:nil bundle:nil];
-            [detailViewController setText:[tableView cellForRowAtIndexPath:indexPath].textLabel.text];
-            [self.navigationController pushViewController:detailViewController animated:YES];
-            break;
-        }
-        case 3:{
-            //NSLog(@"%@", [tableView cellForRowAtIndexPath:indexPath].textLabel.text);
-            AboutFriensoViewController *detailViewController = [[AboutFriensoViewController alloc] initWithNibName:nil bundle:nil];
-            [detailViewController setText:[tableView cellForRowAtIndexPath:indexPath].textLabel.text];
-            [self.navigationController pushViewController:detailViewController
-                                                 animated:YES];
-            break;
-        }
-        /*case 4:
-            [self performSegueWithIdentifier:@"friensoMap" sender:self];
-            break;*/
-        default:
-            break;
+//        switch (indexPath.row) {
+//            case 0:
+//                NSLog(@"%@", [tableView cellForRowAtIndexPath:indexPath].textLabel.text);
+//                UserProfileViewController *detailViewController = [[UserProfileViewController alloc] initWithNibName:nil bundle:nil];
+//                [detailViewController setText:[tableView cellForRowAtIndexPath:indexPath].textLabel.text];
+//                [self.navigationController pushViewController:detailViewController animated:YES];
+//                break;
+//            case 1:
+//                SettingsViewController *detailVC = [[SettingsViewController alloc] initWithNibName:nil bundle:nil];
+//                [detailVC setText:[tableView cellForRowAtIndexPath:indexPath].textLabel.text];
+//                [self.navigationController pushViewController:detailVC animated:YES];
+//                break;
+//            default:
+//                break;
+//        }//ends switch
     }
-        
 }
 /*
 // Override to support conditional editing of the table view.

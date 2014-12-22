@@ -7,6 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "SettingsViewController.h"
+
 
 @interface FriensoOptionsTVC : UITableViewController
 

@@ -12,6 +12,8 @@
 
 @interface SettingsViewController : UIViewController <MFMailComposeViewControllerDelegate,UITextFieldDelegate>
 
+@property (nonatomic,strong) UITextField *editAlarmTimer;
+@property(nonatomic) CGRect buttonFrame;
 - (void) setText:(NSString *)paramText;
 
 @end

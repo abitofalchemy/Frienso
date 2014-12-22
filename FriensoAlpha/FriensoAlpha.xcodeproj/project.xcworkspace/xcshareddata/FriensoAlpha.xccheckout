@@ -14,7 +14,7 @@
 		<string>https://github.com/abitofalchemy/Frienso.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
-	<string>FriensoAlpha/FriensoAlpha.xcodeproj/project.xcworkspace</string>
+	<string>FriensoAlpha/FriensoAlpha.xcodeproj</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
 		<key>70F19A3FC147EF4364DDF3268DF8C67773C28CFB</key>

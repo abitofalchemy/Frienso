@@ -1,0 +1,54 @@
+\documentclass[letterpaper, 10pt, twoside, openright, english]{memoir}
+\usepackage{mypreamble}
+\usepackage{longtable}
+\usepackage{geometry}
+\usepackage{tcolorbox}
+
+% SVN info for this file
+\svnidlong
+{$HeadURL$}
+{$LastChangedDate$}
+{$LastChangedRevision$}
+{$LastChangedBy$}
+
+\includeonly{%
+  titlepage,
+  toc,
+  beta-min-features,
+%  chap1,
+%  chap2,
+%  chap3,
+%  appendix,
+%  bibliography,
+}
+
+
+
+\begin{document}
+
+\frontmatter
+\include{titlepage}
+%\include{syllabus}
+\normalcolor
+\include{toc}
+\mainmatter
+\include{beta-min-features}
+%\include{introduction}
+%\part{Bla bla bla}
+%\labelPart{first}
+%\part{More stuff}
+%\labelPart{more_stuff}
+%\include{chap2}
+%\part{Last stuff}
+%\labelPart{last_stuff}
+%\include{chap3}
+%\appendix
+%\part{Appendices}
+%\labelPart{appendices}
+%\include{appendix}
+%\backmatter
+%\include{bibliography}
+
+
+
+\end{document}

@@ -376,7 +376,6 @@
     [profilePhoto setFrame:CGRectMake(0,0,self.view.bounds.size.width/3,self.view.bounds.size.width/3)];
     [profilePhoto setCenter:CGPointMake(self.view.center.x, self.view.center.x * 0.4)];
     profilePhoto.layer.borderColor  = [UIColor whiteColor].CGColor;
-#warning crop the image to look more normal
     profilePhoto.contentMode = UIViewContentModeScaleAspectFill;
     
     CALayer *imageLayer = profilePhoto.layer;

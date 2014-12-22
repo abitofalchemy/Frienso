@@ -1599,7 +1599,7 @@ enum PinAnnotationTypeTag {
     UIImage *image = nil;
     UIImageView __block *imgView = nil;
     if ( [[NSUserDefaults standardUserDefaults] URLForKey:@"profileImageUrl"] == NULL) {
-        NSLog(@"  avatar.png...");
+        //NSLog(@"  avatar.png...");
         image = [UIImage imageNamed:@"avatar.png"];
         UIImage *scaledimage = [[[FRStringImage alloc] init] scaleImage:image toSize:CGSizeMake(38.0, 38.0)];
         imgView = [self newImageViewWithImage:scaledimage

@@ -526,7 +526,7 @@ static NSString *coreFriendsCell = @"coreFriendsCell";
 - (void) coreFriendsAction:(id) sender {
     
     self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Done"
-                                                                             style:UIBarButtonItemStyleBordered
+                                                                             style:UIBarButtonItemStylePlain
                                                                             target:nil
                                                                             action:nil];
 

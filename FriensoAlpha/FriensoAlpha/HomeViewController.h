@@ -25,5 +25,5 @@
 - (void) setInitialLocation:(CLLocation *)aLocation;
 - (void) actionAddFriensoUserLocation:(PFGeoPoint *)geoPoint forUser:(NSString *)friend;
 - (void) configureOverlay;
-
+- (void) watchMeSwitchEnabled:(UISwitch*) sender;
 @end
