@@ -111,11 +111,13 @@
 		3EFEC30A19152633002A709D /* FriensoEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 3EFEC30919152633002A709D /* FriensoEvent.m */; };
 		3EFEC30C1917877E002A709D /* und_logo29.png in Resources */ = {isa = PBXBuildFile; fileRef = 3EFEC30B1917877E002A709D /* und_logo29.png */; };
 		3EFEC30F19180276002A709D /* CoreFriends.m in Sources */ = {isa = PBXBuildFile; fileRef = 3EFEC30E19180276002A709D /* CoreFriends.m */; };
+		881C765F1A54083500D9BB2D /* Run.m in Sources */ = {isa = PBXBuildFile; fileRef = 881C765E1A54083500D9BB2D /* Run.m */; };
+		881C76621A54083600D9BB2D /* Location.m in Sources */ = {isa = PBXBuildFile; fileRef = 881C76611A54083600D9BB2D /* Location.m */; };
 		88276BB019FD21B40071024A /* plus-32.png in Resources */ = {isa = PBXBuildFile; fileRef = 88276BAF19FD21B40071024A /* plus-32.png */; };
 		88276BB219FD221E0071024A /* police_badge-32.png in Resources */ = {isa = PBXBuildFile; fileRef = 88276BB119FD221E0071024A /* police_badge-32.png */; };
 		88276BB419FD24250071024A /* talk-32.png in Resources */ = {isa = PBXBuildFile; fileRef = 88276BB319FD24250071024A /* talk-32.png */; };
 		882E46E119BC770B00F8B0DE /* chaticon44px.png in Resources */ = {isa = PBXBuildFile; fileRef = 882E46E019BC770B00F8B0DE /* chaticon44px.png */; };
-		D2B4C533194F90D000094B98 /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2B4C532194F90D000094B98 /* Crashlytics.framework */; };
+		884204D41A5164AA00CE2B67 /* ParseClasses.txt in Resources */ = {isa = PBXBuildFile; fileRef = 884204D31A5164AA00CE2B67 /* ParseClasses.txt */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -273,11 +275,15 @@
 		3EFEC30B1917877E002A709D /* und_logo29.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = und_logo29.png; sourceTree = "<group>"; };
 		3EFEC30D19180275002A709D /* CoreFriends.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CoreFriends.h; path = FriensoAlpha/CoreFriends.h; sourceTree = SOURCE_ROOT; };
 		3EFEC30E19180276002A709D /* CoreFriends.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CoreFriends.m; path = FriensoAlpha/CoreFriends.m; sourceTree = SOURCE_ROOT; };
+		881C765D1A54083500D9BB2D /* Run.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Run.h; sourceTree = SOURCE_ROOT; };
+		881C765E1A54083500D9BB2D /* Run.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Run.m; sourceTree = SOURCE_ROOT; };
+		881C76601A54083600D9BB2D /* Location.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Location.h; sourceTree = SOURCE_ROOT; };
+		881C76611A54083600D9BB2D /* Location.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Location.m; sourceTree = SOURCE_ROOT; };
 		88276BAF19FD21B40071024A /* plus-32.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "plus-32.png"; sourceTree = "<group>"; };
 		88276BB119FD221E0071024A /* police_badge-32.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "police_badge-32.png"; sourceTree = "<group>"; };
 		88276BB319FD24250071024A /* talk-32.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "talk-32.png"; sourceTree = "<group>"; };
 		882E46E019BC770B00F8B0DE /* chaticon44px.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = chaticon44px.png; sourceTree = "<group>"; };
-		D2B4C532194F90D000094B98 /* Crashlytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Crashlytics.framework; sourceTree = "<group>"; };
+		884204D31A5164AA00CE2B67 /* ParseClasses.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ParseClasses.txt; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -287,7 +293,6 @@
 			files = (
 				3EA4E58B1991538400D5F12B /* AssetsLibrary.framework in Frameworks */,
 				3E1FBD281958424A00AC7197 /* Parse.framework in Frameworks */,
-				D2B4C533194F90D000094B98 /* Crashlytics.framework in Frameworks */,
 				3EEA2280191F7DFC00DC8C54 /* MessageUI.framework in Frameworks */,
 				3E9F893518FEB62A00DA190C /* MapKit.framework in Frameworks */,
 				180E880F18BE0C97009A570F /* CoreLocation.framework in Frameworks */,
@@ -343,6 +348,7 @@
 		182792F818BE06740056C849 = {
 			isa = PBXGroup;
 			children = (
+				884204D31A5164AA00CE2B67 /* ParseClasses.txt */,
 				1808553418C3B9810047A8BE /* README.md */,
 				1827930A18BE06750056C849 /* FriensoAlpha */,
 				1827932918BE06750056C849 /* FriensoAlphaTests */,
@@ -365,7 +371,6 @@
 			children = (
 				3EA4E58A1991538300D5F12B /* AssetsLibrary.framework */,
 				3E1FBD271958424A00AC7197 /* Parse.framework */,
-				D2B4C532194F90D000094B98 /* Crashlytics.framework */,
 				3EEA227F191F7DFC00DC8C54 /* MessageUI.framework */,
 				3E9F893418FEB62A00DA190C /* MapKit.framework */,
 				180E880E18BE0C97009A570F /* CoreLocation.framework */,
@@ -514,6 +519,10 @@
 				3EFEC30919152633002A709D /* FriensoEvent.m */,
 				3EFEC30D19180275002A709D /* CoreFriends.h */,
 				3EFEC30E19180276002A709D /* CoreFriends.m */,
+				881C76601A54083600D9BB2D /* Location.h */,
+				881C76611A54083600D9BB2D /* Location.m */,
+				881C765D1A54083500D9BB2D /* Run.h */,
+				881C765E1A54083500D9BB2D /* Run.m */,
 			);
 			path = "CoreData Files";
 			sourceTree = "<group>";
@@ -693,6 +702,7 @@
 				180E882618BF2AB5009A570F /* first-view-cover-2.png in Resources */,
 				18DF849C18C275C7003F431F /* lighthouse-24.png in Resources */,
 				3E3FC2EA19618A2F008EDC00 /* frienso-1.png in Resources */,
+				884204D41A5164AA00CE2B67 /* ParseClasses.txt in Resources */,
 				3E4579E3197962E8008499B7 /* help-switch-bg.png in Resources */,
 				1808553518C3B9810047A8BE /* README.md in Resources */,
 				1879B59318C7277100AEA55F /* Profile-256.png in Resources */,
@@ -777,12 +787,14 @@
 				187B616C195421D500DEF677 /* TrackingFriendButton.m in Sources */,
 				3E4120F818E3005E0058012B /* aBoAViewController.m in Sources */,
 				3E9B0F47193E05900019ED6A /* UserResponseScrollView.m in Sources */,
+				881C76621A54083600D9BB2D /* Location.m in Sources */,
 				3EB5C447191A5EE5006557DE /* FRUserGenContentButton.m in Sources */,
 				182E86F018C120CF009AD302 /* ABALoginTVC.m in Sources */,
 				3E21A0541920EE050083F1AC /* FRStringImage.m in Sources */,
 				3E56D3D5194F96D90092CF63 /* CloudEntityContacts.m in Sources */,
 				3E3FC2ED19618A93008EDC00 /* WelcomeViewCtrl.m in Sources */,
 				1827931518BE06750056C849 /* FriensoAppDelegate.m in Sources */,
+				881C765F1A54083500D9BB2D /* Run.m in Sources */,
 				3ECD3998192416F000A61B83 /* FRSyncFriendConnections.m in Sources */,
 				1853403F18C2236E0094AC5A /* FriensoOptionsTVC.m in Sources */,
 			);

@@ -10,7 +10,15 @@ git branch
 
 Version History
 ---------------
-* ver 1.8.1 build : Update to be compatible with iOS 8.1
+
+* ver 1.8.1 build ###: Working out issues of selecting  core  friends & location info
+-- Sal: 
+
+* ver 1.8.1 build 113: Update to be compatible with iOS 8.1
+-- Sal: options view: are my circle logged-in?  need that implementation
+-- Sal: ensured that mapview works and at least the mainview works (more or less)
+
+-- Sal: removing crashlytics because of errors, need to switch to parse analytics [_]
 -- Sal: handle Contacts selection 
 -- Sal: Getting the locate me needle button to work
 -- Sal: Deprecated various features from the last working version

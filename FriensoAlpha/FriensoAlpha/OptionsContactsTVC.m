@@ -49,7 +49,7 @@
     self.navigationItem.title = @"Contacts";
     
     
-    self.optionsArray = [[NSMutableArray alloc] init];
+    self.optionsArray   = [[NSMutableArray alloc] init];
     NSDictionary *cfDic = [[NSUserDefaults standardUserDefaults] dictionaryForKey:@"CoreFriendsContactInfoDicKey"];
     for (id key in cfDic) {
         [self.optionsArray addObject:[cfDic objectForKey:key]];

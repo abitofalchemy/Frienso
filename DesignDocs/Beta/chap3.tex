@@ -54,3 +54,31 @@ neque ullamcorper ultrices id quis velit. Vestibulum dictum, lectus eu mattis
 condimentum, lacus lorem cursus sapien, vel convallis lorem nunc adipiscing
 nunc. Proin eget laoreet odio. Vivamus dignissim, diam nec scelerisque egestas,
 turpis nulla pellentesque est, a dignissim magna turpis scelerisque elit.
+    \documentclass{minimal}
+    \usepackage{tikz}
+    \usetikzlibrary{automata,positioning}
+
+    \begin{document}
+      \begin{tikzpicture}[%
+        >=stealth,
+        shorten >=1pt,
+        node distance=2cm,
+        on grid,
+        auto,
+        state/.append style={minimum size=2em},
+        thick
+      ]
+        \node[state] (A)              {$p$};
+        \node[state] (B) [right of=A] {};
+        \node[state] (C) [right of=B] {$r$};
+
+        \path[->] (A) +(-1,0) edge (A)
+                  (A)         edge [loop above] node {$a$} ()
+                  (A)         edge              node {$a$} (B)
+                  (B)         edge [bend left]  node {$b$} (C)
+                  (C)         edge [bend left]  node {$b$} (B)
+                  (C)         edge [loop below] node {$d$} ()
+                  (C)         edge                         +(1,0);
+      \end{tikzpicture}
+    \end{document}
+

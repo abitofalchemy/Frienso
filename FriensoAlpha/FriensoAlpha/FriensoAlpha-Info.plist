@@ -21,9 +21,13 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>108</string>
+	<string>113</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>I have learned more on stack overflow than anything else</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>The spirit of stack overflow is coders helping coders</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
 	<key>UIRequiredDeviceCapabilities</key>

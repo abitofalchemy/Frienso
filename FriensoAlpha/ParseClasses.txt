@@ -1,0 +1,13 @@
+"UserEvent"
+===========
+Parse class maintains each time a user activates a WatchMe event and this class maintains the status
+
+eventActive: Yes / No
+eventType: watch / help (help might be deprecated)
+friensoUser: self or friends
+objectId: used to validate status at the app level
+
+UserEventTracking
+=================
+Parse class maintains users (friends) watching or tracking others
+

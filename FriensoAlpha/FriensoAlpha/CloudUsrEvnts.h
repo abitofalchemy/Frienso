@@ -20,13 +20,12 @@
 - (void) sendToCloud;
 - (void) sendNotificationsToCoreCircle;
 - (void) disableEvent;
+- (NSString*) checkWatchMeStatus;
 - (BOOL) activeAlertCheck;
 - (void) trackingUserEvent:(PFObject*) userEventObjId
                 withStatus:(NSString*) status
                  trackedBy:(PFUser  *) parseUser;
 - (void) isUserInMy2WatchList:(PFUser *)friensoUser;
-
-
-//- (NSArray *) ongoingAlertsCheck;
+- (void)cloudCheckForCircleEvents;
 
 @end

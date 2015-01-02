@@ -18,12 +18,23 @@
 
 @interface HomeViewController : UIViewController <NSFetchedResultsControllerDelegate, UIGestureRecognizerDelegate,UITableViewDelegate,UITableViewDataSource,MKMapViewDelegate,CLLocationManagerDelegate,UIAlertViewDelegate,UIScrollViewDelegate,MFMessageComposeViewControllerDelegate>
 
-@property (nonatomic,retain) CLLocationManager* locationManager;
+@property (nonatomic,strong) CLLocationManager* locationManager;
+//
+@property int seconds;
+@property float distance;
+@property (nonatomic, strong) NSMutableArray *locations;
+@property (nonatomic, strong) NSTimer *timer;
+//
 @property (nonatomic,strong) MKMapView*         mapView;
-//@property (nonatomic, strong) UIButton*         helpMeNowBtn;
+/*@property (nonatomic, strong) UIButton*         helpMeNowBtn;*/
 
 - (void) setInitialLocation:(CLLocation *)aLocation;
 - (void) actionAddFriensoUserLocation:(PFGeoPoint *)geoPoint forUser:(NSString *)friend;
-- (void) configureOverlay;
+/*****************************
+ *  I want to simplify (improve significantly) 
+ *  this method:
+ - (void) configureOverlay;
+ *****************************/
+- (void) checkUsersStatus;
 - (void) watchMeSwitchEnabled:(UISwitch*) sender;
 @end

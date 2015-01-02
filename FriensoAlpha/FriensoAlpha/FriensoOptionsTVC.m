@@ -99,6 +99,8 @@
     }
     if ( indexPath.section == 0) {
         cell.textLabel.text = [self.friendsArray objectAtIndex:indexPath.row];
+#warning check here if user is online?
+//        NSLog(@"%@", cell.textLabel.text);
         cell.imageView.image = [UIImage imageNamed:@"talk-32.png"];
     }
     else if ( indexPath.section == 1) {

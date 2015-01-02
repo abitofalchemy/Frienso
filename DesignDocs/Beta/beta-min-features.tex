@@ -8,13 +8,31 @@
   the features needing work and a milestone with attached dates that we \textbf{must} try hard
   to meet on time. 
 \end{introduction}
+\begin{figure*}[t]
+\centering
+
+\subfloat{%
+  \includegraphics[width=3cm]{images/ScrnSht_mainview}%
+    \label{fig:evaluation:revenue}%
+}\qquad
+\subfloat{%
+  \includegraphics[width=3cm]{images/ScrnSht_optionsview}%
+  \label{fig:evaluation:avgPrice}%
+}
+
+\caption{Frienso Views: HomeView and the OptionsView}
+\end{figure*}
 
 \section{21Dec14 Updates to the MVP}
 
 \begin{enumerate}
-\item \textbf{WatchMe:}  We minimize the features, we remove HelpMe for now and make sure WatchMe works by maintaining location info for the duration of WatchMe.
+\item \textbf{WatchMe:}  We minimize the features, we removed HelpMe for now and make sure WatchMe works by maintaining location info for the duration of WatchMe.
 \item \textbf{Friends:} Simplify adding friends to core circle. Eliminate the need for accepting friend requests for now. If the user is in your Contacts, just add the user to the core circle.  On the backend, we maintain only the phone, until that user registers a Frienso account.
 \item \textbf{Map location tracking:} Add history/path tracking for the duration of the Watch.
+\item \textbf{Design challenges}: What is the best way to query the UserEvents class (data-store for watchMe events)
+so that we don't pull 10s, 100s, 1000s of active events when we begin to scale up? We need a design improvement
+to post an event (say watchMe) and that user's event is stored in cloud with properties that limits a query to only those that the user's micro-network. /NY?/
+
 \end{enumerate}
 
 \subsection{Issues due to iOS, and Mac OS updates}
@@ -23,6 +41,13 @@ Selecting contacts has changed in iOS 8.  There are now new requirements for bui
 We need to change the crash reporting (use Parse's new offering). \\
 
 Current iOS version (repository): branch \emph{ frienso\_beta\_experimental} \\
+
+\subsection{Map Location Tracking}
+\noindent\textbf{Proposal for review:} (sal) I propose that after a user enables watchMe, the user's device
+updates location every so many seconds using the normal way of location updating. Then on the user's side, those
+watching will fetch (get) the corefriend's location with the watchMe event. For that user we maintain 
+a route array of geopoints.  The aim is to simplify and minimize our backend storage and its complexity,
+so that we may avoid/minimize app errors.
 
 \section{21Dec14 Action Items}
 \subsection{iOS version}

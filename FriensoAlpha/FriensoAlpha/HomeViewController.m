@@ -45,7 +45,7 @@ enum PinAnnotationTypeTag {
 };
 
 
-@interface HomeViewController ()
+@interface HomeViewController () <CLLocationManagerDelegate>
 {
     NSMutableArray *coreFriendsArray;
     UISwitch       *watchMeSwitch;
@@ -71,7 +71,7 @@ enum PinAnnotationTypeTag {
 
 @property (nonatomic,strong) ProfileSneakPeekView *profileView;
 @property (nonatomic,strong) UISwitch       *watchMeSwitch;
-@property (nonatomic,strong) UISwitch       *helpMeNowSwitch;
+//@property (nonatomic,strong) UISwitch       *helpMeNowSwitch;
 //@property (nonatomic,strong) UILabel        *drawerLabel; // deprecated
 //@property (nonatomic)        CGFloat scrollViewY;
 @property (nonatomic)        CGRect normTableViewRect;
@@ -90,14 +90,14 @@ enum PinAnnotationTypeTag {
 @implementation HomeViewController
 @synthesize locationManager  = _locationManager;
 @synthesize watchMeSwitch    = _watchMeSwitch;
-@synthesize helpMeNowSwitch  = _helpMeNowSwitch;
+//@synthesize helpMeNowSwitch  = _helpMeNowSwitch;
 
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
-        // Custom initialization
+        // NSLog(@"--Custom initialization");
     }
     return self;
 }
@@ -108,9 +108,8 @@ enum PinAnnotationTypeTag {
     
     // Setup UI
     [self setupMapView];
-    [self setupTopTableView];
     [self setupMapViewControls];
-    //[self setupHelpMeSwitch];
+    [self setupTopTableView];
     [self setupOptionsNavigation];
     //[self setupTxtFriensoChat];
     [self setupWatchMeSwitch];
@@ -119,13 +118,21 @@ enum PinAnnotationTypeTag {
     
 
 }
+- (void) viewWillDisappear:(BOOL)animated{
+    [super viewWillDisappear:animated];
+    [self.timer invalidate];
+}
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
+    // Check users status and circle of friends status
+    [self checkUsersStatus];
+    
 	// Restore touch interaction on the following widgets
 	[navGestures setEnabled:YES]; 
     [UIView animateWithDuration:0.5 animations:^{
         [self.navigationController setNavigationBarHidden:YES];
+        [self.navigationController setToolbarHidden:YES];
     }];
 }
 - (void)didReceiveMemoryWarning
@@ -196,10 +203,29 @@ enum PinAnnotationTypeTag {
     self.mapView.layer.borderWidth = 2.0f;
     self.mapView.layer.borderColor = [UIColor whiteColor].CGColor;//UIColorFromRGB(0x9B90C8).CGColor;
     self.mapView.delegate = self;
+//    [self.view addSubview:self.mapView];
+//    
+    // Intrinsic to this view is to set to current location based on device
+    NSLog(@" updating location");
+    self.locationManager = [[CLLocationManager alloc] init];
+    self.locationManager.delegate = self;
+    [self.locationManager requestWhenInUseAuthorization];
+    
+    
+    [UIView animateWithDuration:0.75 animations:^{
+        //[self.locationManager startUpdatingLocation];
+        [self startLocationUpdates];
+        self.mapView.showsUserLocation = YES;
+        [self.mapView setMapType:MKMapTypeStandard];
+        [self.mapView setZoomEnabled:NO];
+        [self.mapView setScrollEnabled:NO];
+//        [self.locationManager startUpdatingLocation];
+//        [self setInitialLocation:self.locationManager.location];
+//        self.mapView.region = MKCoordinateRegionMake(self.location.coordinate,
+//                                                     MKCoordinateSpanMake(0.05f, 0.05f));
+    }];
+    
     [self.view addSubview:self.mapView];
-    
-    
-    
     
     // Adding a refresh mapview btn
 //    UIButton *refreshMavpViewBtn = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -267,8 +293,12 @@ enum PinAnnotationTypeTag {
                       action:@selector(watchMeSwitchEnabled:)
             forControlEvents:UIControlEventValueChanged];
     watchMeSwitch.layer.cornerRadius = watchMeSwitch.frame.size.height/2.0;
-    watchMeSwitch.layer.borderWidth =  1.0;
+    watchMeSwitch.layer.borderWidth =  1.5;
     watchMeSwitch.layer.borderColor = [UIColor whiteColor].CGColor;
+    watchMeSwitch.layer.shadowColor   = [UIColor darkGrayColor].CGColor;
+    watchMeSwitch.layer.shadowOffset  = CGSizeMake(1.5f, 1.5f);
+    watchMeSwitch.layer.shadowOpacity = 1.0;
+    watchMeSwitch.layer.shadowRadius  = 4.0;
     [watchMeSwitch sizeToFit];
     [watchMeSwitch setCenter:CGPointMake(self.optionsButton.frame.origin.x - watchMeSwitch.frame.size.width, self.optionsButton.center.y)];
     [watchMeSwitch setCenter:CGPointMake(10+watchMeSwitch.frame.size.width/2.0f,
@@ -341,8 +371,12 @@ enum PinAnnotationTypeTag {
 {
     self.optionsButton= [[UIButton alloc] initWithFrame:CGRectZero];
     [self.optionsButton setTitle:@"☰" forState:(UIControlStateNormal)];
-    [self.optionsButton.titleLabel setFont:[UIFont fontWithName:@"AppleSDGothicNeo-Regular" size:22]];
-    
+    [self.optionsButton.titleLabel setFont:[UIFont fontWithName:@"AppleSDGothicNeo-Regular" size:28]];
+    self.optionsButton.titleLabel.textColor  = [UIColor blueColor];
+    self.optionsButton.layer.shadowColor   = [UIColor darkGrayColor].CGColor;
+    self.optionsButton.layer.shadowOffset  = CGSizeMake(1.5f, 1.5f);
+    self.optionsButton.layer.shadowOpacity = 1.0;
+    self.optionsButton.layer.shadowRadius  = 4.0;
     if (![self.optionsButton isEnabled])
         [self.optionsButton setEnabled:YES];
     [self.optionsButton sizeToFit];
@@ -383,7 +417,7 @@ enum PinAnnotationTypeTag {
     homeProfileView.imageView.contentMode  = UIViewContentModeScaleAspectFill;
     homeProfileView.imageView.layer.cornerRadius = homeProfileView.imageView.frame.size.height/2.0f;
     homeProfileView.imageView.layer.borderWidth  = 2.0;
-    homeProfileView.imageView.layer.borderColor  = [UIColor whiteColor].CGColor;
+    homeProfileView.imageView.layer.borderColor  = [UIColor greenColor].CGColor;
     homeProfileView.imageView.layer.masksToBounds = YES;
     //[imgView setImage:image];
 //[homeProfileView setFrame:CGRectMake(0, 0, 58, 58)];
@@ -432,6 +466,24 @@ enum PinAnnotationTypeTag {
 }
 
 #pragma mark - HomeView Methods
+- (void) checkUsersStatus { /* check users status: check if event's are logged */
+    // NSLog(@"checkUsersStatus:...");
+    
+    // Check self
+    if ([[NSUserDefaults standardUserDefaults] objectForKey:@"watchObjId"] == nil ){
+        NSLog(@"WATCHME object:%@",[[NSUserDefaults standardUserDefaults] objectForKey:@"watchObjId"]);
+//        [object setObject:[NSNumber numberWithBool:NO] forKey:@"eventActive"];
+//        [object saveInBackground];
+    } else {
+        NSLog(@"WATCHME OBJECT is not nil: %@", [[NSUserDefaults standardUserDefaults] objectForKey:@"watchObjId"]);
+        [watchMeSwitch setOn:YES animated:YES];
+        // continue uploading location information until user turns off watchMe
+    }
+    
+    // Check Core Circle for watchMe events
+    CloudUsrEvnts *userEvent = [[CloudUsrEvnts alloc] init];
+    [userEvent cloudCheckForCircleEvents];
+}
 -(void)navigationCtrlrSingleTap:(id) sender {
     NSLog(@"navigationCtrlrSingleTap tapped");
     self.profileView = [[ProfileSneakPeekView alloc] initWithFrame:self.navigationController.navigationBar.frame];
@@ -461,29 +513,29 @@ enum PinAnnotationTypeTag {
                                                                             target:nil
                                                                             action:nil];
 }
--(void) setupHelpMeNowSwitch
-{
-    helpMeNowSwitch = [[UISwitch alloc] init];
-    [helpMeNowSwitch addTarget:self action:@selector(helpMeNowSwitchAction:)
-              forControlEvents:UIControlEventValueChanged];
-    helpMeNowSwitch.layer.cornerRadius = helpMeNowSwitch.frame.size.height/2.0;
-    helpMeNowSwitch.layer.borderWidth =  1.0;
-    helpMeNowSwitch.layer.borderColor = [UIColor whiteColor].CGColor;
-    [helpMeNowSwitch setCenter:CGPointMake(self.navigationController.toolbar.center.x, 22)];
-    [helpMeNowSwitch setOn:NO animated:YES];
-    [helpMeNowSwitch setOnTintColor:[UIColor redColor]];
-    [helpMeNowSwitch setBackgroundColor:[UIColor clearColor]];
-    [self.navigationController.toolbar addSubview:helpMeNowSwitch];
-    if (DBG) NSLog(@"[self.navigationController.toolbar addSubview:helpMeNowSwitch]");
-    
-    UILabel *label = [[UILabel alloc] initWithFrame:CGRectZero];
-    [label setText:@"help"];
-    [label setFont:[UIFont fontWithName:@"AppleSDGothicNeo-Light" size:11.0]];
-    [label sizeToFit];
-    [label setTag:100];
-    [label setCenter:CGPointMake(label.center.x+4.0f, label.center.y + 9)];
-    [helpMeNowSwitch addSubview:label];
-}
+//-(void) setupHelpMeNowSwitch
+//{
+//    helpMeNowSwitch = [[UISwitch alloc] init];
+//    [helpMeNowSwitch addTarget:self action:@selector(helpMeNowSwitchAction:)
+//              forControlEvents:UIControlEventValueChanged];
+//    helpMeNowSwitch.layer.cornerRadius = helpMeNowSwitch.frame.size.height/2.0;
+//    helpMeNowSwitch.layer.borderWidth =  1.0;
+//    helpMeNowSwitch.layer.borderColor = [UIColor whiteColor].CGColor;
+//    [helpMeNowSwitch setCenter:CGPointMake(self.navigationController.toolbar.center.x, 22)];
+//    [helpMeNowSwitch setOn:NO animated:YES];
+//    [helpMeNowSwitch setOnTintColor:[UIColor redColor]];
+//    [helpMeNowSwitch setBackgroundColor:[UIColor clearColor]];
+//    [self.navigationController.toolbar addSubview:helpMeNowSwitch];
+//    if (DBG) NSLog(@"[self.navigationController.toolbar addSubview:helpMeNowSwitch]");
+//    
+//    UILabel *label = [[UILabel alloc] initWithFrame:CGRectZero];
+//    [label setText:@"help"];
+//    [label setFont:[UIFont fontWithName:@"AppleSDGothicNeo-Light" size:11.0]];
+//    [label sizeToFit];
+//    [label setTag:100];
+//    [label setCenter:CGPointMake(label.center.x+4.0f, label.center.y + 9)];
+//    [helpMeNowSwitch addSubview:label];
+//}
 -(void)makeFriensoEvent:(UIButton *)theButton {
     [self animateThisButton:theButton];
     [self performSegueWithIdentifier:@"createEvent" sender:self];
@@ -640,7 +692,14 @@ enum PinAnnotationTypeTag {
     }
     
 }
-
+#pragma mark - MFMessageComposeViewController Delegate method
+- (void)messageComposeViewController:(MFMessageComposeViewController *)controller didFinishWithResult:(MessageComposeResult)result {
+    switch (result) {
+        case MessageComposeResultSent: if (DBG) NSLog(@"SENT"); [self dismissViewControllerAnimated:YES completion:nil]; break;
+        case MessageComposeResultFailed: if (DBG) NSLog(@"FAILED"); [self dismissViewControllerAnimated:YES completion:nil]; break;
+        case MessageComposeResultCancelled: if (DBG) NSLog(@"CANCELLED"); [self dismissViewControllerAnimated:YES completion:nil]; break;
+    }
+}
 #pragma mark - Location methods
 - (void)setInitialLocation:(CLLocation *)aLocation {
     /* setInitialLocation
@@ -690,8 +749,8 @@ enum PinAnnotationTypeTag {
             [subview removeFromSuperview];
         }
     }
-    if ([[NSUserDefaults standardUserDefaults] objectForKey:@"adminID"] != NULL)
-        [self configureOverlay];
+//    if ([[NSUserDefaults standardUserDefaults] objectForKey:@"adminID"] != NULL)
+//        [self configureOverlay];
 }
 
 - (void) goToCurrentLocation:(id)sender
@@ -711,6 +770,43 @@ enum PinAnnotationTypeTag {
 }
 
 #pragma mark - Local Actions
+- (void)startLocationUpdates
+{
+    // Create the location manager if this object does not
+    // already have one.
+    if (self.locationManager == nil) {
+        self.locationManager = [[CLLocationManager alloc] init];
+    }
+    
+    //self.locationManager.delegate = self;
+    self.locationManager.desiredAccuracy = kCLLocationAccuracyBest;
+    self.locationManager.activityType = CLActivityTypeFitness;
+    
+    // Movement threshold for new events.
+    self.locationManager.distanceFilter = 3.0; // meters
+    
+    [self.locationManager startUpdatingLocation];
+}
+- (void)eachSecond
+{
+    self.seconds++;
+    
+    PFGeoPoint *currentLocation =  [PFGeoPoint geoPointWithLocation:[self.locations lastObject]];
+    PFUser *currentUser = [PFUser currentUser];
+    [currentUser setObject:currentLocation forKey:@"currentLocation"];
+    [currentUser saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+        if (!error)
+        {
+            NSLog(@"Saved Users Location");
+        }
+    }];
+    /**
+    self.timeLabel.text = [NSString stringWithFormat:@"Time: %@",  [MathController stringifySecondCount:self.seconds usingLongFormat:NO]];
+    self.distLabel.text = [NSString stringWithFormat:@"Distance: %@", [MathController stringifyDistance:self.distance]];
+    self.paceLabel.text = [NSString stringWithFormat:@"Pace: %@",  [MathController stringifyAvgPaceFromDist:self.distance overTime:self.seconds]];
+     **/
+}
+/*
 -(void) helpMeNowSwitchAction:(UISwitch*)sender
 {
     if ([sender isOn]) {
@@ -741,18 +837,12 @@ enum PinAnnotationTypeTag {
     }
 }
 
-
+*/
 -(void) watchMeSwitchEnabled:(UISwitch*)sender
 {
     if (DBG) NSLog(@"********* trackMeswitchEnabled ****");
     
     if ([sender isOn]){
-        /*for (id subview in [sender subviews])
-        {
-            UILabel *label = subview;
-            if (label.tag > 99)
-                [label removeFromSuperview];
-        }*/
         // Alert the user
         [[[UIAlertView alloc] initWithTitle:@"WatchMe"
                                     message:@"CoreCircle of friends will be notified and your location shared."
@@ -781,7 +871,7 @@ enum PinAnnotationTypeTag {
         
         
     } else {
-        if (DBG) NSLog(@"Stop the watchMe event");
+        NSLog(@"Stop the watchMe event");
         [[[UIAlertView alloc] initWithTitle:@"WatchMe"
                                     message:@"Your location sharing will stop"
                                    delegate:self
@@ -789,6 +879,7 @@ enum PinAnnotationTypeTag {
                           otherButtonTitles:nil] show];
         CloudUsrEvnts *watchMeEvent = [[CloudUsrEvnts alloc] initWithAlertType:@"watchMe"];
         [watchMeEvent disableEvent];
+        // Log event locally but as temp
         [[NSUserDefaults standardUserDefaults] setObject:nil forKey:@"watchObjId"];
         [[NSUserDefaults standardUserDefaults] synchronize];
     }
@@ -890,7 +981,10 @@ enum PinAnnotationTypeTag {
     if ( [title isEqualToString:@"WatchMe"]) {
         switch (buttonIndex) {
             case 0: // dismiss, cancel, or okay
+                [self.locationManager stopUpdatingLocation];
+                [self.timer invalidate];
                 [watchMeSwitch setOn:NO animated:YES]; // Nothing happens -- no action
+                NSLog(@"stop the watch me event");
                 break;
             case 1: // accept
                 //if (DBG) NSLog(@"Accept: 1:%ld", buttonIndex);
@@ -1060,7 +1154,61 @@ enum PinAnnotationTypeTag {
     }
 }
 
-
+#pragma mark - MapView delegate methods
+- (void)mapView:(MKMapView *)mapView didUpdateUserLocation:(MKUserLocation *)userLocation
+{
+    MKCoordinateRegion region = MKCoordinateRegionMakeWithDistance(userLocation.coordinate, 800, 800);
+    [self.mapView setRegion:[self.mapView regionThatFits:region] animated:YES];
+}
+- (NSString *)deviceLocation {
+    return [NSString stringWithFormat:@"latitude: %f longitude: %f", self.locationManager.location.coordinate.latitude, self.locationManager.location.coordinate.longitude];
+}
+- (NSString *)deviceLat {
+    return [NSString stringWithFormat:@"%f", self.locationManager.location.coordinate.latitude];
+}
+- (NSString *)deviceLon {
+    return [NSString stringWithFormat:@"%f", self.locationManager.location.coordinate.longitude];
+}
+- (NSString *)deviceAlt {
+    return [NSString stringWithFormat:@"%f", self.locationManager.location.altitude];
+}
+#pragma mark - CLLocationManagerDelegate methods
+- (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations {
+    /***
+    //1
+    CLLocation *lastLocation = [locations lastObject];
+    //NSLog(@"%@", [locations lastObject]);
+    //2
+    CLLocationAccuracy accuracy = [lastLocation horizontalAccuracy];
+    //NSLog(@"Received location %@ with accuracy %f", lastLocation, accuracy);
+    
+    NSLog(@"Location Post: %d", self.seconds);
+    
+    //3
+    if(accuracy < 100.0) {
+        //4
+        MKCoordinateSpan span = MKCoordinateSpanMake(0.14, 0.14);
+        MKCoordinateRegion region = MKCoordinateRegionMake([lastLocation coordinate], span);
+        
+        [_mapView setRegion:region animated:YES];
+        
+        // More code here
+        [manager stopUpdatingLocation];
+    }
+    ***/
+    for (CLLocation *newLocation in locations) {
+        if (newLocation.horizontalAccuracy < 20) {
+            //NSLog(@"update distance");
+            
+            // update distance
+            if (self.locations.count > 0) {
+                self.distance += [newLocation distanceFromLocation:self.locations.lastObject];
+            }
+            
+            [self.locations addObject:newLocation];
+        }
+    }
+}
 
 #pragma mark - More Local functions
 
@@ -1187,9 +1335,16 @@ enum PinAnnotationTypeTag {
     // Watch Me event tracking
     CloudUsrEvnts *watchMeEvent = [[CloudUsrEvnts alloc] initWithAlertType:@"watchMe"
                                                         eventStartDateTime:[NSDate date] ];
-    //[watchMeEvent setPersonalEvent];
     [watchMeEvent sendToCloud];
-    
+    // Start updating location every second:
+    self.seconds = 0;
+    self.distance = 0;
+    self.locations = [NSMutableArray array];
+    self.timer = [NSTimer scheduledTimerWithTimeInterval:(7.0) target:self
+                                                selector:@selector(eachSecond)
+                                                userInfo:nil
+                                                 repeats:YES];
+    [self startLocationUpdates];
 }
 -(void) contactByDialingFriendWithEmail:(NSString *)friendEmail
 {

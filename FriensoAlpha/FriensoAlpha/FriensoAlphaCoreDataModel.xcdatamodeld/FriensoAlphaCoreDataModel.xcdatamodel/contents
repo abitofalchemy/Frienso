@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="5064" systemVersion="13D65" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="6254" systemVersion="14B25" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
     <entity name="CoreFriends" representedClassName="CoreFriends" syncable="YES">
         <attribute name="coreCreated" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="coreEmail" optional="YES" attributeType="String" syncable="YES"/>
@@ -35,9 +35,23 @@
         <attribute name="resUpdated" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="resUrlLink" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
+    <entity name="Location" representedClassName="Location" syncable="YES">
+        <attribute name="latitude" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="longitude" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="timestamp" optional="YES" attributeType="Date" syncable="YES"/>
+        <relationship name="run" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="Run" inverseName="locations" inverseEntity="Run" syncable="YES"/>
+    </entity>
+    <entity name="Run" representedClassName="Run" syncable="YES">
+        <attribute name="distance" optional="YES" attributeType="Float" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="duration" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="timestamp" optional="YES" attributeType="Date" syncable="YES"/>
+        <relationship name="locations" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Location" inverseName="run" inverseEntity="Location" syncable="YES"/>
+    </entity>
     <elements>
         <element name="CoreFriends" positionX="0" positionY="0" width="128" height="210"/>
         <element name="FriensoEvent" positionX="0" positionY="0" width="128" height="195"/>
         <element name="FriensoResources" positionX="0" positionY="54" width="128" height="165"/>
+        <element name="Run" positionX="0" positionY="90" width="128" height="103"/>
+        <element name="Location" positionX="9" positionY="99" width="128" height="103"/>
     </elements>
 </model>

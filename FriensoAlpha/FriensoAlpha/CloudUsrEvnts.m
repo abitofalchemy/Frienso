@@ -11,6 +11,7 @@
 #import "FriensoEvent.h"
 
 
+
 @implementation CloudUsrEvnts
 - (id)initWithAlertType:(NSString*)alertType
 {
@@ -31,22 +32,45 @@
     }
     return self;
 }
-//-(NSArray *) ongoingAlertsCheck {
+- (void)cloudCheckForCircleEvents{
+    /***************************** Check for friends with events **/
+    NSDictionary *dic =[[NSUserDefaults standardUserDefaults]
+                        dictionaryForKey:@"CoreFriendsContactInfoDicKey"];
+    for (NSString *coreFriendPh in [dic allValues])
+    {
+        NSLog(@"User's phone number:\t %@",  coreFriendPh);
+    }
+    // Check for friends with active alerts
+    PFQuery *query = [PFQuery queryWithClassName:@"UserEvent"];
+    [query whereKey:@"eventActive" equalTo:[NSNumber numberWithBool:YES]];
+    [query includeKey:@"friensoUser"];
+    [query orderByDescending:@"createdAt"];
+    [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+        if (!DBG) NSLog(@"------ Checking for Events ... objects: %d", (int)objects.count);
+        if (!error) {
+            NSLog(@"No error, data fetch: %@", objects);
+            
+        } else
+            if (DBG) NSLog(@"Parse error while fetching records: %@", error.localizedDescription);
+        
+    }];
+//    NSString* retStr = nil;
 //    PFQuery *query = [PFQuery queryWithClassName:@"UserEvent"];
-//    [query whereKey:@"eventActive" equalTo:[PFUser currentUser]];
-//    [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+//    [query whereKey:@"friensoUser" equalTo:[PFUser currentUser]];
+//    [query orderByDescending:@"createdAt"];
+//    [query getFirstObjectInBackgroundWithBlock:^(PFObject *object, NSError *error) {
 //        if (!error) {
+//            // The find succeeded.
+//            NSLog(@"Successfully retrieved  scores.%@", object);
+//            // Do something with the found objects
+//            NSLog(@"%@", object.objectId);
 //            
-//            return objects;
 //        } else {
-//            // Did not find any UserStats for the current user
-//            NSLog(@"Error: %@", error);
-//            
+//            // Log details of the failure
+//            NSLog(@"Error: %@ %@", error, [error userInfo]);
 //        }
 //    }];
-//
-//    
-//}
+}
 - (void) isUserInMy2WatchList:(PFUser *)friensoUser
 {
     PFQuery *sentToQuery = [PFQuery queryWithClassName:@"TrackRequest"];
@@ -64,17 +88,35 @@
         }
     }];
 }
+- (NSString*) checkWatchMeStatus{
+    /** checkWatchMeStatus 
+     ** check  if the current user has an active watch going and check return the objectid
+     ** else return nil */
+    NSLog(@"check watch me status");
+    NSString* retStr = nil;
+    PFQuery *query = [PFQuery queryWithClassName:@"UserEvent"];
+    [query whereKey:@"friensoUser" equalTo:[PFUser currentUser]];
+    [query orderByDescending:@"createdAt"];
+    [query getFirstObjectInBackgroundWithBlock:^(PFObject *object, NSError *error) {
+        if (!error) {
+            // The find succeeded.
+            NSLog(@"Successfully retrieved  scores.%@", object);
+            // Do something with the found objects
+            NSLog(@"%@", object.objectId);
+            
+        } else {
+            // Log details of the failure
+            NSLog(@"Error: %@ %@", error, [error userInfo]);
+        }
+    }];
+    
+    
+    return retStr;
+}
 - (void) trackingUserEvent:(PFObject*) userEventObjId
                 withStatus:(NSString*) status
                  trackedBy:(PFUser  *) friensoUser
 {
-//    NSLog(@"%@", [[NSUserDefaults standardUserDefaults] objectForKey:@"userPhone"]);
-    // update the cloud-store for pfuser with new state; subqueries should be on the same Class
-//    PFQuery *query = [PFQuery queryWithClassName:@"TrackRequest"];
-//    [query whereKey:@"SenderPh" equalTo:[cloudUser objectForKey:@"phoneNumber"]];
-//    [query whereKey:@"RecipientPh" equalTo:[[NSUserDefaults standardUserDefaults] objectForKey:@"userPhone"]];
-//    PFQuery *sentByQuery = [PFQuery queryWithClassName:@"TrackRequest"];
-//    [sentByQuery whereKey:@"SenderPh" equalTo:[cloudUser objectForKey:@"phoneNumber"]];
     /** Parse/Frienso/UserEventTracking Class
      ** This class tracks who has reviewed and taken action on a userEventRequest
      **         status: is the action will be either: accepted or rejected
@@ -115,6 +157,7 @@
         NSString *minPhString = [self stripStringOfUnwantedChars:coreFriendPh];
         NSString *personalizedChannelNumber =[NSString stringWithFormat:@"Ph%@",
                                               [minPhString substringFromIndex:minPhString.length-10]];
+#warning what is this line below?
         if(!([minPhString rangeOfString:@"3394087"].location == NSNotFound))
         {
             NSLog(@"Phone Number for this friend is: %@", personalizedChannelNumber);
