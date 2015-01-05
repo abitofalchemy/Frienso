@@ -12,7 +12,13 @@ Version History
 ---------------
 
 * ver 1.8.1 build ###: Working out issues of selecting  core  friends & location info
--- Sal: 
+-- Sal: Got the map to work and to center on the user of interest
+-- [ ] add the check if the annotation has already been added for that user, update loc only
+
+-- Sal: Got event for those in my circle and currently tracking them via listView 
+        Need action to map said user and provide other features
+-- Sal: Refresh automatically the table datasource
+
 
 * ver 1.8.1 build 113: Update to be compatible with iOS 8.1
 -- Sal: options view: are my circle logged-in?  need that implementation

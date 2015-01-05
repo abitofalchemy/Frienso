@@ -52,6 +52,7 @@ enum PinAnnotationTypeTag {
     UIGestureRecognizer *navGestures;
     UISwitch       *helpMeNowSwitch;
     CGRect         tblViewFrame;
+    NSMutableDictionary *eventToTrackDict;
 }
 @property (nonatomic,strong) UIButton *selectedBubbleBtn;
 @property (nonatomic,strong) UIButton *fullScreenBtn;
@@ -62,6 +63,7 @@ enum PinAnnotationTypeTag {
 @property (nonatomic,strong) UIActivityIndicatorView    *loadingView;
 //@property (nonatomic,strong) UserResponseScrollView     *scrollView; // deprecated
 @property (nonatomic,retain) NSArray        *appFrameProperties;
+//@property (nonatomic,retain) NSMutableArray *phoneNbrsInNetwork;
 @property (nonatomic,retain) NSMutableArray *friendsLocationArray;
 @property (nonatomic,retain) NSMutableArray *pendingRqstsArray; // pending requests array
 @property (nonatomic,retain) NSMutableArray *watchingCoFrArray; // watching coreFriends array
@@ -115,8 +117,9 @@ enum PinAnnotationTypeTag {
     [self setupWatchMeSwitch];
     [self setupNavigationBar];
 
-    
-
+    eventToTrackDict = [[NSMutableDictionary alloc] init];
+    // Check users status and circle of friends status
+    [self checkUsersStatus];
 }
 - (void) viewWillDisappear:(BOOL)animated{
     [super viewWillDisappear:animated];
@@ -125,15 +128,15 @@ enum PinAnnotationTypeTag {
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-    // Check users status and circle of friends status
-    [self checkUsersStatus];
     
-	// Restore touch interaction on the following widgets
+    // Restore touch interaction on the following widgets
 	[navGestures setEnabled:YES]; 
     [UIView animateWithDuration:0.5 animations:^{
         [self.navigationController setNavigationBarHidden:YES];
         [self.navigationController setToolbarHidden:YES];
     }];
+    
+    
 }
 - (void)didReceiveMemoryWarning
 {
@@ -147,15 +150,13 @@ enum PinAnnotationTypeTag {
                                         APP_SCREEN_FRAME.size.height*0.150)];
     self.tableView.dataSource = self;
     self.tableView.delegate   = self;
-    [self.view addSubview:self.tableView];
+    [self.mapView addSubview:self.tableView];
     [self.tableView setScrollEnabled:YES];
     [self.tableView setScrollsToTop:YES];
-    self.tableView.layer.shadowColor   = [UIColor blueColor].CGColor;
-    self.tableView.layer.shadowOffset  = CGSizeMake(0, 1.5f);
-    self.tableView.layer.shadowOpacity = 1.0;
-    self.tableView.layer.shadowRadius  = 4.0;
+    self.tableView.layer.borderWidth = 1.0;
+    self.tableView.layer.borderColor = UIColorFromRGB(0x9B90C8).CGColor;//[UIColor darkGrayColor].CGColor;
     [self.tableView setCenter:CGPointMake(APP_SCREEN_FRAME.size.width/2.0,
-                                          self.view.bounds.size.height - self.tableView.frame.size.height/2.0f)];
+                                          APP_SCREEN_FRAME.size.height*0.925)];
     
     tblViewFrame = self.tableView.frame;
     
@@ -164,12 +165,12 @@ enum PinAnnotationTypeTag {
                                     initWithEntityName:@"FriensoEvent"];
     
     NSSortDescriptor *createdSort = [[NSSortDescriptor alloc] initWithKey:@"eventCreated"
-                                                                ascending:NO];
+                                                                ascending:YES];
     
     NSSortDescriptor *prioritySort = [[NSSortDescriptor alloc] initWithKey:@"eventPriority"
-                                                                 ascending:NO];
+                                                                 ascending:YES];
     
-    fetchRequest.sortDescriptors = @[prioritySort,createdSort];
+    fetchRequest.sortDescriptors = @[createdSort,prioritySort];
     
     self.frc = [[NSFetchedResultsController alloc] initWithFetchRequest:fetchRequest
                                                    managedObjectContext:[self managedObjectContext]
@@ -201,7 +202,7 @@ enum PinAnnotationTypeTag {
     self.mapViewHeight = self.view.frame.size.height * 0.5;
     self.mapView.region = MKCoordinateRegionMake(self.location.coordinate,MKCoordinateSpanMake(0.05f,0.05f));
     self.mapView.layer.borderWidth = 2.0f;
-    self.mapView.layer.borderColor = [UIColor whiteColor].CGColor;//UIColorFromRGB(0x9B90C8).CGColor;
+    self.mapView.layer.borderColor = [UIColor whiteColor].CGColor;//
     self.mapView.delegate = self;
 //    [self.view addSubview:self.mapView];
 //    
@@ -217,8 +218,8 @@ enum PinAnnotationTypeTag {
         [self startLocationUpdates];
         self.mapView.showsUserLocation = YES;
         [self.mapView setMapType:MKMapTypeStandard];
-        [self.mapView setZoomEnabled:NO];
-        [self.mapView setScrollEnabled:NO];
+//        [self.mapView setZoomEnabled:YES];
+        [self.mapView setScrollEnabled:YES];
 //        [self.locationManager startUpdatingLocation];
 //        [self setInitialLocation:self.locationManager.location];
 //        self.mapView.region = MKCoordinateRegionMake(self.location.coordinate,
@@ -277,12 +278,13 @@ enum PinAnnotationTypeTag {
     [compassNeedleBtn setTitleColor:UIColorFromRGB(0x006bb6) forState:UIControlStateNormal];
     [compassNeedleBtn.titleLabel setFont:[UIFont fontWithName:@"AppleSDGothicNeo-Medium" size:18.0]];
     compassNeedleBtn.titleLabel.textAlignment = NSTextAlignmentCenter;
-    compassNeedleBtn.layer.shadowColor   = [UIColor whiteColor].CGColor;
+    compassNeedleBtn.layer.shadowColor   = [UIColor darkGrayColor].CGColor;
     compassNeedleBtn.layer.shadowOffset  = CGSizeMake(1.5f, 1.5f);
     compassNeedleBtn.layer.shadowOpacity = 1.0;
     compassNeedleBtn.layer.shadowRadius  = 4.0;
     [compassNeedleBtn sizeToFit];
-    CGPoint compassOrigin = CGPointMake(self.view.frame.size.width - compassNeedleBtn.frame.size.width/2.0 - 8.0, self.tableView.frame.origin.y - compassNeedleBtn.frame.size.height);
+    CGPoint compassOrigin = CGPointMake(self.view.frame.size.width - compassNeedleBtn.frame.size.width/2.0 - 8.0,APP_SCREEN_FRAME.size.height*0.875 - compassNeedleBtn.frame.size.height);
+                                        //self.tableView.frame.origin.y - compassNeedleBtn.frame.size.height);
     [compassNeedleBtn setCenter:compassOrigin];
     [compassNeedleBtn setTransform:CGAffineTransformMakeRotation(-M_PI * 0.33)];
     [self.mapView addSubview:compassNeedleBtn];
@@ -466,6 +468,40 @@ enum PinAnnotationTypeTag {
 }
 
 #pragma mark - HomeView Methods
+- (void) processUniqueEventsIn:(NSMutableDictionary*)parseObjDict {
+    NSArray* parseObjArr = [parseObjDict allKeys];
+    NSArray *uniqueArray = [parseObjArr valueForKeyPath:@"@distinctUnionOfObjects.self"];
+    NSLog(@"%@", uniqueArray);
+    /**
+     
+     this is the array of friends with a WatchMe event currently active
+     do something about it
+     
+     **/
+    // if not already added, add to list, where uniqueObj = pfobject
+    if (uniqueArray.count > 0)
+        for (PFObject* uniqueObj in uniqueArray)
+            [self trackUserEventLocally:[parseObjDict objectForKey:uniqueObj]];
+    
+}
+- (BOOL) objectBelongsToOneInMyNetwork:(PFObject *)parseObj {
+    BOOL retBool = NO;
+    NSDictionary *dic =[[NSUserDefaults standardUserDefaults]
+                        dictionaryForKey:@"CoreFriendsContactInfoDicKey"];
+    
+    //    NSLog(@"%@", [parseObj objectForKey:@"friensoUser"]);
+    PFUser* pfusr = [parseObj objectForKey:@"friensoUser"];
+    //NSLog(@"%@", [pfusr objectForKey:@"phoneNumber"]);
+    for (NSString *coreFriendPh in [dic allValues])
+    {
+        if ([coreFriendPh isEqualToString:[pfusr objectForKey:@"phoneNumber"]]){
+            [eventToTrackDict setObject:parseObj forKey:[pfusr objectForKey:@"username"]];
+             //addObject:[pfusr objectForKey:@"username"]];
+            retBool = YES;
+        }
+    }
+    return retBool;
+}
 - (void) checkUsersStatus { /* check users status: check if event's are logged */
     // NSLog(@"checkUsersStatus:...");
     
@@ -481,8 +517,32 @@ enum PinAnnotationTypeTag {
     }
     
     // Check Core Circle for watchMe events
-    CloudUsrEvnts *userEvent = [[CloudUsrEvnts alloc] init];
-    [userEvent cloudCheckForCircleEvents];
+    PFQuery *query = [PFQuery queryWithClassName:@"UserEvent"];
+    [query whereKey:@"eventActive" equalTo:[NSNumber numberWithBool:YES]];
+    [query includeKey:@"friensoUser"];
+    [query orderByDescending:@"createdAt"];
+    [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+        if (!DBG) NSLog(@"------ Checking for Events ... objects: %d", (int)objects.count);
+        if (!error) {
+            NSInteger objCnt = 0;
+            for (PFObject *object in objects)
+            {
+                objCnt++;
+                if ([[object objectForKey:@"eventType"] isEqualToString:@"watchMe"])
+                {
+                    [self objectBelongsToOneInMyNetwork:object];
+                    
+                }
+                if (objCnt == [objects count])
+                    [self processUniqueEventsIn:eventToTrackDict];
+ // from those in my network
+            }// ends for loop
+            
+            
+        } else
+            if (DBG) NSLog(@"Parse error while fetching records: %@", error.localizedDescription);
+        
+    }];
 }
 -(void)navigationCtrlrSingleTap:(id) sender {
     NSLog(@"navigationCtrlrSingleTap tapped");
@@ -615,7 +675,8 @@ enum PinAnnotationTypeTag {
     }
     [cell setTag:0];
     FriensoEvent *event = [self.frc objectAtIndexPath:indexPath];
-    
+    //PFGeoPoint* userLoc = event.eventLocation;
+    NSLog(@"user location: %@", event.eventLocation);
     cell.textLabel.text = event.eventTitle;// stringByAppendingFormat:@" %@", person.lastName];
     cell.textLabel.font = [UIFont fontWithName:@"AppleSDGothicNeo-Medium" size:14.0];
     cell.detailTextLabel.text = [NSString stringWithFormat:@"%@",event.eventSubtitle];
@@ -627,6 +688,17 @@ enum PinAnnotationTypeTag {
     if ([event.eventCategory isEqualToString:@"calendar"]) {
         cell.imageView.image = [self imageWithBorderFromImage:[UIImage imageNamed:@"cal-ic-24.png"]];
         cell.backgroundColor = [UIColor clearColor];
+    }else if ([event.eventCategory isEqualToString:@"watch"]) {
+        UIImage *avatarImg = [UIImage imageNamed:@"avatar.png"];
+        UIImage *scaledimage = [[[FRStringImage alloc] init] scaleImage:avatarImg
+                                                                 toSize:CGSizeMake(40.0, 40.0)];
+        cell.imageView.image = scaledimage;
+        cell.imageView.layer.borderColor   = [UIColor greenColor].CGColor;
+        cell.imageView.layer.cornerRadius  = cell.imageView.frame.size.height/2.0f;
+        cell.imageView.layer.borderWidth   = 2.0;
+        cell.imageView.layer.borderColor   = [UIColor greenColor].CGColor;
+        cell.imageView.layer.masksToBounds = YES;
+    
     } else if ([event.eventCategory isEqualToString:@"general"] ||
                [event.eventCategory isEqualToString:@"und"]) {
         [cell.textLabel setNumberOfLines:3];
@@ -647,6 +719,29 @@ enum PinAnnotationTypeTag {
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    // if category = event watch show event on map, userlocation is stored locally when stored
+    // to core data, plot this and update in background
+    
+    FriensoEvent *frEvent = (FriensoEvent *)[self.frc objectAtIndexPath:indexPath];
+    NSArray *items = [frEvent.eventLocation componentsSeparatedByString:@","];
+    // Create a PFGeoPoint using the user's location
+#warning if nsarray items is of size 2, and they are floats.
+    PFGeoPoint *currentPoint =
+    [PFGeoPoint geoPointWithLatitude:[[items objectAtIndex:0] floatValue]
+                           longitude:[[items objectAtIndex:1] floatValue]];
+//    CLLocation* lLocation = [[CLLocation alloc] initWithLatitude:currentPoint.latitude
+//                                                      longitude:currentPoint.longitude];
+//    GeoPointAnnotation *annotation = [[GeoPointAnnotation alloc] initWithCoordinate:lLocation.coordinate radius:self.radius];
+//    [self.mapView addAnnotation:annotation];
+    NSArray *array = @[frEvent.eventTitle,
+                       [NSString stringWithFormat:@"%f",[items[0] floatValue]],  // latitude
+                       [NSString stringWithFormat:@"%f",[items[1] floatValue]], // longitude
+                       @"email"];
+    GeoCDPointAnnotation *geoCDPointAnn = [[GeoCDPointAnnotation alloc] initWithObject:array];
+    [self.mapView addAnnotation:geoCDPointAnn];
+    [self.mapView setRegion:MKCoordinateRegionMake(CLLocationCoordinate2DMake([currentPoint latitude], [currentPoint longitude]),MKCoordinateSpanMake(0.01, 0.01) )];
+    
+    
     if (DBG) NSLog(@"%ld", (long)[tableView cellForRowAtIndexPath:indexPath].tag);
     switch ([tableView cellForRowAtIndexPath:indexPath].tag)
     {
@@ -673,9 +768,6 @@ enum PinAnnotationTypeTag {
                                             self.tableView.frame.size.width * 0.8,
                                             self.tableView.frame.size.height);
             [self.tableView setFrame:tvNewFrame1];
-            self.tableView.layer.borderWidth = 1.0;
-            self.tableView.layer.borderColor = [UIColor darkGrayColor].CGColor;
-            
             [self.tableView setFrame:CGRectMake(0, fullScreenRect.origin.y + tvFrameOriginOffset_y,
                                                 fullScreenRect.size.width, fullScreenRect.size.height*.9)];
             
@@ -1154,11 +1246,72 @@ enum PinAnnotationTypeTag {
     }
 }
 
+#pragma mark - MKMapViewDelegate
+- (MKAnnotationView *)mapView:(MKMapView *)mapView
+            viewForAnnotation:(id<MKAnnotation>)annotation
+{
+    if (DBG) NSLog(@"viewFoAnnotation");
+    static NSString *GeoPointAnnotationIdentifier = @"RedPinAnnotation";
+    static NSString *GeoQueryAnnotationIdentifier = @"PurplePinAnnotation";
+    
+    if ([annotation isKindOfClass:[GeoCDPointAnnotation class]]) {
+        MKPinAnnotationView *annotationView =
+        (MKPinAnnotationView *)[mapView
+                                dequeueReusableAnnotationViewWithIdentifier:GeoPointAnnotationIdentifier];
+        
+        if (!annotationView) {
+            annotationView = [[MKPinAnnotationView alloc]
+                              initWithAnnotation:annotation
+                              reuseIdentifier:GeoQueryAnnotationIdentifier];
+            annotationView.tag = PinAnnotationTypeTagGeoQuery;
+            annotationView.canShowCallout = YES;
+            annotationView.pinColor = MKPinAnnotationColorPurple;
+            annotationView.animatesDrop = YES;
+            annotationView.draggable = NO;
+            annotationView.rightCalloutAccessoryView = [UIButton buttonWithType:UIButtonTypeDetailDisclosure];
+        }
+        
+        return annotationView;
+    } else if ([annotation isKindOfClass:[GeoPointAnnotation class]]) {
+        MKPinAnnotationView *annotationView =
+        (MKPinAnnotationView *)[mapView
+                                dequeueReusableAnnotationViewWithIdentifier:GeoPointAnnotationIdentifier];
+        
+        if (!annotationView) {
+            annotationView = [[MKPinAnnotationView alloc]
+                              initWithAnnotation:annotation
+                              reuseIdentifier:GeoPointAnnotationIdentifier];
+            annotationView.tag = PinAnnotationTypeTagGeoPoint;
+            annotationView.canShowCallout = YES;
+            annotationView.pinColor = MKPinAnnotationColorRed;
+            annotationView.animatesDrop = YES;
+            annotationView.draggable = NO;
+        }
+        
+        return annotationView;
+    }
+    
+    return nil;
+}
+- (void)mapView:(MKMapView *)mapView annotationView:(MKAnnotationView *)view
+calloutAccessoryControlTapped:(UIControl *)control
+{
+    UIAlertView *contactFriendAV = [[UIAlertView alloc] initWithTitle:[view.annotation subtitle]
+                                                              message:nil
+                                                             delegate:self
+                                                    cancelButtonTitle:@"Cancel"
+                                                    otherButtonTitles:@"📞 Call",@"💬 SMS", nil];
+    [contactFriendAV setTag:100];
+    [contactFriendAV show];
+    
+}
+
 #pragma mark - MapView delegate methods
 - (void)mapView:(MKMapView *)mapView didUpdateUserLocation:(MKUserLocation *)userLocation
 {
-    MKCoordinateRegion region = MKCoordinateRegionMakeWithDistance(userLocation.coordinate, 800, 800);
-    [self.mapView setRegion:[self.mapView regionThatFits:region] animated:YES];
+    NSLog(@".");
+//    MKCoordinateRegion region = MKCoordinateRegionMakeWithDistance(userLocation.coordinate, 800, 800);
+//    [self.mapView setRegion:[self.mapView regionThatFits:region] animated:YES];
 }
 - (NSString *)deviceLocation {
     return [NSString stringWithFormat:@"latitude: %f longitude: %f", self.locationManager.location.coordinate.latitude, self.locationManager.location.coordinate.longitude];
@@ -1174,7 +1327,6 @@ enum PinAnnotationTypeTag {
 }
 #pragma mark - CLLocationManagerDelegate methods
 - (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations {
-    /***
     //1
     CLLocation *lastLocation = [locations lastObject];
     //NSLog(@"%@", [locations lastObject]);
@@ -1183,7 +1335,6 @@ enum PinAnnotationTypeTag {
     //NSLog(@"Received location %@ with accuracy %f", lastLocation, accuracy);
     
     NSLog(@"Location Post: %d", self.seconds);
-    
     //3
     if(accuracy < 100.0) {
         //4
@@ -1193,9 +1344,9 @@ enum PinAnnotationTypeTag {
         [_mapView setRegion:region animated:YES];
         
         // More code here
-        [manager stopUpdatingLocation];
+        //[manager stopUpdatingLocation];
     }
-    ***/
+    
     for (CLLocation *newLocation in locations) {
         if (newLocation.horizontalAccuracy < 20) {
             //NSLog(@"update distance");
@@ -1327,7 +1478,7 @@ enum PinAnnotationTypeTag {
         
         else {
             // Log details of the failure
-            NSLog(@"Error: %@ %@", error, [error userInfo]);
+            NSLog(@"Error: Log details of the failure %@ %@", error, [error userInfo]);
         }
     }
     
@@ -1419,27 +1570,55 @@ enum PinAnnotationTypeTag {
     }];
     
 }
+#pragma mark - NSFetchResultsController delegate methods
+- (void)controllerDidChangeContent:(NSFetchedResultsController *)controller {
+    [self.tableView reloadData];
+}
+
 #pragma mark - CoreData helper methods
 -(void) trackUserEventLocally:(PFObject *)userEventObject
 {
     if (!DBG) NSLog(@"track userEvent locally");
-    FriensoEvent *frEvent = [NSEntityDescription insertNewObjectForEntityForName:@"FriensoEvent"
-                                                          inManagedObjectContext:[self managedObjectContext]];
+//    FriensoAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+//    
+//    NSManagedObjectContext *managedObjectContext =
+//    appDelegate.managedObjectContext;
+    // First check to see if the objectId already exists
+    NSEntityDescription *entityDescription = [NSEntityDescription entityForName:@"FriensoEvent"
+                                                         inManagedObjectContext:[self managedObjectContext]];
+    NSFetchRequest *request = [[NSFetchRequest alloc] init];
+    [request setPredicate:[NSPredicate predicateWithFormat:@"eventObjId like %@",userEventObject.objectId]];
+    [request setEntity:entityDescription];
+    BOOL unique = YES;
+    NSError  *error;
+    NSArray *items = [[self managedObjectContext] executeFetchRequest:request error:&error];
+    if(items.count > 0)
+        unique = NO;
+
+    if (unique) {
+        FriensoEvent *frEvent = [NSEntityDescription insertNewObjectForEntityForName:@"FriensoEvent"
+                                                              inManagedObjectContext:[self managedObjectContext]];
     
-    if (frEvent != nil){
+        NSDictionary *dict =[[NSUserDefaults standardUserDefaults]
+                            dictionaryForKey:@"CoreFriendsContactInfoDicKey"];
+        NSDictionary *newdict = [[NSDictionary alloc] initWithObjects:[dict allKeys]
+                                                              forKeys:[dict allValues]];
+        
         PFUser *friensoUser = [userEventObject objectForKey:@"friensoUser"];
-        frEvent.eventTitle     = [NSString stringWithFormat:@"Watching over: %@",friensoUser.username ];
+        PFGeoPoint* userLocation = [friensoUser objectForKey:@"currentLocation"];
+        
+        frEvent.eventLocation  = [NSString stringWithFormat:@"%f, %f", userLocation.latitude, userLocation.longitude];
+        frEvent.eventTitle     = [newdict objectForKey:[friensoUser objectForKey:@"phoneNumber"]];
         frEvent.eventSubtitle  = [userEventObject objectForKey:@"eventType"];
         frEvent.eventPriority  = [NSNumber numberWithInteger:3];
         frEvent.eventObjId     = userEventObject.objectId;
+        frEvent.eventCategory  = @"watch";
         
         NSError *savingError = nil;
         if(![[self managedObjectContext] save:&savingError])
             if (!DBG) NSLog(@"Failed to save the context. Error = %@", savingError);
         
-    } else
-        if (!DBG) NSLog(@"Failed to create a new event.");
-    
+    } // if unique
 }
 -(void) updateCoreFriendEntity:(NSString *)friendEmail
                   withLocation:(PFGeoPoint *)friendCurrentLoc

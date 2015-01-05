@@ -348,8 +348,8 @@
 		182792F818BE06740056C849 = {
 			isa = PBXGroup;
 			children = (
-				884204D31A5164AA00CE2B67 /* ParseClasses.txt */,
 				1808553418C3B9810047A8BE /* README.md */,
+				884204D31A5164AA00CE2B67 /* ParseClasses.txt */,
 				1827930A18BE06750056C849 /* FriensoAlpha */,
 				1827932918BE06750056C849 /* FriensoAlphaTests */,
 				1827930318BE06740056C849 /* Frameworks */,

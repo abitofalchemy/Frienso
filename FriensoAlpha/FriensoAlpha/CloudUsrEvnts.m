@@ -11,7 +11,6 @@
 #import "FriensoEvent.h"
 
 
-
 @implementation CloudUsrEvnts
 - (id)initWithAlertType:(NSString*)alertType
 {
@@ -32,45 +31,43 @@
     }
     return self;
 }
-- (void)cloudCheckForCircleEvents{
-    /***************************** Check for friends with events **/
-    NSDictionary *dic =[[NSUserDefaults standardUserDefaults]
-                        dictionaryForKey:@"CoreFriendsContactInfoDicKey"];
-    for (NSString *coreFriendPh in [dic allValues])
-    {
-        NSLog(@"User's phone number:\t %@",  coreFriendPh);
-    }
-    // Check for friends with active alerts
-    PFQuery *query = [PFQuery queryWithClassName:@"UserEvent"];
-    [query whereKey:@"eventActive" equalTo:[NSNumber numberWithBool:YES]];
-    [query includeKey:@"friensoUser"];
-    [query orderByDescending:@"createdAt"];
-    [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
-        if (!DBG) NSLog(@"------ Checking for Events ... objects: %d", (int)objects.count);
-        if (!error) {
-            NSLog(@"No error, data fetch: %@", objects);
-            
-        } else
-            if (DBG) NSLog(@"Parse error while fetching records: %@", error.localizedDescription);
-        
-    }];
-//    NSString* retStr = nil;
+
+
+//- (void)cloudCheckForCircleEvents:(NSMutableArray*)usersWithEventArr{
+//    
+//    /***************************** Check for friends with events **/
+//    // Check for friends with active alerts
 //    PFQuery *query = [PFQuery queryWithClassName:@"UserEvent"];
-//    [query whereKey:@"friensoUser" equalTo:[PFUser currentUser]];
+//    [query whereKey:@"eventActive" equalTo:[NSNumber numberWithBool:YES]];
+//    [query includeKey:@"friensoUser"];
 //    [query orderByDescending:@"createdAt"];
-//    [query getFirstObjectInBackgroundWithBlock:^(PFObject *object, NSError *error) {
+//    [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+//        if (!DBG) NSLog(@"------ Checking for Events ... objects: %d", (int)objects.count);
 //        if (!error) {
-//            // The find succeeded.
-//            NSLog(@"Successfully retrieved  scores.%@", object);
-//            // Do something with the found objects
-//            NSLog(@"%@", object.objectId);
+//            NSInteger objCnt = 0;
+//            for (PFObject *object in objects)
+//            {
+//                objCnt++;
+//                
+//                if ([[object objectForKey:@"eventType"] isEqualToString:@"watchMe"])
+//                {
+//                    if ([self objectBelongsToOneInMyNetwork:object])
+//                    {
+//                        [usersWithEventArr addObject:object];
+//                        NSLog(@"---- object belongs to someone in my network");
+//                        
+//                    }
+//                }
+//                if (objCnt == [objects count])
+//                    NSLog(@"%@",usersWithEventArr);
+//            }// ends for loop
 //            
-//        } else {
-//            // Log details of the failure
-//            NSLog(@"Error: %@ %@", error, [error userInfo]);
-//        }
+//            
+//        } else
+//            if (DBG) NSLog(@"Parse error while fetching records: %@", error.localizedDescription);
+//        
 //    }];
-}
+//}
 - (void) isUserInMy2WatchList:(PFUser *)friensoUser
 {
     PFQuery *sentToQuery = [PFQuery queryWithClassName:@"TrackRequest"];

@@ -11,3 +11,5 @@ UserEventTracking
 =================
 Parse class maintains users (friends) watching or tracking others
 
+
+CoreData:

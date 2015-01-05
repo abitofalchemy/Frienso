@@ -26,6 +26,6 @@
                 withStatus:(NSString*) status
                  trackedBy:(PFUser  *) parseUser;
 - (void) isUserInMy2WatchList:(PFUser *)friensoUser;
-- (void)cloudCheckForCircleEvents;
+//- (void)cloudCheckForCircleEvents:(NSMutableArray*)usersWithEventArr;
 
 @end

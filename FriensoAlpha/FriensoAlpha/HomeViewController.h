@@ -37,4 +37,5 @@
  *****************************/
 - (void) checkUsersStatus;
 - (void) watchMeSwitchEnabled:(UISwitch*) sender;
+//- (void) showUserPhoneNbrWithEvent;
 @end
